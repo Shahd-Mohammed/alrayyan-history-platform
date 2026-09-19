@@ -19,7 +19,11 @@ def create_app():
     )
 
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(
+    app,
+    db,
+    render_as_batch=True,
+)
     login_manager.init_app(app)
     from alrayyan import models
 

@@ -11,13 +11,21 @@ class Curriculum(db.Model):
     subject = db.Column(db.String(100), nullable=False)
     grade = db.Column(db.String(50), nullable=False)
     semester = db.Column(db.String(50), nullable=False)
-    academic_year = db.Column(db.String(30))
-    version = db.Column(db.String(50), default="1.0")
-    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    academic_year = db.Column(db.String(30), nullable=False)
+    version = db.Column(
+        db.String(50),
+        nullable=False,
+        default="1.0",
+    )
+    is_active = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=True,
+    )
     created_at = db.Column(
         db.DateTime,
-        default=lambda: datetime.now(timezone.utc),
         nullable=False,
+        default=lambda: datetime.now(timezone.utc),
     )
 
     units = db.relationship(
@@ -27,19 +35,47 @@ class Curriculum(db.Model):
         order_by="Unit.order_index",
     )
 
+    sources = db.relationship(
+        "SourceDocument",
+        back_populates="curriculum",
+        cascade="all, delete-orphan",
+    )
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "grade",
+            "semester",
+            "academic_year",
+            "version",
+            name="uq_curriculum_version",
+        ),
+    )
+
 
 class Unit(db.Model):
     __tablename__ = "units"
 
     id = db.Column(db.Integer, primary_key=True)
+
     curriculum_id = db.Column(
         db.Integer,
-        db.ForeignKey("curricula.id", ondelete="CASCADE"),
+        db.ForeignKey(
+            "curricula.id",
+            ondelete="CASCADE",
+        ),
         nullable=False,
     )
-    title = db.Column(db.String(200), nullable=False)
+
+    title = db.Column(
+        db.String(200),
+        nullable=False,
+    )
     description = db.Column(db.Text)
-    order_index = db.Column(db.Integer, nullable=False, default=1)
+    order_index = db.Column(
+        db.Integer,
+        nullable=False,
+        default=1,
+    )
 
     curriculum = db.relationship(
         "Curriculum",
@@ -53,22 +89,50 @@ class Unit(db.Model):
         order_by="Lesson.order_index",
     )
 
+    __table_args__ = (
+        db.UniqueConstraint(
+            "curriculum_id",
+            "order_index",
+            name="uq_curriculum_unit_order",
+        ),
+    )
+
 
 class Lesson(db.Model):
     __tablename__ = "lessons"
 
     id = db.Column(db.Integer, primary_key=True)
+
     unit_id = db.Column(
         db.Integer,
-        db.ForeignKey("units.id", ondelete="CASCADE"),
+        db.ForeignKey(
+            "units.id",
+            ondelete="CASCADE",
+        ),
         nullable=False,
     )
-    title = db.Column(db.String(200), nullable=False)
-    slug = db.Column(db.String(220), unique=True, nullable=False)
+
+    title = db.Column(
+        db.String(250),
+        nullable=False,
+    )
+    slug = db.Column(
+        db.String(250),
+        unique=True,
+        nullable=False,
+    )
     summary = db.Column(db.Text)
     learning_objectives = db.Column(db.Text)
-    order_index = db.Column(db.Integer, nullable=False, default=1)
-    is_published = db.Column(db.Boolean, default=False, nullable=False)
+    order_index = db.Column(
+        db.Integer,
+        nullable=False,
+        default=1,
+    )
+    is_published = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False,
+    )
 
     unit = db.relationship(
         "Unit",
@@ -78,7 +142,19 @@ class Lesson(db.Model):
     sources = db.relationship(
         "SourceDocument",
         back_populates="lesson",
-        cascade="all, delete-orphan",
+    )
+
+    chunks = db.relationship(
+        "ContentChunk",
+        back_populates="lesson",
+    )
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "unit_id",
+            "order_index",
+            name="uq_unit_lesson_order",
+        ),
     )
 
 
@@ -86,23 +162,68 @@ class SourceDocument(db.Model):
     __tablename__ = "source_documents"
 
     id = db.Column(db.Integer, primary_key=True)
-    lesson_id = db.Column(
+
+    curriculum_id = db.Column(
         db.Integer,
-        db.ForeignKey("lessons.id", ondelete="CASCADE"),
+        db.ForeignKey(
+            "curricula.id",
+            ondelete="CASCADE",
+        ),
         nullable=False,
     )
-    title = db.Column(db.String(250), nullable=False)
-    source_type = db.Column(db.String(50), nullable=False)
+
+    lesson_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "lessons.id",
+            ondelete="SET NULL",
+        ),
+        nullable=True,
+    )
+
+    title = db.Column(
+        db.String(250),
+        nullable=False,
+    )
+    source_type = db.Column(
+        db.String(50),
+        nullable=False,
+    )
     original_filename = db.Column(db.String(255))
     stored_path = db.Column(db.String(500))
     page_count = db.Column(db.Integer)
-    checksum = db.Column(db.String(64), index=True)
+    checksum = db.Column(
+        db.String(64),
+        nullable=False,
+        index=True,
+    )
     academic_year = db.Column(db.String(30))
-    is_active = db.Column(db.Boolean, default=True, nullable=False)
+
+    priority = db.Column(
+        db.Integer,
+        nullable=False,
+        default=100,
+    )
+    is_primary = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False,
+    )
+    is_active = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=True,
+    )
+
     created_at = db.Column(
         db.DateTime,
-        default=lambda: datetime.now(timezone.utc),
         nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+    )
+
+    curriculum = db.relationship(
+        "Curriculum",
+        back_populates="sources",
     )
 
     lesson = db.relationship(
@@ -117,24 +238,62 @@ class SourceDocument(db.Model):
         order_by="ContentChunk.chunk_index",
     )
 
+    __table_args__ = (
+        db.UniqueConstraint(
+            "curriculum_id",
+            "checksum",
+            name="uq_curriculum_source_checksum",
+        ),
+    )
+
 
 class ContentChunk(db.Model):
     __tablename__ = "content_chunks"
 
     id = db.Column(db.Integer, primary_key=True)
+
     source_id = db.Column(
         db.Integer,
-        db.ForeignKey("source_documents.id", ondelete="CASCADE"),
+        db.ForeignKey(
+            "source_documents.id",
+            ondelete="CASCADE",
+        ),
         nullable=False,
     )
+
+    lesson_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "lessons.id",
+            ondelete="SET NULL",
+        ),
+        nullable=True,
+    )
+
     page_number = db.Column(db.Integer)
-    chunk_index = db.Column(db.Integer, nullable=False)
-    text = db.Column(db.Text, nullable=False)
+    chunk_index = db.Column(
+        db.Integer,
+        nullable=False,
+    )
+    text = db.Column(
+        db.Text,
+        nullable=False,
+    )
+    text_hash = db.Column(
+        db.String(64),
+        nullable=False,
+        index=True,
+    )
     embedding = db.Column(db.Text)
     token_count = db.Column(db.Integer)
 
     source = db.relationship(
         "SourceDocument",
+        back_populates="chunks",
+    )
+
+    lesson = db.relationship(
+        "Lesson",
         back_populates="chunks",
     )
 

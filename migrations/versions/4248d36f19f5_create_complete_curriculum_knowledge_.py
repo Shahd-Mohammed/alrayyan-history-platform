@@ -1,8 +1,8 @@
-"""Create curriculum database structure
+"""Create complete curriculum knowledge schema
 
-Revision ID: 83a2e445a35d
+Revision ID: 4248d36f19f5
 Revises: 
-Create Date: 2026-09-19 16:07:15.128232
+Create Date: 2026-09-19 17:45:32.648181
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '83a2e445a35d'
+revision = '4248d36f19f5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,11 +24,12 @@ def upgrade():
     sa.Column('subject', sa.String(length=100), nullable=False),
     sa.Column('grade', sa.String(length=50), nullable=False),
     sa.Column('semester', sa.String(length=50), nullable=False),
-    sa.Column('academic_year', sa.String(length=30), nullable=True),
-    sa.Column('version', sa.String(length=50), nullable=True),
+    sa.Column('academic_year', sa.String(length=30), nullable=False),
+    sa.Column('version', sa.String(length=50), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('grade', 'semester', 'academic_year', 'version', name='uq_curriculum_version')
     )
     op.create_table('units',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -37,35 +38,42 @@ def upgrade():
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('order_index', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['curriculum_id'], ['curricula.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('curriculum_id', 'order_index', name='uq_curriculum_unit_order')
     )
     op.create_table('lessons',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('unit_id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=200), nullable=False),
-    sa.Column('slug', sa.String(length=220), nullable=False),
+    sa.Column('title', sa.String(length=250), nullable=False),
+    sa.Column('slug', sa.String(length=250), nullable=False),
     sa.Column('summary', sa.Text(), nullable=True),
     sa.Column('learning_objectives', sa.Text(), nullable=True),
     sa.Column('order_index', sa.Integer(), nullable=False),
     sa.Column('is_published', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['unit_id'], ['units.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('slug')
+    sa.UniqueConstraint('slug'),
+    sa.UniqueConstraint('unit_id', 'order_index', name='uq_unit_lesson_order')
     )
     op.create_table('source_documents',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('lesson_id', sa.Integer(), nullable=False),
+    sa.Column('curriculum_id', sa.Integer(), nullable=False),
+    sa.Column('lesson_id', sa.Integer(), nullable=True),
     sa.Column('title', sa.String(length=250), nullable=False),
     sa.Column('source_type', sa.String(length=50), nullable=False),
     sa.Column('original_filename', sa.String(length=255), nullable=True),
     sa.Column('stored_path', sa.String(length=500), nullable=True),
     sa.Column('page_count', sa.Integer(), nullable=True),
-    sa.Column('checksum', sa.String(length=64), nullable=True),
+    sa.Column('checksum', sa.String(length=64), nullable=False),
     sa.Column('academic_year', sa.String(length=30), nullable=True),
+    sa.Column('priority', sa.Integer(), nullable=False),
+    sa.Column('is_primary', sa.Boolean(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['lesson_id'], ['lessons.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
+    sa.ForeignKeyConstraint(['curriculum_id'], ['curricula.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['lesson_id'], ['lessons.id'], ondelete='SET NULL'),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('curriculum_id', 'checksum', name='uq_curriculum_source_checksum')
     )
     with op.batch_alter_table('source_documents', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_source_documents_checksum'), ['checksum'], unique=False)
@@ -73,20 +81,29 @@ def upgrade():
     op.create_table('content_chunks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('source_id', sa.Integer(), nullable=False),
+    sa.Column('lesson_id', sa.Integer(), nullable=True),
     sa.Column('page_number', sa.Integer(), nullable=True),
     sa.Column('chunk_index', sa.Integer(), nullable=False),
     sa.Column('text', sa.Text(), nullable=False),
+    sa.Column('text_hash', sa.String(length=64), nullable=False),
     sa.Column('embedding', sa.Text(), nullable=True),
     sa.Column('token_count', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['lesson_id'], ['lessons.id'], ondelete='SET NULL'),
     sa.ForeignKeyConstraint(['source_id'], ['source_documents.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('source_id', 'chunk_index', name='uq_source_chunk')
     )
+    with op.batch_alter_table('content_chunks', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_content_chunks_text_hash'), ['text_hash'], unique=False)
+
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    with op.batch_alter_table('content_chunks', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_content_chunks_text_hash'))
+
     op.drop_table('content_chunks')
     with op.batch_alter_table('source_documents', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_source_documents_checksum'))
