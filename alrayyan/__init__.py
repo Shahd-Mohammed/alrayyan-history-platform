@@ -21,6 +21,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    from alrayyan import models
 
     from alrayyan.routes.main import main_bp
     app.register_blueprint(main_bp)
