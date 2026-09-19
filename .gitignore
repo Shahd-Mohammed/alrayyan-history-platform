@@ -5,3 +5,6 @@ __pycache__/
 instance/
 *.db
 .DS_Store
+
+curriculum/raw/
+curriculum/processed/
