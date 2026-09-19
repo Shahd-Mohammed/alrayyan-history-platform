@@ -2,7 +2,7 @@ import hashlib
 from pathlib import Path
 
 from docx import Document
-from pypdf import PdfReader
+import pymupdf
 
 
 def calculate_checksum(file_path):
@@ -25,25 +25,31 @@ def extract_pdf(file_path):
     """
     Extract text from a PDF while preserving page numbers.
     """
-    reader = PdfReader(str(file_path))
+    document = pymupdf.open(str(file_path))
     pages = []
 
-    for page_number, page in enumerate(reader.pages, start=1):
-        text = page.extract_text() or ""
+    try:
+        for page_number, page in enumerate(
+            document,
+            start=1,
+        ):
+            text = page.get_text("text") or ""
 
-        pages.append(
-            {
-                "page_number": page_number,
-                "text": text.strip(),
-            }
-        )
+            pages.append(
+                {
+                    "page_number": page_number,
+                    "text": text.strip(),
+                }
+            )
 
-    return {
-        "document_type": "pdf",
-        "page_count": len(reader.pages),
-        "pages": pages,
-    }
+        return {
+            "document_type": "pdf",
+            "page_count": document.page_count,
+            "pages": pages,
+        }
 
+    finally:
+        document.close()
 
 def extract_docx(file_path):
     """

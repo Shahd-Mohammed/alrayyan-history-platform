@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-import fitz
+import pymupdf
 from pypdf import PdfReader
 
 
@@ -42,7 +42,7 @@ print(f"Preview: {pypdf_text[:500]}")
 print()
 
 
-fitz_document = fitz.open(str(pdf_path))
+fitz_document = pymupdf.open(str(pdf_path))
 fitz_text = "\n".join(
     page.get_text("text")
     for page in fitz_document
