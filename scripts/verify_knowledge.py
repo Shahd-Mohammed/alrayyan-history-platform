@@ -239,10 +239,76 @@ def verify():
         print(f"Chunks: {len(chunks)}")
         print(f"Embeddings currently generated: {embedded_count}")
 
-        check(
-            embedded_count == 0,
-            "Embeddings are correctly waiting for phase two",
+        active_chunk_count = (
+            ContentChunk.query
+            .join(
+                SourceDocument,
+                ContentChunk.source_id
+                == SourceDocument.id,
+            )
+            .join(
+                Curriculum,
+                SourceDocument.curriculum_id
+                == Curriculum.id,
+            )
+            .filter(
+                Curriculum.is_active.is_(True),
+                SourceDocument.is_active.is_(True),
+            )
+            .count()
         )
+
+        inactive_embedding_count = (
+            ContentChunk.query
+            .join(
+                SourceDocument,
+                ContentChunk.source_id
+                == SourceDocument.id,
+            )
+            .filter(
+                SourceDocument.is_active.is_(False),
+                ContentChunk.embedding.isnot(None),
+            )
+            .count()
+        )
+
+        check(
+            embedded_count
+            in {0, active_chunk_count},
+            (
+                "Embeddings are either pending "
+                "or complete without partial data"
+            ),
+        )
+
+        check(
+            inactive_embedding_count == 0,
+            "Inactive sources have no embeddings",
+        )
+
+        if embedded_count > 0:
+            dimensions = {
+                chunk.embedding_dimensions
+                for chunk in chunks
+                if chunk.embedding is not None
+            }
+
+            models = {
+                chunk.embedding_model
+                for chunk in chunks
+                if chunk.embedding is not None
+            }
+
+            check(
+                dimensions == {1536},
+                "All embeddings have 1536 dimensions",
+            )
+
+            check(
+                None not in models
+                and len(models) == 1,
+                "All embeddings use one recorded model",
+            )
 
         print("=" * 60)
 

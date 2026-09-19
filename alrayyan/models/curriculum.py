@@ -285,6 +285,22 @@ class ContentChunk(db.Model):
         index=True,
     )
     embedding = db.Column(db.Text)
+
+    embedding_model = db.Column(
+        db.String(150),
+        nullable=True,
+    )
+
+    embedding_dimensions = db.Column(
+        db.Integer,
+        nullable=True,
+    )
+
+    embedded_at = db.Column(
+        db.DateTime,
+        nullable=True,
+    )
+
     token_count = db.Column(db.Integer)
 
     source = db.relationship(
