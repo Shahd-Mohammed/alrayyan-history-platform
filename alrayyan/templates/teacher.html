@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>المعلّم الذكي | الريان في الدراسات التاريخية</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/teacher.css') }}"
+    >
+</head>
+
+<body>
+    <header class="teacher-header">
+        <a class="teacher-brand" href="/">
+            <img
+                src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
+                alt="الريان في الدراسات التاريخية"
+            >
+        </a>
+
+        <nav>
+            <a href="/">الرئيسية</a>
+            <a href="#">الدروس</a>
+            <a href="#">الاختبارات</a>
+            <a class="active" href="{{ url_for('teacher.teacher_page') }}">
+                المعلّم الذكي
+            </a>
+        </nav>
+    </header>
+
+    <main class="teacher-page">
+        <section class="teacher-intro">
+            <div>
+                <span class="intro-label">
+                    مدعوم بمصادر المنهج
+                </span>
+
+                <h1>
+                    اسأل
+                    <span>المعلّم الذكي</span>
+                </h1>
+
+                <p>
+                    اطرح سؤالك عن منهج الدراسات التاريخية،
+                    واحصل على شرح واضح ومبسّط مع المصادر
+                    وأرقام الصفحات.
+                </p>
+            </div>
+
+            <div class="knowledge-status">
+                <span class="status-dot"></span>
+
+                <div>
+                    <strong>قاعدة المعرفة جاهزة</strong>
+                    <small>
+                        ملزمة الريان والكتاب الرسمي
+                    </small>
+                </div>
+            </div>
+        </section>
+
+        <section class="chat-layout">
+            <aside class="chat-sidebar">
+                <div class="sidebar-heading">
+                    <span class="sidebar-icon">✦</span>
+
+                    <div>
+                        <h2>أسئلة مقترحة</h2>
+                        <p>اضغطي على أي سؤال لتجربته</p>
+                    </div>
+                </div>
+
+                <button
+                    class="suggestion-button"
+                    type="button"
+                    data-question="ما المقصود بالاستعمار وما أهم دوافعه؟"
+                >
+                    ما المقصود بالاستعمار وما دوافعه؟
+                </button>
+
+                <button
+                    class="suggestion-button"
+                    type="button"
+                    data-question="اشرح الاستعمار الاستيطاني في الجزائر."
+                >
+                    الاستعمار الاستيطاني في الجزائر
+                </button>
+
+                <button
+                    class="suggestion-button"
+                    type="button"
+                    data-question="كيف فرض الانتداب الفرنسي على سوريا ولبنان؟"
+                >
+                    الانتداب الفرنسي على سوريا ولبنان
+                </button>
+
+                <button
+                    class="suggestion-button"
+                    type="button"
+                    data-question="ما الفرق بين الاستعمار والانتداب؟"
+                >
+                    الفرق بين الاستعمار والانتداب
+                </button>
+
+                <div class="source-priority">
+                    <span>ترتيب المصادر</span>
+
+                    <ol>
+                        <li>
+                            <strong>ملزمة الريان</strong>
+                            <small>المصدر التعليمي الأساسي</small>
+                        </li>
+
+                        <li>
+                            <strong>الكتاب الرسمي</strong>
+                            <small>المصدر المرجعي المعتمد</small>
+                        </li>
+                    </ol>
+                </div>
+            </aside>
+
+            <section class="chat-card">
+                <div class="chat-card-header">
+                    <div class="teacher-avatar">ر</div>
+
+                    <div>
+                        <h2>معلّم الريان</h2>
+
+                        <span>
+                            <i></i>
+                            متصل وجاهز للإجابة
+                        </span>
+                    </div>
+
+                    <button
+                        id="clear-chat"
+                        class="clear-button"
+                        type="button"
+                        title="مسح المحادثة"
+                    >
+                        محادثة جديدة
+                    </button>
+                </div>
+
+                <div
+                    id="chat-messages"
+                    class="chat-messages"
+                    aria-live="polite"
+                >
+                    <article class="message assistant-message">
+                        <div class="message-avatar">ر</div>
+
+                        <div class="message-content">
+                            <span class="message-name">
+                                معلّم الريان
+                            </span>
+
+                            <div class="message-bubble">
+                                أهلًا بك! أنا معلّم الريان الذكي.
+                                اسألني عن دروس الدراسات التاريخية
+                                للصف الحادي عشر، وسأجيبك اعتمادًا
+                                على مصادر المنهج.
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div
+                    id="typing-indicator"
+                    class="typing-indicator"
+                    hidden
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <p>أبحث داخل المنهج وأجهّز الإجابة...</p>
+                </div>
+
+                <form id="teacher-form" class="question-form">
+                    <label for="question-input">
+                        اكتب سؤالك
+                    </label>
+
+                    <div class="input-wrapper">
+                        <textarea
+                            id="question-input"
+                            name="question"
+                            rows="2"
+                            maxlength="1000"
+                            placeholder="مثال: ما دوافع الاستعمار الفرنسي للجزائر؟"
+                            required
+                        ></textarea>
+
+                        <button
+                            id="send-button"
+                            type="submit"
+                        >
+                            <span>إرسال السؤال</span>
+                            <b>←</b>
+                        </button>
+                    </div>
+
+                    <small>
+                        يجيب المعلّم اعتمادًا على المصادر
+                        التعليمية المتاحة في المنصة.
+                    </small>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <script
+        src="{{ url_for('static', filename='js/teacher.js') }}"
+    ></script>
+</body>
+</html>

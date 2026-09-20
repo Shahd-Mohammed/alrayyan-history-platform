@@ -3,31 +3,37 @@ from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask
 
+load_dotenv()
+
 from config import Config
 from alrayyan.extensions import db, login_manager, migrate
 
 
 def create_app():
-    load_dotenv()
-
     app = Flask(__name__)
     app.config.from_object(Config)
 
     Path(app.instance_path).mkdir(
         parents=True,
-        exist_ok=True
+        exist_ok=True,
     )
 
     db.init_app(app)
+
     migrate.init_app(
-    app,
-    db,
-    render_as_batch=True,
-)
+        app,
+        db,
+        render_as_batch=True,
+    )
+
     login_manager.init_app(app)
+
     from alrayyan import models
 
     from alrayyan.routes.main import main_bp
+    from alrayyan.routes.teacher import teacher_bp
+
     app.register_blueprint(main_bp)
+    app.register_blueprint(teacher_bp)
 
     return app

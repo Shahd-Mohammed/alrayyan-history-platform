@@ -1,41 +1,79 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>الريان في الدراسات التاريخية</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
 </head>
 
 <body>
     <header class="site-header">
-        <a class="brand" href="/">
+        <a
+            class="brand"
+            href="{{ url_for('main.home') }}"
+        >
             <img
-        class="brand-logo"
-        src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
-        alt="الريان في الدراسات التاريخية"
+                class="brand-logo"
+                src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
+                alt="الريان في الدراسات التاريخية"
             >
         </a>
 
         <nav>
-            <a href="/">الرئيسية</a>
-            <a href="#">الدروس</a>
-            <a href="#">الاختبارات</a>
-            <a href="#">المعلّم الذكي</a>
+            <a
+                class="active"
+                href="{{ url_for('main.home') }}"
+            >
+                الرئيسية
+            </a>
+
+            <a href="#">
+                الدروس
+            </a>
+
+            <a href="#">
+                الاختبارات
+            </a>
+
+            <a href="{{ url_for('teacher.teacher_page') }}">
+                المعلّم الذكي
+            </a>
         </nav>
     </header>
 
     <main>
         <section class="hero">
             <div class="hero-content">
-                <span class="badge">منصة تعليمية مدعومة بالذكاء الاصطناعي</span>
+                <span class="badge">
+                    منصة تعليمية مدعومة بالذكاء الاصطناعي
+                </span>
 
                 <h2>
                     تعلّم التاريخ بطريقة
@@ -43,20 +81,41 @@
                 </h2>
 
                 <p>
-                    استكشف دروس الصف الحادي عشر، احصل على شروحات مبسطة،
-                    واسأل المعلّم الذكي من محتوى المنهج المعتمد.
+                    استكشف دروس الصف الحادي عشر، واحصل على
+                    شروحات مبسطة، واسأل المعلّم الذكي من
+                    محتوى المنهج المعتمد.
                 </p>
 
                 <div class="hero-actions">
-                    <a class="primary-button" href="#">ابدأ التعلّم</a>
-                    <a class="secondary-button" href="#">اسأل المعلّم الذكي</a>
+                    <a
+                        class="primary-button"
+                        href="#"
+                    >
+                        ابدأ التعلّم
+                    </a>
+
+                    <a
+                        class="secondary-button"
+                        href="{{ url_for('teacher.teacher_page') }}"
+                    >
+                        اسأل المعلّم الذكي
+                    </a>
                 </div>
             </div>
 
             <div class="history-card">
-                <span>الوحدة الأولى</span>
-                <h3>الاستعمار: مفهومه ودوافعه وأشكاله</h3>
-                <p>ابدأ رحلتك في فهم الأحداث والمفاهيم التاريخية.</p>
+                <span>
+                    الوحدة الأولى
+                </span>
+
+                <h3>
+                    الاستعمار: مفهومه ودوافعه وأشكاله
+                </h3>
+
+                <p>
+                    ابدأ رحلتك في فهم الأحداث والمفاهيم
+                    التاريخية.
+                </p>
 
                 <div class="timeline">
                     <i></i>
@@ -67,6 +126,9 @@
         </section>
     </main>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script
+        src="{{ url_for('static', filename='js/main.js') }}"
+    ></script>
 </body>
+
 </html>
