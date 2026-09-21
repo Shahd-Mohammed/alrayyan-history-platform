@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        تسجيل الدخول | الريان
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/auth.css') }}"
+    >
+</head>
+
+<body>
+    <main class="auth-page">
+        <section class="auth-brand-panel">
+            <a href="/">
+                <img
+                    src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
+                    alt="الريان في الدراسات التاريخية"
+                >
+            </a>
+
+            <div>
+                <span>منصة تعليمية ذكية</span>
+
+                <h1>
+                    التاريخ يصبح
+                    <strong>أوضح وأقرب</strong>
+                </h1>
+
+                <p>
+                    تعلّم، تدرّب، اختبر نفسك، واستفد
+                    من المعلّم الذكي المبني على المنهج.
+                </p>
+            </div>
+        </section>
+
+        <section class="auth-form-panel">
+            <div class="auth-box">
+                <a class="back-link" href="/">
+                    ← العودة إلى الرئيسية
+                </a>
+
+                <span class="auth-label">
+                    حسابك في منصة الريان
+                </span>
+
+                <h2>تسجيل الدخول</h2>
+
+                <p class="auth-description">
+                    أدخل بيانات حسابك للوصول إلى المحتوى
+                    والنتائج وأدوات المعلمة.
+                </p>
+
+                {% with messages = get_flashed_messages(
+                    with_categories=true
+                ) %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endwith %}
+
+                <form method="post">
+                    {{ form.hidden_tag() }}
+
+                    <div class="field-group">
+                        {{ form.email.label }}
+
+                        {{ form.email(
+                            type="email",
+                            placeholder="teacher@alrayyan.local",
+                            autocomplete="email"
+                        ) }}
+
+                        {% for error in form.email.errors %}
+                            <small class="field-error">
+                                {{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+
+                    <div class="field-group">
+                        {{ form.password.label }}
+
+                        {{ form.password(
+                            placeholder="كلمة المرور",
+                            autocomplete="current-password"
+                        ) }}
+
+                        {% for error in form.password.errors %}
+                            <small class="field-error">
+                                {{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+
+                    <label class="remember-field">
+                        {{ form.remember() }}
+                        <span>{{ form.remember.label.text }}</span>
+                    </label>
+
+                    {{ form.submit(class="submit-button") }}
+                </form>
+
+                <div class="auth-note">
+                    <span>🔒</span>
+                    بيانات الدخول محمية ولا تظهر للطلبة.
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

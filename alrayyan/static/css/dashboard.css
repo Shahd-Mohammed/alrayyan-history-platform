@@ -1,0 +1,398 @@
+:root {
+    --navy: #172d4f;
+    --navy-light: #294c77;
+    --gold: #c99b3d;
+    --cream: #fbf8f1;
+    --white: #ffffff;
+    --text: #172d4f;
+    --muted: #6c788b;
+    --border: #e0e4eb;
+    --success: #2c805d;
+    --danger: #a33d3d;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    background: var(--cream);
+    font-family: "IBM Plex Sans Arabic", sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+.dashboard-header {
+    width: min(1200px, calc(100% - 40px));
+    min-height: 95px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.dashboard-brand img {
+    width: 175px;
+    height: 72px;
+    object-fit: contain;
+}
+
+.account-area {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.account-area strong,
+.account-area span {
+    display: block;
+}
+
+.account-area span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.account-area button,
+.return-link {
+    padding: 10px 15px;
+    color: var(--navy);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--white);
+    cursor: pointer;
+}
+
+.dashboard-page,
+.form-page {
+    width: min(1150px, calc(100% - 40px));
+    margin: 25px auto 70px;
+}
+
+.dashboard-welcome {
+    padding: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    color: var(--white);
+    border-radius: 27px;
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(201, 155, 61, 0.32),
+            transparent 28%
+        ),
+        linear-gradient(
+            135deg,
+            var(--navy),
+            #23456e
+        );
+}
+
+.dashboard-welcome span,
+.form-intro > span {
+    color: #efcf83;
+    font-weight: 700;
+}
+
+.dashboard-welcome h1,
+.form-intro h1 {
+    margin: 6px 0;
+    font-family: "Aref Ruqaa", serif;
+    font-size: 42px;
+}
+
+.dashboard-welcome p {
+    margin: 0;
+    color: #dbe4ef;
+}
+
+.primary-action {
+    display: inline-flex;
+    min-height: 48px;
+    padding: 0 20px;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    text-decoration: none;
+    border: 0;
+    border-radius: 12px;
+    background: var(--gold);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.stats-grid {
+    margin: 22px 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.stats-grid article {
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--white);
+}
+
+.stats-grid span {
+    color: var(--muted);
+}
+
+.stats-grid strong {
+    display: block;
+    margin-top: 7px;
+    font-size: 31px;
+}
+
+.content-panel,
+.worksheet-form {
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 23px;
+    background: var(--white);
+    box-shadow: 0 18px 55px rgba(23, 45, 79, 0.08);
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-heading span {
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.panel-heading h2 {
+    margin: 4px 0 0;
+}
+
+.panel-heading a,
+.empty-state a {
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.worksheet-row {
+    padding: 17px 0;
+    display: grid;
+    grid-template-columns: 55px 1fr auto auto;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.file-icon {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    border-radius: 13px;
+    background: #fff6df;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.worksheet-info h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.worksheet-info p {
+    margin: 3px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.difficulty,
+.status {
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 11px;
+}
+
+.difficulty {
+    color: var(--navy);
+    background: #edf2f8;
+}
+
+.status.published {
+    color: var(--success);
+    background: #eaf8f1;
+}
+
+.status.draft {
+    color: #876421;
+    background: #fff5dc;
+}
+
+.empty-state {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.empty-state > span {
+    font-size: 50px;
+}
+
+.empty-state h3 {
+    margin-bottom: 5px;
+}
+
+.empty-state p {
+    color: var(--muted);
+}
+
+.alert {
+    margin-bottom: 18px;
+    padding: 13px 16px;
+    border-radius: 12px;
+}
+
+.alert.success {
+    color: var(--success);
+    background: #eaf8f1;
+}
+
+.alert.error {
+    color: var(--danger);
+    background: #fff0f0;
+}
+
+.form-page {
+    max-width: 850px;
+}
+
+.form-intro {
+    margin-bottom: 24px;
+}
+
+.form-intro > span {
+    color: var(--gold);
+}
+
+.form-intro p {
+    color: var(--muted);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.field-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 700;
+}
+
+.field-group input,
+.field-group select,
+.field-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    outline: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fbfcfd;
+}
+
+.field-group input:focus,
+.field-group select:focus,
+.field-group textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(201, 155, 61, 0.12);
+}
+
+.upload-field {
+    padding: 20px;
+    border: 1px dashed #c9ad6c;
+    border-radius: 15px;
+    background: #fffaf0;
+}
+
+.upload-field small {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+}
+
+.checkbox-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.field-error {
+    display: block;
+    margin-top: 5px;
+    color: var(--danger);
+}
+
+.form-actions {
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.form-actions > a {
+    color: var(--muted);
+    text-decoration: none;
+}
+
+@media (max-width: 700px) {
+    .dashboard-header {
+        padding: 15px 0;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dashboard-welcome {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .stats-grid,
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+
+    .worksheet-row {
+        grid-template-columns: 50px 1fr;
+    }
+
+    .difficulty,
+    .status {
+        width: fit-content;
+    }
+}

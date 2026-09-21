@@ -1,0 +1,227 @@
+:root {
+    --navy: #172d4f;
+    --navy-light: #294c77;
+    --gold: #c99b3d;
+    --cream: #fbf8f1;
+    --white: #ffffff;
+    --text: #172d4f;
+    --muted: #6d7787;
+    --border: #dfe3ea;
+    --danger: #a43d3d;
+    --success: #277b58;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    background: var(--cream);
+    font-family: "IBM Plex Sans Arabic", sans-serif;
+}
+
+.auth-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+}
+
+.auth-brand-panel {
+    padding: 55px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--white);
+    background:
+        radial-gradient(
+            circle at 30% 15%,
+            rgba(201, 155, 61, 0.35),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            var(--navy),
+            #0e2039
+        );
+}
+
+.auth-brand-panel img {
+    width: 205px;
+    height: 90px;
+    padding: 8px;
+    object-fit: contain;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.94);
+}
+
+.auth-brand-panel > div {
+    max-width: 540px;
+}
+
+.auth-brand-panel span {
+    color: #edcd81;
+    font-weight: 700;
+}
+
+.auth-brand-panel h1 {
+    margin: 12px 0;
+    font-family: "Aref Ruqaa", serif;
+    font-size: clamp(45px, 6vw, 78px);
+    line-height: 1.15;
+}
+
+.auth-brand-panel h1 strong {
+    display: block;
+    color: var(--gold);
+}
+
+.auth-brand-panel p {
+    max-width: 500px;
+    color: #dbe3ef;
+    font-size: 18px;
+    line-height: 2;
+}
+
+.auth-form-panel {
+    padding: 40px 20px;
+    display: grid;
+    place-items: center;
+}
+
+.auth-box {
+    width: min(100%, 470px);
+    padding: 38px;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    background: var(--white);
+    box-shadow: 0 25px 75px rgba(23, 45, 79, 0.13);
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 30px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.auth-label {
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.auth-box h2 {
+    margin: 5px 0;
+    font-family: "Aref Ruqaa", serif;
+    font-size: 43px;
+}
+
+.auth-description {
+    margin: 0 0 25px;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+.field-group {
+    margin-bottom: 18px;
+}
+
+.field-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 700;
+}
+
+.field-group input {
+    width: 100%;
+    height: 52px;
+    padding: 0 14px;
+    outline: 0;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: #fbfcfd;
+}
+
+.field-group input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(201, 155, 61, 0.13);
+}
+
+.remember-field {
+    margin: 5px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.submit-button {
+    width: 100%;
+    min-height: 53px;
+    color: var(--white);
+    border: 0;
+    border-radius: 13px;
+    background: var(--navy);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.submit-button:hover {
+    background: var(--navy-light);
+}
+
+.alert {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 11px;
+    font-size: 13px;
+}
+
+.alert.error {
+    color: var(--danger);
+    background: #fff0f0;
+}
+
+.alert.success {
+    color: var(--success);
+    background: #edfaf4;
+}
+
+.field-error {
+    display: block;
+    margin-top: 5px;
+    color: var(--danger);
+}
+
+.auth-note {
+    margin-top: 20px;
+    padding-top: 18px;
+    color: var(--muted);
+    text-align: center;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+}
+
+@media (max-width: 800px) {
+    .auth-page {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-brand-panel {
+        min-height: 360px;
+        padding: 30px 22px;
+    }
+
+    .auth-brand-panel h1 {
+        font-size: 45px;
+    }
+
+    .auth-box {
+        padding: 27px 20px;
+    }
+}

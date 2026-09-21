@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>تعديل ورقة العمل | الريان</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/dashboard.css') }}"
+    >
+</head>
+
+<body>
+    <header class="dashboard-header">
+        <a class="dashboard-brand" href="/">
+            <img
+                src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
+                alt="الريان"
+            >
+        </a>
+
+        <a
+            class="return-link"
+            href="{{ url_for('teacher_dashboard.dashboard') }}"
+        >
+            العودة إلى لوحة المعلمة
+        </a>
+    </header>
+
+    <main class="form-page">
+        <section class="form-intro">
+            <span>إدارة أوراق العمل</span>
+            <h1>تعديل ورقة العمل</h1>
+            <p>{{ worksheet.title }}</p>
+        </section>
+
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <form
+            method="post"
+            class="worksheet-form"
+        >
+            {{ form.hidden_tag() }}
+
+            {% if form.errors %}
+                <div class="alert error">
+                    <ul>
+                        {% for field_name, errors in form.errors.items() %}
+                            {% for error in errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="field-group full-width">
+                    {{ form.title.label }}
+                    {{ form.title() }}
+                </div>
+
+                <div class="field-group">
+                    {{ form.lesson_id.label }}
+                    {{ form.lesson_id() }}
+                </div>
+
+                <div class="field-group">
+                    {{ form.difficulty_level.label }}
+                    {{ form.difficulty_level() }}
+                </div>
+
+                <div class="field-group full-width">
+                    {{ form.description.label }}
+                    {{ form.description(rows="3") }}
+                </div>
+
+                <div class="field-group full-width">
+                    {{ form.instructions.label }}
+                    {{ form.instructions(rows="3") }}
+                </div>
+
+                <div class="field-group">
+                    {{ form.publication_status.label }}
+                    {{ form.publication_status() }}
+                </div>
+
+                <label class="checkbox-field">
+                    {{ form.allow_download() }}
+
+                    <span>
+                        {{ form.allow_download.label.text }}
+                    </span>
+                </label>
+            </div>
+
+            <div class="current-file">
+                <strong>الملف الحالي:</strong>
+
+                {% if worksheet.attachments %}
+                    {{ worksheet.attachments[0].original_filename }}
+                {% else %}
+                    لا يوجد ملف مرفق
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <a
+                    href="{{ url_for('teacher_dashboard.dashboard') }}"
+                >
+                    إلغاء
+                </a>
+
+                {{ form.submit(class="primary-action") }}
+            </div>
+        </form>
+    </main>
+</body>
+
+</html>
