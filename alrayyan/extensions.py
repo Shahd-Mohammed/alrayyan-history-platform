@@ -9,11 +9,22 @@ login_manager = LoginManager()
 
 
 @login_manager.user_loader
+@login_manager.user_loader
 def load_user(user_id):
-    """
-    Temporary user loader.
+    from alrayyan.models import User
 
-    We will connect this function to the User model
-    when the login system is created.
-    """
-    return None
+    try:
+        parsed_user_id = int(user_id)
+    except (TypeError, ValueError):
+        return None
+
+    return db.session.get(
+        User,
+        parsed_user_id,
+    )
+    
+login_manager.login_view = "auth.login"
+login_manager.login_message = (
+    "يرجى تسجيل الدخول للوصول إلى هذه الصفحة."
+)
+login_manager.login_message_category = "info"

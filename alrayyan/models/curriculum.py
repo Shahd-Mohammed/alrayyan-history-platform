@@ -148,6 +148,19 @@ class Lesson(db.Model):
         "ContentChunk",
         back_populates="lesson",
     )
+    
+    worksheets = db.relationship(
+        "Worksheet",
+        back_populates="lesson",
+        cascade="all, delete-orphan",
+    )
+
+    historical_dates = db.relationship(
+        "HistoricalDate",
+        back_populates="lesson",
+        cascade="all, delete-orphan",
+        order_by="HistoricalDate.sort_year",
+    )
 
     __table_args__ = (
         db.UniqueConstraint(

@@ -6,6 +6,21 @@ from alrayyan.models.curriculum import (
     Unit,
 )
 
+from alrayyan.models.user import User
+
+from alrayyan.models.assessment import (
+    Choice,
+    Question,
+    StudentAnswer,
+    Worksheet,
+    WorksheetAttempt,
+)
+
+from alrayyan.models.date_memory import (
+    DateReview,
+    HistoricalDate,
+)
+
 
 __all__ = [
     "Curriculum",
@@ -13,4 +28,12 @@ __all__ = [
     "Lesson",
     "SourceDocument",
     "ContentChunk",
+    "User",
+    "Worksheet",
+    "Question",
+    "Choice",
+    "WorksheetAttempt",
+    "StudentAnswer",
+    "HistoricalDate",
+    "DateReview",
 ]
