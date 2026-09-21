@@ -38,7 +38,7 @@ class Config:
         or "20"
     )
 
-    
+
     UPLOAD_FOLDER = os.getenv(
         "UPLOAD_FOLDER",
         "uploads",
