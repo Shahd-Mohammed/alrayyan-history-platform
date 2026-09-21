@@ -37,3 +37,25 @@ class Config:
         os.getenv("EMBEDDING_BATCH_SIZE")
         or "20"
     )
+
+    
+    UPLOAD_FOLDER = os.getenv(
+        "UPLOAD_FOLDER",
+        "uploads",
+    )
+
+    MAX_CONTENT_LENGTH = int(
+        os.getenv(
+            "MAX_CONTENT_LENGTH",
+            str(15 * 1024 * 1024),
+        )
+    )
+
+    ALLOWED_WORKSHEET_EXTENSIONS = {
+        "pdf",
+        "doc",
+        "docx",
+        "png",
+        "jpg",
+        "jpeg",
+    }

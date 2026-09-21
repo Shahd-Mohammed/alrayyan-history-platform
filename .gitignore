@@ -8,3 +8,5 @@ instance/
 
 curriculum/raw/
 curriculum/processed/
+uploads/*
+!uploads/.gitkeep

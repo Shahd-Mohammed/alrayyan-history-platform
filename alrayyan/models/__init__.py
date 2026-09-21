@@ -13,6 +13,7 @@ from alrayyan.models.assessment import (
     Question,
     StudentAnswer,
     Worksheet,
+    WorksheetAttachment,
     WorksheetAttempt,
 )
 
@@ -36,4 +37,5 @@ __all__ = [
     "StudentAnswer",
     "HistoricalDate",
     "DateReview",
+    "WorksheetAttachment",
 ]

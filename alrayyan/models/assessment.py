@@ -21,6 +21,16 @@ class Worksheet(db.Model):
         index=True,
     )
 
+    created_by_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "users.id",
+            ondelete="SET NULL",
+        ),
+        nullable=True,
+        index=True,
+    )
+
     title = db.Column(
         db.String(250),
         nullable=False,
@@ -34,6 +44,38 @@ class Worksheet(db.Model):
     instructions = db.Column(
         db.Text,
         nullable=True,
+    )
+
+    creation_method = db.Column(
+        db.String(30),
+        nullable=False,
+        default="manual",
+        index=True,
+    )
+
+    difficulty_level = db.Column(
+        db.String(30),
+        nullable=False,
+        default="medium",
+    )
+
+    publication_status = db.Column(
+        db.String(30),
+        nullable=False,
+        default="draft",
+        index=True,
+    )
+
+    allow_download = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=True,
+    )
+
+    is_ai_generated = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False,
     )
 
     time_limit_minutes = db.Column(
@@ -97,6 +139,18 @@ class Worksheet(db.Model):
         cascade="all, delete-orphan",
     )
 
+    created_by = db.relationship(
+        "User",
+        foreign_keys=[created_by_id],
+    )
+
+    attachments = db.relationship(
+        "WorksheetAttachment",
+        back_populates="worksheet",
+        cascade="all, delete-orphan",
+        order_by="WorksheetAttachment.created_at",
+    )
+
     def total_points(self):
         return sum(
             question.points
@@ -133,6 +187,16 @@ class Question(db.Model):
         default="multiple_choice",
     )
 
+    interaction_config = db.Column(
+        db.Text,
+        nullable=True,
+    )
+
+    requires_manual_grading = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False,
+    )
     correct_answer_text = db.Column(
         db.Text,
         nullable=True,
@@ -357,6 +421,20 @@ class StudentAnswer(db.Model):
         nullable=True,
     )
 
+    answer_data = db.Column(
+        db.Text,
+        nullable=True,
+    )
+
+    teacher_feedback = db.Column(
+        db.Text,
+        nullable=True,
+    )
+
+    graded_at = db.Column(
+        db.DateTime,
+        nullable=True,
+    )
     is_correct = db.Column(
         db.Boolean,
         nullable=True,
@@ -395,4 +473,71 @@ class StudentAnswer(db.Model):
             "question_id",
             name="uq_attempt_question_answer",
         ),
+    )
+
+class WorksheetAttachment(db.Model):
+    __tablename__ = "worksheet_attachments"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    worksheet_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "worksheets.id",
+            ondelete="CASCADE",
+        ),
+        nullable=False,
+        index=True,
+    )
+
+    attachment_type = db.Column(
+        db.String(30),
+        nullable=False,
+        default="worksheet",
+    )
+
+    original_filename = db.Column(
+        db.String(255),
+        nullable=False,
+    )
+
+    stored_filename = db.Column(
+        db.String(255),
+        nullable=False,
+        unique=True,
+    )
+
+    storage_path = db.Column(
+        db.String(500),
+        nullable=False,
+    )
+
+    file_extension = db.Column(
+        db.String(20),
+        nullable=False,
+    )
+
+    mime_type = db.Column(
+        db.String(150),
+        nullable=True,
+    )
+
+    file_size = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0,
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+    )
+
+    worksheet = db.relationship(
+        "Worksheet",
+        back_populates="attachments",
     )
