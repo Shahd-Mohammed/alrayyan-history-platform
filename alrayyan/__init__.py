@@ -38,35 +38,28 @@ def create_app():
 
     login_manager.init_app(app)
 
+    # Import models so SQLAlchemy and migrations
+    # can discover all database tables.
     from alrayyan import models
 
-    from alrayyan.routes.auth import (
-        auth_bp,
-    )
-    from alrayyan.routes.main import (
-        main_bp,
-    )
-    from alrayyan.routes.teacher import (
-        teacher_bp,
-    )
+    from alrayyan.routes.auth import auth_bp
+    from alrayyan.routes.main import main_bp
+    from alrayyan.routes.teacher import teacher_bp
     from alrayyan.routes.teacher_dashboard import (
         teacher_dashboard_bp,
     )
-
-    app.register_blueprint(
-        main_bp
+    from alrayyan.routes.worksheets import (
+        worksheets_bp,
     )
 
-    app.register_blueprint(
-        teacher_bp
-    )
-
-    app.register_blueprint(
-        auth_bp
-    )
-
+    app.register_blueprint(main_bp)
+    app.register_blueprint(teacher_bp)
+    app.register_blueprint(auth_bp)
     app.register_blueprint(
         teacher_dashboard_bp
+    )
+    app.register_blueprint(
+        worksheets_bp
     )
 
     return app

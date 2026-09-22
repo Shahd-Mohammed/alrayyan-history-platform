@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>أوراق العمل | الريان</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/worksheets.css') }}"
+    >
+</head>
+
+<body>
+    <header class="site-header">
+        <a
+            class="brand"
+            href="{{ url_for('main.home') }}"
+        >
+            <img
+                src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
+                alt="الريان في الدراسات التاريخية"
+            >
+        </a>
+
+        <nav class="main-nav">
+            <a href="{{ url_for('main.home') }}">
+                الرئيسية
+            </a>
+
+            <a
+                class="active"
+                href="{{ url_for('worksheets.worksheet_list') }}"
+            >
+                أوراق العمل
+            </a>
+
+            <a href="{{ url_for('teacher.teacher_page') }}">
+                المعلّم الذكي
+            </a>
+
+            {% if current_user.role in ["teacher", "admin"] %}
+                <a href="{{ url_for('teacher_dashboard.dashboard') }}">
+                    لوحة المعلمة
+                </a>
+            {% endif %}
+
+            <form
+                class="logout-form"
+                method="POST"
+                action="{{ url_for('auth.logout') }}"
+            >
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <button type="submit">
+                    تسجيل الخروج
+                </button>
+            </form>
+        </nav>
+    </header>
+
+    <main>
+        <section class="worksheets-hero">
+            <div class="hero-content">
+                <span class="eyebrow">
+                    تعلّم وتدرّب وتقدّم
+                </span>
+
+                <h1>
+                    أوراق عمل تفاعلية
+                    <span>لتثبيت معلوماتك</span>
+                </h1>
+
+                <p>
+                    اختر ورقة العمل المناسبة، راجع الدرس،
+                    وحلّ الأنشطة والأسئلة لتختبر فهمك
+                    لمادة الدراسات التاريخية.
+                </p>
+            </div>
+
+            <div class="hero-card">
+                <span class="hero-icon">✦</span>
+
+                <strong>
+                    {{ worksheets | length }}
+                </strong>
+
+                <p>ورقة عمل متاحة الآن</p>
+            </div>
+        </section>
+
+        <section class="worksheets-container">
+            <div class="section-heading">
+                <div>
+                    <span>مكتبة التدريب</span>
+                    <h2>اختر ورقة العمل</h2>
+                </div>
+
+                <p>
+                    المعروض هنا هو المحتوى الذي راجعته
+                    المعلمة وقامت بنشره للطلاب.
+                </p>
+            </div>
+
+            {% if worksheets %}
+                <div class="worksheets-grid">
+                    {% for worksheet in worksheets %}
+                        <article class="worksheet-card">
+                            <div class="card-top">
+                                <span class="worksheet-number">
+                                    {{ loop.index }}
+                                </span>
+
+                                <span class="difficulty {{ worksheet.difficulty_level }}">
+                                    {% if worksheet.difficulty_level == "easy" %}
+                                        سهل
+                                    {% elif worksheet.difficulty_level == "hard" %}
+                                        متقدم
+                                    {% else %}
+                                        متوسط
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <div class="card-content">
+                                {% if worksheet.lesson %}
+                                    <span class="lesson-name">
+                                        {{ worksheet.lesson.title }}
+                                    </span>
+                                {% else %}
+                                    <span class="lesson-name">
+                                        مراجعة عامة
+                                    </span>
+                                {% endif %}
+
+                                <h3>{{ worksheet.title }}</h3>
+
+                                <p>
+                                    {% if worksheet.description %}
+                                        {{ worksheet.description }}
+                                    {% else %}
+                                        ورقة تدريبية لمراجعة المفاهيم
+                                        والمعلومات التاريخية.
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            <div class="card-meta">
+                                <span>
+                                    {% if worksheet.creation_method == "uploaded" %}
+                                        📄 ملف ورقة عمل
+                                    {% elif worksheet.creation_method == "ai_generated" %}
+                                        ✨ مولّدة بالذكاء الاصطناعي
+                                    {% else %}
+                                        📝 نشاط تفاعلي
+                                    {% endif %}
+                                </span>
+
+                                {% if worksheet.allow_download %}
+                                    <span>⬇ متاحة للتنزيل</span>
+                                {% endif %}
+                            </div>
+
+                            <a
+                                class="open-button"
+                                href="{{ url_for(
+                                    'worksheets.worksheet_details',
+                                    worksheet_id=worksheet.id
+                                ) }}"
+                            >
+                                عرض ورقة العمل
+                                <span>←</span>
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📚</div>
+
+                    <h2>
+                        لا توجد أوراق منشورة حاليًا
+                    </h2>
+
+                    <p>
+                        ستظهر هنا أوراق العمل بمجرد
+                        مراجعتها ونشرها من المعلمة.
+                    </p>
+
+                    <a href="{{ url_for('main.home') }}">
+                        الرجوع إلى الرئيسية
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

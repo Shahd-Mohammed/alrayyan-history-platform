@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ worksheet.title }} | الريان
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/worksheets.css') }}"
+    >
+</head>
+
+<body>
+    <header class="site-header">
+        <a
+            class="brand"
+            href="{{ url_for('main.home') }}"
+        >
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/alrayyan-logo.png'
+                ) }}"
+                alt="الريان في الدراسات التاريخية"
+            >
+        </a>
+
+        <nav class="main-nav">
+            <a href="{{ url_for('main.home') }}">
+                الرئيسية
+            </a>
+
+            <a
+                class="active"
+                href="{{ url_for(
+                    'worksheets.worksheet_list'
+                ) }}"
+            >
+                أوراق العمل
+            </a>
+
+            <a href="{{ url_for('teacher.teacher_page') }}">
+                المعلّم الذكي
+            </a>
+
+            {% if current_user.role in ["teacher", "admin"] %}
+                <a
+                    href="{{ url_for(
+                        'teacher_dashboard.dashboard'
+                    ) }}"
+                >
+                    لوحة المعلمة
+                </a>
+            {% endif %}
+
+            <form
+                class="logout-form"
+                method="POST"
+                action="{{ url_for('auth.logout') }}"
+            >
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <button type="submit">
+                    تسجيل الخروج
+                </button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="details-page">
+        <a
+            class="back-link"
+            href="{{ url_for(
+                'worksheets.worksheet_list'
+            ) }}"
+        >
+            → العودة إلى أوراق العمل
+        </a>
+
+        <section class="details-card">
+            <div class="details-content">
+                <div class="details-badges">
+                    <span class="published-badge">
+                        منشورة
+                    </span>
+
+                    <span
+                        class="difficulty {{ worksheet.difficulty_level }}"
+                    >
+                        {% if worksheet.difficulty_level == "easy" %}
+                            سهل
+                        {% elif worksheet.difficulty_level == "hard" %}
+                            متقدم
+                        {% else %}
+                            متوسط
+                        {% endif %}
+                    </span>
+                </div>
+
+                {% if worksheet.lesson %}
+                    <span class="lesson-name">
+                        {{ worksheet.lesson.title }}
+                    </span>
+                {% else %}
+                    <span class="lesson-name">
+                        مراجعة عامة
+                    </span>
+                {% endif %}
+
+                <h1>
+                    {{ worksheet.title }}
+                </h1>
+
+                <p class="description">
+                    {% if worksheet.description %}
+                        {{ worksheet.description }}
+                    {% else %}
+                        ورقة عمل لمراجعة الدرس وتثبيت
+                        المفاهيم والمعلومات التاريخية.
+                    {% endif %}
+                </p>
+
+                {% if worksheet.instructions %}
+                    <div class="instructions">
+                        <h2>
+                            تعليمات ورقة العمل
+                        </h2>
+
+                        <p>
+                            {{ worksheet.instructions }}
+                        </p>
+                    </div>
+                {% endif %}
+
+                <div class="details-actions">
+    {% if worksheet_file and worksheet.allow_download %}
+        <a
+            class="download-button"
+            href="{{ url_for(
+                'worksheets.download_worksheet',
+                worksheet_id=worksheet.id
+            ) }}"
+        >
+            تنزيل ورقة العمل
+        </a>
+    {% elif worksheet_file %}
+        <span class="disabled-button">
+            التنزيل غير متاح لهذه الورقة
+        </span>
+    {% else %}
+        <span class="disabled-button">
+            لا يوجد ملف مرفق
+        </span>
+    {% endif %}
+
+    <button
+        class="disabled-button"
+        type="button"
+        disabled
+    >
+        الحل التفاعلي قريبًا
+    </button>
+</div>
+            </div>
+
+            <aside class="file-preview">
+                <div class="file-icon">
+                    📄
+                </div>
+
+                {% if worksheet_file %}
+                    <h2>
+                        {{ worksheet_file.original_filename }}
+                    </h2>
+
+                    <p>
+                        نوع الملف:
+                        {{
+                            worksheet_file.file_extension
+                            | upper
+                        }}
+                    </p>
+
+                    {% if worksheet.allow_download %}
+                        <p>
+                            يمكنك فتح الملف وقراءته،
+                            ثم تنزيله أو طباعته.
+                        </p>
+                    {% else %}
+                        <p>
+                            الملف متاح للمشاهدة فقط.
+                        </p>
+                    {% endif %}
+                {% else %}
+                    <h2>
+                        نشاط تفاعلي
+                    </h2>
+
+                    <p>
+                        لا يوجد ملف مرفق بهذه الورقة.
+                    </p>
+                {% endif %}
+            </aside>
+        </section>
+
+        <section class="student-tip">
+            <div>
+                <span class="tip-icon">
+                    ✦
+                </span>
+            </div>
+
+            <div>
+                <h2>
+                    نصيحة قبل البدء
+                </h2>
+
+                <p>
+                    راجع مفاهيم الدرس أولًا، ثم حاول
+                    حل ورقة العمل بنفسك قبل الرجوع
+                    إلى الكتاب أو سؤال المعلّم الذكي.
+                </p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,552 @@
+:root {
+    --navy: #172f52;
+    --navy-light: #284b76;
+    --gold: #c99a3d;
+    --cream: #faf7f0;
+    --white: #ffffff;
+    --text: #1d2c40;
+    --muted: #6d7784;
+    --border: #e7dfd0;
+    --success: #277a56;
+    --shadow: 0 18px 45px rgba(23, 47, 82, 0.10);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: var(--text);
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(201, 154, 61, 0.12),
+            transparent 30rem
+        ),
+        var(--cream);
+    font-family: "IBM Plex Sans Arabic", sans-serif;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font-family: inherit;
+}
+
+.site-header {
+    min-height: 84px;
+    padding: 14px max(5vw, 24px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    background: rgba(255, 255, 255, 0.94);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(14px);
+}
+
+.brand img {
+    display: block;
+    width: 170px;
+    max-height: 60px;
+    object-fit: contain;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.main-nav a,
+.logout-form button {
+    padding: 10px 14px;
+    color: var(--navy);
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.main-nav a:hover,
+.main-nav a.active,
+.logout-form button:hover {
+    color: var(--gold);
+    background: #faf4e7;
+}
+
+.logout-form {
+    margin: 0;
+}
+
+.worksheets-hero {
+    width: min(1180px, calc(100% - 32px));
+    margin: 34px auto;
+    padding: 44px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    align-items: center;
+    gap: 40px;
+    color: var(--white);
+    background:
+        linear-gradient(
+            135deg,
+            var(--navy),
+            var(--navy-light)
+        );
+    border-radius: 26px;
+    box-shadow: var(--shadow);
+}
+
+.eyebrow {
+    color: #f2cb73;
+    font-weight: 700;
+}
+
+.hero-content h1 {
+    max-width: 700px;
+    margin: 8px 0 14px;
+    font-family: "Aref Ruqaa", serif;
+    font-size: clamp(36px, 6vw, 60px);
+    line-height: 1.3;
+}
+
+.hero-content h1 span {
+    display: block;
+    color: #e8bb58;
+}
+
+.hero-content p {
+    max-width: 680px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+.hero-card {
+    min-height: 190px;
+    padding: 24px;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 22px;
+}
+
+.hero-icon {
+    color: var(--gold);
+    font-size: 30px;
+}
+
+.hero-card strong {
+    font-size: 48px;
+}
+
+.hero-card p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.worksheets-container {
+    width: min(1180px, calc(100% - 32px));
+    margin: 0 auto 70px;
+}
+
+.section-heading {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.section-heading span {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.section-heading h2 {
+    margin: 4px 0 0;
+    color: var(--navy);
+    font-size: 30px;
+}
+
+.section-heading p {
+    max-width: 500px;
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+.worksheets-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.worksheet-card {
+    min-height: 360px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(23, 47, 82, 0.06);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.worksheet-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.worksheet-number {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    color: var(--white);
+    background: var(--navy);
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.difficulty,
+.published-badge {
+    width: fit-content;
+    padding: 6px 11px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.difficulty.easy {
+    color: #237352;
+    background: #e8f6ee;
+}
+
+.difficulty.medium {
+    color: #976417;
+    background: #fff4d9;
+}
+
+.difficulty.hard {
+    color: #a13f3f;
+    background: #ffeded;
+}
+
+.lesson-name {
+    display: block;
+    margin-top: 24px;
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.card-content h3 {
+    margin: 7px 0 10px;
+    color: var(--navy);
+    font-size: 21px;
+    line-height: 1.5;
+}
+
+.card-content p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+.card-meta {
+    margin-top: auto;
+    padding: 18px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.open-button,
+.download-button {
+    min-height: 47px;
+    padding: 11px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--white);
+    background: var(--navy);
+    border-radius: 11px;
+    font-weight: 700;
+}
+
+.open-button:hover,
+.download-button:hover {
+    background: var(--navy-light);
+}
+
+.empty-state {
+    padding: 60px 25px;
+    text-align: center;
+    background: var(--white);
+    border: 1px dashed #d9c79f;
+    border-radius: 22px;
+}
+
+.empty-icon {
+    font-size: 48px;
+}
+
+.empty-state h2 {
+    color: var(--navy);
+}
+
+.empty-state p {
+    color: var(--muted);
+}
+
+.empty-state a {
+    margin-top: 12px;
+    padding: 11px 20px;
+    display: inline-flex;
+    color: var(--white);
+    background: var(--navy);
+    border-radius: 10px;
+}
+
+.details-page {
+    width: min(1050px, calc(100% - 32px));
+    margin: 34px auto 70px;
+}
+
+.back-link {
+    display: inline-flex;
+    margin-bottom: 18px;
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.details-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.7fr);
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.details-content {
+    padding: 38px;
+}
+
+.details-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.published-badge {
+    color: var(--success);
+    background: #e8f6ee;
+}
+
+.details-content h1 {
+    margin: 10px 0 14px;
+    color: var(--navy);
+    font-family: "Aref Ruqaa", serif;
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.35;
+}
+
+.description {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+.instructions {
+    margin-top: 24px;
+    padding: 20px;
+    background: #faf7ef;
+    border-right: 4px solid var(--gold);
+    border-radius: 12px;
+}
+
+.instructions h2 {
+    margin: 0 0 8px;
+    color: var(--navy);
+    font-size: 18px;
+}
+
+.instructions p {
+    margin: 0;
+    line-height: 1.8;
+}
+
+.details-actions {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.disabled-button {
+    min-height: 47px;
+    padding: 11px 18px;
+    color: var(--muted);
+    background: #eeeeee;
+    border: 0;
+    border-radius: 11px;
+    cursor: not-allowed;
+}
+
+.file-preview {
+    padding: 34px;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    text-align: center;
+    color: var(--white);
+    background:
+        linear-gradient(
+            150deg,
+            var(--navy),
+            var(--navy-light)
+        );
+}
+
+.file-icon {
+    font-size: 64px;
+}
+
+.file-preview h2 {
+    max-width: 260px;
+    margin: 15px 0 8px;
+    font-size: 19px;
+    overflow-wrap: anywhere;
+}
+
+.file-preview p {
+    margin: 4px 0;
+    color: rgba(255, 255, 255, 0.76);
+}
+
+@media (max-width: 900px) {
+    .worksheets-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .details-card {
+        grid-template-columns: 1fr;
+    }
+
+    .file-preview {
+        min-height: 260px;
+    }
+}
+
+@media (max-width: 680px) {
+    .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .worksheets-hero {
+        padding: 26px;
+        grid-template-columns: 1fr;
+    }
+
+    .hero-card {
+        min-height: 150px;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .worksheets-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .details-content {
+        padding: 24px;
+    }
+
+    .details-actions > * {
+        width: 100%;
+    }
+
+    .download-button {
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.download-button:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+
+.student-tip {
+    margin-top: 22px;
+    padding: 22px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: #fffaf0;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
+
+.tip-icon {
+    width: 45px;
+    height: 45px;
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    background: #f7ead0;
+    border-radius: 50%;
+    font-size: 22px;
+}
+
+.student-tip h2 {
+    margin: 0 0 5px;
+    color: var(--navy);
+    font-size: 18px;
+}
+
+.student-tip p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+}
+
+

@@ -14,6 +14,7 @@ from wtforms import (
 from wtforms.validators import (
     DataRequired,
     Length,
+    Optional,
 )
 
 
@@ -100,6 +101,24 @@ class UploadWorksheetForm(FlaskForm):
                 ),
             ),
         ],
+    )
+    
+    answer_key_file = FileField(
+    "نموذج الإجابة — اختياري",
+    validators=[
+        Optional(),
+        FileAllowed(
+            [
+                "pdf",
+                "doc",
+                "docx",
+                "png",
+                "jpg",
+                "jpeg",
+            ],
+            "صيغة نموذج الإجابة غير مسموحة.",
+        ),
+    ],
     )
 
     submit = SubmitField(
