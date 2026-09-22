@@ -102,7 +102,6 @@ class UploadWorksheetForm(FlaskForm):
             ),
         ],
     )
-    
     answer_key_file = FileField(
     "نموذج الإجابة — اختياري",
     validators=[
