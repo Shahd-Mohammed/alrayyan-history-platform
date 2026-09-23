@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>تعديل السؤال | الريان</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/dashboard.css',
+            v='20260922-4'
+        ) }}"
+    >
+</head>
+
+<body>
+    <header class="dashboard-header">
+        <a
+            class="dashboard-brand"
+            href="{{ url_for('main.home') }}"
+        >
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/alrayyan-logo.png'
+                ) }}"
+                alt="الريان"
+            >
+        </a>
+
+        <a
+            class="return-link"
+            href="{{ url_for(
+                'assessment.manage_questions',
+                worksheet_id=worksheet.id
+            ) }}"
+        >
+            العودة إلى الأسئلة
+        </a>
+    </header>
+
+    <main class="form-page">
+        <section class="form-intro">
+            <span>إدارة النشاط التفاعلي</span>
+
+            <h1>تعديل السؤال</h1>
+
+            <p>{{ worksheet.title }}</p>
+        </section>
+
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        {% if has_student_answers %}
+            <div class="alert error">
+                توجد نتائج طلاب مرتبطة بهذا السؤال؛
+                يمكنك تعديل النص والشرح فقط.
+                الإجابة والخيارات والدرجة ستبقى محفوظة
+                لحماية النتائج السابقة.
+            </div>
+        {% endif %}
+
+        <form
+            method="post"
+            class="worksheet-form"
+        >
+            {{ form.hidden_tag() }}
+
+            {% if form.errors %}
+                <div class="alert error">
+                    {% for errors in form.errors.values() %}
+                        {% for error in errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="field-group full-width">
+                    {{ form.question_text.label }}
+
+                    {{
+                        form.question_text(
+                            rows="4"
+                        )
+                    }}
+                </div>
+
+                {% if not has_student_answers %}
+                    <div class="field-group">
+                        {{ form.question_type.label }}
+                        {{ form.question_type() }}
+                    </div>
+
+                    <div class="field-group">
+                        {{ form.points.label }}
+                        {{ form.points() }}
+                    </div>
+
+                    <div class="field-group full-width">
+                        {{ form.choices_text.label }}
+
+                        {{
+                            form.choices_text(
+                                rows="5"
+                            )
+                        }}
+
+                        <small>
+                            كل خيار في سطر مستقل.
+                        </small>
+                    </div>
+
+                    <div class="field-group full-width">
+                        {{
+                            form
+                            .correct_answer_text
+                            .label
+                        }}
+
+                        {{
+                            form
+                            .correct_answer_text()
+                        }}
+                    </div>
+                {% endif %}
+
+                <div class="field-group full-width">
+                    {{ form.explanation.label }}
+
+                    {{
+                        form.explanation(
+                            rows="4"
+                        )
+                    }}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a
+                    href="{{ url_for(
+                        'assessment.manage_questions',
+                        worksheet_id=worksheet.id
+                    ) }}"
+                >
+                    إلغاء
+                </a>
+
+                {{
+                    form.submit(
+                        class="primary-action",
+                        value="حفظ التعديلات"
+                    )
+                }}
+            </div>
+        </form>
+    </main>
+</body>
+
+</html>

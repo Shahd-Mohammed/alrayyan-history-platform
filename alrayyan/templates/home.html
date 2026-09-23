@@ -54,12 +54,12 @@
                 الرئيسية
             </a>
 
-            <a href="#">
-                الدروس
+            <a href="{{ url_for('teacher.teacher_page') }}">
+                 المعلّم الذكي
             </a>
 
-            <a href="#">
-                الاختبارات
+            <a href="{{ url_for('worksheets.worksheet_list') }}">
+                 أوراق العمل
             </a>
 
             <a href="{{ url_for('teacher.teacher_page') }}">
@@ -87,12 +87,36 @@
                 </p>
 
                 <div class="hero-actions">
-                    <a
-                        class="primary-button"
-                        href="#"
-                    >
-                        ابدأ التعلّم
-                    </a>
+                    {% if current_user.is_authenticated %}
+    {% if current_user.role == "student" %}
+        <a
+            class="primary-button"
+            href="{{ url_for(
+                'main.student_dashboard'
+            ) }}"
+        >
+            ابدأ التعلّم
+        </a>
+
+    {% elif current_user.role in ["teacher", "admin"] %}
+        <a
+            class="primary-button"
+            href="{{ url_for(
+                'teacher_dashboard.dashboard'
+            ) }}"
+        >
+            الذهاب إلى لوحة المعلمة
+        </a>
+    {% endif %}
+
+{% else %}
+    <a
+        class="primary-button"
+        href="{{ url_for('auth.login') }}"
+    >
+        ابدأ التعلّم
+    </a>
+{% endif %}
 
                     <a
                         class="secondary-button"

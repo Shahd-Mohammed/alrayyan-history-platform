@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>لوحة الطالب | الريان</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/worksheets.css'
+        ) }}"
+    >
+</head>
+
+<body>
+    <header class="student-dashboard-header">
+        <a href="{{ url_for('main.home') }}">
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/alrayyan-logo.png'
+                ) }}"
+                alt="الريان"
+            >
+        </a>
+
+        <nav>
+            <a href="{{ url_for('main.home') }}">
+                الرئيسية
+            </a>
+
+            <a href="{{ url_for(
+                'worksheets.worksheet_list'
+            ) }}">
+                أوراق العمل
+            </a>
+
+            <a href="{{ url_for(
+                'assessment.my_results'
+            ) }}">
+                نتائجي
+            </a>
+
+            <a href="{{ url_for(
+                'teacher.teacher_page'
+            ) }}">
+                المعلّم الذكي
+            </a>
+
+            <form
+                method="post"
+                action="{{ url_for('auth.logout') }}"
+            >
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <button type="submit">
+                    تسجيل الخروج
+                </button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="student-dashboard-page">
+        {% set messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+
+        {% if messages %}
+            {% set category, message = messages[-1] %}
+
+            <div class="alert {{ category }}">
+                {{ message }}
+            </div>
+        {% endif %}
+
+        <section class="student-welcome">
+            <div>
+                <span>مساحتك التعليمية</span>
+
+                <h1>
+                    أهلًا بكِ
+                    {{ current_user.full_name }}
+                </h1>
+
+                <p>
+                    تابعي أوراق العمل، محاولاتك،
+                    ونتائجك من مكان واحد.
+                </p>
+            </div>
+
+            <a
+                class="student-primary-action"
+                href="{{ url_for(
+                    'worksheets.worksheet_list'
+                ) }}"
+            >
+                ابدأ التعلم
+            </a>
+        </section>
+
+        <section class="student-stats">
+            <article>
+                <span>أوراق العمل المتاحة</span>
+
+                <strong>
+                    {{ available_worksheets | length }}
+                </strong>
+            </article>
+
+            <article>
+                <span>محاولات قيد الحل</span>
+
+                <strong>
+                    {{ open_attempts | length }}
+                </strong>
+            </article>
+
+            <article>
+                <span>المحاولات المكتملة</span>
+
+                <strong>
+                    {{ completed_attempts | length }}
+                </strong>
+            </article>
+        </section>
+
+        {% if open_attempts %}
+            <section class="student-dashboard-panel">
+                <div class="student-panel-heading">
+                    <div>
+                        <span>أكملي من حيث توقفتِ</span>
+                        <h2>محاولات قيد الحل</h2>
+                    </div>
+                </div>
+
+                <div class="student-dashboard-grid">
+                    {% for attempt in open_attempts %}
+                        <article class="student-dashboard-card">
+                            <span>
+                                محاولة رقم {{ attempt.id }}
+                            </span>
+
+                            <h3>
+                                {{ attempt.worksheet.title }}
+                            </h3>
+
+                            <p>
+                                ما زالت هذه المحاولة مفتوحة.
+                            </p>
+
+                            <a href="{{ url_for(
+                                'assessment.solve_attempt',
+                                attempt_id=attempt.id
+                            ) }}">
+                                متابعة الحل
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <section class="student-dashboard-panel">
+            <div class="student-panel-heading">
+                <div>
+                    <span>المحتوى المتاح</span>
+                    <h2>أوراق العمل</h2>
+                </div>
+
+                <a href="{{ url_for(
+                    'worksheets.worksheet_list'
+                ) }}">
+                    عرض الكل
+                </a>
+            </div>
+
+            {% if available_worksheets %}
+                <div class="student-dashboard-grid">
+                    {% for worksheet in available_worksheets[:3] %}
+                        <article class="student-dashboard-card">
+                            <span>
+                                {{ worksheet.difficulty_level }}
+                            </span>
+
+                            <h3>{{ worksheet.title }}</h3>
+
+                            <p>
+                                {{
+                                    worksheet.description
+                                    or "ورقة عمل تفاعلية"
+                                }}
+                            </p>
+
+                            <a href="{{ url_for(
+                                'worksheets.worksheet_details',
+                                worksheet_id=worksheet.id
+                            ) }}">
+                                فتح ورقة العمل
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="student-empty-state">
+                    لا توجد أوراق عمل منشورة حاليًا.
+                </p>
+            {% endif %}
+        </section>
+
+        <section class="student-dashboard-panel">
+            <div class="student-panel-heading">
+                <div>
+                    <span>آخر نشاط</span>
+                    <h2>أحدث النتائج</h2>
+                </div>
+
+                <a href="{{ url_for(
+                    'assessment.my_results'
+                ) }}">
+                    جميع النتائج
+                </a>
+            </div>
+
+            {% if latest_results %}
+                <div class="student-dashboard-grid">
+                    {% for attempt in latest_results %}
+                        <article class="student-dashboard-card">
+                            <span>
+                                نتيجة محاولة
+                            </span>
+
+                            <h3>
+                                {{ attempt.worksheet.title }}
+                            </h3>
+
+                            <p>
+                                النتيجة:
+                                <bdi class="numeric-value">
+                                    {{
+                                        "%.1f"
+                                        | format(
+                                            attempt.percentage
+                                        )
+                                    }}%
+                                </bdi>
+                            </p>
+
+                            <a href="{{ url_for(
+                                'assessment.attempt_result',
+                                attempt_id=attempt.id
+                            ) }}">
+                                عرض النتيجة
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="student-empty-state">
+                    لم تُسلّم أي محاولة بعد.
+                </p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+
+</html>

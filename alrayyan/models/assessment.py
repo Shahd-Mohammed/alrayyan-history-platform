@@ -94,6 +94,12 @@ class Worksheet(db.Model):
         nullable=False,
         default=True,
     )
+    max_attempts = db.Column(
+    db.Integer,
+    nullable=False,
+    default=3,
+    server_default="3",
+    )
 
     show_answers_after_submit = db.Column(
         db.Boolean,

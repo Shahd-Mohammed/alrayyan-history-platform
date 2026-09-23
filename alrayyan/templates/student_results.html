@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>نتائجي | الريان</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/worksheets.css'
+        ) }}"
+    >
+</head>
+
+<body>
+    <main class="worksheets-container">
+        <div class="section-heading">
+            <div>
+                <span>متابعة التقدم</span>
+                <h1>نتائجي ومحاولاتي</h1>
+            </div>
+
+            <a href="{{ url_for(
+                'worksheets.worksheet_list'
+            ) }}">
+                أوراق العمل
+            </a>
+        </div>
+
+        {% if attempts %}
+            <div class="worksheets-grid">
+                {% for attempt in attempts %}
+                    <article class="worksheet-card">
+                        <div class="card-content">
+                            <span class="lesson-name">
+                                محاولة رقم
+                                {{ loop.revindex }}
+                            </span>
+
+                            <h2>
+                                {{
+                                    attempt
+                                    .worksheet
+                                    .title
+                                }}
+                            </h2>
+
+                            {% if attempt.submitted_at %}
+                                <p>
+                                    النتيجة:
+                                    <bdi class="numeric-value">
+                                        {{
+                                            "%.1f"
+                                                | format(
+                                                    attempt.percentage
+                                                )
+                                        }}%
+                                    </bdi>
+                                </p>
+
+                                <p>
+                                    {{
+                                        "ناجح"
+                                        if attempt.is_passed
+                                        else "يحتاج مراجعة"
+                                    }}
+                                </p>
+                            {% else %}
+                                <p>
+                                    محاولة غير مكتملة.
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        {% if attempt.submitted_at %}
+                            <a
+                                class="open-button"
+                                href="{{ url_for(
+                                    'assessment.attempt_result',
+                                    attempt_id=attempt.id
+                                ) }}"
+                            >
+                                عرض النتيجة
+                            </a>
+                        {% else %}
+                            <a
+                                class="open-button"
+                                href="{{ url_for(
+                                    'assessment.solve_attempt',
+                                    attempt_id=attempt.id
+                                ) }}"
+                            >
+                                متابعة الحل
+                            </a>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>لا توجد محاولات حتى الآن</h2>
+
+                <p>
+                    ابدئي بحل أول ورقة عمل،
+                    وستظهر النتيجة هنا.
+                </p>
+            </div>
+        {% endif %}
+    </main>
+</body>
+
+</html>

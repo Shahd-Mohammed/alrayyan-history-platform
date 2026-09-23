@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>نتيجة المحاولة | الريان</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/worksheets.css'
+        ) }}"
+    >
+</head>
+
+<body>
+    <main class="details-page">
+        <section class="details-card">
+            <div class="details-content">
+                <span class="lesson-name">
+                    نتيجة ورقة العمل
+                </span>
+
+                <h1>
+                    {{ attempt.worksheet.title }}
+                </h1>
+
+                <div class="details-badges">
+                    <span class="published-badge">
+                        <bdi class="numeric-value">
+                        {{ "%.1f" | format(attempt.percentage) }}%
+                        </bdi>
+                    </span>
+
+                    <span class="difficulty medium">
+                        <bdi class="numeric-value">
+                            {{ "%.1f" | format(attempt.score) }}
+                            /
+                            {{ "%.1f" | format(attempt.max_score) }}
+                        </bdi>
+                    </span>
+                </div>
+
+                {% if pending_manual_grading %}
+                    <div class="instructions">
+                        <h2>
+                            النتيجة مؤقتة
+                        </h2>
+
+                        <p>
+                            يوجد سؤال مقالي بانتظار
+                            تصحيح المعلمة.
+                        </p>
+                    </div>
+
+                {% elif attempt.is_passed %}
+                    <div class="instructions">
+                        <h2>أحسنت!</h2>
+
+                        <p>
+                            لقد اجتزت ورقة العمل بنجاح.
+                        </p>
+                    </div>
+
+                {% else %}
+                    <div class="instructions">
+                        <h2>حاولي مرة أخرى</h2>
+
+                        <p>
+                            راجعي الدرس ثم أعيدي المحاولة.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        {% if attempt.worksheet.show_answers_after_submit %}
+            {% for answer in attempt.answers %}
+                <section class="student-tip">
+                    <div>
+                        <span class="tip-icon">
+                            {{ loop.index }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <h2>
+                            {{
+                                answer
+                                .question
+                                .question_text
+                            }}
+                        </h2>
+
+                        <p>
+                            <strong>إجابتك:</strong>
+
+                            {% if answer.selected_choice %}
+                                {{
+                                    answer
+                                    .selected_choice
+                                    .choice_text
+                                }}
+                            {% else %}
+                                {{
+                                    answer.answer_text
+                                    or "بدون إجابة"
+                                }}
+                            {% endif %}
+                        </p>
+
+                        <p>
+                            <strong>الدرجة:</strong>
+                            <bdi class="numeric-value">
+                                {{ "%.1f" | format(answer.awarded_points) }}
+                                /
+                                {{ "%.1f" | format(answer.question.points) }}
+                            </bdi>
+                        </p>
+
+                        {% if answer.is_correct is none %}
+                            <p>
+                                بانتظار تصحيح المعلمة.
+                            </p>
+                        {% elif answer.is_correct %}
+                            <p>✓ إجابة صحيحة</p>
+                        {% else %}
+                            <p>✗ إجابة غير صحيحة</p>
+                        {% endif %}
+
+                        {% if answer.question.explanation %}
+                            <p>
+                                {{
+                                    answer
+                                    .question
+                                    .explanation
+                                }}
+                            </p>
+                        {% endif %}
+
+                        {% if answer.teacher_feedback %}
+                            <p>
+                                <strong>
+                                    ملاحظة المعلمة:
+                                </strong>
+
+                                {{
+                                    answer
+                                    .teacher_feedback
+                                }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </section>
+            {% endfor %}
+        {% endif %}
+
+        <div class="details-actions">
+            <a
+                class="download-button"
+                href="{{ url_for(
+                    'assessment.my_results'
+                ) }}"
+            >
+                جميع نتائجي
+            </a>
+
+            <a
+                class="disabled-button"
+                href="{{ url_for(
+                    'worksheets.worksheet_list'
+                ) }}"
+            >
+                أوراق العمل
+            </a>
+        </div>
+    </main>
+</body>
+
+</html>

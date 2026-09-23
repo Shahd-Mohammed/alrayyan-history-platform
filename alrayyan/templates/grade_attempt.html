@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>تصحيح المحاولة | الريان</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/dashboard.css',
+            v='20260922-5'
+        ) }}"
+    >
+</head>
+
+<body>
+    <header class="dashboard-header">
+        <a
+            class="dashboard-brand"
+            href="{{ url_for('main.home') }}"
+        >
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/alrayyan-logo.png'
+                ) }}"
+                alt="الريان"
+            >
+        </a>
+
+        <a
+            class="return-link"
+            href="{{ url_for(
+                'assessment.manage_questions',
+                worksheet_id=attempt.worksheet.id
+            ) }}"
+        >
+            العودة إلى الأسئلة والنتائج
+        </a>
+    </header>
+
+    <main class="form-page">
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <section class="form-intro">
+            <span>تصحيح محاولة الطالب</span>
+
+            <h1>
+                {{ attempt.worksheet.title }}
+            </h1>
+
+            <p>
+                الطالب:
+                <strong>
+                    {{ attempt.student.full_name }}
+                </strong>
+            </p>
+        </section>
+
+        <section class="attempt-summary">
+            <article>
+                <span>الدرجة الحالية</span>
+
+                <strong>
+                    <bdi class="numeric-value">
+                        {{ "%.1f" | format(attempt.score) }}
+                        /
+                        {{ "%.1f" | format(attempt.max_score) }}
+                    </bdi>
+                </strong>
+            </article>
+
+            <article>
+                <span>النسبة الحالية</span>
+
+                <strong>
+                    <bdi class="numeric-value">
+                        {{ "%.1f" | format(attempt.percentage) }}%
+                    </bdi>
+                </strong>
+            </article>
+
+            <article>
+                <span>الحالة</span>
+
+                <strong>
+                    {% if attempt.is_passed %}
+                        ناجح
+                    {% else %}
+                        تحتاج مراجعة
+                    {% endif %}
+                </strong>
+            </article>
+        </section>
+
+        <form
+            method="post"
+            class="worksheet-form"
+        >
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            {% for answer in attempt.answers %}
+                <article class="grading-question">
+                    <div class="grading-heading">
+                        <span>
+                            السؤال {{ loop.index }}
+                        </span>
+
+                        <strong>
+                            {{ answer.question.points }}
+                            درجة
+                        </strong>
+                    </div>
+
+                    <h2>
+                        {{
+                            answer
+                            .question
+                            .question_text
+                        }}
+                    </h2>
+
+                    <div class="student-answer-box">
+                        <span>إجابة الطالب</span>
+
+                        <p>
+                            {% if answer.selected_choice %}
+                                {{
+                                    answer
+                                    .selected_choice
+                                    .choice_text
+                                }}
+                            {% else %}
+                                {{
+                                    answer.answer_text
+                                    or "لم يكتب إجابة"
+                                }}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    {% if
+                        answer
+                        .question
+                        .requires_manual_grading
+                    %}
+                        <div class="form-grid">
+                            <div class="field-group">
+                                <label
+                                    for="points_{{ answer.id }}"
+                                >
+                                    الدرجة من
+                                    {{
+                                        answer
+                                        .question
+                                        .points
+                                    }}
+                                </label>
+
+                                <input
+                                    id="points_{{ answer.id }}"
+                                    name="points_{{ answer.id }}"
+                                    type="number"
+                                    min="0"
+                                    max="{{
+                                        answer
+                                        .question
+                                        .points
+                                    }}"
+                                    step="0.5"
+                                    value="{{
+                                        answer
+                                        .awarded_points
+                                    }}"
+                                    required
+                                >
+                            </div>
+
+                            <div class="field-group full-width">
+                                <label
+                                    for="feedback_{{ answer.id }}"
+                                >
+                                    ملاحظة المعلمة
+                                </label>
+
+                                <textarea
+                                    id="feedback_{{ answer.id }}"
+                                    name="feedback_{{ answer.id }}"
+                                    rows="3"
+                                    placeholder="اكتبي ملاحظة مفيدة للطالب"
+                                >{{ answer.teacher_feedback or "" }}</textarea>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="automatic-grade">
+                            <span>
+                                تصحيح تلقائي
+                            </span>
+
+                            <strong>
+                                <bdi class="numeric-value">
+                                    {{ "%.1f" | format(answer.awarded_points) }}
+                                    /
+                                    {{
+                                        "%.1f"
+                                            | format(answer.question.points)
+                                    }}
+                                </bdi>
+                            </strong>
+
+                            {% if answer.is_correct %}
+                                <b class="correct-answer">
+                                    إجابة صحيحة
+                                </b>
+                            {% else %}
+                                <b class="wrong-answer">
+                                    إجابة غير صحيحة
+                                </b>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+
+            <div class="form-actions">
+                <a
+                    href="{{ url_for(
+                        'assessment.manage_questions',
+                        worksheet_id=attempt.worksheet.id
+                    ) }}"
+                >
+                    رجوع
+                </a>
+
+                <button
+                    class="primary-action"
+                    type="submit"
+                >
+                    حفظ التصحيح
+                </button>
+            </div>
+        </form>
+    </main>
+</body>
+
+</html>

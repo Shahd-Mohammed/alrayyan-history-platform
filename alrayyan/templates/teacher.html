@@ -35,8 +35,17 @@
 
         <nav>
             <a href="/">الرئيسية</a>
-            <a href="#">الدروس</a>
-            <a href="#">الاختبارات</a>
+            <a href="{{ url_for(
+                'worksheets.worksheet_list'
+                ) }}">
+                     أوراق العمل
+            </a>
+
+            <a href="{{ url_for(
+                'teacher_dashboard.dashboard'
+                ) }}">
+                     لوحة المعلمة
+            </a>
             <a class="active" href="{{ url_for('teacher.teacher_page') }}">
                 المعلّم الذكي
             </a>

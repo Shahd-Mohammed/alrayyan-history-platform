@@ -66,7 +66,7 @@ def get_user_homepage(user):
         )
 
     return url_for(
-        "main.home"
+    "main.student_dashboard"
     )
 
 

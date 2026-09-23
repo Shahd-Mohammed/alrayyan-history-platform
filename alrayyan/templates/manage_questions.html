@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        إدارة الأسئلة | الريان
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/dashboard.css'
+        ) }}"
+    >
+</head>
+
+<body>
+    <header class="dashboard-header">
+        <a
+            class="dashboard-brand"
+            href="{{ url_for('main.home') }}"
+        >
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/alrayyan-logo.png'
+                ) }}"
+                alt="الريان"
+            >
+        </a>
+
+        <a
+            class="return-link"
+            href="{{ url_for(
+                'teacher_dashboard.dashboard'
+            ) }}"
+        >
+            العودة إلى لوحة المعلمة
+        </a>
+    </header>
+
+    <main class="form-page">
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <section class="form-intro">
+            <span>إدارة النشاط التفاعلي</span>
+
+            <h1>
+                {{ worksheet.title }}
+            </h1>
+
+            <p>
+                أضيفي الأسئلة وحددي إعدادات
+                الحل والنجاح.
+            </p>
+        </section>
+    <nav class="assessment-tabs">
+    <a
+        class="active"
+        href="{{ url_for(
+            'assessment.manage_questions',
+            worksheet_id=worksheet.id
+        ) }}"
+    >
+        الأسئلة والإعدادات
+    </a>
+
+    <a
+        href="{{ url_for(
+            'assessment.worksheet_results',
+            worksheet_id=worksheet.id
+        ) }}"
+    >
+        نتائج الطلاب
+    </a>
+    </nav>
+        <section class="worksheet-form assessment-section">
+            <h2>إعدادات الحل</h2>
+
+            <form
+                method="post"
+                action="{{ url_for(
+                    'assessment.save_worksheet_settings',
+                    worksheet_id=worksheet.id
+                ) }}"
+            >
+                {{ settings_form.hidden_tag() }}
+
+                <div class="form-grid">
+                    <div class="field-group">
+                        {{
+                            settings_form
+                            .time_limit_minutes
+                            .label
+                        }}
+
+                        {{
+                            settings_form
+                            .time_limit_minutes()
+                        }}
+                    </div>
+
+                    <div class="field-group">
+                        {{
+                            settings_form
+                            .passing_score
+                            .label
+                        }}
+
+                        {{
+                            settings_form
+                            .passing_score()
+                        }}
+                    </div>
+
+                    <div class="field-group">
+                        {{ settings_form.max_attempts.label }}
+
+                        {{
+                            settings_form.max_attempts(
+                            min="1",
+                            max="20",
+                            placeholder="مثال: 3"
+                            )
+                        }}
+
+                        <small>
+                             حددي عدد المرات التي يستطيع
+                             الطالب حل الورقة فيها.
+                        </small>
+
+                        {% for error in
+                            settings_form.max_attempts.errors
+                        %}
+                            <small class="field-error">
+                                {{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+
+                    <label class="checkbox-field">
+                        {{
+                            settings_form
+                            .show_answers_after_submit()
+                        }}
+
+                        <span>
+                            {{
+                                settings_form
+                                .show_answers_after_submit
+                                .label.text
+                            }}
+                        </span>
+                    </label>
+                </div>
+
+                {{
+                    settings_form.submit(
+                        class="primary-action"
+                    )
+                }}
+            </form>
+        </section>
+
+        <section class="worksheet-form assessment-section">
+            <h2>إضافة سؤال جديد</h2>
+
+            <form method="post">
+                {{ form.hidden_tag() }}
+
+                {% if form.errors %}
+                    <div class="alert error">
+                        {% for errors in form.errors.values() %}
+                            {% for error in errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-grid">
+                    <div class="field-group full-width">
+                        {{ form.question_text.label }}
+
+                        {{
+                            form.question_text(
+                                rows="3"
+                            )
+                        }}
+                    </div>
+
+                    <div class="field-group">
+                        {{ form.question_type.label }}
+                        {{ form.question_type() }}
+                    </div>
+
+                    <div class="field-group">
+                        {{ form.points.label }}
+                        {{ form.points() }}
+                    </div>
+
+                    <div class="field-group full-width">
+                        {{ form.choices_text.label }}
+
+                        {{
+                            form.choices_text(
+                                rows="5",
+                                placeholder=(
+                                    "الخيار الأول\n"
+                                    "الخيار الثاني\n"
+                                    "الخيار الثالث"
+                                )
+                            )
+                        }}
+
+                        <small>
+                            استخدمي هذا الحقل فقط
+                            للاختيار من متعدد.
+                        </small>
+                    </div>
+
+                    <div class="field-group full-width">
+                        {{
+                            form
+                            .correct_answer_text
+                            .label
+                        }}
+
+                        {{
+                            form.correct_answer_text(
+                                placeholder=(
+                                    "نص الخيار الصحيح، "
+                                    "أو صح، أو خطأ"
+                                )
+                            )
+                        }}
+                    </div>
+
+                    <div class="field-group full-width">
+                        {{ form.explanation.label }}
+
+                        {{
+                            form.explanation(
+                                rows="3"
+                            )
+                        }}
+                    </div>
+                </div>
+
+                {{
+                    form.submit(
+                        class="primary-action"
+                    )
+                }}
+            </form>
+        </section>
+
+        <section class="worksheet-form assessment-section">
+            <h2>
+                الأسئلة الحالية
+                ({{ worksheet.questions | length }})
+            </h2>
+
+            {% for question in worksheet.questions %}
+                <article class="current-file">
+                    <strong>
+                        {{ loop.index }}.
+                        {{ question.question_text }}
+                    </strong>
+
+                    النوع:
+
+                    {% if question.question_type == "multiple_choice" %}
+                         اختيار من متعدد
+                    {% elif question.question_type == "true_false" %}
+                         صح أو خطأ
+                    {% elif question.question_type == "short_answer" %}
+                         إجابة قصيرة
+                    {% elif question.question_type == "essay" %}
+                         سؤال مقالي
+                    {% else %}
+                         سؤال تفاعلي
+                    {% endif %}
+
+                    —
+
+                    الدرجة:
+                    {{ question.points }}
+
+                    {% if question.choices %}
+                        <ul>
+                            {% for choice in question.choices %}
+                                <li>
+                                    {{ choice.choice_text }}
+
+                                    {% if choice.is_correct %}
+                                        ✓ الإجابة الصحيحة
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <div class="question-actions">
+                    <a
+                        class="question-edit-action"
+                        href="{{ url_for(
+                            'assessment.edit_question',
+                            question_id=question.id
+                        ) }}"
+                    >
+                         تعديل السؤال
+                    </a>
+                    <form
+                        method="post"
+                        action="{{ url_for(
+                            'assessment.delete_question',
+                            question_id=question.id
+                        ) }}"
+                        onsubmit="return confirm(
+                            'هل تريدين حذف هذا السؤال؟'
+                        );"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <button type="submit">
+                            حذف السؤال
+                        </button>
+                    </form>
+                    </div>
+                </article>
+            {% else %}
+                <div class="current-file">
+                    لم تتم إضافة أسئلة بعد.
+                </div>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+
+</html>

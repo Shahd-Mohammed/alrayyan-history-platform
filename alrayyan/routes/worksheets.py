@@ -8,11 +8,15 @@ from flask import (
     render_template,
     send_file,
 )
-from flask_login import login_required
+from flask_login import (
+    current_user,
+    login_required,
+)
 
 from alrayyan.models import (
     Worksheet,
     WorksheetAttachment,
+    WorksheetAttempt,
 )
 
 
@@ -76,12 +80,59 @@ def worksheet_details(worksheet_id):
         .first()
     )
 
+    max_attempts = worksheet.max_attempts or 1
+    attempts_used = 0
+    attempts_remaining = max_attempts
+    open_attempt = None
+
+    if (
+        current_user.is_authenticated
+        and current_user.role == "student"
+    ):
+        open_attempt = (
+            WorksheetAttempt.query
+            .filter_by(
+                worksheet_id=worksheet.id,
+                student_id=current_user.id,
+                submitted_at=None,
+            )
+            .order_by(
+                WorksheetAttempt.started_at.desc()
+            )
+            .first()
+        )
+
+        completed_attempts = (
+            WorksheetAttempt.query
+            .filter_by(
+                worksheet_id=worksheet.id,
+                student_id=current_user.id,
+            )
+            .filter(
+                WorksheetAttempt.submitted_at.isnot(None)
+            )
+            .count()
+        )
+
+        attempts_used = (
+            completed_attempts
+            + (1 if open_attempt else 0)
+        )
+
+        attempts_remaining = max(
+            max_attempts - attempts_used,
+            0,
+        )
+
     return render_template(
         "worksheet_details.html",
         worksheet=worksheet,
         worksheet_file=worksheet_file,
+        max_attempts=max_attempts,
+        attempts_used=attempts_used,
+        attempts_remaining=attempts_remaining,
+        open_attempt=open_attempt,
     )
-
 
 @worksheets_bp.get(
     "/<int:worksheet_id>/download"

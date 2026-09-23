@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        حل {{ worksheet.title }} | الريان
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/worksheets.css'
+        ) }}"
+    >
+</head>
+
+<body>
+    <main class="details-page solve-page">
+        <a
+            class="back-link"
+            href="{{ url_for(
+                'worksheets.worksheet_details',
+                worksheet_id=worksheet.id
+            ) }}"
+        >
+            → العودة إلى تفاصيل الورقة
+        </a>
+
+        {% set messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+
+        {% if messages %}
+            {% set category, message = messages[-1] %}
+
+            <div
+                class="alert {{ category }}"
+                role="alert"
+            >
+                {{ message }}
+            </div>
+        {% endif %}
+
+        <section class="solve-header">
+            <div>
+                <span class="lesson-name">
+                    نشاط تفاعلي
+                </span>
+
+                <h1>{{ worksheet.title }}</h1>
+
+                <p>
+                    {{
+                        worksheet.instructions
+                        or
+                        "أجب عن جميع الأسئلة ثم اضغط على تسليم الإجابات."
+                    }}
+                </p>
+            </div>
+
+            <div class="solve-header-stats">
+                <div>
+                    <span>عدد الأسئلة</span>
+
+                    <strong dir="ltr">
+                        {{ worksheet.questions | length }}
+                    </strong>
+                </div>
+
+                {% if remaining_seconds is not none %}
+    <div
+        id="timer-card"
+        class="timer-card"
+    >
+        <span>
+            الوقت المتبقي
+        </span>
+
+        <strong
+            id="countdown-timer"
+            dir="ltr"
+            aria-live="polite"
+        >
+            --:--
+        </strong>
+    </div>
+{% endif %}
+            </div>
+        </section>
+        <div
+    id="autosave-status"
+    class="autosave-status"
+    role="status"
+    aria-live="polite"
+>
+    <span class="save-dot"></span>
+
+    <span id="autosave-message">
+        تُحفظ إجاباتك تلقائيًا أثناء الحل.
+    </span>
+</div>
+
+        {% if worksheet.questions %}
+            <form
+    id="solve-form"
+    class="solve-form"
+    method="post"
+    data-autosave-url="{{ url_for(
+        'assessment.autosave_attempt',
+        attempt_id=attempt.id
+    ) }}"
+>
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <div class="questions-list">
+                    {% for question in worksheet.questions %}
+                    {% set saved_value = saved_answers.get(
+                    question.id,
+                    ""
+                    ) %}
+                        <article class="solve-question-card">
+                            <div class="question-card-heading">
+                                <span class="question-number">
+                                    السؤال {{ loop.index }}
+                                </span>
+
+                                <span class="question-points">
+                                    <bdi>
+                                        {{ question.points | float }}
+                                    </bdi>
+                                    درجة
+                                </span>
+                            </div>
+
+                            <h2
+                                class="question-text"
+                                dir="auto"
+                            >
+                                {{ question.question_text }}
+                            </h2>
+
+                            <div class="question-answer">
+                                {% if (
+                                    question.question_type
+                                    == "multiple_choice"
+                                ) %}
+                                    <div class="answer-options">
+                                        {% for choice in question.choices %}
+                                            <label class="answer-option">
+                                                <input
+                                                    type="radio"
+                                                    name="question_{{ question.id }}"
+                                                    value="{{ choice.id }}"
+                                                    required
+                                                    {% if saved_value == choice.id|string %}
+                                                        checked
+                                                    {% endif %}
+                                                >
+
+                                                <span
+                                                    class="option-indicator"
+                                                    aria-hidden="true"
+                                                ></span>
+
+                                                <span
+                                                    class="option-text"
+                                                    dir="auto"
+                                                >
+                                                    {{ choice.choice_text }}
+                                                </span>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+
+                                {% elif (
+                                    question.question_type
+                                    == "true_false"
+                                ) %}
+                                    <div
+                                        class="
+                                            answer-options
+                                            true-false-options
+                                        "
+                                    >
+                                        <label class="answer-option">
+                                            <input
+                                                type="radio"
+                                                name="question_{{ question.id }}"
+                                                value="صح"
+                                                required
+                                                {% if saved_value == "صح" %}
+                                                    checked
+                                                {% endif %}
+                                            >
+
+                                            <span
+                                                class="option-indicator"
+                                                aria-hidden="true"
+                                            ></span>
+
+                                            <span class="option-text">
+                                                صح
+                                            </span>
+                                        </label>
+
+                                        <label class="answer-option">
+                                            <input
+                                                type="radio"
+                                                name="question_{{ question.id }}"
+                                                value="خطأ"
+                                                required
+                                                {% if saved_value == "خطأ" %}
+                                                    checked
+                                                {% endif %}
+                                            >
+
+                                            <span
+                                                class="option-indicator"
+                                                aria-hidden="true"
+                                            ></span>
+
+                                            <span class="option-text">
+                                                خطأ
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                {% elif (
+                                    question.question_type
+                                    == "essay"
+                                ) %}
+                                    <label
+                                        class="written-answer-label"
+                                        for="question_{{ question.id }}"
+                                    >
+                                         إجابتك
+                                    </label>
+
+                                    <input
+                                        id="question_{{ question.id }}"
+                                        class="written-answer short-answer"
+                                        type="text"
+                                        name="question_{{ question.id }}"
+                                        value="{{ saved_value }}"
+                                        required
+                                        placeholder="اكتب إجابتك هنا..."
+                                        dir="auto"
+                                    >
+
+                                {% else %}
+                                    <label
+                                        class="written-answer-label"
+                                        for="question_{{ question.id }}"
+                                    >
+                                        إجابتك
+                                    </label>
+
+                                    <input
+                                        id="question_{{ question.id }}"
+                                        class="written-answer short-answer"
+                                        type="text"
+                                        name="question_{{ question.id }}"
+                                        required
+                                        placeholder="اكتب إجابتك هنا..."
+                                        dir="auto"
+                                    >
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+
+                <div class="solve-submit-area">
+                    <div>
+                        <strong>
+                            هل انتهيت من الحل؟
+                        </strong>
+
+                        <p>
+                            راجع جميع إجاباتك قبل التسليم؛
+                            لأن تسليم الورقة ينهي هذه المحاولة.
+                        </p>
+                    </div>
+
+                    <button
+                        id="submit-answers-button"
+                        class="submit-answers-button"
+                        type="submit"
+                    >
+                         تسليم الإجابات
+                    </button>
+                </div>
+            </form>
+
+        {% else %}
+            <section class="empty-questions-state">
+                <span aria-hidden="true">✦</span>
+
+                <h2>
+                    لم تُضف أسئلة لهذه الورقة بعد
+                </h2>
+
+                <p>
+                    ستظهر الأسئلة هنا عندما تضيفها المعلمة.
+                </p>
+
+                <a
+                    href="{{ url_for(
+                        'worksheets.worksheet_details',
+                        worksheet_id=worksheet.id
+                    ) }}"
+                >
+                    العودة إلى تفاصيل الورقة
+                </a>
+            </section>
+        {% endif %}
+    </main>
+<script>
+    (() => {
+        const form = document.getElementById(
+            "solve-form"
+        );
+
+        const statusBox = document.getElementById(
+            "autosave-status"
+        );
+
+        const statusMessage = document.getElementById(
+            "autosave-message"
+        );
+
+        const submitButton = document.getElementById(
+            "submit-answers-button"
+        );
+
+        const timerElement = document.getElementById(
+            "countdown-timer"
+        );
+
+        const timerCard = document.getElementById(
+            "timer-card"
+        );
+
+        if (!form) {
+            return;
+        }
+
+        const autosaveUrl = (
+            form.dataset.autosaveUrl
+        );
+
+        let remainingSeconds = (
+            {{ remaining_seconds | tojson }}
+        );
+
+        let saveDelay = null;
+        let saveRequestRunning = false;
+        let pendingSave = false;
+        let dirty = false;
+        let finalizing = false;
+
+        function setSaveStatus(
+            state,
+            message
+        ) {
+            statusBox.classList.remove(
+                "saving",
+                "saved",
+                "error"
+            );
+
+            statusBox.classList.add(
+                state
+            );
+
+            statusMessage.textContent = (
+                message
+            );
+        }
+
+        function formatTime(totalSeconds) {
+            const safeSeconds = Math.max(
+                totalSeconds,
+                0
+            );
+
+            const minutes = Math.floor(
+                safeSeconds / 60
+            );
+
+            const seconds = (
+                safeSeconds % 60
+            );
+
+            return (
+                String(minutes).padStart(2, "0")
+                + ":"
+                + String(seconds).padStart(2, "0")
+            );
+        }
+
+        function updateTimer() {
+            if (
+                !timerElement
+                || remainingSeconds === null
+            ) {
+                return;
+            }
+
+            timerElement.textContent = (
+                formatTime(
+                    remainingSeconds
+                )
+            );
+
+            if (remainingSeconds <= 60) {
+                timerCard.classList.add(
+                    "timer-warning"
+                );
+            }
+
+            if (remainingSeconds <= 15) {
+                timerCard.classList.add(
+                    "timer-danger"
+                );
+            }
+        }
+
+        async function saveDraft(
+            force = false
+        ) {
+            if (finalizing) {
+                return;
+            }
+
+            if (saveRequestRunning) {
+                pendingSave = true;
+                return;
+            }
+
+            if (!dirty && !force) {
+                return;
+            }
+
+            saveRequestRunning = true;
+            pendingSave = false;
+
+            setSaveStatus(
+                "saving",
+                "جاري حفظ إجاباتك..."
+            );
+
+            try {
+                const response = await fetch(
+                    autosaveUrl,
+                    {
+                        method: "POST",
+                        body: new FormData(form),
+                        credentials: "same-origin",
+                        headers: {
+                            "X-Requested-With":
+                                "XMLHttpRequest"
+                        }
+                    }
+                );
+
+                const data = await response.json();
+
+                if (
+                    data.submitted
+                    && data.redirect_url
+                ) {
+                    finalizing = true;
+
+                    window.location.assign(
+                        data.redirect_url
+                    );
+
+                    return;
+                }
+
+                if (
+                    !response.ok
+                    || !data.saved
+                ) {
+                    throw new Error(
+                        data.message
+                        || "تعذر الحفظ."
+                    );
+                }
+
+                dirty = false;
+
+                if (
+                    data.remaining_seconds
+                    !== null
+                    && remainingSeconds !== null
+                ) {
+                    remainingSeconds = Math.min(
+                        remainingSeconds,
+                        data.remaining_seconds
+                    );
+
+                    updateTimer();
+                }
+
+                setSaveStatus(
+                    "saved",
+                    "تم حفظ إجاباتك تلقائيًا."
+                );
+
+            } catch (error) {
+                dirty = true;
+
+                setSaveStatus(
+                    "error",
+                    (
+                        "تعذر الحفظ الآن. "
+                        + "تحقق من الاتصال."
+                    )
+                );
+
+            } finally {
+                saveRequestRunning = false;
+
+                if (
+                    pendingSave
+                    && !finalizing
+                ) {
+                    saveDraft(true);
+                }
+            }
+        }
+
+        function scheduleSave() {
+            dirty = true;
+
+            setSaveStatus(
+                "saving",
+                "بانتظار حفظ التعديل..."
+            );
+
+            window.clearTimeout(
+                saveDelay
+            );
+
+            saveDelay = window.setTimeout(
+                () => {
+                    saveDraft();
+                },
+                800
+            );
+        }
+
+        form.addEventListener(
+            "input",
+            scheduleSave
+        );
+
+        form.addEventListener(
+            "change",
+            scheduleSave
+        );
+
+        form.addEventListener(
+            "submit",
+            (event) => {
+                if (finalizing) {
+                    return;
+                }
+
+                const confirmed = window.confirm(
+                    (
+                        "هل أنت متأكد من "
+                        + "تسليم الإجابات؟"
+                    )
+                );
+
+                if (!confirmed) {
+                    event.preventDefault();
+                    return;
+                }
+
+                finalizing = true;
+                submitButton.disabled = true;
+
+                submitButton.textContent = (
+                    "جاري التسليم..."
+                );
+
+                setSaveStatus(
+                    "saving",
+                    "جاري تسليم المحاولة..."
+                );
+            }
+        );
+
+        window.setInterval(
+            () => {
+                saveDraft();
+            },
+            10000
+        );
+
+        document.addEventListener(
+            "visibilitychange",
+            () => {
+                if (
+                    document.visibilityState
+                    === "hidden"
+                    && dirty
+                ) {
+                    navigator.sendBeacon(
+                        autosaveUrl,
+                        new FormData(form)
+                    );
+                }
+            }
+        );
+
+        if (
+            timerElement
+            && remainingSeconds !== null
+        ) {
+            updateTimer();
+
+            window.setInterval(
+                async () => {
+                    if (finalizing) {
+                        return;
+                    }
+
+                    remainingSeconds = Math.max(
+                        remainingSeconds - 1,
+                        0
+                    );
+
+                    updateTimer();
+
+                    if (remainingSeconds !== 0) {
+                        return;
+                    }
+
+                    finalizing = true;
+                    submitButton.disabled = true;
+
+                    submitButton.textContent = (
+                        "انتهى الوقت"
+                    );
+
+                    setSaveStatus(
+                        "saving",
+                        (
+                            "انتهى الوقت، جاري "
+                            + "حفظ وتسليم إجاباتك..."
+                        )
+                    );
+
+                    try {
+                        const response = await fetch(
+                            autosaveUrl,
+                            {
+                                method: "POST",
+                                body: new FormData(
+                                    form
+                                ),
+                                credentials:
+                                    "same-origin",
+                                headers: {
+                                    "X-Requested-With":
+                                        "XMLHttpRequest"
+                                }
+                            }
+                        );
+
+                        const data = (
+                            await response.json()
+                        );
+
+                        if (data.redirect_url) {
+                            window.location.assign(
+                                data.redirect_url
+                            );
+
+                            return;
+                        }
+
+                        window.location.reload();
+
+                    } catch (error) {
+                        finalizing = false;
+
+                        setSaveStatus(
+                            "error",
+                            (
+                                "انتهى الوقت وتعذر "
+                                + "الاتصال. لا تغلق "
+                                + "الصفحة."
+                            )
+                        );
+                    }
+                },
+                1000
+            );
+        }
+    })();
+</script>
+</body>
+
+</html>

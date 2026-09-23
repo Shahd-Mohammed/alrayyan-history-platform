@@ -1,33 +1,23 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
-
-    <title>
-        {{ worksheet.title }} | الريان
-    </title>
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
+    <title>{{ worksheet.title }} | الريان</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         rel="preconnect"
         href="https://fonts.gstatic.com"
         crossorigin
     >
-
     <link
         href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     >
-
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/worksheets.css') }}"
@@ -75,11 +65,15 @@
                 >
                     لوحة المعلمة
                 </a>
+            {% elif current_user.role == "student" %}
+                <a href="{{ url_for('main.student_dashboard') }}">
+                    لوحة الطالب
+                </a>
             {% endif %}
 
             <form
                 class="logout-form"
-                method="POST"
+                method="post"
                 action="{{ url_for('auth.logout') }}"
             >
                 <input
@@ -87,7 +81,6 @@
                     name="csrf_token"
                     value="{{ csrf_token() }}"
                 >
-
                 <button type="submit">
                     تسجيل الخروج
                 </button>
@@ -96,6 +89,20 @@
     </header>
 
     <main class="details-page">
+        {% set messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+
+        {% if messages %}
+            {% set category, message = messages[-1] %}
+            <div
+                class="alert {{ category }}"
+                role="alert"
+            >
+                {{ message }}
+            </div>
+        {% endif %}
+
         <a
             class="back-link"
             href="{{ url_for(
@@ -135,9 +142,7 @@
                     </span>
                 {% endif %}
 
-                <h1>
-                    {{ worksheet.title }}
-                </h1>
+                <h1>{{ worksheet.title }}</h1>
 
                 <p class="description">
                     {% if worksheet.description %}
@@ -150,51 +155,147 @@
 
                 {% if worksheet.instructions %}
                     <div class="instructions">
-                        <h2>
-                            تعليمات ورقة العمل
-                        </h2>
-
-                        <p>
-                            {{ worksheet.instructions }}
-                        </p>
+                        <h2>تعليمات ورقة العمل</h2>
+                        <p>{{ worksheet.instructions }}</p>
                     </div>
                 {% endif %}
 
-                <div class="details-actions">
-    {% if worksheet_file and worksheet.allow_download %}
-        <a
-            class="download-button"
-            href="{{ url_for(
-                'worksheets.download_worksheet',
-                worksheet_id=worksheet.id
-            ) }}"
-        >
-            تنزيل ورقة العمل
-        </a>
-    {% elif worksheet_file %}
-        <span class="disabled-button">
-            التنزيل غير متاح لهذه الورقة
-        </span>
-    {% else %}
-        <span class="disabled-button">
-            لا يوجد ملف مرفق
-        </span>
-    {% endif %}
+                {% if (
+                    current_user.role == "student"
+                    and worksheet.questions
+                ) %}
+                    <section class="attempt-summary">
+                        <div class="attempt-summary-heading">
+                            <div>
+                                <span>حالة الحل التفاعلي</span>
+                                <h2>محاولاتك في هذه الورقة</h2>
+                            </div>
 
-    <button
-        class="disabled-button"
-        type="button"
-        disabled
-    >
-        الحل التفاعلي قريبًا
-    </button>
-</div>
+                            {% if open_attempt %}
+                                <strong class="attempt-state open">
+                                    محاولة قيد الحل
+                                </strong>
+                            {% elif attempts_remaining > 0 %}
+                                <strong class="attempt-state available">
+                                    يمكنك المحاولة
+                                </strong>
+                            {% else %}
+                                <strong class="attempt-state exhausted">
+                                    انتهت المحاولات
+                                </strong>
+                            {% endif %}
+                        </div>
+
+                        <div class="attempt-stats">
+                            <div class="attempt-stat">
+                                <span>المسموحة</span>
+                                <strong dir="ltr">
+                                    {{ max_attempts }}
+                                </strong>
+                            </div>
+
+                            <div class="attempt-stat">
+                                <span>المستخدمة</span>
+                                <strong dir="ltr">
+                                    {{ attempts_used }}
+                                </strong>
+                            </div>
+
+                            <div class="attempt-stat">
+                                <span>المتبقية</span>
+                                <strong dir="ltr">
+                                    {{ attempts_remaining }}
+                                </strong>
+                            </div>
+                        </div>
+
+                        {% if open_attempt %}
+                            <p class="attempt-note">
+                                لديك محاولة مفتوحة لم تُسلّم بعد.
+                                يمكنك متابعتها من حيث توقفت،
+                                ولن تُنشأ محاولة جديدة.
+                            </p>
+                        {% elif (
+                            attempts_remaining > 0
+                            and attempts_used > 0
+                        ) %}
+                            <p class="attempt-note">
+                                يمكنك إعادة الحل لتحسين نتيجتك،
+                                سواء نجحت في المحاولة السابقة
+                                أو لم تنجح.
+                            </p>
+                        {% elif attempts_remaining == 0 %}
+                            <p class="attempt-note exhausted-note">
+                                استخدمت جميع المحاولات التي
+                                حددتها المعلمة لهذه الورقة.
+                            </p>
+                        {% endif %}
+                    </section>
+                {% endif %}
+
+                <div class="details-actions">
+                    {% if worksheet.questions %}
+                        {% if current_user.role != "student" %}
+                            <span class="disabled-button">
+                                الحل التفاعلي متاح من حساب الطالب
+                            </span>
+                        {% elif (
+                            not open_attempt
+                            and attempts_remaining == 0
+                        ) %}
+                            <span
+                                class="disabled-button attempts-disabled"
+                            >
+                                انتهت المحاولات المتاحة
+                            </span>
+                        {% else %}
+                            <form
+                                method="post"
+                                action="{{ url_for(
+                                    'assessment.start_attempt',
+                                    worksheet_id=worksheet.id
+                                ) }}"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token() }}"
+                                >
+
+                                <button
+                                    class="interactive-button"
+                                    type="submit"
+                                    {% if (
+                                        attempts_used > 0
+                                        and not open_attempt
+                                    ) %}
+                                        onclick="return confirm(
+                                            'أنت على وشك بدء المحاولة رقم {{ attempts_used + 1 }} من أصل {{ max_attempts }}. هل تريد المتابعة؟'
+                                        )"
+                                    {% endif %}
+                                >
+                                    {% if open_attempt %}
+                                        متابعة الحل
+                                    {% elif attempts_used > 0 %}
+                                        إعادة المحاولة
+                                    {% else %}
+                                        ابدأ الحل التفاعلي
+                                    {% endif %}
+
+                                    ({{ worksheet.questions | length }} أسئلة)
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <span class="disabled-button">
+                            لم تضف المعلمة أسئلة تفاعلية بعد
+                        </span>
+                    {% endif %}
+                </div>
             </div>
 
             <aside class="file-preview">
-                <div class="file-icon">
-                    📄
-                </div>
+                <div class="file-icon">📄</div>
 
                 {% if worksheet_file %}
                     <h2>
@@ -203,10 +304,7 @@
 
                     <p>
                         نوع الملف:
-                        {{
-                            worksheet_file.file_extension
-                            | upper
-                        }}
+                        {{ worksheet_file.file_extension | upper }}
                     </p>
 
                     {% if worksheet.allow_download %}
@@ -219,11 +317,26 @@
                             الملف متاح للمشاهدة فقط.
                         </p>
                     {% endif %}
-                {% else %}
-                    <h2>
-                        نشاط تفاعلي
-                    </h2>
 
+                    <div class="file-download-area">
+                        {% if worksheet.allow_download %}
+                            <a
+                                class="download-button file-download-button"
+                                href="{{ url_for(
+                                    'worksheets.download_worksheet',
+                                    worksheet_id=worksheet.id
+                                ) }}"
+                            >
+                                تنزيل ورقة العمل
+                            </a>
+                        {% else %}
+                            <span class="disabled-button">
+                                التنزيل غير متاح لهذه الورقة
+                            </span>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <h2>نشاط تفاعلي</h2>
                     <p>
                         لا يوجد ملف مرفق بهذه الورقة.
                     </p>
@@ -233,16 +346,11 @@
 
         <section class="student-tip">
             <div>
-                <span class="tip-icon">
-                    ✦
-                </span>
+                <span class="tip-icon">✦</span>
             </div>
 
             <div>
-                <h2>
-                    نصيحة قبل البدء
-                </h2>
-
+                <h2>نصيحة قبل البدء</h2>
                 <p>
                     راجع مفاهيم الدرس أولًا، ثم حاول
                     حل ورقة العمل بنفسك قبل الرجوع
@@ -252,4 +360,5 @@
         </section>
     </main>
 </body>
+
 </html>

@@ -56,6 +56,17 @@
                 أوراق العمل
             </a>
 
+            {% if
+            current_user.is_authenticated
+            and current_user.role == "student"
+            %}
+                <a href="{{ url_for(
+                    'assessment.my_results'
+                ) }}">
+                     نتائجي
+                </a>
+            {% endif %}
+
             <a href="{{ url_for('teacher.teacher_page') }}">
                 المعلّم الذكي
             </a>

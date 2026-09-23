@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>نتائج الطلاب | الريان</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/dashboard.css',
+            v='20260922-6'
+        ) }}"
+    >
+</head>
+
+<body>
+    <header class="dashboard-header">
+        <a
+            class="dashboard-brand"
+            href="{{ url_for('main.home') }}"
+        >
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/alrayyan-logo.png'
+                ) }}"
+                alt="الريان"
+            >
+        </a>
+
+        <a
+            class="return-link"
+            href="{{ url_for(
+                'teacher_dashboard.dashboard'
+            ) }}"
+        >
+            العودة إلى لوحة المعلمة
+        </a>
+    </header>
+
+    <main class="results-dashboard">
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <section class="results-intro">
+            <span>متابعة الأداء</span>
+
+            <h1>نتائج الطلاب</h1>
+
+            <p>{{ worksheet.title }}</p>
+        </section>
+
+        <nav class="assessment-tabs">
+            <a
+                href="{{ url_for(
+                    'assessment.manage_questions',
+                    worksheet_id=worksheet.id
+                ) }}"
+            >
+                الأسئلة والإعدادات
+            </a>
+
+            <a
+                class="active"
+                href="{{ url_for(
+                    'assessment.worksheet_results',
+                    worksheet_id=worksheet.id
+                ) }}"
+            >
+                نتائج الطلاب
+            </a>
+        </nav>
+
+        <section class="results-stats">
+            <article class="stat-card students">
+                <span>عدد الطلاب</span>
+
+                <strong>
+                    {{
+                        statistics
+                        .total_students
+                    }}
+                </strong>
+            </article>
+
+            <article class="stat-card passed">
+                <span>الناجحون</span>
+
+                <strong>
+                    {{
+                        statistics
+                        .passed_count
+                    }}
+                </strong>
+            </article>
+
+            <article class="stat-card failed">
+                <span>يحتاجون مراجعة</span>
+
+                <strong>
+                    {{
+                        statistics
+                        .failed_count
+                    }}
+                </strong>
+            </article>
+
+            <article class="stat-card pending">
+                <span>بانتظار التصحيح</span>
+
+                <strong>
+                    {{
+                        statistics
+                        .pending_count
+                    }}
+                </strong>
+            </article>
+
+            <article class="stat-card excellent">
+                <span>من 90% إلى أقل من 100%</span>
+
+                <strong>
+                    {{
+                        statistics
+                        .excellent_count
+                    }}
+                </strong>
+            </article>
+
+            <article class="stat-card perfect">
+                <span>العلامة الكاملة 100%</span>
+
+                <strong>
+                    {{
+                        statistics
+                        .perfect_count
+                    }}
+                </strong>
+            </article>
+
+            <article class="stat-card average">
+                <span>متوسط النتائج</span>
+
+                <strong>
+                    <bdi class="numeric-value">
+                        {{
+                            "%.1f"
+                                | format(
+                                    statistics.average_percentage
+                                )
+                        }}%
+                    </bdi>
+                </strong>
+            </article>
+        </section>
+
+        <section class="results-panel">
+            <div class="results-panel-heading">
+                <div>
+                    <span>آخر محاولة لكل طالب</span>
+
+                    <h2>سجل النتائج</h2>
+                </div>
+
+                <p>
+                    نسبة النجاح:
+                    <bdi class="numeric-value">
+                        {{ "%.1f" | format(worksheet.passing_score) }}%
+                    </bdi>
+            </div>
+
+            {% if result_rows %}
+                <div class="attempts-table-wrapper">
+                    <table class="attempts-table">
+                        <thead>
+                            <tr>
+                                <th>الطالب</th>
+                                <th>المحاولات</th>
+                                <th>الدرجة</th>
+                                <th>النسبة</th>
+                                <th>الحالة</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for row in result_rows %}
+                                {% set attempt = row.attempt %}
+
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            {{
+                                                attempt
+                                                .student
+                                                .full_name
+                                            }}
+                                        </strong>
+
+                                        <small>
+                                            {{
+                                                attempt
+                                                .student
+                                                .email
+                                            }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        {{ row.attempts_count }}
+                                    </td>
+
+                                    <td>
+                                        <bdi class="numeric-value">
+                                            {{ "%.1f" | format(attempt.score) }}
+                                            /
+                                            {{ "%.1f" | format(attempt.max_score) }}
+                                        </bdi>
+                                    </td>
+
+                                    <td>
+                                        <bdi class="numeric-value">
+                                            {{ "%.1f" | format(attempt.percentage) }}%
+                                        </bdi>
+                                    </td>
+
+                                    <td>
+                                        {% if row.pending %}
+                                            <span class="attempt-status pending">
+                                                بانتظار التصحيح
+                                            </span>
+
+                                        {% elif attempt.is_passed %}
+                                            <span class="attempt-status passed">
+                                                ناجح
+                                            </span>
+
+                                        {% else %}
+                                            <span class="attempt-status failed">
+                                                يحتاج مراجعة
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        <a
+                                            class="grade-attempt-action"
+                                            href="{{ url_for(
+                                                'assessment.grade_attempt',
+                                                attempt_id=attempt.id
+                                            ) }}"
+                                        >
+                                            عرض وتصحيح
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="results-empty">
+                    <span>⌁</span>
+
+                    <h2>
+                        لا توجد نتائج بعد
+                    </h2>
+
+                    <p>
+                        ستظهر نتائج الطلاب هنا
+                        بعد تسليم أول محاولة.
+                    </p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+
+</html>

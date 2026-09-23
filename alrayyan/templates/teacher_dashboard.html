@@ -32,6 +32,14 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
+    <link
+    rel="stylesheet"
+    href="{{ url_for(
+        'static',
+        filename='css/dashboard.css',
+        v='20260922-3'
+    ) }}"
+    >
 
     <style>
         :root {
@@ -805,6 +813,35 @@
                                     ) }}"
                                 >
                                     تعديل
+                                    <a
+                                        class="assessment-action"
+                                        href="{{ url_for(
+                                            'assessment.manage_questions',
+                                             worksheet_id=worksheet.id
+                                        ) }}"
+                                    >
+                                    <span
+                                        class="assessment-action-icon"
+                                        aria-hidden="true"
+                                    >
+                                        ✦
+                                    </span>
+
+                                    <span class="assessment-action-text">
+                                        إدارة الأسئلة
+                                    </span>
+                                    <a
+                                    class="results-action"
+                                    href="{{ url_for(
+                                        'assessment.worksheet_results',
+                                        worksheet_id=worksheet.id
+                                    ) }}"
+                                    >
+                                    <span aria-hidden="true">◉</span>
+
+                                    <span>نتائج الطلاب</span>
+                                    </a>
+                                    </a>
                                 </a>
 
                                 <form
