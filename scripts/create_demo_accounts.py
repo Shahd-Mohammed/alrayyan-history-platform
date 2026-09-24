@@ -1,3 +1,6 @@
+
+import os
+
 from app import app
 
 from alrayyan.extensions import db
@@ -8,13 +11,13 @@ ACCOUNTS = [
     {
         "full_name": "معلمة الريان",
         "email": "teacher@alrayyan.local",
-        "password": "Teacher123!",
+        "password": os.getenv("DEMO_TEACHER_PASSWORD"),
         "role": "teacher",
     },
     {
         "full_name": "طالب تجريبي",
         "email": "student@alrayyan.local",
-        "password": "Student123!",
+        "password": os.getenv("DEMO_STUDENT_PASSWORD"),
         "role": "student",
     },
 ]
@@ -59,3 +62,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
