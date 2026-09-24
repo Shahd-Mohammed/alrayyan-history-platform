@@ -22,30 +22,7 @@
 </head>
 
 <body>
-    <header class="dashboard-header">
-        <a
-            class="dashboard-brand"
-            href="{{ url_for('main.home') }}"
-        >
-            <img
-                src="{{ url_for(
-                    'static',
-                    filename='images/alrayyan-logo.png'
-                ) }}"
-                alt="الريان"
-            >
-        </a>
-
-        <a
-            class="return-link"
-            href="{{ url_for(
-                'assessment.manage_questions',
-                worksheet_id=worksheet.id
-            ) }}"
-        >
-            العودة إلى الأسئلة
-        </a>
-    </header>
+    {% include '_platform_header.html' %}
 
     <main class="form-page">
         <section class="form-intro">
@@ -171,6 +148,7 @@
             </div>
         </form>
     </main>
+    {% include '_platform_footer.html' %}
 </body>
 
 </html>

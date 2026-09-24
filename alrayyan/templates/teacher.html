@@ -25,32 +25,7 @@
 </head>
 
 <body>
-    <header class="teacher-header">
-        <a class="teacher-brand" href="/">
-            <img
-                src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
-                alt="الريان في الدراسات التاريخية"
-            >
-        </a>
-
-        <nav>
-            <a href="/">الرئيسية</a>
-            <a href="{{ url_for(
-                'worksheets.worksheet_list'
-                ) }}">
-                     أوراق العمل
-            </a>
-
-            <a href="{{ url_for(
-                'teacher_dashboard.dashboard'
-                ) }}">
-                     لوحة المعلمة
-            </a>
-            <a class="active" href="{{ url_for('teacher.teacher_page') }}">
-                المعلّم الذكي
-            </a>
-        </nav>
-    </header>
+    {% include '_platform_header.html' %}
 
     <main class="teacher-page">
         <section class="teacher-intro">
@@ -237,5 +212,6 @@
     <script
         src="{{ url_for('static', filename='js/teacher.js') }}"
     ></script>
+    {% include '_platform_footer.html' %}
 </body>
 </html>

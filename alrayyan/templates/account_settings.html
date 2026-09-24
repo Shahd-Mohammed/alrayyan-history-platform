@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حسابي | الريان</title>
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/platform.css') }}"
+    >
+</head>
+<body class="account-page-body">
+    {% include '_platform_header.html' %}
+
+    <main class="account-page">
+        <header class="account-hero">
+            <div>
+                <span>مساحتك الشخصية</span>
+                <h1>إعدادات حسابي</h1>
+                <p>
+                    حدّثي اسمك وبريدك، أو غيّري كلمة المرور
+                    بأمان من مكان واحد.
+                </p>
+            </div>
+
+            <div class="account-avatar-large">
+                {{ current_user.first_name[:1] }}
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+            {% for category, message in messages %}
+                <div class="account-alert {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <form class="account-form" method="post">
+            {{ form.hidden_tag() }}
+
+            <section>
+                <div class="account-section-heading">
+                    <span>01</span>
+                    <div>
+                        <h2>البيانات الأساسية</h2>
+                        <p>تظهر هذه البيانات داخل لوحتك ونتائجك.</p>
+                    </div>
+                </div>
+
+                <div class="account-fields-grid">
+                    <label>
+                        {{ form.full_name.label.text }}
+                        {{ form.full_name(
+                            autocomplete="name",
+                            dir="auto"
+                        ) }}
+                        {% for error in form.full_name.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </label>
+
+                    <label>
+                        {{ form.email.label.text }}
+                        {{ form.email(
+                            type="email",
+                            autocomplete="email",
+                            dir="ltr"
+                        ) }}
+                        {% for error in form.email.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </label>
+                </div>
+            </section>
+
+            <section>
+                <div class="account-section-heading">
+                    <span>02</span>
+                    <div>
+                        <h2>تغيير كلمة المرور</h2>
+                        <p>
+                            اتركي الحقول فارغة إن لم ترغبي بتغييرها.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="account-fields-grid password-grid">
+                    <label>
+                        {{ form.current_password.label.text }}
+                        {{ form.current_password(
+                            autocomplete="current-password"
+                        ) }}
+                        {% for error in form.current_password.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </label>
+
+                    <label>
+                        {{ form.new_password.label.text }}
+                        {{ form.new_password(
+                            autocomplete="new-password"
+                        ) }}
+                        {% for error in form.new_password.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </label>
+
+                    <label>
+                        {{ form.confirm_password.label.text }}
+                        {{ form.confirm_password(
+                            autocomplete="new-password"
+                        ) }}
+                        {% for error in form.confirm_password.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </label>
+                </div>
+            </section>
+
+            <div class="account-form-actions">
+                {{ form.submit(class="account-save-button") }}
+                <a href="{{ url_for('main.student_dashboard')
+                    if current_user.role == 'student'
+                    else url_for('teacher_dashboard.dashboard') }}">
+                    العودة إلى اللوحة
+                </a>
+            </div>
+        </form>
+    </main>
+
+    {% include '_platform_footer.html' %}
+</body>
+</html>

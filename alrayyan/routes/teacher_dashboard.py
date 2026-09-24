@@ -16,10 +16,12 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.forms import (
+    AboutPageForm,
     EditWorksheetForm,
     UploadWorksheetForm,
 )
 from alrayyan.models import (
+    AboutPage,
     Lesson,
     Worksheet,
     WorksheetAttachment,
@@ -203,6 +205,47 @@ def dashboard():
     return render_template(
         "teacher_dashboard.html",
         worksheets=worksheets,
+    )
+
+
+@teacher_dashboard_bp.route(
+    "/about/edit",
+    methods=["GET", "POST"],
+)
+@teacher_required
+def edit_about_page():
+    """Allow the teacher to edit the public About page."""
+
+    about_content = (
+        AboutPage.get_or_create()
+    )
+
+    form = AboutPageForm(
+        obj=about_content
+    )
+
+    if form.validate_on_submit():
+        form.populate_obj(
+            about_content
+        )
+
+        db.session.commit()
+
+        flash(
+            "تم تحديث صفحة من نحن بنجاح.",
+            "success",
+        )
+
+        return redirect(
+            url_for(
+                "main.about"
+            )
+        )
+
+    return render_template(
+        "edit_about.html",
+        form=form,
+        about_content=about_content,
     )
 
 

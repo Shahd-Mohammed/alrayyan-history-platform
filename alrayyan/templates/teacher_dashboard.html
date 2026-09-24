@@ -331,14 +331,13 @@
         }
 
         .worksheet-card {
-            padding: 18px;
+            padding: 20px;
             display: grid;
             grid-template-columns:
                 minmax(220px, 1.6fr)
                 minmax(150px, 0.8fr)
                 minmax(110px, 0.5fr)
-                minmax(120px, 0.55fr)
-                minmax(230px, auto);
+                minmax(120px, 0.55fr);
             align-items: center;
             gap: 18px;
             border: 1px solid var(--border);
@@ -368,6 +367,21 @@
             color: var(--muted);
             font-size: 14px;
             line-height: 1.7;
+        }
+
+        .worksheet-policy-chip {
+            width: fit-content;
+            margin-top: 11px;
+            padding: 6px 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #e8cf98;
+            border-radius: 999px;
+            background: #fff7e4;
+            color: #815b17;
+            font-size: 12px;
+            font-weight: 700;
         }
 
         .worksheet-detail {
@@ -412,11 +426,81 @@
         }
 
         .worksheet-actions {
+            grid-column: 1 / -1;
+            margin-top: 2px;
+            padding-top: 16px;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: flex-start;
             flex-wrap: wrap;
             gap: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .worksheet-action {
+            min-height: 42px;
+            padding: 9px 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .worksheet-action:hover {
+            transform: translateY(-2px);
+        }
+
+        .worksheet-action-primary {
+            color: var(--white);
+            border-color: var(--navy);
+            background: var(--navy);
+            box-shadow: 0 7px 18px rgba(23, 47, 82, 0.14);
+        }
+
+        .worksheet-action-primary:hover {
+            border-color: var(--navy-light);
+            background: var(--navy-light);
+        }
+
+        .worksheet-action-results {
+            color: var(--navy);
+            border-color: var(--gold);
+            background: #fffaf0;
+        }
+
+        .worksheet-action-results:hover {
+            color: var(--white);
+            background: var(--gold);
+        }
+
+        .worksheet-action-edit {
+            color: var(--navy);
+            background: var(--white);
+        }
+
+        .worksheet-action-edit:hover {
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+
+        .worksheet-action-state.unpublish {
+            color: var(--warning);
+            border-color: #ead291;
+            background: var(--warning-bg);
+        }
+
+        .worksheet-action-state.publish {
+            color: var(--success);
+            border-color: #b8ddc8;
+            background: var(--success-bg);
         }
 
         .action-button {
@@ -498,7 +582,7 @@
                 grid-template-columns:
                     minmax(220px, 1.5fr)
                     minmax(140px, 0.8fr)
-                    minmax(220px, auto);
+                    minmax(110px, 0.5fr);
             }
 
             .worksheet-card .worksheet-status,
@@ -507,8 +591,8 @@
             }
 
             .worksheet-actions {
-                grid-column: 3;
-                grid-row: 1 / span 2;
+                grid-column: 1 / -1;
+                grid-row: auto;
             }
         }
 
@@ -565,7 +649,7 @@
             }
 
             .worksheet-actions > * {
-                flex: 1 1 130px;
+                flex: 1 1 145px;
             }
 
             .action-button {
@@ -576,55 +660,7 @@
 </head>
 
 <body>
-    <header class="site-header">
-        <a
-            class="brand"
-            href="{{ url_for('main.home') }}"
-        >
-            <img
-                class="brand-logo"
-                src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
-                alt="الريان في الدراسات التاريخية"
-            >
-        </a>
-
-        <nav class="main-nav">
-            <a href="{{ url_for('main.home') }}">
-                الرئيسية
-            </a>
-
-            <a href="{{ url_for('teacher.teacher_page') }}">
-                المعلّم الذكي
-            </a>
-
-            <a href="{{ url_for('teacher_dashboard.dashboard') }}">
-                لوحة المعلمة
-            </a>
-
-            <a href="{{ url_for('teacher_dashboard.upload_worksheet') }}">
-                إضافة ورقة عمل
-            </a>
-
-            <form
-                class="logout-form"
-                method="POST"
-                action="{{ url_for('auth.logout') }}"
-            >
-                <input
-                    type="hidden"
-                    name="csrf_token"
-                    value="{{ csrf_token() }}"
-                >
-
-                <button
-                    class="logout-button"
-                    type="submit"
-                >
-                    تسجيل الخروج
-                </button>
-            </form>
-        </nav>
-    </header>
+    {% include '_platform_header.html' %}
 
     <main class="dashboard-page">
         <section class="dashboard-hero">
@@ -634,8 +670,8 @@
                 </p>
 
                 <h1>
-                    أهلًا بكِ،
-                    {{ current_user.full_name }}
+                    مرحبًا بكِ أ.
+                    {{ current_user.first_name }}
                 </h1>
 
                 <p>
@@ -645,13 +681,21 @@
                 </p>
             </div>
 
-            <a
-                class="primary-button"
-                href="{{ url_for('teacher_dashboard.upload_worksheet') }}"
-            >
-                <span>＋</span>
-                إضافة ورقة عمل
-            </a>
+            <div class="dashboard-hero-actions">
+                <a
+                    class="primary-button"
+                    href="{{ url_for('teacher_dashboard.upload_worksheet') }}"
+                >
+                    <span>＋</span>
+                    إضافة ورقة عمل
+                </a>
+                <a
+                    class="about-management-button"
+                    href="{{ url_for('teacher_dashboard.edit_about_page') }}"
+                >
+                    تعديل صفحة من نحن
+                </a>
+            </div>
         </section>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -760,6 +804,19 @@
                                         لم تتم إضافة وصف لورقة العمل.
                                     {% endif %}
                                 </p>
+
+                                <span class="worksheet-policy-chip">
+                                    العلامة المعتمدة:
+                                    {% if worksheet.attempt_score_policy == "latest" %}
+                                        آخر محاولة
+                                    {% elif worksheet.attempt_score_policy == "first" %}
+                                        أول محاولة
+                                    {% elif worksheet.attempt_score_policy == "average" %}
+                                        متوسط المحاولات
+                                    {% else %}
+                                        أعلى محاولة
+                                    {% endif %}
+                                </span>
                             </div>
 
                             <div class="worksheet-detail">
@@ -806,42 +863,35 @@
 
                             <div class="worksheet-actions">
                                 <a
-                                    class="action-button"
+                                    class="worksheet-action worksheet-action-primary"
+                                    href="{{ url_for(
+                                        'assessment.manage_questions',
+                                        worksheet_id=worksheet.id
+                                    ) }}"
+                                >
+                                    <span aria-hidden="true">✦</span>
+                                    إدارة الأسئلة
+                                </a>
+
+                                <a
+                                    class="worksheet-action worksheet-action-results"
+                                    href="{{ url_for(
+                                        'assessment.worksheet_results',
+                                        worksheet_id=worksheet.id
+                                    ) }}"
+                                >
+                                    <span aria-hidden="true">◉</span>
+                                    نتائج الطلاب
+                                </a>
+
+                                <a
+                                    class="worksheet-action worksheet-action-edit"
                                     href="{{ url_for(
                                         'teacher_dashboard.edit_worksheet',
                                         worksheet_id=worksheet.id
                                     ) }}"
                                 >
                                     تعديل
-                                    <a
-                                        class="assessment-action"
-                                        href="{{ url_for(
-                                            'assessment.manage_questions',
-                                             worksheet_id=worksheet.id
-                                        ) }}"
-                                    >
-                                    <span
-                                        class="assessment-action-icon"
-                                        aria-hidden="true"
-                                    >
-                                        ✦
-                                    </span>
-
-                                    <span class="assessment-action-text">
-                                        إدارة الأسئلة
-                                    </span>
-                                    <a
-                                    class="results-action"
-                                    href="{{ url_for(
-                                        'assessment.worksheet_results',
-                                        worksheet_id=worksheet.id
-                                    ) }}"
-                                    >
-                                    <span aria-hidden="true">◉</span>
-
-                                    <span>نتائج الطلاب</span>
-                                    </a>
-                                    </a>
                                 </a>
 
                                 <form
@@ -860,14 +910,14 @@
 
                                     {% if worksheet.publication_status == "published" %}
                                         <button
-                                            class="action-button unpublish"
+                                            class="worksheet-action worksheet-action-state unpublish"
                                             type="submit"
                                         >
                                             إرجاع لمسودة
                                         </button>
                                     {% else %}
                                         <button
-                                            class="action-button publish"
+                                            class="worksheet-action worksheet-action-state publish"
                                             type="submit"
                                         >
                                             نشر الآن
@@ -904,5 +954,6 @@
             {% endif %}
         </section>
     </main>
+    {% include '_platform_footer.html' %}
 </body>
 </html>

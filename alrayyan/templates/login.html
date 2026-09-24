@@ -78,9 +78,11 @@
                     with_categories=true
                 ) %}
                     {% for category, message in messages %}
-                        <div class="alert {{ category }}">
-                            {{ message }}
-                        </div>
+                        {% if category == "error" %}
+                            <div class="alert {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 {% endwith %}
 
@@ -92,7 +94,7 @@
 
                         {{ form.email(
                             type="email",
-                            placeholder="teacher@alrayyan.local",
+                            placeholder="name@example.com",
                             autocomplete="email"
                         ) }}
 

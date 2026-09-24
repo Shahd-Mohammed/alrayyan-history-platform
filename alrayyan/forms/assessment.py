@@ -152,23 +152,54 @@ class WorksheetSettingsForm(FlaskForm):
     )
 
     max_attempts = IntegerField(
-    "الحد الأقصى للمحاولات",
-    validators=[
-        DataRequired(
-            message=(
-                "يرجى تحديد عدد المحاولات."
-            )
-        ),
-        NumberRange(
-            min=1,
-            max=20,
-            message=(
-                "عدد المحاولات يجب أن يكون "
-                "بين محاولة واحدة و20 محاولة."
+        "الحد الأقصى للمحاولات",
+        validators=[
+            DataRequired(
+                message=(
+                    "يرجى تحديد عدد المحاولات."
+                )
             ),
-        ),
-    ],
-    default=3,
+            NumberRange(
+                min=1,
+                max=20,
+                message=(
+                    "عدد المحاولات يجب أن يكون "
+                    "بين محاولة واحدة و20 محاولة."
+                ),
+            ),
+        ],
+        default=3,
+    )
+
+    attempt_score_policy = SelectField(
+        "العلامة المعتمدة للطالب",
+        choices=[
+            (
+                "highest",
+                "أعلى علامة من جميع المحاولات",
+            ),
+            (
+                "latest",
+                "علامة آخر محاولة",
+            ),
+            (
+                "first",
+                "علامة أول محاولة",
+            ),
+            (
+                "average",
+                "متوسط علامات جميع المحاولات",
+            ),
+        ],
+        validators=[
+            DataRequired(
+                message=(
+                    "يرجى اختيار طريقة "
+                    "احتساب العلامة."
+                )
+            )
+        ],
+        default="highest",
     )
 
     show_answers_after_submit = BooleanField(

@@ -95,10 +95,17 @@ class Worksheet(db.Model):
         default=True,
     )
     max_attempts = db.Column(
-    db.Integer,
-    nullable=False,
-    default=3,
-    server_default="3",
+        db.Integer,
+        nullable=True,
+        default=3,
+        server_default="3",
+    )
+
+    attempt_score_policy = db.Column(
+        db.String(20),
+        nullable=False,
+        default="highest",
+        server_default="highest",
     )
 
     show_answers_after_submit = db.Column(

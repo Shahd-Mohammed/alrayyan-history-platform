@@ -22,29 +22,7 @@
 </head>
 
 <body>
-    <header class="dashboard-header">
-        <a
-            class="dashboard-brand"
-            href="{{ url_for('main.home') }}"
-        >
-            <img
-                src="{{ url_for(
-                    'static',
-                    filename='images/alrayyan-logo.png'
-                ) }}"
-                alt="الريان"
-            >
-        </a>
-
-        <a
-            class="return-link"
-            href="{{ url_for(
-                'teacher_dashboard.dashboard'
-            ) }}"
-        >
-            العودة إلى لوحة المعلمة
-        </a>
-    </header>
+    {% include '_platform_header.html' %}
 
     <main class="results-dashboard">
         {% with messages = get_flashed_messages(
@@ -85,6 +63,30 @@
                 نتائج الطلاب
             </a>
         </nav>
+
+        <section class="score-policy-banner">
+            <div>
+                <span>سياسة احتساب النتيجة</span>
+                <strong>
+                    {% if worksheet.attempt_score_policy == "latest" %}
+                        علامة آخر محاولة
+                    {% elif worksheet.attempt_score_policy == "first" %}
+                        علامة أول محاولة
+                    {% elif worksheet.attempt_score_policy == "average" %}
+                        متوسط علامات جميع المحاولات
+                    {% else %}
+                        أعلى علامة من جميع المحاولات
+                    {% endif %}
+                </strong>
+            </div>
+
+            <a href="{{ url_for(
+                'assessment.manage_questions',
+                worksheet_id=worksheet.id
+            ) }}">
+                تعديل السياسة
+            </a>
+        </section>
 
         <section class="results-stats">
             <article class="stat-card students">
@@ -172,7 +174,7 @@
         <section class="results-panel">
             <div class="results-panel-heading">
                 <div>
-                    <span>آخر محاولة لكل طالب</span>
+                    <span>علامة معتمدة واحدة لكل طالب</span>
 
                     <h2>سجل النتائج</h2>
                 </div>
@@ -182,6 +184,7 @@
                     <bdi class="numeric-value">
                         {{ "%.1f" | format(worksheet.passing_score) }}%
                     </bdi>
+                </p>
             </div>
 
             {% if result_rows %}
@@ -191,8 +194,8 @@
                             <tr>
                                 <th>الطالب</th>
                                 <th>المحاولات</th>
-                                <th>الدرجة</th>
-                                <th>النسبة</th>
+                                <th>الدرجة المعتمدة</th>
+                                <th>النسبة المعتمدة</th>
                                 <th>الحالة</th>
                                 <th>الإجراء</th>
                             </tr>
@@ -227,15 +230,15 @@
 
                                     <td>
                                         <bdi class="numeric-value">
-                                            {{ "%.1f" | format(attempt.score) }}
+                                            {{ "%.1f" | format(row.counted_score) }}
                                             /
-                                            {{ "%.1f" | format(attempt.max_score) }}
+                                            {{ "%.1f" | format(row.counted_max_score) }}
                                         </bdi>
                                     </td>
 
                                     <td>
                                         <bdi class="numeric-value">
-                                            {{ "%.1f" | format(attempt.percentage) }}%
+                                            {{ "%.1f" | format(row.counted_percentage) }}%
                                         </bdi>
                                     </td>
 
@@ -245,7 +248,7 @@
                                                 بانتظار التصحيح
                                             </span>
 
-                                        {% elif attempt.is_passed %}
+                                        {% elif row.counted_is_passed %}
                                             <span class="attempt-status passed">
                                                 ناجح
                                             </span>
@@ -289,6 +292,7 @@
             {% endif %}
         </section>
     </main>
+    {% include '_platform_footer.html' %}
 </body>
 
 </html>

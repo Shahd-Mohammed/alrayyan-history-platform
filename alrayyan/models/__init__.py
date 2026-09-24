@@ -22,6 +22,10 @@ from alrayyan.models.date_memory import (
     HistoricalDate,
 )
 
+from alrayyan.models.site_content import (
+    AboutPage,
+)
+
 
 __all__ = [
     "Curriculum",
@@ -38,4 +42,5 @@ __all__ = [
     "HistoricalDate",
     "DateReview",
     "WorksheetAttachment",
+    "AboutPage",
 ]

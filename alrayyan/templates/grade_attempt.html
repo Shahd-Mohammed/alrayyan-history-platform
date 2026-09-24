@@ -22,30 +22,7 @@
 </head>
 
 <body>
-    <header class="dashboard-header">
-        <a
-            class="dashboard-brand"
-            href="{{ url_for('main.home') }}"
-        >
-            <img
-                src="{{ url_for(
-                    'static',
-                    filename='images/alrayyan-logo.png'
-                ) }}"
-                alt="الريان"
-            >
-        </a>
-
-        <a
-            class="return-link"
-            href="{{ url_for(
-                'assessment.manage_questions',
-                worksheet_id=attempt.worksheet.id
-            ) }}"
-        >
-            العودة إلى الأسئلة والنتائج
-        </a>
-    </header>
+    {% include '_platform_header.html' %}
 
     <main class="form-page">
         {% with messages = get_flashed_messages(
@@ -261,6 +238,7 @@
             </div>
         </form>
     </main>
+    {% include '_platform_footer.html' %}
 </body>
 
 </html>

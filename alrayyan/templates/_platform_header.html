@@ -1,0 +1,70 @@
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/platform.css') }}"
+>
+
+<header class="platform-header">
+    <a class="platform-brand" href="{{ url_for('main.home') }}">
+        <img
+            src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
+            alt="الريان في الدراسات التاريخية"
+        >
+    </a>
+
+    <button
+        class="platform-menu-toggle"
+        type="button"
+        aria-label="فتح القائمة"
+        aria-expanded="false"
+        data-platform-menu-toggle
+    >
+        <span></span><span></span><span></span>
+    </button>
+
+    <nav class="platform-navigation" data-platform-menu>
+        <a href="{{ url_for('main.home') }}">الرئيسية</a>
+        <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
+        <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
+        <a href="{{ url_for('main.about') }}">من نحن</a>
+
+        {% if current_user.is_authenticated %}
+            {% if current_user.role in ['teacher', 'admin'] %}
+                <a href="{{ url_for('teacher_dashboard.dashboard') }}">لوحة المعلمة</a>
+            {% elif current_user.role == 'student' %}
+                <a href="{{ url_for('main.student_dashboard') }}">لوحتي</a>
+                <a href="{{ url_for('assessment.my_results') }}">نتائجي</a>
+            {% endif %}
+
+            <a href="{{ url_for('auth.account_settings') }}">حسابي</a>
+
+            <div class="platform-user-menu">
+                <span class="platform-avatar">{{ current_user.first_name[:1] }}</span>
+                <span>{{ current_user.first_name }}</span>
+                <form method="post" action="{{ url_for('auth.logout') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit">تسجيل الخروج</button>
+                </form>
+            </div>
+        {% else %}
+            <a class="platform-login-link" href="{{ url_for('auth.login') }}">تسجيل الدخول</a>
+        {% endif %}
+    </nav>
+</header>
+
+<script>
+    (() => {
+        const toggle = document.querySelector(
+            "[data-platform-menu-toggle]"
+        );
+        const menu = document.querySelector(
+            "[data-platform-menu]"
+        );
+
+        if (!toggle || !menu) return;
+
+        toggle.addEventListener("click", () => {
+            const isOpen = menu.classList.toggle("is-open");
+            toggle.setAttribute("aria-expanded", String(isOpen));
+        });
+    })();
+</script>

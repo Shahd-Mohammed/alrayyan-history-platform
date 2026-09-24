@@ -1,158 +1,189 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الريان في الدراسات التاريخية</title>
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/style.css') }}"
-    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
-<body>
-    <header class="site-header">
-        <a
-            class="brand"
-            href="{{ url_for('main.home') }}"
-        >
-            <img
-                class="brand-logo"
-                src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
-                alt="الريان في الدراسات التاريخية"
-            >
-        </a>
-
-        <nav>
-            <a
-                class="active"
-                href="{{ url_for('main.home') }}"
-            >
-                الرئيسية
-            </a>
-
-            <a href="{{ url_for('teacher.teacher_page') }}">
-                 المعلّم الذكي
-            </a>
-
-            <a href="{{ url_for('worksheets.worksheet_list') }}">
-                 أوراق العمل
-            </a>
-
-            <a href="{{ url_for('teacher.teacher_page') }}">
-                المعلّم الذكي
-            </a>
-        </nav>
-    </header>
+<body class="premium-home">
+    {% include '_platform_header.html' %}
 
     <main>
-        <section class="hero">
-            <div class="hero-content">
-                <span class="badge">
-                    منصة تعليمية مدعومة بالذكاء الاصطناعي
-                </span>
+        <section class="premium-hero">
+            <div class="hero-glow hero-glow-one"></div>
+            <div class="hero-glow hero-glow-two"></div>
 
-                <h2>
-                    تعلّم التاريخ بطريقة
-                    <span>أوضح وأذكى</span>
-                </h2>
-
+            <div class="premium-hero-copy">
+                <span class="premium-kicker"><i></i> منصة تعليمية مدعومة بالذكاء الاصطناعي</span>
+                <h1>لأنّ التاريخ ليس حكايةً قديمة، بل <em>وعيٌ يصنع المستقبل</em></h1>
                 <p>
-                    استكشف دروس الصف الحادي عشر، واحصل على
-                    شروحات مبسطة، واسأل المعلّم الذكي من
-                    محتوى المنهج المعتمد.
+                    تعلّمي تاريخ الصف الحادي عشر من مصادر المنهج المعتمدة،
+                    اختبري فهمك بأنشطة تفاعلية، واسألي المعلّم الذكي في أي وقت.
                 </p>
 
-                <div class="hero-actions">
-                    {% if current_user.is_authenticated %}
-    {% if current_user.role == "student" %}
-        <a
-            class="primary-button"
-            href="{{ url_for(
-                'main.student_dashboard'
-            ) }}"
-        >
-            ابدأ التعلّم
-        </a>
+                <div class="premium-hero-actions">
+                    {% if current_user.is_authenticated and current_user.role == 'student' %}
+                        <a class="button-gold" href="{{ url_for('main.student_dashboard') }}">ابدئي رحلة التعلّم <span>←</span></a>
+                    {% elif current_user.is_authenticated and current_user.role in ['teacher', 'admin'] %}
+                        <a class="button-gold" href="{{ url_for('teacher_dashboard.dashboard') }}">الذهاب إلى لوحة المعلمة <span>←</span></a>
+                    {% else %}
+                        <a class="button-gold" href="{{ url_for('auth.login') }}">ابدئي رحلة التعلّم <span>←</span></a>
+                    {% endif %}
+                    <a class="button-glass" href="{{ url_for('teacher.teacher_page') }}">اسألي المعلّم الذكي</a>
+                </div>
 
-    {% elif current_user.role in ["teacher", "admin"] %}
-        <a
-            class="primary-button"
-            href="{{ url_for(
-                'teacher_dashboard.dashboard'
-            ) }}"
-        >
-            الذهاب إلى لوحة المعلمة
-        </a>
-    {% endif %}
-
-{% else %}
-    <a
-        class="primary-button"
-        href="{{ url_for('auth.login') }}"
-    >
-        ابدأ التعلّم
-    </a>
-{% endif %}
-
-                    <a
-                        class="secondary-button"
-                        href="{{ url_for('teacher.teacher_page') }}"
-                    >
-                        اسأل المعلّم الذكي
-                    </a>
+                <div class="hero-trust-row">
+                    <span><b>8</b> دروس مترابطة</span>
+                    <span><b>188</b> مقطعًا معرفيًا</span>
+                    <span><b>AI</b> إجابات موثّقة</span>
                 </div>
             </div>
 
-            <div class="history-card">
-                <span>
-                    الوحدة الأولى
-                </span>
-
-                <h3>
-                    الاستعمار: مفهومه ودوافعه وأشكاله
-                </h3>
-
-                <p>
-                    ابدأ رحلتك في فهم الأحداث والمفاهيم
-                    التاريخية.
-                </p>
-
-                <div class="timeline">
-                    <i></i>
-                    <i></i>
-                    <i></i>
+            <div class="hero-experience-card">
+                <div class="experience-topline">
+                    <span>رحلتك في التاريخ</span>
+                    <i>✦</i>
                 </div>
+                <div class="experience-orbit">
+                    <div class="orbit-ring ring-one"></div>
+                    <div class="orbit-ring ring-two"></div>
+                    <div class="orbit-core">الريان</div>
+                    <span class="orbit-label label-one">افهمي</span>
+                    <span class="orbit-label label-two">تدرّبي</span>
+                    <span class="orbit-label label-three">تقدّمي</span>
+                </div>
+                <p>محتوى أصيل، تجربة ذكية، وتقدّم يمكنكِ رؤيته.</p>
             </div>
+        </section>
+
+        <section class="premium-feature-strip" aria-label="مزايا المنصة">
+            <article><span>01</span><div><h2>محتوى موثوق</h2><p>مبني على مصادر المنهج المعتمد.</p></div></article>
+            <article><span>02</span><div><h2>تعلّم تفاعلي</h2><p>أسئلة ومحاولات ونتائج فورية.</p></div></article>
+            <article><span>03</span><div><h2>معلّم ذكي</h2><p>إجابات مرتبطة بمحتوى الدروس.</p></div></article>
+        </section>
+
+        <section class="featured-learning-section">
+            <div class="premium-section-heading">
+                <div><span>مختارة لكِ</span><h2>ابدئي من أحدث أوراق العمل</h2></div>
+                <a href="{{ url_for('worksheets.worksheet_list') }}">عرض جميع الأوراق ←</a>
+            </div>
+
+            <div class="learning-slider" data-learning-slider aria-label="أحدث أوراق العمل">
+                <div class="learning-slides">
+                    {% if featured_worksheets %}
+                        {% for worksheet in featured_worksheets %}
+                            <article class="learning-slide{% if loop.first %} is-active{% endif %}" data-learning-slide>
+                                <div class="slide-number">0{{ loop.index }}</div>
+                                <div class="slide-copy">
+                                    <span>{{ worksheet.lesson.title if worksheet.lesson else 'ورقة عمل تفاعلية' }}</span>
+                                    <h3>{{ worksheet.title }}</h3>
+                                    <p>{{ worksheet.description or 'تدرّبي على مفاهيم الدرس وتابعي تقدمك خطوة بخطوة.' }}</p>
+                                    <div class="slide-meta">
+                                        {% if worksheet.questions %}<span>{{ worksheet.questions | length }} أسئلة</span>{% endif %}
+                                        {% if worksheet.time_limit_minutes %}<span>{{ worksheet.time_limit_minutes }} دقيقة</span>{% endif %}
+                                        <span>
+                                            {% if worksheet.difficulty_level == 'easy' %}
+                                                سهل
+                                            {% elif worksheet.difficulty_level == 'hard' %}
+                                                متقدم
+                                            {% else %}
+                                                متوسط
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <a class="slide-link" href="{{ url_for('worksheets.worksheet_details', worksheet_id=worksheet.id) }}">فتح ورقة العمل <b>←</b></a>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    {% else %}
+                        <article class="learning-slide is-active" data-learning-slide>
+                            <div class="slide-number">01</div>
+                            <div class="slide-copy">
+                                <span>الوحدة الأولى</span>
+                                <h3>الاستعمار: مفهومه ودوافعه وأشكاله</h3>
+                                <p>ستظهر هنا آخر خمس أوراق تنشرها المعلمة تلقائيًا.</p>
+                                <a class="slide-link" href="{{ url_for('worksheets.worksheet_list') }}">استعراض أوراق العمل <b>←</b></a>
+                            </div>
+                        </article>
+                    {% endif %}
+                </div>
+
+                {% if featured_worksheets|length > 1 %}
+                    <div class="slider-controls">
+                        <button type="button" data-slider-next aria-label="التالي">←</button>
+                        <div class="slider-dots" aria-hidden="true">
+                            {% for worksheet in featured_worksheets %}<button type="button" class="{% if loop.first %}is-active{% endif %}" data-slider-dot="{{ loop.index0 }}" tabindex="-1"></button>{% endfor %}
+                        </div>
+                        <button type="button" data-slider-previous aria-label="السابق">→</button>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="learning-journey-section">
+            <div class="journey-intro">
+                <span>تجربة مصمّمة لكِ</span>
+                <h2>من السؤال الأول إلى فهمٍ يبقى</h2>
+                <p>كل جزء في المنصة يقودكِ للخطوة التالية دون تشتيت.</p>
+                <a href="{{ url_for('worksheets.worksheet_list') }}">اكتشفي المحتوى</a>
+            </div>
+            <div class="journey-steps">
+                <article><b>01</b><i>⌘</i><h3>اختاري الدرس</h3><p>ابدئي من الموضوع الذي تريدين فهمه.</p></article>
+                <article><b>02</b><i>✦</i><h3>اسألي وتعلّمي</h3><p>استعيني بالمعلّم الذكي والمصادر الموثوقة.</p></article>
+                <article><b>03</b><i>✓</i><h3>اختبري فهمك</h3><p>حلي أنشطة تفاعلية بوقت ومحاولات محددة.</p></article>
+                <article><b>04</b><i>↗</i><h3>تابعي تقدمك</h3><p>راجعي النتائج واعرفي أين تتحسنين.</p></article>
+            </div>
+        </section>
+
+        <section class="ai-showcase-section">
+            <div class="ai-visual"><span class="ai-spark">✦</span><div class="ai-rings"></div><strong>AI</strong></div>
+            <div class="ai-showcase-copy">
+                <span>المعلّم الذكي</span>
+                <h2>إجابة لا تكتفي بالمعلومة، بل تقودكِ إلى الفهم</h2>
+                <p>اطرحي سؤالك بلغتك الطبيعية واحصلي على شرح واضح مستند إلى المحتوى التاريخي المحضّر داخل المنصة.</p>
+                <a href="{{ url_for('teacher.teacher_page') }}">ابدئي محادثة ذكية ←</a>
+            </div>
+        </section>
+
+        <section class="premium-final-cta">
+            <span>خطوتك التالية تبدأ الآن</span>
+            <h2>جاهزة لرؤية التاريخ بعيون مختلفة؟</h2>
+            <p>اختاري ورقة عمل، ابدئي التعلّم، ودعي الريان ترافق تقدمك.</p>
+            <a href="{{ url_for('worksheets.worksheet_list') }}">ابدئي الآن <b>←</b></a>
         </section>
     </main>
 
-    <script
-        src="{{ url_for('static', filename='js/main.js') }}"
-    ></script>
-</body>
+    {% include '_platform_footer.html' %}
 
+    <script>
+        (() => {
+            const slider = document.querySelector('[data-learning-slider]');
+            if (!slider) return;
+            const slides = [...slider.querySelectorAll('[data-learning-slide]')];
+            const dots = [...slider.querySelectorAll('[data-slider-dot]')];
+            if (slides.length < 2) return;
+            let activeIndex = 0;
+            let timer;
+            const showSlide = (index) => {
+                activeIndex = (index + slides.length) % slides.length;
+                slides.forEach((slide, i) => slide.classList.toggle('is-active', i === activeIndex));
+                dots.forEach((dot, i) => dot.classList.toggle('is-active', i === activeIndex));
+            };
+            const restart = () => {
+                window.clearInterval(timer);
+                timer = window.setInterval(() => showSlide(activeIndex + 1), 6000);
+            };
+            slider.querySelector('[data-slider-next]')?.addEventListener('click', () => { showSlide(activeIndex + 1); restart(); });
+            slider.querySelector('[data-slider-previous]')?.addEventListener('click', () => { showSlide(activeIndex - 1); restart(); });
+            dots.forEach((dot) => dot.addEventListener('click', () => { showSlide(Number(dot.dataset.sliderDot)); restart(); }));
+            slider.addEventListener('mouseenter', () => window.clearInterval(timer));
+            slider.addEventListener('mouseleave', restart);
+            restart();
+        })();
+    </script>
+</body>
 </html>

@@ -166,13 +166,13 @@ body {
     color: var(--white);
     border: 0;
     border-radius: 13px;
-    background: var(--navy);
+    background: linear-gradient(135deg, var(--gold), #a87519);
     cursor: pointer;
     font-weight: 700;
 }
 
 .submit-button:hover {
-    background: var(--navy-light);
+    background: linear-gradient(135deg, #b98320, #8f6112);
 }
 
 .alert {

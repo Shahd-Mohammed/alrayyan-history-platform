@@ -97,6 +97,19 @@ class User(UserMixin, db.Model):
     def is_active(self):
         return self.is_active_account
 
+    @property
+    def first_name(self):
+        """Return a short friendly name for dashboard greetings."""
+
+        normalized_name = " ".join(
+            (self.full_name or "").split()
+        )
+
+        if not normalized_name:
+            return "بك"
+
+        return normalized_name.split(" ", 1)[0]
+
     def __repr__(self):
         return (
             f"<User id={self.id} "

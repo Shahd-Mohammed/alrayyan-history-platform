@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>من نحن | الريان</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css') }}">
+</head>
+<body class="about-page-body">
+    {% include '_platform_header.html' %}
+
+    <main class="about-page">
+        <section class="about-hero">
+            <div class="about-hero-copy">
+                <span>من نحن</span>
+                <h1>{{ about_content.hero_title }}</h1>
+                <p>{{ about_content.about_text }}</p>
+                <a
+                    class="about-email-action"
+                    href="mailto:{{ about_content.email }}?subject=تواصل من منصة الريان"
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Zm2 .3v.28l7 4.67 7-4.67V6.8a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5Zm14 2.68-6.45 4.3a1 1 0 0 1-1.1 0L5 9.48v8.02c0 .28.22.5.5.5h13a.5.5 0 0 0 .5-.5V9.48Z" />
+                    </svg>
+                    تواصلي معنا
+                </a>
+            </div>
+
+            <div class="about-teacher-badge">
+                <span>إ</span>
+                <strong>{{ about_content.teacher_name }}</strong>
+                <small>{{ about_content.role_title }}</small>
+            </div>
+        </section>
+
+        <section class="about-counter-grid" aria-label="إنجازات المعلمة">
+            <article>
+                <strong data-counter="{{ about_content.years_experience }}">0</strong>
+                <span>+ عامًا من الخبرة</span>
+            </article>
+            <article>
+                <strong data-counter="{{ about_content.questions_count }}">0</strong>
+                <span>+ سؤال تعليمي</span>
+            </article>
+            <article>
+                <strong data-counter="{{ about_content.initiatives_count }}">0</strong>
+                <span>+ مبادرة تربوية</span>
+            </article>
+            <article>
+                <strong data-counter="{{ about_content.programs_count }}">0</strong>
+                <span>+ برامج تدريبية</span>
+            </article>
+        </section>
+
+        <section class="about-story-section">
+            <div class="about-story-mark">إ</div>
+            <div>
+                <span>المعلمة وراء المنصة</span>
+                <h2>{{ about_content.teacher_name }}</h2>
+                <p>
+                    {{ about_content.role_title }}، تحمل ماجستير في أصول التربية
+                    وبكالوريوس في التاريخ، وتوظّف التعلم النشط والمحتوى الرقمي
+                    والذكاء الاصطناعي لتطوير تجربة تعليمية أقرب إلى الطالبات.
+                </p>
+            </div>
+        </section>
+
+        <section class="about-purpose-grid">
+            <article>
+                <span>01</span>
+                <h2>رؤيتنا</h2>
+                <p>{{ about_content.vision_text }}</p>
+            </article>
+            <article>
+                <span>02</span>
+                <h2>رسالتنا</h2>
+                <p>{{ about_content.mission_text }}</p>
+            </article>
+            <article>
+                <span>03</span>
+                <h2>قيمنا</h2>
+                <p>
+                    المصداقية، الوضوح، التفاعل، مراعاة الفروق الفردية،
+                    والتطوير المستمر لكل ما يخدم تعلم الطالبات.
+                </p>
+            </article>
+        </section>
+
+        <section class="about-contact-banner">
+            <div>
+                <span>لديكِ سؤال أو اقتراح؟</span>
+                <h2>يسعدنا أن نسمع منكِ</h2>
+                <p>تواصلي مباشرة مع المعلمة عبر البريد الإلكتروني.</p>
+            </div>
+            <a
+                href="mailto:{{ about_content.email }}?subject=تواصل من منصة الريان"
+                aria-label="التواصل معنا عبر البريد الإلكتروني"
+            >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Zm2 .3v.28l7 4.67 7-4.67V6.8a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5Zm14 2.68-6.45 4.3a1 1 0 0 1-1.1 0L5 9.48v8.02c0 .28.22.5.5.5h13a.5.5 0 0 0 .5-.5V9.48Z" />
+                </svg>
+                تواصلي معنا
+            </a>
+        </section>
+
+        {% if current_user.is_authenticated and current_user.role in ['teacher', 'admin'] %}
+            <a
+                class="about-edit-shortcut"
+                href="{{ url_for('teacher_dashboard.edit_about_page') }}"
+            >
+                تعديل محتوى هذه الصفحة
+            </a>
+        {% endif %}
+    </main>
+
+    {% include '_platform_footer.html' %}
+
+    <script>
+        (() => {
+            const counters = document.querySelectorAll("[data-counter]");
+
+            const animateCounter = (element) => {
+                const target = Number(element.dataset.counter || 0);
+                const duration = 1200;
+                const start = performance.now();
+
+                const update = (now) => {
+                    const progress = Math.min((now - start) / duration, 1);
+                    element.textContent = Math.floor(target * progress).toLocaleString("ar");
+
+                    if (progress < 1) requestAnimationFrame(update);
+                };
+
+                requestAnimationFrame(update);
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    animateCounter(entry.target);
+                    observer.unobserve(entry.target);
+                });
+            }, { threshold: 0.45 });
+
+            counters.forEach((counter) => observer.observe(counter));
+        })();
+    </script>
+</body>
+</html>

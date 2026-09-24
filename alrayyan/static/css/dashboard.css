@@ -949,3 +949,108 @@ textarea {
         width: 100%;
     }
 }
+
+/* Premium attempt-policy controls and question actions. */
+.score-policy-field select {
+    width: 100%;
+    min-height: 48px;
+    padding: 8px 13px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: #fffdf8;
+    color: var(--navy);
+    font: inherit;
+}
+
+.score-policy-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 18px 0 24px;
+    padding: 18px 22px;
+    border: 1px solid rgba(201, 154, 61, .55);
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fffaf0, #f5e2b8);
+}
+
+.score-policy-banner div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.score-policy-banner span {
+    color: #8c641e;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.score-policy-banner strong {
+    color: var(--navy);
+    font-size: 16px;
+}
+
+.score-policy-banner a {
+    flex: 0 0 auto;
+    padding: 10px 15px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--gold), #a97518);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.question-actions .question-edit-action,
+.question-actions .question-delete-action {
+    min-height: 42px !important;
+    padding: 9px 17px !important;
+    border-radius: 10px !important;
+    font: inherit !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+.question-actions .question-edit-action {
+    border: 1px solid var(--gold) !important;
+    background: linear-gradient(135deg, var(--gold), #a97518) !important;
+    color: #fff !important;
+}
+
+.question-actions .question-delete-action {
+    border: 1px solid var(--gold) !important;
+    background: #fffaf0 !important;
+    color: #815b17 !important;
+    box-shadow: none !important;
+}
+
+.question-actions .question-edit-action:hover,
+.question-actions .question-delete-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 20px rgba(154, 107, 22, .16) !important;
+}
+
+@media (max-width: 600px) {
+    .score-policy-banner {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .score-policy-banner a {
+        text-align: center;
+    }
+
+    .question-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .question-actions form,
+    .question-actions button,
+    .question-edit-action {
+        width: 100%;
+        text-align: center;
+    }
+}

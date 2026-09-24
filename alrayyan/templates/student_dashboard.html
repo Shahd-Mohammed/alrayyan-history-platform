@@ -21,56 +21,7 @@
 </head>
 
 <body>
-    <header class="student-dashboard-header">
-        <a href="{{ url_for('main.home') }}">
-            <img
-                src="{{ url_for(
-                    'static',
-                    filename='images/alrayyan-logo.png'
-                ) }}"
-                alt="الريان"
-            >
-        </a>
-
-        <nav>
-            <a href="{{ url_for('main.home') }}">
-                الرئيسية
-            </a>
-
-            <a href="{{ url_for(
-                'worksheets.worksheet_list'
-            ) }}">
-                أوراق العمل
-            </a>
-
-            <a href="{{ url_for(
-                'assessment.my_results'
-            ) }}">
-                نتائجي
-            </a>
-
-            <a href="{{ url_for(
-                'teacher.teacher_page'
-            ) }}">
-                المعلّم الذكي
-            </a>
-
-            <form
-                method="post"
-                action="{{ url_for('auth.logout') }}"
-            >
-                <input
-                    type="hidden"
-                    name="csrf_token"
-                    value="{{ csrf_token() }}"
-                >
-
-                <button type="submit">
-                    تسجيل الخروج
-                </button>
-            </form>
-        </nav>
-    </header>
+    {% include '_platform_header.html' %}
 
     <main class="student-dashboard-page">
         {% set messages = get_flashed_messages(
@@ -90,8 +41,8 @@
                 <span>مساحتك التعليمية</span>
 
                 <h1>
-                    أهلًا بكِ
-                    {{ current_user.full_name }}
+                    أهلًا
+                    {{ current_user.first_name }}
                 </h1>
 
                 <p>
@@ -191,7 +142,13 @@
                     {% for worksheet in available_worksheets[:3] %}
                         <article class="student-dashboard-card">
                             <span>
-                                {{ worksheet.difficulty_level }}
+                                {% if worksheet.difficulty_level == "easy" %}
+                                    سهل
+                                {% elif worksheet.difficulty_level == "hard" %}
+                                    متقدم
+                                {% else %}
+                                    متوسط
+                                {% endif %}
                             </span>
 
                             <h3>{{ worksheet.title }}</h3>
@@ -273,6 +230,7 @@
             {% endif %}
         </section>
     </main>
+    {% include '_platform_footer.html' %}
 </body>
 
 </html>

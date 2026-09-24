@@ -11,6 +11,312 @@
     --shadow: 0 18px 45px rgba(23, 47, 82, 0.10);
 }
 
+/* Student results and attempt review */
+.student-results-page,
+.attempt-result-page {
+    width: min(1180px, calc(100% - 36px));
+    margin: 0 auto;
+    padding: 48px 0 72px;
+}
+
+.student-results-hero,
+.attempt-result-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 36px;
+    padding: clamp(28px, 5vw, 54px);
+    border-radius: 28px;
+    background: linear-gradient(135deg, #102d55, #234a78);
+    color: #fff;
+    box-shadow: 0 24px 58px rgba(15, 40, 75, 0.16);
+}
+
+.student-results-hero h1,
+.attempt-result-hero h1 {
+    margin: 10px 0 12px;
+    color: #fff;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.3;
+}
+
+.student-results-hero p,
+.attempt-result-copy > p {
+    max-width: 680px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.76);
+    line-height: 1.9;
+}
+
+.results-primary-link,
+.result-card-action,
+.result-primary-action,
+.result-secondary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.results-primary-link {
+    flex: 0 0 auto;
+    background: #d4a039;
+    color: #102d55;
+}
+
+.student-results-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: -20px 28px 34px;
+    position: relative;
+    z-index: 2;
+}
+
+.student-results-summary article {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 22px;
+    border: 1px solid #e4e9f0;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(15, 40, 75, 0.08);
+}
+
+.student-results-summary span,
+.result-card-score span {
+    color: #748096;
+    font-size: 0.9rem;
+}
+
+.student-results-summary strong {
+    color: #102d55;
+    font-size: 1.8rem;
+}
+
+.results-list-section,
+.result-answers-section,
+.answers-hidden-message {
+    padding: clamp(22px, 4vw, 36px);
+    border: 1px solid #e1e6ed;
+    border-radius: 24px;
+    background: #fff;
+}
+
+.results-list-heading,
+.result-answers-heading,
+.result-question-heading,
+.result-question-footer,
+.result-card-topline,
+.attempt-result-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.results-list-heading span,
+.result-answers-heading span,
+.result-question-heading span {
+    color: #c58e24;
+    font-weight: 700;
+}
+
+.results-list-heading h2,
+.result-answers-heading h2 {
+    margin: 5px 0 0;
+    color: #102d55;
+    font-size: 1.8rem;
+}
+
+.results-list-heading > p,
+.result-answers-heading > p {
+    color: #748096;
+}
+
+.results-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.result-attempt-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 285px;
+    padding: 24px;
+    border: 1px solid #e1e6ed;
+    border-radius: 19px;
+    background: #fbfcfe;
+}
+
+.result-card-topline > span {
+    color: #c58e24;
+    font-weight: 700;
+}
+
+.result-status,
+.answer-state {
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+}
+
+.status-passed,
+.answer-correct { background: #e7f7ef; color: #16734b; }
+.status-review,
+.answer-wrong { background: #fff0f0; color: #bd3434; }
+.status-pending,
+.answer-pending { background: #fff5dc; color: #92630b; }
+.status-open { background: #eaf1fb; color: #275b96; }
+
+.result-attempt-card h3 {
+    margin: 20px 0 6px;
+    color: #102d55;
+    font-size: 1.45rem;
+}
+
+.result-lesson-name {
+    margin: 0;
+    color: #748096;
+}
+
+.result-card-score {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 22px 0;
+}
+
+.result-card-score > div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 14px;
+    border-radius: 13px;
+    background: #fff;
+}
+
+.result-card-score strong { color: #102d55; }
+
+.result-card-action {
+    width: 100%;
+    margin-top: auto;
+    background: #17375f;
+    color: #fff;
+}
+
+.results-empty-state {
+    padding: 64px 20px;
+    text-align: center;
+}
+
+.results-empty-state > span { color: #d4a039; font-size: 2rem; }
+.results-empty-state h2 { color: #102d55; }
+.results-empty-state p { color: #748096; }
+.results-empty-state a { color: #17375f; font-weight: 800; }
+
+.result-back-link {
+    display: inline-flex;
+    margin-bottom: 20px;
+    color: #17375f;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.attempt-result-hero { align-items: stretch; }
+.attempt-result-copy { flex: 1; }
+.attempt-result-copy > span { color: #e6b84e; font-weight: 700; }
+
+.result-message {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-width: 680px;
+    margin-top: 24px;
+    padding: 17px 19px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.result-message span { color: rgba(255, 255, 255, 0.78); }
+.result-message-success { border-right: 4px solid #51ca91; }
+.result-message-review { border-right: 4px solid #e6b84e; }
+.result-message-pending { border-right: 4px solid #86b7ef; }
+
+.attempt-score-panel {
+    display: flex;
+    flex: 0 0 220px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.attempt-score-panel > span { color: rgba(255, 255, 255, 0.72); }
+.attempt-score-panel > strong { margin: 7px 0; color: #fff; font-size: 2.75rem; }
+.attempt-score-panel p { margin: 0; color: #e6b84e; }
+
+.result-answers-section { margin-top: 28px; }
+.result-question-list { display: grid; gap: 18px; margin-top: 26px; }
+.result-question-card { padding: 26px; border: 1px solid #e0e6ee; border-radius: 18px; background: #fbfcfe; }
+.result-question-heading b { color: #748096; font-size: 0.9rem; }
+.result-question-card h3 { margin: 18px 0; color: #102d55; font-size: 1.35rem; line-height: 1.7; }
+
+.student-answer-box,
+.answer-explanation,
+.teacher-feedback-box {
+    padding: 17px 19px;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.student-answer-box { border-right: 4px solid #d4a039; }
+.student-answer-box span { color: #748096; font-size: 0.88rem; }
+.student-answer-box p { margin: 7px 0 0; color: #102d55; font-weight: 600; }
+.result-question-footer { margin-top: 17px; }
+.result-question-footer > strong { color: #102d55; }
+.answer-explanation { margin-top: 16px; background: #f5f8fc; }
+.teacher-feedback-box { margin-top: 16px; background: #fff8e9; }
+.answer-explanation p,
+.teacher-feedback-box p { margin: 7px 0 0; line-height: 1.8; }
+
+.attempt-result-actions { justify-content: flex-start; margin-top: 24px; }
+.result-primary-action { border: 1px solid #c99a3d; background: linear-gradient(135deg, #d2a13b, #9a6b16); color: #fff; box-shadow: 0 10px 24px rgba(154,107,22,.18); }
+.result-secondary-action { border: 1px solid #d2a13b; background: #fffaf0; color: #17375f; }
+.result-primary-action:hover,
+.result-secondary-action:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(23,47,82,.13); }
+.answers-hidden-message { margin-top: 28px; text-align: center; }
+
+@media (max-width: 820px) {
+    .student-results-hero,
+    .attempt-result-hero { align-items: stretch; flex-direction: column; }
+    .student-results-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-inline: 12px; }
+    .results-cards-grid { grid-template-columns: 1fr; }
+    .attempt-score-panel { flex-basis: auto; }
+}
+
+@media (max-width: 520px) {
+    .student-results-page,
+    .attempt-result-page { width: min(100% - 22px, 1180px); padding-top: 20px; }
+    .student-results-summary { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .student-results-summary article { padding: 16px; }
+    .result-card-score { grid-template-columns: 1fr; }
+    .result-question-footer,
+    .attempt-result-actions { align-items: stretch; flex-direction: column; }
+    .result-primary-action,
+    .result-secondary-action { width: 100%; }
+}
+
 * {
     box-sizing: border-box;
 }

@@ -1,187 +1,89 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نتيجة المحاولة | الريان</title>
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for(
-            'static',
-            filename='css/worksheets.css'
-        ) }}"
-    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css') }}">
 </head>
-
 <body>
-    <main class="details-page">
-        <section class="details-card">
-            <div class="details-content">
-                <span class="lesson-name">
-                    نتيجة ورقة العمل
-                </span>
+    {% include '_platform_header.html' %}
+    <main class="attempt-result-page">
+        <a class="result-back-link" href="{{ url_for('assessment.my_results') }}">→ العودة إلى جميع النتائج</a>
 
-                <h1>
-                    {{ attempt.worksheet.title }}
-                </h1>
-
-                <div class="details-badges">
-                    <span class="published-badge">
-                        <bdi class="numeric-value">
-                        {{ "%.1f" | format(attempt.percentage) }}%
-                        </bdi>
-                    </span>
-
-                    <span class="difficulty medium">
-                        <bdi class="numeric-value">
-                            {{ "%.1f" | format(attempt.score) }}
-                            /
-                            {{ "%.1f" | format(attempt.max_score) }}
-                        </bdi>
-                    </span>
-                </div>
+        <header class="attempt-result-hero">
+            <div class="attempt-result-copy">
+                <span>نتيجة ورقة العمل</span>
+                <h1>{{ attempt.worksheet.title }}</h1>
+                {% if attempt.worksheet.lesson %}<p>{{ attempt.worksheet.lesson.title }}</p>{% endif %}
 
                 {% if pending_manual_grading %}
-                    <div class="instructions">
-                        <h2>
-                            النتيجة مؤقتة
-                        </h2>
-
-                        <p>
-                            يوجد سؤال مقالي بانتظار
-                            تصحيح المعلمة.
-                        </p>
-                    </div>
-
+                    <div class="result-message result-message-pending"><strong>النتيجة مؤقتة</strong><span>يوجد سؤال بانتظار تصحيح المعلمة.</span></div>
                 {% elif attempt.is_passed %}
-                    <div class="instructions">
-                        <h2>أحسنت!</h2>
-
-                        <p>
-                            لقد اجتزت ورقة العمل بنجاح.
-                        </p>
-                    </div>
-
+                    <div class="result-message result-message-success"><strong>أحسنتِ!</strong><span>اجتزتِ ورقة العمل بنجاح.</span></div>
                 {% else %}
-                    <div class="instructions">
-                        <h2>حاولي مرة أخرى</h2>
-
-                        <p>
-                            راجعي الدرس ثم أعيدي المحاولة.
-                        </p>
-                    </div>
+                    <div class="result-message result-message-review"><strong>خطوة جيدة، تابعي المحاولة</strong><span>راجعي الإجابات ثم عودي للمحاولة المتاحة.</span></div>
                 {% endif %}
             </div>
-        </section>
+
+            <div class="attempt-score-panel">
+                <span>نسبتك</span>
+                <strong><bdi class="numeric-value">{{ "%.1f" | format(attempt.percentage) }}%</bdi></strong>
+                <p><bdi class="numeric-value">{{ "%.1f" | format(attempt.score) }} من {{ "%.1f" | format(attempt.max_score) }}</bdi></p>
+            </div>
+        </header>
 
         {% if attempt.worksheet.show_answers_after_submit %}
-            {% for answer in attempt.answers %}
-                <section class="student-tip">
-                    <div>
-                        <span class="tip-icon">
-                            {{ loop.index }}
-                        </span>
-                    </div>
+            <section class="result-answers-section">
+                <div class="result-answers-heading">
+                    <div><span>مراجعة المحاولة</span><h2>الأسئلة والإجابات</h2></div>
+                    <p>{{ attempt.answers | length }} أسئلة</p>
+                </div>
 
-                    <div>
-                        <h2>
-                            {{
-                                answer
-                                .question
-                                .question_text
-                            }}
-                        </h2>
+                <div class="result-question-list">
+                    {% for answer in attempt.answers %}
+                        <article class="result-question-card">
+                            <div class="result-question-heading">
+                                <span>السؤال {{ loop.index }}</span>
+                                <b><bdi class="numeric-value">{{ "%.1f" | format(answer.question.points) }}</bdi> درجة</b>
+                            </div>
+                            <h3>{{ answer.question.question_text }}</h3>
 
-                        <p>
-                            <strong>إجابتك:</strong>
+                            <div class="student-answer-box">
+                                <span>إجابتك</span>
+                                <p>{% if answer.selected_choice %}{{ answer.selected_choice.choice_text }}{% else %}{{ answer.answer_text or "بدون إجابة" }}{% endif %}</p>
+                            </div>
 
-                            {% if answer.selected_choice %}
-                                {{
-                                    answer
-                                    .selected_choice
-                                    .choice_text
-                                }}
-                            {% else %}
-                                {{
-                                    answer.answer_text
-                                    or "بدون إجابة"
-                                }}
+                            <div class="result-question-footer">
+                                {% if answer.is_correct is none %}
+                                    <span class="answer-state answer-pending">بانتظار تصحيح المعلمة</span>
+                                {% elif answer.is_correct %}
+                                    <span class="answer-state answer-correct">✓ إجابة صحيحة</span>
+                                {% else %}
+                                    <span class="answer-state answer-wrong">✕ إجابة غير صحيحة</span>
+                                {% endif %}
+                                <strong>الدرجة: <bdi class="numeric-value">{{ "%.1f" | format(answer.awarded_points) }} / {{ "%.1f" | format(answer.question.points) }}</bdi></strong>
+                            </div>
+
+                            {% if answer.question.explanation %}
+                                <div class="answer-explanation"><strong>تفسير الإجابة</strong><p>{{ answer.question.explanation }}</p></div>
                             {% endif %}
-                        </p>
-
-                        <p>
-                            <strong>الدرجة:</strong>
-                            <bdi class="numeric-value">
-                                {{ "%.1f" | format(answer.awarded_points) }}
-                                /
-                                {{ "%.1f" | format(answer.question.points) }}
-                            </bdi>
-                        </p>
-
-                        {% if answer.is_correct is none %}
-                            <p>
-                                بانتظار تصحيح المعلمة.
-                            </p>
-                        {% elif answer.is_correct %}
-                            <p>✓ إجابة صحيحة</p>
-                        {% else %}
-                            <p>✗ إجابة غير صحيحة</p>
-                        {% endif %}
-
-                        {% if answer.question.explanation %}
-                            <p>
-                                {{
-                                    answer
-                                    .question
-                                    .explanation
-                                }}
-                            </p>
-                        {% endif %}
-
-                        {% if answer.teacher_feedback %}
-                            <p>
-                                <strong>
-                                    ملاحظة المعلمة:
-                                </strong>
-
-                                {{
-                                    answer
-                                    .teacher_feedback
-                                }}
-                            </p>
-                        {% endif %}
-                    </div>
-                </section>
-            {% endfor %}
+                            {% if answer.teacher_feedback %}
+                                <div class="teacher-feedback-box"><strong>ملاحظة المعلمة</strong><p>{{ answer.teacher_feedback }}</p></div>
+                            {% endif %}
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% else %}
+            <section class="answers-hidden-message"><h2>تم حفظ نتيجتك</h2><p>اختارت المعلمة عدم إظهار الإجابات الصحيحة بعد التسليم.</p></section>
         {% endif %}
 
-        <div class="details-actions">
-            <a
-                class="download-button"
-                href="{{ url_for(
-                    'assessment.my_results'
-                ) }}"
-            >
-                جميع نتائجي
-            </a>
-
-            <a
-                class="disabled-button"
-                href="{{ url_for(
-                    'worksheets.worksheet_list'
-                ) }}"
-            >
-                أوراق العمل
-            </a>
+        <div class="attempt-result-actions">
+            <a class="result-primary-action" href="{{ url_for('assessment.my_results') }}">جميع نتائجي</a>
+            <a class="result-secondary-action" href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
         </div>
     </main>
+    {% include '_platform_footer.html' %}
 </body>
-
 </html>

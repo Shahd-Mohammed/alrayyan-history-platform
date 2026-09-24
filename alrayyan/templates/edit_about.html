@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل صفحة من نحن | الريان</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    {% include '_platform_header.html' %}
+
+    <main class="about-editor-page">
+        <section class="about-editor-intro">
+            <div>
+                <span>إدارة محتوى المنصة</span>
+                <h1>تعديل صفحة من نحن</h1>
+                <p>
+                    عدّلي النصوص والأرقام والبريد، وستظهر التغييرات
+                    مباشرة في الصفحة العامة دون الحاجة لتعديل الكود.
+                </p>
+            </div>
+            <a href="{{ url_for('main.about') }}">معاينة الصفحة</a>
+        </section>
+
+        <form method="post" class="about-editor-form">
+            {{ form.hidden_tag() }}
+
+            <section>
+                <h2>هوية المعلمة</h2>
+                <div class="about-editor-grid">
+                    <label>{{ form.teacher_name.label }}{{ form.teacher_name() }}</label>
+                    <label>{{ form.role_title.label }}{{ form.role_title() }}</label>
+                    <label class="full-field">{{ form.hero_title.label }}{{ form.hero_title() }}</label>
+                    <label class="full-field">{{ form.email.label }}{{ form.email(dir='ltr') }}</label>
+                </div>
+            </section>
+
+            <section>
+                <h2>محتوى الصفحة</h2>
+                <label>{{ form.about_text.label }}{{ form.about_text(rows=6) }}</label>
+                <div class="about-editor-grid">
+                    <label>{{ form.vision_text.label }}{{ form.vision_text(rows=6) }}</label>
+                    <label>{{ form.mission_text.label }}{{ form.mission_text(rows=6) }}</label>
+                </div>
+            </section>
+
+            <section>
+                <h2>العدادات</h2>
+                <div class="about-editor-counter-grid">
+                    <label>{{ form.years_experience.label }}{{ form.years_experience() }}</label>
+                    <label>{{ form.questions_count.label }}{{ form.questions_count() }}</label>
+                    <label>{{ form.initiatives_count.label }}{{ form.initiatives_count() }}</label>
+                    <label>{{ form.programs_count.label }}{{ form.programs_count() }}</label>
+                </div>
+            </section>
+
+            {% for field_name, errors in form.errors.items() %}
+                {% for error in errors %}
+                    <p class="about-editor-error">{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+
+            {{ form.submit(class='about-editor-submit') }}
+        </form>
+    </main>
+
+    {% include '_platform_footer.html' %}
+</body>
+</html>

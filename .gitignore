@@ -9,4 +9,5 @@ instance/
 curriculum/raw/
 curriculum/processed/
 uploads/*
-!uploads/.gitkeepworksheet-download-test.pdf
+!uploads/.gitkeep
+worksheet-download-test.pdf

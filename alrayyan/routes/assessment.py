@@ -689,6 +689,10 @@ def save_worksheet_settings(
         form.max_attempts.data
     )
 
+    worksheet.attempt_score_policy = (
+        form.attempt_score_policy.data
+    )
+
     worksheet.allow_multiple_attempts = (
         form.max_attempts.data > 1
     )
@@ -1216,9 +1220,36 @@ def my_results():
         .all()
     )
 
+    completed_attempts = [
+        attempt
+        for attempt in attempts
+        if attempt.submitted_at
+    ]
+
+    results_summary = {
+        "attempts_count": len(attempts),
+        "completed_count": len(
+            completed_attempts
+        ),
+        "passed_count": sum(
+            1
+            for attempt in completed_attempts
+            if attempt.is_passed
+        ),
+        "best_percentage": max(
+            (
+                attempt.percentage
+                for attempt
+                in completed_attempts
+            ),
+            default=0.0,
+        ),
+    }
+
     return render_template(
         "student_results.html",
         attempts=attempts,
+        results_summary=results_summary,
     )
 
 
@@ -1675,9 +1706,9 @@ def worksheet_results(worksheet_id):
     """
     Display a separate results dashboard.
 
-    Statistics use the latest submitted
-    attempt for each student so a student
-    is not counted more than once.
+    Statistics use the score policy selected
+    by the teacher so each student is counted
+    exactly once.
     """
 
     worksheet = (
@@ -1719,36 +1750,118 @@ def worksheet_results(worksheet_id):
             + 1
         )
 
-    latest_attempt_by_student = {}
+    attempts_by_student = {}
 
     for attempt in submitted_attempts:
-        if (
-            attempt.student_id
-            not in latest_attempt_by_student
-        ):
-            latest_attempt_by_student[
-                attempt.student_id
-            ] = attempt
+        attempts_by_student.setdefault(
+            attempt.student_id,
+            [],
+        ).append(attempt)
 
     result_rows = []
 
-    for attempt in (
-        latest_attempt_by_student.values()
+    for student_attempts in (
+        attempts_by_student.values()
     ):
-        pending_manual_grading = any(
-            answer.is_correct is None
-            for answer in attempt.answers
+        chronological_attempts = sorted(
+            student_attempts,
+            key=lambda item: item.submitted_at,
+        )
+
+        pending_attempts = [
+            item
+            for item in chronological_attempts
+            if any(
+                answer.is_correct is None
+                for answer in item.answers
+            )
+        ]
+
+        policy = (
+            worksheet.attempt_score_policy
+            or "highest"
+        )
+
+        if policy == "first":
+            counted_attempt = (
+                chronological_attempts[0]
+            )
+            counted_percentage = (
+                counted_attempt.percentage
+            )
+            counted_score = counted_attempt.score
+        elif policy == "latest":
+            counted_attempt = (
+                chronological_attempts[-1]
+            )
+            counted_percentage = (
+                counted_attempt.percentage
+            )
+            counted_score = counted_attempt.score
+        elif policy == "average":
+            counted_attempt = (
+                chronological_attempts[-1]
+            )
+            counted_percentage = sum(
+                item.percentage
+                for item in chronological_attempts
+            ) / len(chronological_attempts)
+            counted_score = (
+                counted_percentage
+                / 100
+                * counted_attempt.max_score
+                if counted_attempt.max_score
+                else 0.0
+            )
+        else:
+            counted_attempt = max(
+                chronological_attempts,
+                key=lambda item: (
+                    item.percentage,
+                    item.submitted_at,
+                ),
+            )
+            counted_percentage = (
+                counted_attempt.percentage
+            )
+            counted_score = counted_attempt.score
+
+        review_attempt = (
+            pending_attempts[-1]
+            if pending_attempts
+            else counted_attempt
+        )
+
+        pending_manual_grading = bool(
+            pending_attempts
+        )
+
+        counted_is_passed = (
+            not pending_manual_grading
+            and counted_percentage
+            >= worksheet.passing_score
         )
 
         result_rows.append(
             {
-                "attempt": attempt,
+                "attempt": review_attempt,
+                "counted_attempt": counted_attempt,
+                "counted_percentage": (
+                    counted_percentage
+                ),
+                "counted_score": counted_score,
+                "counted_max_score": (
+                    counted_attempt.max_score
+                ),
+                "counted_is_passed": (
+                    counted_is_passed
+                ),
                 "pending": (
                     pending_manual_grading
                 ),
                 "attempts_count": (
                     attempts_count_by_student[
-                        attempt.student_id
+                        counted_attempt.student_id
                     ]
                 ),
             }
@@ -1774,7 +1887,7 @@ def worksheet_results(worksheet_id):
         for row in result_rows
         if (
             not row["pending"]
-            and row["attempt"].is_passed
+            and row["counted_is_passed"]
         )
     )
 
@@ -1783,7 +1896,7 @@ def worksheet_results(worksheet_id):
         for row in result_rows
         if (
             not row["pending"]
-            and not row["attempt"].is_passed
+            and not row["counted_is_passed"]
         )
     )
 
@@ -1793,7 +1906,7 @@ def worksheet_results(worksheet_id):
         if (
             not row["pending"]
             and 90
-            <= row["attempt"].percentage
+            <= row["counted_percentage"]
             < 100
         )
     )
@@ -1803,13 +1916,13 @@ def worksheet_results(worksheet_id):
         for row in result_rows
         if (
             not row["pending"]
-            and row["attempt"].percentage
+            and row["counted_percentage"]
             >= 100
         )
     )
 
     graded_percentages = [
-        row["attempt"].percentage
+        row["counted_percentage"]
         for row in result_rows
         if not row["pending"]
     ]

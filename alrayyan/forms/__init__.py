@@ -4,6 +4,7 @@ from alrayyan.forms.assessment import (
 )
 
 from alrayyan.forms.auth import (
+    AccountSettingsForm,
     LoginForm,
 )
 
@@ -12,11 +13,17 @@ from alrayyan.forms.worksheet import (
     UploadWorksheetForm,
 )
 
+from alrayyan.forms.site_content import (
+    AboutPageForm,
+)
+
 
 __all__ = [
     "LoginForm",
+    "AccountSettingsForm",
     "EditWorksheetForm",
     "UploadWorksheetForm",
     "QuestionForm",
     "WorksheetSettingsForm",
+    "AboutPageForm",
 ]

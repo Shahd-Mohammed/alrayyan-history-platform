@@ -25,68 +25,7 @@
 </head>
 
 <body>
-    <header class="site-header">
-        <a
-            class="brand"
-            href="{{ url_for('main.home') }}"
-        >
-            <img
-                src="{{ url_for(
-                    'static',
-                    filename='images/alrayyan-logo.png'
-                ) }}"
-                alt="الريان في الدراسات التاريخية"
-            >
-        </a>
-
-        <nav class="main-nav">
-            <a href="{{ url_for('main.home') }}">
-                الرئيسية
-            </a>
-
-            <a
-                class="active"
-                href="{{ url_for(
-                    'worksheets.worksheet_list'
-                ) }}"
-            >
-                أوراق العمل
-            </a>
-
-            <a href="{{ url_for('teacher.teacher_page') }}">
-                المعلّم الذكي
-            </a>
-
-            {% if current_user.role in ["teacher", "admin"] %}
-                <a
-                    href="{{ url_for(
-                        'teacher_dashboard.dashboard'
-                    ) }}"
-                >
-                    لوحة المعلمة
-                </a>
-            {% elif current_user.role == "student" %}
-                <a href="{{ url_for('main.student_dashboard') }}">
-                    لوحة الطالب
-                </a>
-            {% endif %}
-
-            <form
-                class="logout-form"
-                method="post"
-                action="{{ url_for('auth.logout') }}"
-            >
-                <input
-                    type="hidden"
-                    name="csrf_token"
-                    value="{{ csrf_token() }}"
-                >
-                <button type="submit">
-                    تسجيل الخروج
-                </button>
-            </form>
-        </nav>
-    </header>
+    {% include '_platform_header.html' %}
 
     <main class="details-page">
         {% set messages = get_flashed_messages(
@@ -359,6 +298,7 @@
             </div>
         </section>
     </main>
+    {% include '_platform_footer.html' %}
 </body>
 
 </html>

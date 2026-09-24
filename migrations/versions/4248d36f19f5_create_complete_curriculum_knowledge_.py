@@ -1,7 +1,7 @@
 """Create complete curriculum knowledge schema
 
 Revision ID: 4248d36f19f5
-Revises: 
+Revises:
 Create Date: 2026-09-19 17:45:32.648181
 
 """

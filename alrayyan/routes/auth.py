@@ -10,11 +10,16 @@ from flask import (
 )
 from flask_login import (
     current_user,
+    login_required,
     login_user,
     logout_user,
 )
 
-from alrayyan.forms import LoginForm
+from alrayyan.extensions import db
+from alrayyan.forms import (
+    AccountSettingsForm,
+    LoginForm,
+)
 from alrayyan.models import User
 
 
@@ -161,11 +166,84 @@ def logout():
     if current_user.is_authenticated:
         logout_user()
 
-    flash(
-        "تم تسجيل الخروج بنجاح.",
-        "success",
-    )
-
     return redirect(
         url_for("main.home")
+    )
+
+
+@auth_bp.route(
+    "/account/",
+    methods=["GET", "POST"],
+)
+@login_required
+def account_settings():
+    """Display and update the signed-in user's account."""
+
+    form = AccountSettingsForm(
+        obj=current_user
+    )
+
+    if form.validate_on_submit():
+        normalized_email = (
+            form.email.data
+            .strip()
+            .lower()
+        )
+
+        duplicate_user = (
+            User.query
+            .filter(
+                User.email == normalized_email,
+                User.id != current_user.id,
+            )
+            .first()
+        )
+
+        if duplicate_user:
+            form.email.errors.append(
+                "هذا البريد مستخدم في حساب آخر."
+            )
+        elif (
+            form.new_password.data
+            and not form.current_password.data
+        ):
+            form.current_password.errors.append(
+                "اكتبي كلمة المرور الحالية أولًا."
+            )
+        elif (
+            form.new_password.data
+            and not current_user.check_password(
+                form.current_password.data
+            )
+        ):
+            form.current_password.errors.append(
+                "كلمة المرور الحالية غير صحيحة."
+            )
+        else:
+            current_user.full_name = (
+                form.full_name.data.strip()
+            )
+            current_user.email = normalized_email
+
+            if form.new_password.data:
+                current_user.set_password(
+                    form.new_password.data
+                )
+
+            db.session.commit()
+
+            flash(
+                "تم تحديث بيانات حسابك بنجاح.",
+                "success",
+            )
+
+            return redirect(
+                url_for(
+                    "auth.account_settings"
+                )
+            )
+
+    return render_template(
+        "account_settings.html",
+        form=form,
     )

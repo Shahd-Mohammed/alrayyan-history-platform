@@ -12,6 +12,7 @@ from flask_login import (
 )
 
 from alrayyan.models import (
+    AboutPage,
     Worksheet,
     WorksheetAttempt,
 )
@@ -25,8 +26,38 @@ main_bp = Blueprint(
 
 @main_bp.get("/")
 def home():
+    featured_worksheets = (
+        Worksheet.query
+        .filter_by(
+            publication_status="published",
+            is_published=True,
+        )
+        .order_by(
+            Worksheet.created_at.desc()
+        )
+        .limit(5)
+        .all()
+    )
+
     return render_template(
-        "home.html"
+        "home.html",
+        featured_worksheets=(
+            featured_worksheets
+        ),
+    )
+
+
+@main_bp.get("/about/")
+def about():
+    """Display the teacher and platform story."""
+
+    about_content = (
+        AboutPage.get_or_create()
+    )
+
+    return render_template(
+        "about.html",
+        about_content=about_content,
     )
 
 

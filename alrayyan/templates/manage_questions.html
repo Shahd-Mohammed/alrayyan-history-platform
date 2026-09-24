@@ -23,29 +23,7 @@
 </head>
 
 <body>
-    <header class="dashboard-header">
-        <a
-            class="dashboard-brand"
-            href="{{ url_for('main.home') }}"
-        >
-            <img
-                src="{{ url_for(
-                    'static',
-                    filename='images/alrayyan-logo.png'
-                ) }}"
-                alt="الريان"
-            >
-        </a>
-
-        <a
-            class="return-link"
-            href="{{ url_for(
-                'teacher_dashboard.dashboard'
-            ) }}"
-        >
-            العودة إلى لوحة المعلمة
-        </a>
-    </header>
+    {% include '_platform_header.html' %}
 
     <main class="form-page">
         {% with messages = get_flashed_messages(
@@ -147,6 +125,26 @@
 
                         {% for error in
                             settings_form.max_attempts.errors
+                        %}
+                            <small class="field-error">
+                                {{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+
+                    <div class="field-group full-width score-policy-field">
+                        {{ settings_form.attempt_score_policy.label }}
+
+                        {{ settings_form.attempt_score_policy() }}
+
+                        <small>
+                            اختاري العلامة التي ستظهر كعلامة
+                            الطالب المعتمدة في لوحة النتائج
+                            والإحصائيات.
+                        </small>
+
+                        {% for error in
+                            settings_form.attempt_score_policy.errors
                         %}
                             <small class="field-error">
                                 {{ error }}
@@ -342,7 +340,10 @@
                             value="{{ csrf_token() }}"
                         >
 
-                        <button type="submit">
+                        <button
+                            class="question-delete-action"
+                            type="submit"
+                        >
                             حذف السؤال
                         </button>
                     </form>
@@ -355,6 +356,7 @@
             {% endfor %}
         </section>
     </main>
+    {% include '_platform_footer.html' %}
 </body>
 
 </html>
