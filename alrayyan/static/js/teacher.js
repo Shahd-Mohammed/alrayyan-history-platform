@@ -1,4 +1,7 @@
 const form = document.getElementById("teacher-form");
+const csrfToken = document.getElementById(
+    "teacher-csrf-token"
+).value;
 const input = document.getElementById("question-input");
 const sendButton = document.getElementById("send-button");
 const messages = document.getElementById("chat-messages");
@@ -107,12 +110,22 @@ async function askTeacher(question) {
         const response = await fetch("/teacher/ask", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
             },
             body: JSON.stringify({
                 question: question
             })
         });
+
+        const contentType =
+            response.headers.get("content-type") || "";
+
+        if (!contentType.includes("application/json")) {
+            throw new Error(
+                `تعذّر الاتصال بالخادم (${response.status}).`
+            );
+        }
 
         const data = await response.json();
 

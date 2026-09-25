@@ -177,6 +177,11 @@
                 </div>
 
                 <form id="teacher-form" class="question-form">
+                    <input
+                        id="teacher-csrf-token"
+                        type="hidden"
+                        value="{{ csrf_token() }}"
+                    >
                     <label for="question-input">
                         اكتب سؤالك
                     </label>
