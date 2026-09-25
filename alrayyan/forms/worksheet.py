@@ -129,9 +129,7 @@ class EditWorksheetForm(FlaskForm):
         "الدرس",
         coerce=int,
         validators=[
-            DataRequired(
-                message="يرجى اختيار الدرس."
-            )
+            Optional()
         ],
     )
 
