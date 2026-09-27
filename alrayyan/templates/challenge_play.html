@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الجولة {{ challenge.current_round }} | تحدي الريان</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/challenge.css') }}">
+</head>
+<body>
+    {% include '_platform_header.html' %}
+    <main
+        class="challenge-shell play-shell"
+        id="challenge-app"
+        data-answer-url="{{ url_for('challenges.answer', session_id=challenge.id, question_id=question.id) }}"
+        data-hint-url="{{ url_for('challenges.hint', session_id=challenge.id, question_id=question.id) }}"
+        data-csrf-token="{{ csrf_token() }}"
+    >
+        <section class="game-hud">
+            <div class="hud-item"><span>الجولة</span><strong>{{ challenge.current_round }}/{{ challenge.total_rounds }}</strong></div>
+            <div class="hud-item"><span>النقاط</span><strong id="hud-score">{{ challenge.score }}</strong></div>
+            <div class="hud-item"><span>XP</span><strong id="hud-xp">{{ challenge.xp_earned }}</strong></div>
+            <div class="hud-item combo"><span>Combo</span><strong id="hud-combo">×{{ challenge.combo }}</strong></div>
+        </section>
+
+        <div class="progress-track" aria-label="تقدم التحدي">
+            <span style="width: {{ progress }}%"></span>
+        </div>
+
+        <section class="question-stage">
+            <header class="question-meta">
+                <span>{{ challenge.lesson.title }}</span>
+                <span class="difficulty-badge">{{ {'beginner':'مبتدئ','medium':'متوسط','advanced':'متقدم'}[question.difficulty] }}</span>
+            </header>
+            <h1>{{ question.question_text }}</h1>
+
+            <div class="option-grid" id="option-grid">
+                {% for option in question.options_json %}
+                    <button class="challenge-option" type="button" data-option-index="{{ loop.index0 }}">
+                        <span>{{ ['أ','ب','ج','د'][loop.index0] }}</span>
+                        <b>{{ option }}</b>
+                    </button>
+                {% endfor %}
+            </div>
+
+            <div class="challenge-actions">
+                <button id="hint-button" class="hint-button" type="button">💡 استخدم تلميحًا</button>
+                <p id="hint-box" class="hint-box" hidden></p>
+            </div>
+
+            <section id="feedback-panel" class="feedback-panel" hidden>
+                <div id="feedback-title" class="feedback-title"></div>
+                <p id="feedback-text"></p>
+                <div class="reward-row">
+                    <span id="score-reward"></span>
+                    <span id="xp-reward"></span>
+                    <span id="combo-reward"></span>
+                </div>
+                <div id="source-list" class="source-list"></div>
+                <a id="next-round-link" class="challenge-primary-button" href="#">الجولة التالية ←</a>
+            </section>
+        </section>
+    </main>
+    <script src="{{ url_for('static', filename='js/challenge.js') }}"></script>
+    {% include '_platform_footer.html' %}
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نتيجة التحدي | الريان</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/challenge.css') }}">
+</head>
+<body>
+    {% include '_platform_header.html' %}
+    <main class="challenge-shell result-shell">
+        <section class="result-card">
+            <div class="result-crown">✦</div>
+            <span class="eyebrow">اكتمل التحدي</span>
+            <h1>أحسنت يا {{ current_user.first_name }}</h1>
+            <p>أنهيت تحدي «{{ challenge.lesson.title }}».</p>
+
+            <div class="result-stats">
+                <article><span>الدقة</span><strong>{{ accuracy }}%</strong></article>
+                <article><span>النقاط</span><strong>{{ challenge.score }}</strong></article>
+                <article><span>XP المكتسبة</span><strong>+{{ challenge.xp_earned }}</strong></article>
+                <article><span>أفضل Combo</span><strong>×{{ challenge.best_combo }}</strong></article>
+            </div>
+
+            <div class="result-actions">
+                <a class="challenge-primary-button" href="{{ url_for('challenges.setup') }}">ابدأ تحديًا جديدًا</a>
+                <a class="challenge-secondary-button" href="{{ url_for('teacher.teacher_page') }}">العودة إلى المعلم الذكي</a>
+            </div>
+        </section>
+    </main>
+    {% include '_platform_footer.html' %}
+</body>
+</html>

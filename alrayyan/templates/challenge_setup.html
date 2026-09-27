@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي المعلّم الذكي | الريان</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/challenge.css') }}">
+</head>
+<body>
+    {% include '_platform_header.html' %}
+    <main class="challenge-shell setup-shell">
+        <section class="challenge-hero">
+            <div>
+                <span class="eyebrow">AI TEACHER CHALLENGE</span>
+                <h1>حوّل الدرس إلى مغامرة معرفية</h1>
+                <p>اختر الدرس والمستوى، ثم ابدأ جولات متكيفة وموثقة من المنهج.</p>
+            </div>
+            <div class="hero-orbit" aria-hidden="true">✦</div>
+        </section>
+
+        {% set messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="challenge-alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+
+        <form class="challenge-setup-card" method="post" action="{{ url_for('challenges.start') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label>
+                <span>الدرس</span>
+                <select name="lesson_id">
+                    <option value="">اختاري الدرس</option>
+                    {% for lesson in lessons %}
+                        <option value="{{ lesson.id }}">{{ lesson.title }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>
+                <span>المفهوم — اختياري</span>
+                <input name="concept" maxlength="250" placeholder="مثال: دوافع الاستعمار الاقتصادية">
+            </label>
+
+            <fieldset>
+                <legend>مستوى الصعوبة</legend>
+                <div class="difficulty-grid">
+                    <label><input type="radio" name="difficulty" value="beginner"><b>مبتدئ</b><small>استرجاع مباشر</small></label>
+                    <label><input type="radio" name="difficulty" value="medium" checked><b>متوسط</b><small>فهم وربط</small></label>
+                    <label><input type="radio" name="difficulty" value="advanced"><b>متقدم</b><small>تحليل ومقارنة</small></label>
+                    <label><input type="radio" name="difficulty" value="adaptive"><b>متكيف</b><small>يتغير مع أدائك</small></label>
+                </div>
+            </fieldset>
+
+            <label>
+                <span>عدد الجولات</span>
+                <select name="total_rounds">
+                    <option value="3">3 جولات</option>
+                    <option value="5" selected>5 جولات</option>
+                    <option value="10">10 جولات</option>
+                </select>
+            </label>
+
+            <label class="random-choice">
+                <input type="checkbox" name="random_mode" value="1">
+                <span><b>اختبرني عشوائيًا</b><small>سيختار النظام درسًا من المحتوى المتاح.</small></span>
+            </label>
+
+            <button class="challenge-primary-button" type="submit">ابدأ التحدي <span>←</span></button>
+        </form>
+    </main>
+    {% include '_platform_footer.html' %}
+</body>
+</html>

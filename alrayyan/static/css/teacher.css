@@ -598,3 +598,24 @@ textarea {
         width: 100%;
     }
 }
+
+.challenge-launch-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 13px 21px;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--gold), #a97922);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(201, 155, 61, 0.24);
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.challenge-launch-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 35px rgba(201, 155, 61, 0.32);
+}
