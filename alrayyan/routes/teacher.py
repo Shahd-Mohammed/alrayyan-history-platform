@@ -1,6 +1,16 @@
 from datetime import datetime, timezone
 
-from flask import Blueprint, abort, current_app, jsonify, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    abort,
+    current_app,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
@@ -13,6 +23,34 @@ from alrayyan.services.tutor_engine import tutor_reply
 
 
 teacher_bp = Blueprint("teacher", __name__, url_prefix="/teacher")
+@teacher_bp.before_request
+def restrict_ai_tutor_to_students():
+    """
+    Restrict the interactive AI Tutor,
+    learning plan, quizzes, and points
+    wallet to student accounts.
+    """
+
+    if not current_user.is_authenticated:
+        return None
+
+    if current_user.role == "student":
+        return None
+
+    flash(
+        (
+            "المعلّم الذكي التفاعلي والتحديات "
+            "مخصصة لحساب الطالب. "
+            "تم تحويلك إلى لوحة المعلمة."
+        ),
+        "info",
+    )
+
+    return redirect(
+        url_for(
+            "teacher_dashboard.dashboard"
+        )
+    )
 
 
 def utc_now():
