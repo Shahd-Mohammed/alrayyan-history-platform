@@ -2,229 +2,132 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>المعلّم الذكي | الريان في الدراسات التاريخية</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المعلّم الذكي التفاعلي | الريان</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/teacher.css') }}"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}">
 </head>
-
 <body>
     {% include '_platform_header.html' %}
 
-    <main class="teacher-page">
-        <section class="teacher-intro">
+    <main
+        class="teacher-page tutor-page"
+        id="tutor-app"
+        data-create-url="{{ url_for('teacher.create_conversation') }}"
+        data-message-url-template="{{ url_for('teacher.send_tutor_message', conversation_id=0) }}"
+        data-history-url-template="{{ url_for('teacher.conversation_messages', conversation_id=0) }}"
+        data-quiz-url="{{ url_for('teacher.start_quick_quiz') }}"
+        data-initial-concept="{{ initial_concept }}"
+        data-review-mode="{{ 'true' if review_mode else 'false' }}"
+        data-csrf-token="{{ csrf_token() }}"
+    >
+        <section class="teacher-intro tutor-intro">
             <div>
-                <span class="intro-label">
-                    مدعوم بمصادر المنهج
-                </span>
-
-                <h1>
-                    اسأل
-                    <span>المعلّم الذكي</span>
-                </h1>
-
+                <span class="intro-label">تعلم يفهم مستواك</span>
+                <h1>المعلّم <span>الذكي التفاعلي</span></h1>
                 <p>
-                    اطرح سؤالك عن منهج الدراسات التاريخية،
-                    واحصل على شرح واضح ومبسّط مع المصادر
-                    وأرقام الصفحات.
+                    لا يكتفي بإعطائك الإجابة؛ يناقشك، يقيّم فهمك،
+                    يقدم تلميحات، ويقترح الخطوة التعليمية المناسبة.
                 </p>
-
-                <a
-                    class="challenge-launch-button"
-                    href="{{ url_for('challenges.setup') }}"
-                >
-                    <span>🎮</span>
-                    ابدأ تحدي المعلّم الذكي
-                </a>
-            </div>
-
-            <div class="knowledge-status">
-                <span class="status-dot"></span>
-
-                <div>
-                    <strong>قاعدة المعرفة جاهزة</strong>
-                    <small>
-                        ملزمة الريان والكتاب الرسمي
-                    </small>
+                <div class="tutor-hero-actions">
+                    <a class="gold-action" href="{{ url_for('challenges.setup') }}">🎮 ابدأ التحدي</a>
+                    <a class="outline-action" href="{{ url_for('teacher.learning_hub') }}">خطتي ونقاط الضعف</a>
                 </div>
+            </div>
+            <div class="tutor-capability-list">
+                <span>محادثة تعليمية</span>
+                <span>تقييم الفهم</span>
+                <span>تلميحات تدريجية</span>
+                <span>مصادر موثقة</span>
             </div>
         </section>
 
-        <section class="chat-layout">
-            <aside class="chat-sidebar">
-                <div class="sidebar-heading">
-                    <span class="sidebar-icon">✦</span>
+        <section class="tutor-tools" aria-label="أدوات التعلم">
+            <article><b>محادثة تفاعلية</b><small>تعلم بأسئلة متتابعة</small></article>
+            <article><b>تحدي ذكي</b><small>نقاط وXP وصعوبة متكيفة</small></article>
+            <article><b>اختبار سريع</b><small>ثلاث جولات لقياس الفهم</small></article>
+            <article><b>خطة شخصية</b><small>مبنية على نقاط ضعفك</small></article>
+        </section>
 
-                    <div>
-                        <h2>أسئلة مقترحة</h2>
-                        <p>اضغطي على أي سؤال لتجربته</p>
-                    </div>
+        <section class="tutor-workspace">
+            <aside class="tutor-sidebar">
+                <div class="new-conversation-panel">
+                    <h2>ابدأ جلسة تعلم</h2>
+                    <label for="lesson-select">الدرس</label>
+                    <select id="lesson-select">
+                        <option value="">بحث عام في المنهج</option>
+                        {% for lesson in lessons %}
+                            <option value="{{ lesson.id }}" {% if lesson.id == initial_lesson_id %}selected{% endif %}>{{ lesson.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <button id="new-conversation" class="gold-action" type="button">محادثة جديدة</button>
+                    <button id="quick-quiz" class="soft-gold-action" type="button">اختبار سريع — 5 أسئلة</button>
                 </div>
 
-                <button
-                    class="suggestion-button"
-                    type="button"
-                    data-question="ما المقصود بالاستعمار وما أهم دوافعه؟"
-                >
-                    ما المقصود بالاستعمار وما دوافعه؟
-                </button>
-
-                <button
-                    class="suggestion-button"
-                    type="button"
-                    data-question="اشرح الاستعمار الاستيطاني في الجزائر."
-                >
-                    الاستعمار الاستيطاني في الجزائر
-                </button>
-
-                <button
-                    class="suggestion-button"
-                    type="button"
-                    data-question="كيف فرض الانتداب الفرنسي على سوريا ولبنان؟"
-                >
-                    الانتداب الفرنسي على سوريا ولبنان
-                </button>
-
-                <button
-                    class="suggestion-button"
-                    type="button"
-                    data-question="ما الفرق بين الاستعمار والانتداب؟"
-                >
-                    الفرق بين الاستعمار والانتداب
-                </button>
-
-                <div class="source-priority">
-                    <span>ترتيب المصادر</span>
-
-                    <ol>
-                        <li>
-                            <strong>ملزمة الريان</strong>
-                            <small>المصدر التعليمي الأساسي</small>
-                        </li>
-
-                        <li>
-                            <strong>الكتاب الرسمي</strong>
-                            <small>المصدر المرجعي المعتمد</small>
-                        </li>
-                    </ol>
+                <div class="conversation-history">
+                    <h2>محادثاتي</h2>
+                    <div id="conversation-list">
+                        {% for conversation in conversations %}
+                            <button type="button" data-conversation-id="{{ conversation.id }}">
+                                <b>{{ conversation.title }}</b>
+                                <small>{{ conversation.lesson.title if conversation.lesson else 'بحث عام' }}</small>
+                            </button>
+                        {% else %}
+                            <p id="empty-history">لا توجد محادثات سابقة.</p>
+                        {% endfor %}
+                    </div>
                 </div>
             </aside>
 
-            <section class="chat-card">
+            <section class="chat-card tutor-chat-card">
                 <div class="chat-card-header">
                     <div class="teacher-avatar">ر</div>
-
                     <div>
-                        <h2>معلّم الريان</h2>
-
-                        <span>
-                            <i></i>
-                            متصل وجاهز للإجابة
-                        </span>
+                        <h2 id="conversation-title">معلّم الريان</h2>
+                        <span><i></i> يتعلم معك خطوة بخطوة</span>
                     </div>
-
-                    <button
-                        id="clear-chat"
-                        class="clear-button"
-                        type="button"
-                        title="مسح المحادثة"
-                    >
-                        محادثة جديدة
-                    </button>
+                    <a class="learning-hub-link" href="{{ url_for('teacher.learning_hub') }}">تقدمي</a>
                 </div>
 
-                <div
-                    id="chat-messages"
-                    class="chat-messages"
-                    aria-live="polite"
-                >
+                <div id="chat-messages" class="chat-messages" aria-live="polite">
                     <article class="message assistant-message">
                         <div class="message-avatar">ر</div>
-
                         <div class="message-content">
-                            <span class="message-name">
-                                معلّم الريان
-                            </span>
-
+                            <span class="message-name">معلّم الريان</span>
                             <div class="message-bubble">
-                                أهلًا بك! أنا معلّم الريان الذكي.
-                                اسألني عن دروس الدراسات التاريخية
-                                للصف الحادي عشر، وسأجيبك اعتمادًا
-                                على مصادر المنهج.
+                                أهلًا {{ current_user.first_name }}. اختاري درسًا ثم ابدئي محادثة؛ سأشرح لك وأسألك وأساعدك على اكتشاف الإجابة.
                             </div>
                         </div>
                     </article>
                 </div>
 
-                <div
-                    id="typing-indicator"
-                    class="typing-indicator"
-                    hidden
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <div id="typing-indicator" class="typing-indicator" hidden>
+                    <span></span><span></span><span></span>
+                    <p>أراجع السياق وأحدد الخطوة التعليمية...</p>
+                </div>
 
-                    <p>أبحث داخل المنهج وأجهّز الإجابة...</p>
+                <div id="tutor-insight" class="tutor-insight" hidden>
+                    <span id="evaluation-badge"></span>
+                    <span id="mastery-badge"></span>
+                    <span id="xp-badge"></span>
+                    <a id="progress-link" class="gold-action" href="{{ url_for('teacher.learning_hub') }}">عرض تحديث خطتي</a>
                 </div>
 
                 <form id="teacher-form" class="question-form">
-                    <input
-                        id="teacher-csrf-token"
-                        type="hidden"
-                        value="{{ csrf_token() }}"
-                    >
-                    <label for="question-input">
-                        اكتب سؤالك
-                    </label>
-
+                    <label for="question-input">اكتبي سؤالك أو أجيبي عن سؤال المعلم</label>
                     <div class="input-wrapper">
-                        <textarea
-                            id="question-input"
-                            name="question"
-                            rows="2"
-                            maxlength="1000"
-                            placeholder="مثال: ما دوافع الاستعمار الفرنسي للجزائر؟"
-                            required
-                        ></textarea>
-
-                        <button
-                            id="send-button"
-                            type="submit"
-                        >
-                            <span>إرسال السؤال</span>
-                            <b>←</b>
-                        </button>
+                        <textarea id="question-input" rows="2" maxlength="1200" placeholder="مثال: أعتقد أن السبب هو الحاجة إلى المواد الخام..." required>{% if review_mode and initial_concept %}أريد مراجعة مفهوم {{ initial_concept }}{% endif %}</textarea>
+                        <button id="send-button" type="submit"><span>إرسال</span><b>←</b></button>
                     </div>
-
-                    <small>
-                        يجيب المعلّم اعتمادًا على المصادر
-                        التعليمية المتاحة في المنصة.
-                    </small>
+                    <small>تُحفظ الجلسة لتستطيعي المتابعة من حيث توقفتِ.</small>
                 </form>
             </section>
         </section>
     </main>
 
-    <script
-        src="{{ url_for('static', filename='js/teacher.js') }}"
-    ></script>
+    <script src="{{ url_for('static', filename='js/teacher.js') }}"></script>
     {% include '_platform_footer.html' %}
 </body>
 </html>

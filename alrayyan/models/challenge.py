@@ -23,6 +23,12 @@ class ChallengeSession(db.Model):
         nullable=True,
         index=True,
     )
+    learning_plan_item_id = db.Column(
+        db.Integer,
+        db.ForeignKey("learning_plan_items.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     concept = db.Column(db.String(250), nullable=True)
     mode = db.Column(
         db.String(30), nullable=False, default="lesson"
@@ -48,6 +54,7 @@ class ChallengeSession(db.Model):
 
     student = db.relationship("User")
     lesson = db.relationship("Lesson")
+    learning_plan_item = db.relationship("LearningPlanItem")
     questions = db.relationship(
         "ChallengeQuestion",
         back_populates="session",

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محفظة نقاطي | الريان</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}">
+</head>
+<body>
+    {% include '_platform_header.html' %}
+    <main class="points-page">
+        <section class="points-hero">
+            <div>
+                <span>تقدمك في المنصة</span>
+                <h1>محفظة نقاطي</h1>
+                <p>كل نقطة موثقة بالنشاط الذي اكتسبتِها منه.</p>
+            </div>
+            <div class="points-total">
+                <small>إجمالي XP</small>
+                <strong>{{ current_user.points or 0 }}</strong>
+                <span>المستوى {{ current_user.level or 1 }}</span>
+            </div>
+        </section>
+
+        <section class="points-summary">
+            {% for reason, amount in totals_by_reason.items() %}
+                <article>
+                    <span>{{ reason_labels.get(reason, reason) }}</span>
+                    <strong>+{{ amount }} XP</strong>
+                </article>
+            {% else %}
+                <article class="points-empty">ابدئي نشاطًا تعليميًا لتظهَر نقاطك هنا.</article>
+            {% endfor %}
+        </section>
+
+        <section class="points-history">
+            <div class="hub-heading">
+                <div><span>سجل موثّق</span><h2>آخر حركات النقاط</h2></div>
+            </div>
+            <div class="points-list">
+                {% for transaction in transactions %}
+                    <article>
+                        <div>
+                            <strong>{{ reason_labels.get(transaction.reason, transaction.reason) }}</strong>
+                            <small>{{ transaction.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        </div>
+                        <b>+{{ transaction.amount }} XP</b>
+                    </article>
+                {% else %}
+                    <div class="hub-empty">لا توجد حركات نقاط حتى الآن.</div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+    {% include '_platform_footer.html' %}
+</body>
+</html>

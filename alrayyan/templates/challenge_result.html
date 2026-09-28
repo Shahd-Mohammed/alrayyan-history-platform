@@ -15,6 +15,18 @@
             <h1>أحسنت يا {{ current_user.first_name }}</h1>
             <p>أنهيت تحدي «{{ challenge.lesson.title }}».</p>
 
+            {% if plan_item %}
+                <div class="mastery-verification {{ 'passed' if accuracy >= 70 else 'retry' }}">
+                    {% if accuracy >= 70 %}
+                        <strong>تم اعتماد المراجعة بنجاح</strong>
+                        <span>حققتِ {{ accuracy }}%، وأُغلقت المهمة بعد التحقق من إتقانك.</span>
+                    {% else %}
+                        <strong>المراجعة ما زالت قيد التعلّم</strong>
+                        <span>حققتِ {{ accuracy }}%. راجعي المفهوم مع المعلم ثم أعيدي اختبار الإتقان.</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+
             <div class="result-stats">
                 <article><span>الدقة</span><strong>{{ accuracy }}%</strong></article>
                 <article><span>النقاط</span><strong>{{ challenge.score }}</strong></article>
@@ -23,6 +35,7 @@
             </div>
 
             <div class="result-actions">
+                <a class="challenge-primary-button" href="{{ url_for('teacher.my_points') }}">محفظة نقاطي</a>
                 <a class="challenge-primary-button" href="{{ url_for('challenges.setup') }}">ابدأ تحديًا جديدًا</a>
                 <a class="challenge-secondary-button" href="{{ url_for('teacher.teacher_page') }}">العودة إلى المعلم الذكي</a>
             </div>

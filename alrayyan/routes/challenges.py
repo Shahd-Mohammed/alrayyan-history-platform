@@ -11,6 +11,7 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
+from sqlalchemy.exc import IntegrityError
 
 from alrayyan.extensions import db
 from alrayyan.models import (
@@ -18,8 +19,11 @@ from alrayyan.models import (
     ChallengeQuestion,
     ChallengeQuestionSource,
     ChallengeSession,
+    ConceptMastery,
     ContentChunk,
+    LearningPlanItem,
     Lesson,
+    Worksheet,
     XPTransaction,
 )
 from alrayyan.services.challenge_engine import (
@@ -29,6 +33,8 @@ from alrayyan.services.challenge_engine import (
 )
 from alrayyan.services.challenge_generator import (
     generate_challenge_question,
+    question_similarity_score,
+    questions_are_similar,
 )
 
 
@@ -82,11 +88,102 @@ def create_question_for_session(session):
     if existing:
         return existing
 
-    payload = generate_challenge_question(
-        session.lesson,
-        session.concept,
-        session.current_difficulty,
+    current_session_questions = [
+        item.question_text
+        for item in session.questions
+        if item.round_number < session.current_round
+    ]
+
+    recent_questions = (
+        ChallengeQuestion.query
+        .join(
+            ChallengeSession,
+            ChallengeQuestion.session_id
+            == ChallengeSession.id,
+        )
+        .filter(
+            ChallengeSession.student_id == session.student_id,
+            ChallengeSession.lesson_id == session.lesson_id,
+            ChallengeSession.id != session.id,
+        )
+        .order_by(ChallengeQuestion.created_at.desc())
+        .limit(12)
+        .all()
     )
+
+    previous_question_texts = list(
+        dict.fromkeys(
+            current_session_questions
+            + [item.question_text for item in recent_questions]
+        )
+    )
+
+    payload = None
+    best_fallback = None
+    best_fallback_similarity = 2.0
+    rejected_question_texts = []
+    last_generation_error = None
+
+    for generation_attempt in range(5):
+        try:
+            candidate = generate_challenge_question(
+                session.lesson,
+                session.concept,
+                session.current_difficulty,
+                previous_question_texts=(
+                    previous_question_texts
+                    + rejected_question_texts
+                ),
+                round_number=session.current_round,
+                variation_number=generation_attempt,
+            )
+        except RuntimeError as error:
+            last_generation_error = error
+            continue
+
+        maximum_similarity = max(
+            (
+                question_similarity_score(
+                    candidate["question_text"],
+                    previous_text,
+                )
+                for previous_text in previous_question_texts
+            ),
+            default=0.0,
+        )
+
+        if maximum_similarity < best_fallback_similarity:
+            best_fallback = candidate
+            best_fallback_similarity = maximum_similarity
+
+        is_duplicate = any(
+            questions_are_similar(
+                candidate["question_text"],
+                previous_text,
+            )
+            for previous_text in previous_question_texts
+        )
+
+        if not is_duplicate:
+            payload = candidate
+            break
+
+        rejected_question_texts.append(
+            candidate["question_text"]
+        )
+
+    if payload is None and best_fallback is not None:
+        # A valid grounded question is safer than aborting the whole session.
+        # We only use the least-similar candidate after exhausting five angles.
+        payload = best_fallback
+
+    if payload is None:
+        if last_generation_error:
+            raise last_generation_error
+        raise RuntimeError(
+            "تعذر إنشاء سؤال موثق الآن. يمكنك إعادة المحاولة "
+            "من الجولة نفسها دون خسارة تقدمك."
+        )
     question = ChallengeQuestion(
         session_id=session.id,
         round_number=session.current_round,
@@ -102,7 +199,17 @@ def create_question_for_session(session):
         prompt_version=payload["prompt_version"],
     )
     db.session.add(question)
-    db.session.flush()
+    try:
+        db.session.flush()
+    except IntegrityError:
+        db.session.rollback()
+        existing = ChallengeQuestion.query.filter_by(
+            session_id=session.id,
+            round_number=session.current_round,
+        ).first()
+        if existing:
+            return existing
+        raise
 
     chunks = ContentChunk.query.filter(
         ContentChunk.id.in_(payload["source_chunk_ids"])
@@ -134,11 +241,51 @@ def setup():
     return render_template("challenge_setup.html", lessons=lessons)
 
 
+@challenges_bp.get("/test-bank")
+@login_required
+def test_bank():
+    student_required()
+    lessons = (
+        Lesson.query
+        .join(ContentChunk, ContentChunk.lesson_id == Lesson.id)
+        .filter(ContentChunk.embedding.isnot(None))
+        .distinct()
+        .order_by(Lesson.id)
+        .all()
+    )
+    worksheets = (
+        Worksheet.query
+        .filter_by(
+            publication_status="published",
+            is_published=True,
+        )
+        .order_by(Worksheet.created_at.desc())
+        .all()
+    )
+    recent_sessions = (
+        ChallengeSession.query
+        .filter_by(student_id=current_user.id, status="completed")
+        .order_by(ChallengeSession.completed_at.desc())
+        .limit(6)
+        .all()
+    )
+    return render_template(
+        "test_bank.html",
+        lessons=lessons,
+        worksheets=worksheets,
+        recent_sessions=recent_sessions,
+    )
+
+
 @challenges_bp.post("/start")
 @login_required
 def start():
     student_required()
-    random_mode = request.form.get("random_mode") == "1"
+    scope_mode = request.form.get("scope_mode", "selected_lesson")
+    random_mode = (
+        scope_mode == "curriculum_random"
+        or request.form.get("random_mode") == "1"
+    )
     difficulty = request.form.get("difficulty", "medium")
     concept = (request.form.get("concept") or "").strip() or None
 
@@ -204,8 +351,11 @@ def play(session_id):
         question = create_question_for_session(session)
     except RuntimeError as error:
         db.session.rollback()
-        flash(str(error), "error")
-        return redirect(url_for("challenges.setup"))
+        return render_template(
+            "challenge_generation_error.html",
+            challenge=session,
+            error_message=str(error),
+        ), 503
 
     return render_template(
         "challenge_play.html",
@@ -300,6 +450,39 @@ def answer(session_id, question_id):
     if is_correct:
         session.correct_count += 1
 
+    mastery = ConceptMastery.query.filter_by(
+        student_id=current_user.id,
+        lesson_id=session.lesson_id,
+        concept=question.concept or "المفهوم العام",
+    ).first()
+
+    if mastery is None:
+        mastery = ConceptMastery(
+            student_id=current_user.id,
+            lesson_id=session.lesson_id,
+            concept=question.concept or "المفهوم العام",
+            mastery_score=50,
+            correct_count=0,
+            partial_count=0,
+            incorrect_count=0,
+        )
+        db.session.add(mastery)
+
+    if is_correct:
+        mastery.mastery_score = min(
+            (mastery.mastery_score or 50) + 6,
+            100,
+        )
+        mastery.correct_count = (mastery.correct_count or 0) + 1
+    else:
+        mastery.mastery_score = max(
+            (mastery.mastery_score or 50) - 5,
+            0,
+        )
+        mastery.incorrect_count = (mastery.incorrect_count or 0) + 1
+
+    mastery.last_reviewed_at = datetime.now(timezone.utc)
+
     session.current_difficulty = choose_next_difficulty(
         session.current_difficulty,
         is_correct,
@@ -335,6 +518,23 @@ def answer(session_id, question_id):
                 source_id=session.id,
             )
         )
+
+        if session.learning_plan_item_id:
+            plan_item = db.session.get(
+                LearningPlanItem,
+                session.learning_plan_item_id,
+            )
+            if plan_item and plan_item.student_id == current_user.id:
+                accuracy = round(
+                    session.correct_count / session.total_rounds * 100
+                )
+                plan_item.verification_score = accuracy
+                plan_item.verified_at = datetime.now(timezone.utc)
+                if accuracy >= 70:
+                    plan_item.status = "completed"
+                    plan_item.completed_at = datetime.now(timezone.utc)
+                else:
+                    plan_item.status = "pending"
     else:
         session.current_round += 1
 
@@ -376,4 +576,5 @@ def result(session_id):
         "challenge_result.html",
         challenge=session,
         accuracy=accuracy,
+        plan_item=session.learning_plan_item,
     )

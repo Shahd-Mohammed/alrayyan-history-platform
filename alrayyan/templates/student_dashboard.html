@@ -87,6 +87,55 @@
             </article>
         </section>
 
+        <section class="student-dashboard-panel">
+            <div class="student-panel-heading">
+                <div>
+                    <span>تعلم ذكي يناسب مستواك</span>
+                    <h2>معلّم الريان التفاعلي</h2>
+                </div>
+            </div>
+
+            <div class="student-dashboard-grid">
+                <article class="student-dashboard-card">
+                    <span>حوار تعليمي</span>
+                    <h3>تعلّم مع المعلّم الذكي</h3>
+                    <p>ناقشي المفهوم، أجيبي عن الأسئلة، واحصلي على تلميحات وشرح موثق.</p>
+                    <a href="{{ url_for('teacher.teacher_page') }}">ابدأ المحادثة</a>
+                </article>
+
+                <article class="student-dashboard-card">
+                    <span>نقاط وXP</span>
+                    <h3>تحدي المعلّم الذكي</h3>
+                    <p>جولات متكيفة تتغير صعوبتها بناءً على إجاباتك.</p>
+                    <a href="{{ url_for('challenges.setup') }}">ابدأ التحدي</a>
+                </article>
+
+                <article class="student-dashboard-card">
+                    <span>تحليل شخصي</span>
+                    <h3>خطتي ونقاط الضعف</h3>
+                    <p>راجعي مستوى إتقان المفاهيم والخطوات المقترحة لك.</p>
+                    <a href="{{ url_for('teacher.learning_hub') }}">عرض خطتي</a>
+                </article>
+
+                <article class="student-dashboard-card">
+                    <span>اختبارات وتدريبات</span>
+                    <h3>بنك الاختبارات</h3>
+                    <p>اختبارات سريعة، تحديات ذكية، وأوراق عمل منشورة في مكان واحد.</p>
+                    <a href="{{ url_for('challenges.test_bank') }}">فتح بنك الاختبارات</a>
+                </article>
+
+                <article class="student-dashboard-card points-dashboard-card">
+                    <span>رصيد التعلم</span>
+                    <h3>محفظة نقاطي</h3>
+                    <p>
+                        لديكِ {{ current_user.points or 0 }} XP في المستوى
+                        {{ current_user.level or 1 }}. شاهدي كيف اكتسبتِ كل نقطة.
+                    </p>
+                    <a href="{{ url_for('teacher.my_points') }}">عرض محفظة النقاط</a>
+                </article>
+            </div>
+        </section>
+
         {% if open_attempts %}
             <section class="student-dashboard-panel">
                 <div class="student-panel-heading">

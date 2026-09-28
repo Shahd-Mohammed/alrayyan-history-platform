@@ -1,5 +1,6 @@
 import json
 import re
+from difflib import SequenceMatcher
 
 import requests
 from flask import current_app
@@ -7,7 +8,15 @@ from flask import current_app
 from alrayyan.services.semantic_search import semantic_search
 
 
-PROMPT_VERSION = "challenge-v1"
+PROMPT_VERSION = "challenge-v3"
+
+QUESTION_ANGLES = (
+    "تعريف أو تمييز المفهوم",
+    "سبب ونتيجة",
+    "مقارنة بين فكرتين",
+    "تطبيق المفهوم على موقف",
+    "ترتيب أو علاقة تاريخية",
+)
 
 DIFFICULTY_GUIDANCE = {
     "beginner": "سؤال مباشر يعتمد على حقيقة واضحة واحدة.",
@@ -29,7 +38,40 @@ hint_two: more specific hint that still does not reveal the answer directly
 concept: short Arabic concept name
 source_chunk_ids: array containing only chunk IDs supplied in the context
 اجعل الخيارات منطقية، ولا تستخدم "جميع ما سبق".
+يجب أن يكون السؤال مختلفًا في الفكرة والصياغة عن الأسئلة السابقة.
 """.strip()
+
+
+def normalize_question_text(value):
+    """Normalize Arabic question text before similarity comparison."""
+    normalized = re.sub(r"[^\w\s]", " ", (value or "").casefold())
+    return " ".join(normalized.split())
+
+
+def questions_are_similar(first_question, second_question):
+    """Return True when two generated questions are probably duplicates."""
+    first = normalize_question_text(first_question)
+    second = normalize_question_text(second_question)
+
+    if not first or not second:
+        return False
+
+    if first == second or first in second or second in first:
+        return True
+
+    similarity = SequenceMatcher(None, first, second).ratio()
+    return similarity >= 0.82
+
+
+def question_similarity_score(first_question, second_question):
+    """Return a 0..1 similarity score used to select the best fallback."""
+    first = normalize_question_text(first_question)
+    second = normalize_question_text(second_question)
+    if not first or not second:
+        return 0.0
+    if first == second:
+        return 1.0
+    return SequenceMatcher(None, first, second).ratio()
 
 
 def _extract_json(text):
@@ -78,7 +120,15 @@ def _validate_payload(payload, allowed_chunk_ids):
     return payload
 
 
-def generate_challenge_question(lesson, concept, difficulty):
+def generate_challenge_question(
+    lesson,
+    concept,
+    difficulty,
+    previous_question_texts=None,
+    round_number=1,
+    variation_number=0,
+):
+    previous_question_texts = previous_question_texts or []
     search_query = " ".join(
         part
         for part in [lesson.title, concept, "سؤال تعليمي"]
@@ -107,32 +157,67 @@ def generate_challenge_question(lesson, concept, difficulty):
     if not api_key:
         raise RuntimeError("مفتاح خدمة الذكاء الاصطناعي غير مضبوط.")
 
-    response = requests.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
-        json={
-            "model": model,
-            "temperature": 0.25,
-            "max_tokens": 900,
-            "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {
-                    "role": "user",
-                    "content": (
-                        f"الدرس: {lesson.title}\n"
-                        f"المفهوم: {concept or 'عام من الدرس'}\n"
-                        f"المستوى: {difficulty}\n"
-                        f"قاعدة الصعوبة: {DIFFICULTY_GUIDANCE[difficulty]}\n\n"
-                        f"السياق:\n{context}"
-                    ),
-                },
-            ],
-        },
-        timeout=60,
+    previous_questions_block = (
+        "\n".join(
+            f"- {question_text}"
+            for question_text in previous_question_texts
+        )
+        or "لا توجد أسئلة سابقة."
     )
+
+    request_payload = {
+        "model": model,
+        "temperature": 0.25,
+        "max_tokens": 900,
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": (
+                    f"الدرس: {lesson.title}\n"
+                    f"المفهوم: {concept or 'عام من الدرس'}\n"
+                    f"المستوى: {difficulty}\n"
+                    f"رقم الجولة: {round_number}\n"
+                    f"زاوية السؤال المطلوبة: "
+                    f"{QUESTION_ANGLES[variation_number % len(QUESTION_ANGLES)]}\n"
+                    f"قاعدة الصعوبة: {DIFFICULTY_GUIDANCE[difficulty]}\n\n"
+                    "الأسئلة السابقة التي يمنع تكرارها أو إعادة صياغتها:\n"
+                    f"{previous_questions_block}\n\n"
+                    "غيّر الحقيقة المركزية ونوع التفكير، وليس الكلمات فقط.\n"
+                    "لا تعِد صياغة سؤال سابق.\n\n"
+                    f"السياق:\n{context}"
+                ),
+            },
+        ],
+    }
+
+    response = None
+
+    for attempt_number in range(2):
+        try:
+            response = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
+                json=request_payload,
+                timeout=60,
+            )
+            break
+        except requests.RequestException as error:
+            current_app.logger.warning(
+                "Challenge provider connection failed "
+                "on attempt %s: %s",
+                attempt_number + 1,
+                error,
+            )
+
+            if attempt_number == 1:
+                raise RuntimeError(
+                    "تعذر الاتصال بخدمة الذكاء الاصطناعي الآن. "
+                    "حاولي بدء التحدي مرة أخرى بعد قليل."
+                ) from error
 
     try:
         response_data = response.json()

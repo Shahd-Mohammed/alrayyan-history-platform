@@ -11,7 +11,7 @@
     <main class="challenge-shell setup-shell">
         <section class="challenge-hero">
             <div>
-                <span class="eyebrow">AI TEACHER CHALLENGE</span>
+                <span class="eyebrow">تحدي المعلّم الذكي</span>
                 <h1>حوّل الدرس إلى مغامرة معرفية</h1>
                 <p>اختر الدرس والمستوى، ثم ابدأ جولات متكيفة وموثقة من المنهج.</p>
             </div>
@@ -60,10 +60,19 @@
                 </select>
             </label>
 
-            <label class="random-choice">
-                <input type="checkbox" name="random_mode" value="1">
-                <span><b>اختبرني عشوائيًا</b><small>سيختار النظام درسًا من المحتوى المتاح.</small></span>
-            </label>
+            <fieldset>
+                <legend>نطاق الأسئلة</legend>
+                <div class="scope-grid">
+                    <label>
+                        <input type="radio" name="scope_mode" value="selected_lesson" checked>
+                        <span><b>تنويع داخل الدرس المختار</b><small>أسئلة متنوعة من مفاهيم الدرس الذي اخترته.</small></span>
+                    </label>
+                    <label>
+                        <input type="radio" name="scope_mode" value="curriculum_random">
+                        <span><b>درس عشوائي من المنهج</b><small>يختار النظام درسًا واحدًا عشوائيًا من المحتوى النشط.</small></span>
+                    </label>
+                </div>
+            </fieldset>
 
             <button class="challenge-primary-button" type="submit">ابدأ التحدي <span>←</span></button>
         </form>

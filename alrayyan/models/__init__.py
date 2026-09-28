@@ -34,6 +34,14 @@ from alrayyan.models.challenge import (
     XPTransaction,
 )
 
+from alrayyan.models.tutor import (
+    ConceptMastery,
+    LearningPlanItem,
+    TutorConversation,
+    TutorMessage,
+    TutorMessageSource,
+)
+
 
 __all__ = [
     "Curriculum",
@@ -56,4 +64,9 @@ __all__ = [
     "ChallengeQuestionSource",
     "ChallengeAnswer",
     "XPTransaction",
+    "TutorConversation",
+    "TutorMessage",
+    "TutorMessageSource",
+    "ConceptMastery",
+    "LearningPlanItem",
 ]
