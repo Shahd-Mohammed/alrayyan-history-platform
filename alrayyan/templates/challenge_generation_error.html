@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعادة محاولة توليد السؤال | الريان</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/challenge.css') }}">
+</head>
+<body>
+    {% include '_platform_header.html' %}
+    <main class="challenge-shell result-shell">
+        <section class="generation-retry-card">
+            <span class="retry-icon" aria-hidden="true">↻</span>
+            <span class="eyebrow">تقدمك محفوظ</span>
+            <h1>تعذّر تجهيز السؤال الآن</h1>
+            <p>{{ error_message }}</p>
+            <p class="retry-note">
+                لم نخسر الجولة ولم نغلق التحدي. أعيدي المحاولة من النقطة نفسها.
+            </p>
+            <div class="result-actions">
+                <a class="challenge-primary-button" href="{{ url_for('challenges.play', session_id=challenge.id) }}">إعادة المحاولة</a>
+                <a class="challenge-secondary-button" href="{{ url_for('challenges.setup') }}">العودة إلى إعداد التحدي</a>
+            </div>
+        </section>
+    </main>
+    {% include '_platform_footer.html' %}
+</body>
+</html>

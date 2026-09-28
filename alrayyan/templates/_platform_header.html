@@ -24,7 +24,14 @@
     <nav class="platform-navigation" data-platform-menu>
         <a href="{{ url_for('main.home') }}">الرئيسية</a>
         <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
-        <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
+        {% if (
+            not current_user.is_authenticated
+            or current_user.role != "student"
+        ) %}
+                <a href="{{ url_for('teacher.teacher_page') }}">
+                     المعلّم الذكي
+                </a>
+        {% endif %}
         <a href="{{ url_for('main.about') }}">من نحن</a>
 
         {% if current_user.is_authenticated %}
@@ -33,6 +40,16 @@
             {% elif current_user.role == 'student' %}
                 <a href="{{ url_for('main.student_dashboard') }}">لوحتي</a>
                 <a href="{{ url_for('assessment.my_results') }}">نتائجي</a>
+                <details class="student-learning-menu">
+                    <summary>تعلّمي</summary>
+                    <div>
+                        <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
+                        <a href="{{ url_for('challenges.setup') }}">التحدي الذكي</a>
+                        <a href="{{ url_for('challenges.test_bank') }}">بنك الاختبارات</a>
+                        <a href="{{ url_for('teacher.learning_hub') }}">خطتي التعليمية</a>
+                        <a href="{{ url_for('teacher.my_points') }}">محفظة نقاطي</a>
+                    </div>
+                </details>
             {% endif %}
 
             <a href="{{ url_for('auth.account_settings') }}">حسابي</a>

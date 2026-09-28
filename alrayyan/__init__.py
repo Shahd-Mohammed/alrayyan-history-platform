@@ -75,6 +75,10 @@ def create_app():
         worksheets_bp,
     )
 
+    from alrayyan.routes.challenges import (
+        challenges_bp,
+    )
+
     app.register_blueprint(main_bp)
     app.register_blueprint(teacher_bp)
     app.register_blueprint(auth_bp)
@@ -89,6 +93,10 @@ def create_app():
 
     app.register_blueprint(
         assessment_bp
+    )
+
+    app.register_blueprint(
+        challenges_bp
     )
 
     return app

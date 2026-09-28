@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خطتي التعليمية | الريان</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}">
+</head>
+<body>
+    {% include '_platform_header.html' %}
+    <main class="learning-hub-page">
+        <section class="learning-hub-hero">
+            <div>
+                <span>تعلم مخصص لك</span>
+                <h1>خطتي التعليمية</h1>
+                <p>نحوّل أداءك في المحادثات إلى مراجعات واختبارات مناسبة لمستواك.</p>
+            </div>
+            <div class="hub-hero-actions">
+                <a class="gold-action" href="{{ url_for('teacher.teacher_page') }}">ابدأ محادثة تعليمية</a>
+                <a class="outline-light-action" href="{{ url_for('teacher.my_points') }}">محفظة نقاطي</a>
+            </div>
+        </section>
+
+        <section class="hub-section">
+            <div class="hub-heading">
+                <div><span>تحليل الفهم</span><h2>إتقان المفاهيم</h2></div>
+            </div>
+            {% if masteries %}
+                <div class="mastery-grid">
+                    {% for mastery in masteries %}
+                        <article class="mastery-card">
+                            <div class="mastery-top">
+                                <div><small>{{ mastery.lesson.title }}</small><h3>{{ mastery.concept }}</h3></div>
+                                <strong>{{ mastery.mastery_score }}%</strong>
+                            </div>
+                            <div class="mastery-track"><span style="width: {{ mastery.mastery_score }}%"></span></div>
+                            <p>
+                                {% if mastery.mastery_score < 45 %}يحتاج مراجعة مركزة
+                                {% elif mastery.mastery_score < 70 %}في طور التحسن
+                                {% elif mastery.mastery_score < 85 %}فهم جيد
+                                {% else %}إتقان ممتاز{% endif %}
+                            </p>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="hub-empty">ابدئي محادثة مع المعلم ليبدأ تحليل نقاط القوة والضعف.</div>
+            {% endif %}
+        </section>
+
+        <section class="hub-section">
+            <div class="hub-heading">
+                <div><span>مقترحات ذكية</span><h2>توصيات اليوم</h2></div>
+            </div>
+            {% if recommendations %}
+                <div class="recommendation-grid">
+                    {% for recommendation in recommendations %}
+                        <article>
+                            <span>{{ recommendation.type }}</span>
+                            <h3>{{ recommendation.concept }}</h3>
+                            <small>{{ recommendation.lesson.title }}</small>
+                            <p>{{ recommendation.text }}</p>
+                            <a class="gold-action" href="{{ url_for('teacher.teacher_page', lesson_id=recommendation.lesson.id, concept=recommendation.concept, mode='review') }}">ابدأ الآن</a>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="hub-empty">ستظهر توصياتك بعد أول محادثة تعليمية مقيمة.</div>
+            {% endif %}
+        </section>
+
+        <section class="hub-section">
+            <div class="hub-heading">
+                <div><span>الخطوة التالية</span><h2>خطة المراجعة المقترحة</h2></div>
+            </div>
+            {% if plan_items %}
+                <div class="plan-list">
+                    {% for item in plan_items %}
+                        <article>
+                            <div class="plan-number">{{ "%02d" | format(loop.index) }}</div>
+                            <div class="plan-copy">
+                                <small>{{ item.lesson.title if item.lesson else 'خطة عامة' }}</small>
+                                <h3>{{ item.title }}</h3>
+                                <p>{{ item.description }}</p>
+                            </div>
+                            <div class="plan-actions">
+                                {% if item.lesson %}
+                                    <a class="gold-action" href="{{ url_for('teacher.teacher_page', lesson_id=item.lesson.id, concept=item.title | replace('راجعي مفهوم: ', ''), mode='review') }}">ابدأ المراجعة</a>
+                                {% endif %}
+                                <form method="post" action="{{ url_for('teacher.verify_plan_item', item_id=item.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button class="outline-action" type="submit">اختبر إتقاني</button>
+                                </form>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="hub-empty">لا توجد مراجعات معلقة الآن. استمري في التعلم والتحديات.</div>
+            {% endif %}
+        </section>
+    </main>
+    {% include '_platform_footer.html' %}
+</body>
+</html>

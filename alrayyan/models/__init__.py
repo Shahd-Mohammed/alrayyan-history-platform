@@ -26,6 +26,22 @@ from alrayyan.models.site_content import (
     AboutPage,
 )
 
+from alrayyan.models.challenge import (
+    ChallengeAnswer,
+    ChallengeQuestion,
+    ChallengeQuestionSource,
+    ChallengeSession,
+    XPTransaction,
+)
+
+from alrayyan.models.tutor import (
+    ConceptMastery,
+    LearningPlanItem,
+    TutorConversation,
+    TutorMessage,
+    TutorMessageSource,
+)
+
 
 __all__ = [
     "Curriculum",
@@ -43,4 +59,14 @@ __all__ = [
     "DateReview",
     "WorksheetAttachment",
     "AboutPage",
+    "ChallengeSession",
+    "ChallengeQuestion",
+    "ChallengeQuestionSource",
+    "ChallengeAnswer",
+    "XPTransaction",
+    "TutorConversation",
+    "TutorMessage",
+    "TutorMessageSource",
+    "ConceptMastery",
+    "LearningPlanItem",
 ]

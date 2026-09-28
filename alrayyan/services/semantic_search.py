@@ -75,6 +75,7 @@ def semantic_search(
     query,
     top_k=5,
     min_similarity=0.15,
+    lesson_id=None,
 ):
     """
     Search active curriculum chunks using cosine similarity.
@@ -90,7 +91,7 @@ def semantic_search(
         query.strip()
     )[0]
 
-    candidates = (
+    candidate_query = (
         ContentChunk.query
         .join(
             SourceDocument,
@@ -109,8 +110,14 @@ def semantic_search(
             ContentChunk.embedding_model
             == settings["model"],
         )
-        .all()
     )
+
+    if lesson_id is not None:
+        candidate_query = candidate_query.filter(
+            ContentChunk.lesson_id == lesson_id
+        )
+
+    candidates = candidate_query.all()
 
     results = []
 
