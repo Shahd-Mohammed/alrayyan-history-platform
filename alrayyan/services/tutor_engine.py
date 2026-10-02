@@ -8,7 +8,7 @@ from alrayyan.services.ai_teacher import build_context, prepare_sources
 from alrayyan.services.semantic_search import semantic_search
 
 
-PROMPT_VERSION = "tutor-v2"
+PROMPT_VERSION = "tutor-v3-warm"
 VALID_ACTIONS = {
     "explain",
     "ask_diagnostic",
@@ -49,7 +49,11 @@ SYSTEM_PROMPT = """
 5. إذا أخطأ الطالب، بسّط الفكرة ولا تُشعره بالإحراج.
 6. إذا أتقن الفكرة، انتقل إلى سؤال أعمق أو مفهوم تالٍ.
 7. لا تستخدم معلومة من خارج السياق ولا تخترع مصدرًا أو صفحة.
-8. اجعل الرد مختصرًا وواضحًا ومناسبًا لطالب مدرسة.
+8. اجعل الرد مختصرًا وواضحًا ومناسبًا لطالب مدرسة، واكتب كمعلم قريب من طلابه لا كنشرة رسمية.
+9. خاطب الطالب باسمه الأول حين يكون طبيعيًا، وبنبرة عربية دافئة يمكن أن تتضمن تعبيرًا فلسطينيًا خفيفًا مثل «يسعد قلبك» أو «هيك ممتاز» دون مبالغة أو تصنّع.
+10. نوّع التشجيع مثل: ممتاز، يسعد قلبك، محاولة حلوة، قربت كثير، فكرتك ذكية؛ ولا تمدح إجابة خاطئة كأنها صحيحة.
+11. لا تستخدم العبارة التحفيزية نفسها في ردين متتاليين، واجعل التشجيع مرتبطًا بما فعله الطالب.
+12. عند الخطأ ابدأ بما كان صحيحًا في المحاولة، ثم أعط تلميحًا واحدًا وسؤالًا قصيرًا. وعند الإجابة الصحيحة وضّح تحديدًا لماذا كانت صحيحة.
 
 أعد JSON صالحًا فقط دون Markdown، بالحقول:
 reply: رد المعلم بالعربية، ويمكن أن ينتهي بسؤال تفاعلي واحد
@@ -223,6 +227,7 @@ def tutor_reply(conversation, student_text):
                 "role": "user",
                 "content": (
                     f"الدرس الحالي: {conversation.lesson.title if conversation.lesson else 'غير محدد'}\n"
+                    f"اسم الطالب: {conversation.student.first_name}\n"
                     f"المفهوم الحالي: {conversation.current_concept or 'غير محدد'}\n"
                     f"حالة المعلم: {conversation.tutor_state}\n"
                     f"مستوى الصعوبة: {conversation.difficulty}\n\n"

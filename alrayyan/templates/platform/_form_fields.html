@@ -1,0 +1,1 @@
+{% macro fields(form, selected) %}<div class="platform-form-grid">{% for field in selected %}<label><span>{{ field.label.text }}</span>{{ field }}{% if field.description %}<em>{{ field.description }}</em>{% endif %}{% for error in field.errors %}<small>{{ error }}</small>{% endfor %}</label>{% endfor %}</div>{% endmacro %}

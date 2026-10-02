@@ -121,18 +121,7 @@
                         <span>إجابة الطالب</span>
 
                         <p>
-                            {% if answer.selected_choice %}
-                                {{
-                                    answer
-                                    .selected_choice
-                                    .choice_text
-                                }}
-                            {% else %}
-                                {{
-                                    answer.answer_text
-                                    or "لم يكتب إجابة"
-                                }}
-                            {% endif %}
+                            {{ answer.display_value }}
                         </p>
                     </div>
 

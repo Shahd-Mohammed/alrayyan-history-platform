@@ -56,6 +56,10 @@ class QuestionForm(FlaskForm):
                 "essay",
                 "سؤال مقالي",
             ),
+            ("fill_blank", "أكملي الفراغ"),
+            ("multiple_select", "اختيارات صحيحة متعددة"),
+            ("ordering", "ترتيب أحداث أو خطوات"),
+            ("matching", "مطابقة بين عمودين"),
         ],
         validators=[
             DataRequired()
@@ -69,7 +73,7 @@ class QuestionForm(FlaskForm):
             Length(max=3000),
         ],
         description=(
-            "اكتبي كل خيار في سطر مستقل."
+            "كل خيار في سطر. للمطابقة: المفهوم | الإجابة. وللترتيب اكتبي العناصر بالترتيب الصحيح."
         ),
     )
 

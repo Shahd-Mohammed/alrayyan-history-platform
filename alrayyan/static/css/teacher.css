@@ -861,3 +861,6 @@ a.gold-action {
     .points-hero { align-items: stretch; flex-direction: column; padding: 25px 20px; }
     .points-summary { grid-template-columns: 1fr; }
 }
+
+/* Keep long Arabic conversation titles inside the sidebar at every width. */
+.tutor-workspace,.tutor-sidebar,.tutor-chat-card{min-width:0}.tutor-sidebar{overflow:hidden}#conversation-list{min-width:0;max-height:520px;overflow-y:auto;overflow-x:hidden;padding-inline-end:4px}#conversation-list>button{width:100%;min-width:0;overflow:hidden}#conversation-list b,#conversation-list small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

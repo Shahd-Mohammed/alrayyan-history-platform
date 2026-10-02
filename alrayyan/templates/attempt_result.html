@@ -51,7 +51,7 @@
 
                             <div class="student-answer-box">
                                 <span>إجابتك</span>
-                                <p>{% if answer.selected_choice %}{{ answer.selected_choice.choice_text }}{% else %}{{ answer.answer_text or "بدون إجابة" }}{% endif %}</p>
+                                <p>{{ answer.display_value }}</p>
                             </div>
 
                             <div class="result-question-footer">

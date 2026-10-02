@@ -281,6 +281,27 @@
                     </p>
                 {% endif %}
             </aside>
+
+            {% if lesson_resources %}
+                <section class="lesson-resources-card">
+                    <div>
+                        <span>مواد مرتبطة بالدرس</span>
+                        <h2>ملخص الدرس والمحتوى المساند</h2>
+                    </div>
+                    <div class="lesson-resource-links">
+                        {% for resource in lesson_resources %}
+                            {% if resource.allow_download %}
+                                <a href="{{ url_for('learning.download_resource', resource_id=resource.id) }}">
+                                    <strong>{{ resource.title }}</strong>
+                                    <small>{{ 'ملخص الدرس' if resource.resource_type == 'lesson_summary' else 'مادة مساندة' }}</small>
+                                </a>
+                            {% else %}
+                                <span><strong>{{ resource.title }}</strong><small>متاح للمشاهدة داخل المنصة</small></span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
         </section>
 
         <section class="student-tip">

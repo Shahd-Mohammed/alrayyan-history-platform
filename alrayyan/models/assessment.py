@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timezone
 
 from alrayyan.extensions import db
@@ -120,6 +121,9 @@ class Worksheet(db.Model):
         default=False,
         index=True,
     )
+
+    is_archived = db.Column(db.Boolean, nullable=False, default=False, server_default="0", index=True)
+    archived_at = db.Column(db.DateTime, nullable=True)
 
     created_at = db.Column(
         db.DateTime,
@@ -256,6 +260,13 @@ class Question(db.Model):
             name="uq_worksheet_question_order",
         ),
     )
+
+    @property
+    def interaction_data(self):
+        try:
+            return json.loads(self.interaction_config or "{}")
+        except (TypeError, ValueError):
+            return {}
 
 
 class Choice(db.Model):
@@ -487,6 +498,23 @@ class StudentAnswer(db.Model):
             name="uq_attempt_question_answer",
         ),
     )
+
+    @property
+    def display_value(self):
+        if self.selected_choice:
+            return self.selected_choice.choice_text
+        if self.answer_text:
+            return self.answer_text
+        try:
+            values = json.loads(self.answer_data or "[]")
+        except (TypeError, ValueError):
+            values = []
+        if not isinstance(values, list) or not values:
+            return "بدون إجابة"
+        return "، ".join(
+            str(value).replace("|||", " ← ")
+            for value in values
+        )
 
 class WorksheetAttachment(db.Model):
     __tablename__ = "worksheet_attachments"

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الريان في الدراسات التاريخية</title>
+    <title>{{ platform_settings.platform_name if platform_settings else 'منصة الريان التعليمية' }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,10 +19,10 @@
 
             <div class="premium-hero-copy">
                 <span class="premium-kicker"><i></i> منصة تعليمية مدعومة بالذكاء الاصطناعي</span>
-                <h1>لأنّ التاريخ ليس حكايةً قديمة، بل <em>وعيٌ يصنع المستقبل</em></h1>
+                <h1>تعلّم يفهم مستواك، ويحوّل المعرفة إلى <em>تجربة تبقى</em></h1>
                 <p>
-                    تعلّمي تاريخ الصف الحادي عشر من مصادر المنهج المعتمدة،
-                    اختبري فهمك بأنشطة تفاعلية، واسألي المعلّم الذكي في أي وقت.
+                    محتوى موثّق، معلّم ذكي تفاعلي، تحديات، خرائط مفاهيمية،
+                    ونتائج تساعد الطالب والمعلمة على اتخاذ الخطوة التالية بثقة.
                 </p>
 
                 <div class="premium-hero-actions">
@@ -37,15 +37,15 @@
                 </div>
 
                 <div class="hero-trust-row">
-                    <span><b>8</b> دروس مترابطة</span>
-                    <span><b>188</b> مقطعًا معرفيًا</span>
+                    <span><b>{{ public_stats.lessons }}</b> دروس مترابطة</span>
+                    <span><b>{{ public_stats.knowledge_chunks }}</b> مقطعًا معرفيًا</span>
                     <span><b>AI</b> إجابات موثّقة</span>
                 </div>
             </div>
 
             <div class="hero-experience-card">
                 <div class="experience-topline">
-                    <span>رحلتك في التاريخ</span>
+                    <span>رحلتك في التعلّم</span>
                     <i>✦</i>
                 </div>
                 <div class="experience-orbit">
@@ -61,9 +61,23 @@
         </section>
 
         <section class="premium-feature-strip" aria-label="مزايا المنصة">
-            <article><span>01</span><div><h2>محتوى موثوق</h2><p>مبني على مصادر المنهج المعتمد.</p></div></article>
-            <article><span>02</span><div><h2>تعلّم تفاعلي</h2><p>أسئلة ومحاولات ونتائج فورية.</p></div></article>
-            <article><span>03</span><div><h2>معلّم ذكي</h2><p>إجابات مرتبطة بمحتوى الدروس.</p></div></article>
+            <article><span>01</span><div><h2>مناهج موثوقة</h2><p>المعلّمة تدير المادة ومصادرها من لوحة التحكم.</p></div></article>
+            <article><span>02</span><div><h2>تعلّم متنوع</h2><p>أسئلة، خرائط، ملخصات، شخصيات، وتحديات.</p></div></article>
+            <article><span>03</span><div><h2>ذكاء مسؤول</h2><p>إجابات واقتراحات مرتبطة بمحتوى الدرس ومراجعة المعلمة.</p></div></article>
+        </section>
+
+        <section class="platform-world-section">
+            <div class="premium-section-heading">
+                <div><span>داخل منصة الريان</span><h2>حصة التاريخ كاملة في مساحة واحدة</h2><p>تعرّفي على أقسام المنصة قبل تسجيل الدخول، من الفهم إلى التدريب ثم قياس التقدم.</p></div>
+            </div>
+            <div class="platform-world-grid">
+                <a href="{{ url_for('teacher.teacher_page') }}"><i>✦</i><small>شرح وحوار</small><h3>المعلّم الذكي</h3><p>محادثة تربوية دافئة، أسئلة تشخيصية، تلميحات، ومصادر من المنهج المعتمد.</p><b>ابدئي الحوار ←</b></a>
+                <a href="{{ url_for('challenges.setup') }}"><i>🎯</i><small>لعب وتكيّف</small><h3>التحديات الذكية</h3><p>جولات تتدرج بحسب الإجابة، مع نقاط وشرح ومرجع لكل سؤال.</p><b>اكتشفي التحدي ←</b></a>
+                <a href="{{ url_for('worksheets.worksheet_list') }}"><i>✓</i><small>{{ public_stats.activities }} نشاطًا منشورًا</small><h3>أوراق العمل</h3><p>حل مؤقت، حفظ تلقائي، محاولات، تصحيح إلكتروني ونتائج واضحة.</p><b>تصفحي الأوراق ←</b></a>
+                <a href="{{ url_for('learning.library') }}"><i>🧠</i><small>{{ public_stats.maps }} خرائط</small><h3>مكتبة التعلّم</h3><p>ملخصات ومراجعات وخرائط مفاهيمية ومحتوى مساند لكل درس.</p><b>افتحي المكتبة ←</b></a>
+                <a href="{{ url_for('learning.characters') }}"><i>🏛</i><small>{{ public_stats.characters }} شخصيات</small><h3>من أنا؟</h3><p>تعرفي إلى شخصيات المنهج من تلميحات حقيقية واكسبي نقاطًا من إجابتك.</p><b>ابدئي اللعب ←</b></a>
+                <a href="{{ url_for('learning.honor_board') }}"><i>🏆</i><small>تقدير عادل</small><h3>لوحة الشرف</h3><p>تحتفي بالنشاط والتحسن والإتقان، لا بالعلامة النهائية وحدها.</p><b>شاهدي المتميزين ←</b></a>
+            </div>
         </section>
 
         <section class="featured-learning-section">
@@ -104,8 +118,8 @@
                             <div class="slide-number">01</div>
                             <div class="slide-copy">
                                 <span>الوحدة الأولى</span>
-                                <h3>الاستعمار: مفهومه ودوافعه وأشكاله</h3>
-                                <p>ستظهر هنا آخر خمس أوراق تنشرها المعلمة تلقائيًا.</p>
+                                <h3>أحدث الأنشطة التعليمية</h3>
+                                <p>ستظهر هنا آخر خمس أوراق تنشرها المعلمة تلقائيًا مهما كانت المادة.</p>
                                 <a class="slide-link" href="{{ url_for('worksheets.worksheet_list') }}">استعراض أوراق العمل <b>←</b></a>
                             </div>
                         </article>
@@ -144,15 +158,15 @@
             <div class="ai-showcase-copy">
                 <span>المعلّم الذكي</span>
                 <h2>إجابة لا تكتفي بالمعلومة، بل تقودكِ إلى الفهم</h2>
-                <p>اطرحي سؤالك بلغتك الطبيعية واحصلي على شرح واضح مستند إلى المحتوى التاريخي المحضّر داخل المنصة.</p>
+                <p>اطرحي سؤالك بلغتك الطبيعية واحصلي على شرح وحوار تدريجي مستند إلى محتوى المادة الذي اعتمدته المعلمة.</p>
                 <a href="{{ url_for('teacher.teacher_page') }}">ابدئي محادثة ذكية ←</a>
             </div>
         </section>
 
         <section class="premium-final-cta">
             <span>خطوتك التالية تبدأ الآن</span>
-            <h2>جاهزة لرؤية التاريخ بعيون مختلفة؟</h2>
-            <p>اختاري ورقة عمل، ابدئي التعلّم، ودعي الريان ترافق تقدمك.</p>
+            <h2>جاهزة لتجربة تعلّم مختلفة؟</h2>
+            <p>اختاري نشاطًا، ابدئي التعلّم، ودعي الريان ترافق تقدمك.</p>
             <a href="{{ url_for('worksheets.worksheet_list') }}">ابدئي الآن <b>←</b></a>
         </section>
     </main>

@@ -251,10 +251,53 @@
                                         </label>
                                     </div>
 
-                                {% elif (
-                                    question.question_type
-                                    == "essay"
-                                ) %}
+                                {% elif question.question_type == "multiple_select" %}
+                                    <p class="interaction-help">يمكن أن توجد أكثر من إجابة صحيحة.</p>
+                                    <div class="answer-options">
+                                        {% for choice in question.choices %}
+                                            <label class="answer-option">
+                                                <input type="checkbox" name="question_{{ question.id }}" value="{{ choice.choice_text }}" {% if choice.choice_text in saved_value %}checked{% endif %}>
+                                                <span class="option-indicator" aria-hidden="true"></span>
+                                                <span class="option-text">{{ choice.choice_text }}</span>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+
+                                {% elif question.question_type == "ordering" %}
+                                    <p class="interaction-help">حددي العنصر المناسب لكل ترتيب.</p>
+                                    <div class="structured-interaction">
+                                        {% for position in question.interaction_data.get('items', []) %}
+                                            {% set position_index = loop.index0 %}
+                                            <label>
+                                                <span>الترتيب {{ loop.index }}</span>
+                                                <select name="question_{{ question.id }}" required>
+                                                    <option value="">اختاري العنصر</option>
+                                                    {% for item in question.interaction_data.get('display_items', question.interaction_data.get('items', [])) %}
+                                                        <option value="{{ item }}" {% if saved_value and saved_value[position_index] == item %}selected{% endif %}>{{ item }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+
+                                {% elif question.question_type == "matching" %}
+                                    <p class="interaction-help">طابقي كل مفهوم بالإجابة المناسبة.</p>
+                                    <div class="structured-interaction matching-interaction">
+                                        {% for pair in question.interaction_data.get('pairs', []) %}
+                                            <label>
+                                                <span>{{ pair.left }}</span>
+                                                <select name="question_{{ question.id }}" data-match-left="{{ pair.left }}" required>
+                                                    <option value="">اختاري المطابقة</option>
+                                                    {% for option_pair in question.interaction_data.get('pairs', []) %}
+                                                        {% set composite = pair.left ~ '|||' ~ option_pair.right %}
+                                                        <option value="{{ composite }}" {% if composite in saved_value %}selected{% endif %}>{{ option_pair.right }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+
+                                {% elif question.question_type == "essay" %}
                                     <label
                                         class="written-answer-label"
                                         for="question_{{ question.id }}"
@@ -262,16 +305,15 @@
                                          إجابتك
                                     </label>
 
-                                    <input
+                                    <textarea
                                         id="question_{{ question.id }}"
-                                        class="written-answer short-answer"
-                                        type="text"
+                                        class="written-answer essay-answer"
                                         name="question_{{ question.id }}"
-                                        value="{{ saved_value }}"
                                         required
                                         placeholder="اكتب إجابتك هنا..."
                                         dir="auto"
-                                    >
+                                        rows="6"
+                                    >{{ saved_value }}</textarea>
 
                                 {% else %}
                                     <label
@@ -286,6 +328,7 @@
                                         class="written-answer short-answer"
                                         type="text"
                                         name="question_{{ question.id }}"
+                                        value="{{ saved_value }}"
                                         required
                                         placeholder="اكتب إجابتك هنا..."
                                         dir="auto"

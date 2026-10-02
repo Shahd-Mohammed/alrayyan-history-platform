@@ -1,47 +1,6 @@
-<footer class="platform-footer">
-    <div class="footer-brand-column">
-        <a href="{{ url_for('main.home') }}" aria-label="العودة إلى الرئيسية">
-            <img
-                src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
-                alt="الريان في الدراسات التاريخية"
-            >
-        </a>
-        <p>
-            منصة تعليمية ذكية تساعد طالبات الصف الحادي عشر
-            على فهم التاريخ والتدرّب ومتابعة التقدم بثقة.
-        </p>
-    </div>
-
-    <div class="footer-links-column">
-        <h2>اكتشفي الريان</h2>
-        <nav>
-            <a href="{{ url_for('main.home') }}">الرئيسية</a>
-            <a href="{{ url_for('main.about') }}">من نحن</a>
-            <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
-            <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
-        </nav>
-    </div>
-
-    <div class="footer-contact-column">
-        <h2>ابدئي رحلتك</h2>
-        <p>تعلّم تفاعلي، نتائج واضحة، ومحتوى مستند إلى مصادر المنهج.</p>
-        <a class="footer-cta" href="{{ url_for('worksheets.worksheet_list') }}">
-            استعرضي أوراق العمل ←
-        </a>
-    </div>
-
-    <div class="footer-signature">
-    <span>منصة الريان في الدراسات التاريخية © 2026</span>
-
-    <span>
-        صُمّم بحب
-        <span class="footer-heart" aria-hidden="true">&#10084;</span>
-        بواسطة
-        <a
-            href="https://wa.me/970597114525"
-            target="_blank"
-            rel="noopener noreferrer"
-        >شهد</a>
-    </span>
-</div>
-</footer>
+<footer class="platform-footer premium-platform-footer"><div class="footer-brand-column"><a href="{{ url_for('main.home') }}" aria-label="العودة إلى الرئيسية"><img src="{{ url_for('static',filename='images/alrayyan-logo.png') }}" alt="الريان في الدراسات التاريخية"></a><p>بيئة تعليمية تحول منهج التاريخ إلى شرح موثّق، ممارسة ذكية، وتقدّم تستطيع الطالبة والمعلمة رؤيته.</p>{% if platform_settings and platform_settings.support_email %}<a class="footer-contact-link" href="mailto:{{ platform_settings.support_email }}">✉ تواصلي معنا</a>{% endif %}</div>
+<div class="footer-links-column"><h2>اكتشفي الريان</h2><nav><a href="{{ url_for('main.home') }}">الرئيسية</a><a href="{{ url_for('main.about') }}">من نحن</a><a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a><a href="{{ url_for('learning.library') }}">مكتبة التعلّم</a></nav></div>
+<div class="footer-links-column"><h2>تعلّم تفاعلي</h2><nav><a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a><a href="{{ url_for('challenges.setup') }}">التحدي الذكي</a><a href="{{ url_for('learning.characters') }}">تحدي الشخصيات</a><a href="{{ url_for('challenges.test_bank') }}">بنك الاختبارات</a></nav></div>
+<div class="footer-contact-column"><h2>ابدئي رحلتك</h2><p>ملخصات وخرائط وتحديات ونتائج مترابطة حول الدرس نفسه.</p><a class="footer-cta" href="{{ url_for('auth.login') if not current_user.is_authenticated else url_for('main.student_dashboard') }}">الدخول إلى مساحتك ←</a>{% if platform_settings and platform_settings.whatsapp_url %}<a class="footer-whatsapp" href="{{ platform_settings.whatsapp_url }}" target="_blank" rel="noopener noreferrer">تواصل عبر واتساب</a>{% endif %}</div>
+<div class="footer-signature"><span>{{ platform_settings.platform_name if platform_settings else 'منصة الريان التعليمية' }} © 2026</span><span>صُمّم بحب <span class="footer-heart" aria-hidden="true">&#10084;</span> بواسطة <a href="https://wa.me/970597114525" target="_blank" rel="noopener noreferrer">شهد</a></span></div></footer>
+{% if platform_settings and platform_settings.whatsapp_url %}<a class="floating-whatsapp" href="{{ platform_settings.whatsapp_url }}" target="_blank" rel="noopener noreferrer" aria-label="التواصل مع المنصة عبر واتساب">واتساب</a>{% endif %}

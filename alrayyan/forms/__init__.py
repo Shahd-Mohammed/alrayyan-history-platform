@@ -16,6 +16,17 @@ from alrayyan.forms.worksheet import (
 from alrayyan.forms.site_content import (
     AboutPageForm,
 )
+from alrayyan.forms.platform import (
+    ClassroomForm,
+    ConceptMapForm,
+    ConceptMapUploadForm,
+    CurriculumUploadForm,
+    HistoricalCharacterForm,
+    InvitationForm,
+    InvitationRegistrationForm,
+    LearningResourceForm,
+    PlatformSettingsForm,
+)
 
 
 __all__ = [
@@ -26,4 +37,13 @@ __all__ = [
     "QuestionForm",
     "WorksheetSettingsForm",
     "AboutPageForm",
+    "CurriculumUploadForm",
+    "ClassroomForm",
+    "InvitationForm",
+    "InvitationRegistrationForm",
+    "PlatformSettingsForm",
+    "LearningResourceForm",
+    "ConceptMapForm",
+    "ConceptMapUploadForm",
+    "HistoricalCharacterForm",
 ]

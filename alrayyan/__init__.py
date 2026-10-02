@@ -78,6 +78,8 @@ def create_app():
     from alrayyan.routes.challenges import (
         challenges_bp,
     )
+    from alrayyan.routes.platform_admin import platform_admin_bp
+    from alrayyan.routes.learning import learning_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(teacher_bp)
@@ -98,5 +100,24 @@ def create_app():
     app.register_blueprint(
         challenges_bp
     )
+    app.register_blueprint(platform_admin_bp)
+    app.register_blueprint(learning_bp)
+
+    @app.context_processor
+    def platform_context():
+        from alrayyan.models import PlatformSettings
+        try:
+            settings = PlatformSettings.get_or_create()
+        except Exception:
+            settings = None
+        return {"platform_settings": settings}
+
+    @app.after_request
+    def secure_response_headers(response):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault("Permissions-Policy", "camera=(), geolocation=()")
+        return response
 
     return app

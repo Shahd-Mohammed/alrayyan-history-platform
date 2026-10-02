@@ -1,0 +1,18 @@
+{% extends 'platform/_admin_base.html' %}
+{% block title %}تحليلات التعلّم{% endblock %}
+{% block heading %}تحليلات مستوى الطلاب{% endblock %}
+{% block intro %}قراءة تعليمية تجمع أوراق العمل والتحديات وتفاعل المعلّم الذكي، لتحديد التقدم والحاجة إلى دعم.{% endblock %}
+{% block content %}
+<section class="analytics-stats">
+    <article><span>الطلاب</span><strong>{{ overview.students }}</strong></article>
+    <article><span>الأوراق</span><strong>{{ overview.worksheets }}</strong></article>
+    <article><span>التسليمات</span><strong>{{ overview.submissions }}</strong></article>
+    <article><span>متوسط الأداء</span><strong>{{ overview.average }}%</strong></article>
+    <article><span>يحتاجون متابعة</span><strong>{{ overview.support_count }}</strong></article>
+</section>
+<section class="platform-panel analytics-panel">
+    <div class="analytics-heading"><div><h2>الأداء الفردي</h2><p>مؤشر النشاط للمقارنة التربوية، وليس حكمًا نهائيًا على الطالب.</p></div></div>
+    <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالب</th><th>أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات</th><th>تفاعل المعلم</th><th>الحالة</th></tr></thead><tbody>{% for row in rows %}<tr><td><strong>{{ row.student.full_name }}</strong><small>{{ row.student.email }}</small></td><td>{{ row.worksheet_count }}</td><td><div class="metric-bar"><i style="width:{{ [row.average,100]|min }}%"></i></div>{{ row.average }}%</td><td><div class="metric-bar mastery"><i style="width:{{ [row.mastery_average,100]|min }}%"></i></div>{{ row.mastery_average }}%</td><td>{{ row.challenge_count }}</td><td>{{ row.tutor_interactions }}</td><td>{% if row.needs_support %}<span class="analytics-status support">يحتاج متابعة</span>{% elif row.activity_score %}<span class="analytics-status active">نشط</span>{% else %}<span class="analytics-status quiet">لم يبدأ</span>{% endif %}</td></tr>{% else %}<tr><td colspan="7" class="platform-empty">ستظهر التحليلات بعد انضمام الطلاب وبدء النشاط.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+<section class="platform-panel analytics-note"><h2>كيف نقرأ هذه اللوحة؟</h2><p>النتيجة وحدها لا تكفي. تجمع المنصة العلامات، إتقان المفاهيم، عدد التحديات، والتفاعل المقيم مع المعلم الذكي. هذا يساعد المعلمة على ملاحظة الطالب المجتهد حتى لو كانت درجته ما زالت تتحسن.</p></section>
+{% endblock %}

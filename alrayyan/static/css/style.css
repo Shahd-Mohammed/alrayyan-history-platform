@@ -104,6 +104,7 @@ a, button { font: inherit; }
 .premium-feature-strip p { margin: 0; color: var(--muted); font-size: .9rem; }
 
 .featured-learning-section, .learning-journey-section, .ai-showcase-section { width: min(1180px, calc(100% - 40px)); margin: 110px auto 0; }
+.platform-world-section{width:min(1180px,calc(100% - 40px));margin:110px auto 0}.platform-world-section .premium-section-heading p{max-width:720px;margin:.7rem 0 0;color:var(--muted);line-height:1.8}.platform-world-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.platform-world-grid>a{position:relative;min-height:270px;padding:27px;overflow:hidden;border:1px solid var(--border);border-radius:22px;background:linear-gradient(145deg,#fff,#fffaf0);color:var(--navy-900);text-decoration:none;box-shadow:0 15px 40px rgba(62,45,15,.06);transition:.25s}.platform-world-grid>a:nth-child(2),.platform-world-grid>a:nth-child(5){background:linear-gradient(145deg,#0e315a,#173f6e);color:#fff}.platform-world-grid>a:hover{transform:translateY(-6px);border-color:var(--gold-500);box-shadow:0 24px 55px rgba(62,45,15,.12)}.platform-world-grid i{display:grid;width:50px;height:50px;place-items:center;border-radius:15px;background:linear-gradient(135deg,var(--gold-500),var(--gold-700));color:#fff;font-style:normal}.platform-world-grid small{display:block;margin-top:20px;color:var(--gold-700);font-weight:800}.platform-world-grid>a:nth-child(2) small,.platform-world-grid>a:nth-child(5) small{color:var(--gold-300)}.platform-world-grid h3{margin:5px 0 8px;font-family:"Aref Ruqaa",serif;font-size:1.7rem}.platform-world-grid p{min-height:76px;margin:0;color:var(--muted);line-height:1.8}.platform-world-grid>a:nth-child(2) p,.platform-world-grid>a:nth-child(5) p{color:rgba(255,255,255,.72)}.platform-world-grid b{display:inline-block;margin-top:13px;color:var(--gold-700)}.platform-world-grid>a:nth-child(2) b,.platform-world-grid>a:nth-child(5) b{color:var(--gold-300)}
 .premium-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 28px; }
 .premium-section-heading span, .journey-intro > span, .ai-showcase-copy > span, .premium-final-cta > span { color: var(--gold-700); font-weight: 800; }
 .premium-section-heading h2, .journey-intro h2, .ai-showcase-copy h2 { margin: 7px 0 0; color: var(--navy-900); font-family: "Aref Ruqaa", serif; font-size: clamp(2.2rem, 4vw, 3.3rem); line-height: 1.35; }
@@ -155,6 +156,7 @@ a, button { font: inherit; }
     .platform-navigation.is-open { display: flex; }.platform-navigation > a { padding: 13px; }.platform-user-menu { margin-top: 8px; border-radius: 14px; }
     .premium-hero { grid-template-columns: 1fr; }.hero-experience-card { display: none; }
     .learning-journey-section, .ai-showcase-section { grid-template-columns: 1fr; }.ai-showcase-copy { text-align: center; }
+    .platform-world-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width: 720px) {
     .platform-header { min-height: 70px; padding-inline: 18px; }.platform-brand img { width: 108px; }
@@ -165,4 +167,5 @@ a, button { font: inherit; }
     .learning-slider, .learning-slides { min-height: 520px; }.learning-slide { grid-template-columns: 1fr; gap: 0; padding: 38px 24px 85px; }.slide-number { font-size: 4.4rem; line-height: 1; }
     .journey-steps { grid-template-columns: 1fr; }.ai-showcase-section { gap: 25px; padding: 44px 22px; }.ai-visual { width: 230px; height: 230px; }
     .premium-final-cta { margin-block: 75px; }.platform-footer { grid-template-columns: 1fr; text-align: center; }.platform-footer div p { margin-inline: auto; }
+    .platform-world-section{width:min(100% - 24px,1180px);margin-top:75px}.platform-world-grid{grid-template-columns:1fr}
 }

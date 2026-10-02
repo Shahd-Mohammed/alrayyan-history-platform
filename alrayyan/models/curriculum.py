@@ -7,6 +7,7 @@ class Curriculum(db.Model):
     __tablename__ = "curricula"
 
     id = db.Column(db.Integer, primary_key=True)
+    created_by_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     name = db.Column(db.String(200), nullable=False)
     subject = db.Column(db.String(100), nullable=False)
     grade = db.Column(db.String(50), nullable=False)
@@ -22,6 +23,9 @@ class Curriculum(db.Model):
         nullable=False,
         default=True,
     )
+    processing_status = db.Column(db.String(30), nullable=False, default="ready", index=True)
+    processing_error = db.Column(db.Text, nullable=True)
+    activated_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(
         db.DateTime,
         nullable=False,
@@ -41,8 +45,12 @@ class Curriculum(db.Model):
         cascade="all, delete-orphan",
     )
 
+    created_by = db.relationship("User", foreign_keys=[created_by_id])
+
     __table_args__ = (
         db.UniqueConstraint(
+            "created_by_id",
+            "subject",
             "grade",
             "semester",
             "academic_year",
@@ -148,7 +156,7 @@ class Lesson(db.Model):
         "ContentChunk",
         back_populates="lesson",
     )
-    
+
     worksheets = db.relationship(
         "Worksheet",
         back_populates="lesson",

@@ -14,6 +14,7 @@ from flask_login import (
 )
 
 from alrayyan.models import (
+    LearningResource,
     Worksheet,
     WorksheetAttachment,
     WorksheetAttempt,
@@ -39,6 +40,7 @@ def worksheet_list():
         .filter_by(
             publication_status="published",
             is_published=True,
+            is_archived=False,
         )
         .order_by(
             Worksheet.created_at.desc()
@@ -67,6 +69,7 @@ def worksheet_details(worksheet_id):
             id=worksheet_id,
             publication_status="published",
             is_published=True,
+            is_archived=False,
         )
         .first_or_404()
     )
@@ -78,6 +81,16 @@ def worksheet_details(worksheet_id):
             attachment_type="worksheet",
         )
         .first()
+    )
+
+    lesson_resources = (
+        LearningResource.query
+        .filter_by(
+            lesson_id=worksheet.lesson_id,
+            publication_status="published",
+        )
+        .order_by(LearningResource.created_at.desc())
+        .all()
     )
 
     max_attempts = worksheet.max_attempts or 1
@@ -128,6 +141,7 @@ def worksheet_details(worksheet_id):
         "worksheet_details.html",
         worksheet=worksheet,
         worksheet_file=worksheet_file,
+        lesson_resources=lesson_resources,
         max_attempts=max_attempts,
         attempts_used=attempts_used,
         attempts_remaining=attempts_remaining,
@@ -150,6 +164,7 @@ def download_worksheet(worksheet_id):
             id=worksheet_id,
             publication_status="published",
             is_published=True,
+            is_archived=False,
         )
         .first_or_404()
     )

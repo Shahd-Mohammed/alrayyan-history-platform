@@ -80,9 +80,6 @@ class AccountSettingsForm(FlaskForm):
             DataRequired(
                 message="يرجى كتابة البريد الإلكتروني."
             ),
-            Email(
-                message="يرجى كتابة بريد إلكتروني صالح."
-            ),
             Length(max=255),
         ],
     )

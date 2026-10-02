@@ -544,6 +544,11 @@
             margin: 0;
         }
 
+        .worksheet-filter-bar { display:grid; grid-template-columns:1.5fr .75fr .75fr auto auto; gap:10px; margin-bottom:18px; padding:14px; border:1px solid var(--border); border-radius:15px; background:#fffaf0; }
+        .worksheet-filter-bar input,.worksheet-filter-bar select { min-height:44px; padding:8px 11px; border:1px solid #d9c69e; border-radius:10px; background:#fff; font:inherit; }
+        .worksheet-filter-bar button,.worksheet-filter-bar a { display:inline-flex; min-height:44px; align-items:center; justify-content:center; padding:8px 13px; border:1px solid var(--gold); border-radius:10px; background:var(--gold); color:#fff; font-weight:800; text-decoration:none; cursor:pointer; }
+        .worksheet-filter-bar a { background:#fff; color:var(--navy); }
+        .worksheet-pagination { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:20px; }.worksheet-pagination a{padding:8px 14px;border-radius:9px;background:var(--gold);color:#fff;font-weight:800}
         .empty-state {
             padding: 52px 24px;
             text-align: center;
@@ -623,6 +628,7 @@
             .statistics {
                 grid-template-columns: 1fr;
             }
+            .worksheet-filter-bar { grid-template-columns:1fr; }
 
             .worksheets-section {
                 padding: 18px;
@@ -691,10 +697,32 @@
                 </a>
                 <a
                     class="about-management-button"
-                    href="{{ url_for('teacher_dashboard.edit_about_page') }}"
+                    href="{{ url_for('platform_admin.curricula') }}"
                 >
-                    تعديل صفحة من نحن
+                    إدارة المنصة
                 </a>
+            </div>
+        </section>
+
+        <section class="management-launchpad" aria-labelledby="management-title">
+            <div class="management-launchpad-heading">
+                <div>
+                    <p class="eyebrow">مركز الإدارة</p>
+                    <h2 id="management-title">كل أدواتك في مكان منظم</h2>
+                </div>
+                <p>إدارة مترابطة للمحتوى والطلاب والتقدم من مكان واحد.</p>
+            </div>
+
+            <div class="management-launchpad-grid">
+                <a href="{{ url_for('platform_admin.curricula') }}"><span>📚</span><strong>المناهج والمصادر</strong><small>رفع كتاب أو مذكرات وربطها بمادة ووحدة ودرس.</small></a>
+                <a href="{{ url_for('platform_admin.analytics') }}"><span>📊</span><strong>تحليلات التعلّم</strong><small>نظرة جماعية وفردية على الأداء والنشاط والحاجة للدعم.</small></a>
+                <a href="{{ url_for('platform_admin.classrooms') }}"><span>🏫</span><strong>الصفوف والطلاب</strong><small>أنشئي الصفوف واضبطي رابط التواصل الخاص بها.</small></a>
+                <a href="{{ url_for('platform_admin.invitations') }}"><span>✉️</span><strong>دعوات آمنة</strong><small>رابط خاص لمرة واحدة بدل التسجيل العام.</small></a>
+                <a href="{{ url_for('platform_admin.resources') }}"><span>🗂️</span><strong>الملخصات والملفات</strong><small>ارفعي ملخص درس أو خريطة جاهزة من الجهاز.</small></a>
+                <a href="{{ url_for('platform_admin.concept_maps') }}"><span>🧠</span><strong>الخرائط المفاهيمية</strong><small>بناء يدوي الآن، واقتراح AI قابل للمراجعة.</small></a>
+                <a href="{{ url_for('platform_admin.characters') }}"><span>🏛️</span><strong>الشخصيات التعليمية</strong><small>بطاقات وشخصيات مرتبطة بالدرس والمصدر.</small></a>
+                <a href="{{ url_for('teacher_dashboard.edit_about_page') }}"><span>✦</span><strong>هوية المنصة</strong><small>عدّلي صفحة من نحن ومحتواها من لوحة التحكم.</small></a>
+                <a href="{{ url_for('platform_admin.settings') }}"><span>⚙️</span><strong>الإعدادات</strong><small>اسم المنصة والبريد وواتساب وخيارات العرض.</small></a>
             </div>
         </section>
 
@@ -713,28 +741,6 @@
             {% endif %}
         {% endwith %}
 
-        {% set published_count =
-            worksheets
-            | selectattr(
-                "publication_status",
-                "equalto",
-                "published"
-            )
-            | list
-            | length
-        %}
-
-        {% set draft_count =
-            worksheets
-            | selectattr(
-                "publication_status",
-                "equalto",
-                "draft"
-            )
-            | list
-            | length
-        %}
-
         <section class="statistics">
             <article class="stat-card">
                 <span>
@@ -742,7 +748,7 @@
                 </span>
 
                 <strong>
-                    {{ worksheets | length }}
+                    {{ total_count }}
                 </strong>
             </article>
 
@@ -787,6 +793,13 @@
                     رفع ورقة جديدة
                 </a>
             </div>
+
+            <form class="worksheet-filter-bar" method="get">
+                <input type="search" name="q" value="{{ search_term }}" placeholder="ابحثي بعنوان ورقة العمل">
+                <select name="status"><option value="">كل الحالات</option><option value="published" {% if status_filter=='published' %}selected{% endif %}>منشورة</option><option value="draft" {% if status_filter=='draft' %}selected{% endif %}>مسودة</option></select>
+                <select name="difficulty"><option value="">كل المستويات</option><option value="easy" {% if difficulty_filter=='easy' %}selected{% endif %}>سهل</option><option value="medium" {% if difficulty_filter=='medium' %}selected{% endif %}>متوسط</option><option value="hard" {% if difficulty_filter=='hard' %}selected{% endif %}>متقدم</option></select>
+                <button type="submit">تطبيق الفلترة</button><a href="{{ url_for('teacher_dashboard.dashboard') }}">مسح</a>
+            </form>
 
             {% if worksheets %}
                 <div class="worksheet-list">
@@ -861,7 +874,7 @@
                                 {% endif %}
                             </div>
 
-                            <div class="worksheet-actions">
+                            <div class="worksheet-actions worksheet-actions-premium">
                                 <a
                                     class="worksheet-action worksheet-action-primary"
                                     href="{{ url_for(
@@ -884,50 +897,29 @@
                                     نتائج الطلاب
                                 </a>
 
-                                <a
-                                    class="worksheet-action worksheet-action-edit"
-                                    href="{{ url_for(
-                                        'teacher_dashboard.edit_worksheet',
-                                        worksheet_id=worksheet.id
-                                    ) }}"
-                                >
-                                    تعديل
-                                </a>
-
-                                <form
-                                    class="inline-form"
-                                    method="POST"
-                                    action="{{ url_for(
-                                        'teacher_dashboard.toggle_publish',
-                                        worksheet_id=worksheet.id
-                                    ) }}"
-                                >
-                                    <input
-                                        type="hidden"
-                                        name="csrf_token"
-                                        value="{{ csrf_token() }}"
-                                    >
-
-                                    {% if worksheet.publication_status == "published" %}
-                                        <button
-                                            class="worksheet-action worksheet-action-state unpublish"
-                                            type="submit"
-                                        >
-                                            إرجاع لمسودة
-                                        </button>
-                                    {% else %}
-                                        <button
-                                            class="worksheet-action worksheet-action-state publish"
-                                            type="submit"
-                                        >
-                                            نشر الآن
-                                        </button>
-                                    {% endif %}
-                                </form>
+                                <details class="worksheet-more-menu">
+                                    <summary aria-label="المزيد من إجراءات ورقة العمل">••• المزيد</summary>
+                                    <div>
+                                        <a href="{{ url_for('teacher_dashboard.edit_worksheet', worksheet_id=worksheet.id) }}">تعديل بيانات الورقة</a>
+                                        <form method="POST" action="{{ url_for('teacher_dashboard.toggle_publish', worksheet_id=worksheet.id) }}">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit">{{ 'إرجاع لمسودة' if worksheet.publication_status == 'published' else 'نشر الآن' }}</button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('teacher_dashboard.archive_worksheet', worksheet_id=worksheet.id) }}">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit">أرشفة مع حفظ النتائج</button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('teacher_dashboard.delete_worksheet', worksheet_id=worksheet.id) }}" onsubmit="return confirm('الحذف النهائي متاح فقط إذا لم توجد محاولات. هل تريدين المتابعة؟')">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button class="danger-action" type="submit">حذف نهائي</button>
+                                        </form>
+                                    </div>
+                                </details>
                             </div>
                         </article>
                     {% endfor %}
                 </div>
+                {% if pagination.pages > 1 %}<nav class="worksheet-pagination" aria-label="صفحات أوراق العمل">{% if pagination.has_prev %}<a href="{{ url_for('teacher_dashboard.dashboard',page=pagination.prev_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">السابق</a>{% endif %}<span>صفحة {{ pagination.page }} من {{ pagination.pages }}</span>{% if pagination.has_next %}<a href="{{ url_for('teacher_dashboard.dashboard',page=pagination.next_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">التالي</a>{% endif %}</nav>{% endif %}
             {% else %}
                 <div class="empty-state">
                     <div class="empty-icon">
@@ -952,8 +944,26 @@
                     </a>
                 </div>
             {% endif %}
+
+            {% if archived_worksheets %}
+                <details class="archived-worksheets-panel">
+                    <summary>الأوراق المؤرشفة ({{ archived_worksheets | length }})</summary>
+                    <div class="archived-worksheet-list">
+                        {% for worksheet in archived_worksheets %}
+                            <article>
+                                <div><strong>{{ worksheet.title }}</strong><small>محفوظة مع نتائجها ولا تظهر للطلاب.</small></div>
+                                <form method="POST" action="{{ url_for('teacher_dashboard.restore_worksheet', worksheet_id=worksheet.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit">استعادة كمسودة</button>
+                                </form>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </details>
+            {% endif %}
         </section>
     </main>
     {% include '_platform_footer.html' %}
+<script src="{{ url_for('static',filename='js/dashboard_actions.js') }}" defer></script>
 </body>
 </html>

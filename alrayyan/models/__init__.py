@@ -41,6 +41,19 @@ from alrayyan.models.tutor import (
     TutorMessage,
     TutorMessageSource,
 )
+from alrayyan.models.platform import (
+    Classroom,
+    ClassEnrollment,
+    ConceptMap,
+    ConceptMapEdge,
+    ConceptMapNode,
+    HistoricalCharacter,
+    CharacterAttempt,
+    HonorBoardEntry,
+    LearningResource,
+    PlatformSettings,
+    StudentInvitation,
+)
 
 
 __all__ = [
@@ -69,4 +82,15 @@ __all__ = [
     "TutorMessageSource",
     "ConceptMastery",
     "LearningPlanItem",
+    "Classroom",
+    "ClassEnrollment",
+    "StudentInvitation",
+    "PlatformSettings",
+    "LearningResource",
+    "ConceptMap",
+    "ConceptMapNode",
+    "ConceptMapEdge",
+    "HistoricalCharacter",
+    "CharacterAttempt",
+    "HonorBoardEntry",
 ]

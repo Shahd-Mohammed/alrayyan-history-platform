@@ -43,6 +43,20 @@
         {% if current_user.is_authenticated %}
             {% if current_user.role in ['teacher', 'admin'] %}
                 <a href="{{ url_for('teacher_dashboard.dashboard') }}">لوحة المعلمة</a>
+                <details class="student-learning-menu platform-management-menu">
+                    <summary>إدارة المنصة</summary>
+                    <div>
+                        <a href="{{ url_for('platform_admin.curricula') }}">المناهج والمصادر</a>
+                        <a href="{{ url_for('platform_admin.analytics') }}">تحليلات التعلّم</a>
+                        <a href="{{ url_for('platform_admin.classrooms') }}">الصفوف</a>
+                        <a href="{{ url_for('platform_admin.invitations') }}">دعوات الطلاب</a>
+                        <a href="{{ url_for('platform_admin.resources') }}">الملخصات والملفات</a>
+                        <a href="{{ url_for('platform_admin.concept_maps') }}">الخرائط المفاهيمية</a>
+                        <a href="{{ url_for('platform_admin.characters') }}">الشخصيات التعليمية</a>
+                        <a href="{{ url_for('platform_admin.honor_board') }}">لوحة الشرف</a>
+                        <a href="{{ url_for('platform_admin.settings') }}">إعدادات المنصة</a>
+                    </div>
+                </details>
             {% elif current_user.role == 'student' %}
                 <a href="{{ url_for('main.student_dashboard') }}">لوحتي</a>
                 <a href="{{ url_for('assessment.my_results') }}">نتائجي</a>
@@ -50,10 +64,12 @@
                     <summary>تعلّمي</summary>
                     <div>
                         <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
+                        <a href="{{ url_for('learning.library') }}">مكتبة التعلّم</a>
                         <a href="{{ url_for('challenges.setup') }}">التحدي الذكي</a>
                         <a href="{{ url_for('challenges.test_bank') }}">بنك الاختبارات</a>
                         <a href="{{ url_for('teacher.learning_hub') }}">خطتي التعليمية</a>
                         <a href="{{ url_for('teacher.my_points') }}">محفظة نقاطي</a>
+                        <a href="{{ url_for('learning.honor_board') }}">لوحة الشرف</a>
                     </div>
                 </details>
             {% endif %}

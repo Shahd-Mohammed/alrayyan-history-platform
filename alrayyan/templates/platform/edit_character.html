@@ -1,0 +1,3 @@
+{% extends 'platform/_admin_base.html' %}{% from 'platform/_form_fields.html' import fields %}
+{% block title %}مراجعة شخصية{% endblock %}{% block heading %}مراجعة: {{ character.name }}{% endblock %}{% block intro %}عدّلي المعلومات والتلميحات والمرجع قبل تحويل المسودة إلى نشاط منشور.{% endblock %}
+{% block content %}<section class="platform-panel narrow-panel"><form method="post" class="platform-form">{{ form.hidden_tag() }}{{ fields(form,[form.lesson_id,form.name,form.period,form.summary,form.key_events,form.clues,form.source_notes,form.publication_status]) }}{{ form.submit(class_='platform-gold-button',value='حفظ المراجعة') }}</form></section>{% endblock %}

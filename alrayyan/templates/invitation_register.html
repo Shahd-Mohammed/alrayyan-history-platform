@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>انضمي إلى الريان</title><link rel="stylesheet" href="{{ url_for('static',filename='css/platform.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/auth.css') }}"></head>
+<body class="invitation-page">
+<main class="invitation-shell">
+  <section class="invitation-story"><span>دعوة خاصة وآمنة</span><h1>مكانك في رحلة الريان جاهز</h1><p>أنشأت معلمتك هذه الدعوة لكِ. بعد اختيار الاسم وكلمة المرور ستدخلين صفك مباشرة، ولن يستطيع شخص آخر استعمال الرابط بعدك.</p><div><b>✓</b> محتوى موثّق من منهجك</div><div><b>✓</b> معلّم ذكي وتحديات تفاعلية</div><div><b>✓</b> نتائج وتقدم محفوظان في حسابك</div></section>
+  <section class="invitation-card"><a class="invitation-logo" href="{{ url_for('main.home') }}"><img src="{{ url_for('static',filename='images/alrayyan-logo.png') }}" alt="منصة الريان"></a><span class="invitation-kicker">تفعيل حساب الطالبة</span><h2>أهلًا بكِ في صفك الجديد</h2><p>الدعوة مرتبطة بالبريد <bdi>{{ invitation.email }}</bdi> وصالحة للاستخدام مرة واحدة فقط.</p><form method="post">{{ form.hidden_tag() }}{% for field in [form.full_name,form.password,form.confirm_password] %}<label><span>{{ field.label.text }}</span>{{ field }}{% for error in field.errors %}<small>{{ error }}</small>{% endfor %}</label>{% endfor %}{{ form.submit(class_='login-button') }}</form><small class="invitation-security">🔒 بياناتك محمية ولا يوجد تسجيل عام في المنصة.</small></section>
+</main>
+</body></html>

@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from functools import wraps
 from pathlib import Path
 from uuid import uuid4
@@ -198,13 +199,41 @@ def dashboard():
             created_by_id=current_user.id,
         )
 
-    worksheets = query.order_by(
-        Worksheet.created_at.desc()
+    active_query = query.filter_by(is_archived=False)
+    total_count = active_query.count()
+    published_count = active_query.filter(Worksheet.publication_status == "published").count()
+    draft_count = active_query.filter(Worksheet.publication_status == "draft").count()
+    search_term = (request.args.get("q") or "").strip()
+    status_filter = (request.args.get("status") or "").strip()
+    difficulty_filter = (request.args.get("difficulty") or "").strip()
+    if search_term:
+        active_query = active_query.filter(Worksheet.title.ilike(f"%{search_term}%"))
+    if status_filter in {"draft", "published"}:
+        active_query = active_query.filter(Worksheet.publication_status == status_filter)
+    if difficulty_filter in {"easy", "medium", "hard"}:
+        active_query = active_query.filter(Worksheet.difficulty_level == difficulty_filter)
+    pagination = active_query.order_by(Worksheet.created_at.desc()).paginate(
+        page=max(request.args.get("page", 1, type=int), 1), per_page=12, error_out=False
+    )
+    worksheets = pagination.items
+
+    archived_worksheets = query.filter_by(
+        is_archived=True,
+    ).order_by(
+        Worksheet.archived_at.desc()
     ).all()
 
     return render_template(
         "teacher_dashboard.html",
         worksheets=worksheets,
+        archived_worksheets=archived_worksheets,
+        pagination=pagination,
+        search_term=search_term,
+        status_filter=status_filter,
+        difficulty_filter=difficulty_filter,
+        total_count=total_count,
+        published_count=published_count,
+        draft_count=draft_count,
     )
 
 
@@ -634,3 +663,71 @@ def toggle_publish(worksheet_id):
             "teacher_dashboard.dashboard"
         )
     )
+
+
+@teacher_dashboard_bp.post(
+    "/worksheets/<int:worksheet_id>/archive"
+)
+@teacher_required
+def archive_worksheet(worksheet_id):
+    """Hide a worksheet without destroying attempts or results."""
+    worksheet = get_teacher_worksheet_or_404(worksheet_id)
+    worksheet.is_archived = True
+    worksheet.archived_at = datetime.now(timezone.utc)
+    worksheet.publication_status = "draft"
+    worksheet.is_published = False
+    db.session.commit()
+    flash("تمت أرشفة ورقة العمل مع الاحتفاظ بنتائج الطلاب.", "success")
+    return redirect(url_for("teacher_dashboard.dashboard"))
+
+
+@teacher_dashboard_bp.post(
+    "/worksheets/<int:worksheet_id>/restore"
+)
+@teacher_required
+def restore_worksheet(worksheet_id):
+    """Return an archived worksheet to the teacher workspace as a draft."""
+    worksheet = get_teacher_worksheet_or_404(worksheet_id)
+    worksheet.is_archived = False
+    worksheet.archived_at = None
+    worksheet.publication_status = "draft"
+    worksheet.is_published = False
+    db.session.commit()
+    flash("تمت استعادة ورقة العمل كمسودة.", "success")
+    return redirect(url_for("teacher_dashboard.dashboard"))
+
+
+@teacher_dashboard_bp.post(
+    "/worksheets/<int:worksheet_id>/delete"
+)
+@teacher_required
+def delete_worksheet(worksheet_id):
+    """Permanently delete only worksheets that have no student attempts."""
+    worksheet = get_teacher_worksheet_or_404(worksheet_id)
+    if worksheet.attempts:
+        flash(
+            "لا يمكن حذف ورقة مرتبطة بمحاولات طلاب. استخدمي الأرشفة لحفظ النتائج.",
+            "error",
+        )
+        return redirect(url_for("teacher_dashboard.dashboard"))
+
+    upload_root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
+    attachment_paths = []
+    for attachment in worksheet.attachments:
+        candidate = (upload_root / attachment.storage_path).resolve()
+        if candidate.is_relative_to(upload_root):
+            attachment_paths.append(candidate)
+
+    db.session.delete(worksheet)
+    db.session.commit()
+
+    for candidate in attachment_paths:
+        try:
+            candidate.unlink(missing_ok=True)
+        except OSError:
+            current_app.logger.warning(
+                "Could not remove worksheet attachment %s", candidate
+            )
+
+    flash("تم حذف ورقة العمل نهائيًا.", "success")
+    return redirect(url_for("teacher_dashboard.dashboard"))

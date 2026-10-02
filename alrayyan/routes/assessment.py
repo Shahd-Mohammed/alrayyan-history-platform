@@ -35,6 +35,14 @@ from alrayyan.models import (
     Worksheet,
     WorksheetAttempt,
 )
+from alrayyan.services.question_interactions import (
+    INTERACTIVE_TYPES,
+    build_config,
+    decode_submission,
+    dump_config,
+    encode_submission,
+    grade_interaction,
+)
 
 
 assessment_bp = Blueprint(
@@ -267,12 +275,8 @@ def save_attempt_draft(
         if field_name not in submitted_form:
             continue
 
-        submitted_value = (
-            submitted_form.get(
-                field_name,
-                "",
-            )
-        )
+        submitted_values = submitted_form.getlist(field_name)
+        submitted_value = submitted_values[0] if submitted_values else ""
 
         if isinstance(
             submitted_value,
@@ -318,6 +322,14 @@ def save_attempt_draft(
 
             student_answer.answer_text = None
 
+        elif question.question_type in INTERACTIVE_TYPES:
+            student_answer.selected_choice_id = None
+            student_answer.answer_text = None
+            student_answer.answer_data = encode_submission(
+                question.question_type,
+                submitted_values,
+            )
+
         else:
             student_answer.selected_choice_id = (
                 None
@@ -326,6 +338,7 @@ def save_attempt_draft(
             student_answer.answer_text = (
                 submitted_value
             )
+            student_answer.answer_data = None
 
         student_answer.is_correct = None
         student_answer.awarded_points = 0.0
@@ -383,6 +396,7 @@ def grade_and_submit_attempt(
         elif question.question_type in {
             "true_false",
             "short_answer",
+            "fill_blank",
         }:
             student_answer.is_correct = (
                 normalize_answer(
@@ -399,6 +413,14 @@ def grade_and_submit_attempt(
                 student_answer.awarded_points = (
                     question.points
                 )
+
+        elif question.question_type in INTERACTIVE_TYPES:
+            is_correct, ratio = grade_interaction(
+                question,
+                student_answer.answer_data,
+            )
+            student_answer.is_correct = is_correct
+            student_answer.awarded_points = round(question.points * ratio, 2)
 
         elif (
             question.question_type
@@ -433,6 +455,11 @@ def build_saved_answers(attempt):
                 answer.question_id
             ] = str(
                 answer.selected_choice_id
+            )
+        elif answer.answer_data:
+            saved_answers[answer.question_id] = decode_submission(
+                answer.question.question_type,
+                answer.answer_data,
             )
         else:
             saved_answers[
@@ -486,6 +513,21 @@ def manage_questions(worksheet_id):
             form.correct_answer_text.data
             or ""
         ).strip()
+
+        interaction_config, interaction_errors = build_config(
+            question_type,
+            choices,
+            correct_answer,
+        )
+        if interaction_errors:
+            for error in interaction_errors:
+                flash(error, "error")
+            return render_template(
+                "manage_questions.html",
+                worksheet=worksheet,
+                form=form,
+                settings_form=settings_form,
+            )
 
         if question_type == "multiple_choice":
             if len(choices) < 2:
@@ -553,7 +595,7 @@ def manage_questions(worksheet_id):
                 )
 
         if (
-            question_type == "short_answer"
+            question_type in {"short_answer", "fill_blank"}
             and not correct_answer
         ):
             flash(
@@ -594,12 +636,17 @@ def manage_questions(worksheet_id):
             requires_manual_grading=(
                 question_type == "essay"
             ),
+            interaction_config=(
+                dump_config(interaction_config)
+                if question_type in INTERACTIVE_TYPES
+                else None
+            ),
         )
 
         db.session.add(question)
         db.session.flush()
 
-        if question_type == "multiple_choice":
+        if question_type in {"multiple_choice", "multiple_select"}:
             for index, choice_text in enumerate(
                 choices,
                 start=1,
@@ -608,12 +655,15 @@ def manage_questions(worksheet_id):
                     question_id=question.id,
                     choice_text=choice_text,
                     is_correct=(
-                        normalize_answer(
-                            choice_text
-                        )
-                        == normalize_answer(
-                            correct_answer
-                        )
+                        normalize_answer(choice_text)
+                        in {
+                            normalize_answer(item)
+                            for item in (
+                                interaction_config.get("correct_values", [])
+                                if question_type == "multiple_select"
+                                else [correct_answer]
+                            )
+                        }
                     ),
                     order_index=index,
                 )
@@ -796,6 +846,7 @@ def get_published_worksheet_or_404(
             id=worksheet_id,
             publication_status="published",
             is_published=True,
+            is_archived=False,
         )
         .first_or_404()
     )
@@ -1350,6 +1401,22 @@ def edit_question(question_id):
             or ""
         ).strip()
 
+        interaction_config, interaction_errors = build_config(
+            question_type,
+            choices,
+            correct_answer,
+        )
+        if interaction_errors:
+            for error in interaction_errors:
+                flash(error, "error")
+            return render_template(
+                "edit_question.html",
+                worksheet=worksheet,
+                question=question,
+                form=form,
+                has_student_answers=has_student_answers,
+            )
+
         if question_type == "multiple_choice":
             if len(choices) < 2:
                 flash(
@@ -1425,7 +1492,7 @@ def edit_question(question_id):
                 )
 
         if (
-            question_type == "short_answer"
+            question_type in {"short_answer", "fill_blank"}
             and not correct_answer
         ):
             flash(
@@ -1462,6 +1529,12 @@ def edit_question(question_id):
             question_type == "essay"
         )
 
+        question.interaction_config = (
+            dump_config(interaction_config)
+            if question_type in INTERACTIVE_TYPES
+            else None
+        )
+
         for old_choice in list(
             question.choices
         ):
@@ -1471,7 +1544,7 @@ def edit_question(question_id):
 
         db.session.flush()
 
-        if question_type == "multiple_choice":
+        if question_type in {"multiple_choice", "multiple_select"}:
             for index, choice_text in enumerate(
                 choices,
                 start=1,
@@ -1481,12 +1554,15 @@ def edit_question(question_id):
                         question_id=question.id,
                         choice_text=choice_text,
                         is_correct=(
-                            normalize_answer(
-                                choice_text
-                            )
-                            == normalize_answer(
-                                correct_answer
-                            )
+                            normalize_answer(choice_text)
+                            in {
+                                normalize_answer(item)
+                                for item in (
+                                    interaction_config.get("correct_values", [])
+                                    if question_type == "multiple_select"
+                                    else [correct_answer]
+                                )
+                            }
                         ),
                         order_index=index,
                     )

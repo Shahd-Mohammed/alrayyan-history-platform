@@ -10,9 +10,18 @@ from flask_login import (
     current_user,
     login_required,
 )
+from sqlalchemy import text
+
+from alrayyan.extensions import db
 
 from alrayyan.models import (
     AboutPage,
+    ConceptMap,
+    ContentChunk,
+    Curriculum,
+    HistoricalCharacter,
+    LearningResource,
+    Lesson,
     Worksheet,
     WorksheetAttempt,
 )
@@ -24,6 +33,13 @@ main_bp = Blueprint(
 )
 
 
+@main_bp.get("/health")
+def health():
+    """Small deployment health check without exposing private data."""
+    db.session.execute(text("SELECT 1"))
+    return {"status": "ok"}, 200
+
+
 @main_bp.get("/")
 def home():
     featured_worksheets = (
@@ -31,6 +47,7 @@ def home():
         .filter_by(
             publication_status="published",
             is_published=True,
+            is_archived=False,
         )
         .order_by(
             Worksheet.created_at.desc()
@@ -39,11 +56,22 @@ def home():
         .all()
     )
 
+    public_stats = {
+        "subjects": Curriculum.query.filter_by(is_active=True).with_entities(Curriculum.subject).distinct().count(),
+        "lessons": Lesson.query.filter_by(is_published=True).count(),
+        "knowledge_chunks": ContentChunk.query.count(),
+        "activities": Worksheet.query.filter_by(publication_status="published", is_published=True, is_archived=False).count(),
+        "learning_resources": LearningResource.query.filter_by(publication_status="published").count(),
+        "maps": ConceptMap.query.filter_by(publication_status="published").count(),
+        "characters": HistoricalCharacter.query.filter_by(publication_status="published").count(),
+    }
+
     return render_template(
         "home.html",
         featured_worksheets=(
             featured_worksheets
         ),
+        public_stats=public_stats,
     )
 
 
@@ -86,6 +114,7 @@ def student_dashboard():
         .filter_by(
             publication_status="published",
             is_published=True,
+            is_archived=False,
         )
         .order_by(
             Worksheet.created_at.desc()

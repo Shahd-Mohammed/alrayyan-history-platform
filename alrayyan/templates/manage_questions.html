@@ -228,8 +228,9 @@
                         }}
 
                         <small>
-                            استخدمي هذا الحقل فقط
-                            للاختيار من متعدد.
+                            للاختيار: كل خيار في سطر. للترتيب:
+                            اكتبي العناصر بالترتيب الصحيح. للمطابقة:
+                            اكتبي «المفهوم | الإجابة» في كل سطر.
                         </small>
                     </div>
 
@@ -244,7 +245,7 @@
                             form.correct_answer_text(
                                 placeholder=(
                                     "نص الخيار الصحيح، "
-                                    "أو صح، أو خطأ"
+                                    "أو صح/خطأ. للاختيارات المتعددة افصلي الصحيحة بعلامة |"
                                 )
                             )
                         }}
@@ -292,6 +293,14 @@
                          إجابة قصيرة
                     {% elif question.question_type == "essay" %}
                          سؤال مقالي
+                    {% elif question.question_type == "fill_blank" %}
+                         إكمال فراغ
+                    {% elif question.question_type == "multiple_select" %}
+                         اختيارات صحيحة متعددة
+                    {% elif question.question_type == "ordering" %}
+                         ترتيب
+                    {% elif question.question_type == "matching" %}
+                         مطابقة
                     {% else %}
                          سؤال تفاعلي
                     {% endif %}

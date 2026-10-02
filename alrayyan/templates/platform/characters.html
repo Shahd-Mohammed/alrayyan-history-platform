@@ -1,0 +1,15 @@
+{% extends 'platform/_admin_base.html' %}
+{% from 'platform/_form_fields.html' import fields %}
+{% block title %}الشخصيات التعليمية{% endblock %}
+{% block heading %}الشخصيات التعليمية{% endblock %}
+{% block intro %}نشاط «من أنا؟» موثّق من الدرس، مع تلميحات ونقاط حقيقية. ويمكن استعمال القسم لاحقًا للعلماء والأدباء في المواد الأخرى.{% endblock %}
+{% block content %}
+<div class="platform-two-columns">
+  <section class="platform-panel">
+    <div class="panel-title"><span>01</span><div><h2>إضافة يدوية</h2><p>افصلي التلميحات عن المرجع حتى لا يظهر اسم المصدر كأنه وصف للشخصية.</p></div></div>
+    <form method="post" class="platform-form">{{ form.hidden_tag() }}{{ fields(form,[form.lesson_id,form.name,form.period,form.summary,form.key_events,form.clues,form.source_notes,form.publication_status]) }}{{ form.submit(class_='platform-gold-button') }}</form>
+    <div class="platform-ai-box"><h3>استخراج موثّق من المنهج</h3><p>يقرأ الدرس النشط ويقترح شخصيات وتلميحات كمسودات، ولا ينشر شيئًا دون مراجعتك.</p><form method="post" action="{{ url_for('platform_admin.generate_characters') }}" class="platform-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label>الدرس<select name="lesson_id" required>{% for value,label in form.lesson_id.choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></label><button class="platform-gold-button" type="submit">اقتراح شخصيات بالذكاء الاصطناعي</button></form></div>
+  </section>
+  <section class="platform-panel"><div class="panel-title"><span>02</span><div><h2>الشخصيات الحالية</h2><p>راجعي التلميحات والمصدر ثم اعتمدي النشر.</p></div></div><div class="platform-list">{% for row in characters %}<article><div><strong>{{ row.name }}</strong><p>{{ row.lesson.title }} · {{ row.period or 'دون فترة محددة' }}{% if row.is_ai_generated %} · اقتراح AI{% endif %}</p><small>{{ row.summary|truncate(110) }}</small></div><div class="review-actions"><span class="status-pill">{{ 'منشورة' if row.publication_status=='published' else 'مسودة' }}</span><a href="{{ url_for('platform_admin.edit_character',row_id=row.id) }}">مراجعة</a><form method="post" action="{{ url_for('platform_admin.toggle_character',row_id=row.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">{{ 'إخفاء' if row.publication_status=='published' else 'اعتماد ونشر' }}</button></form></div></article>{% else %}<div class="platform-empty">لا توجد شخصيات بعد.</div>{% endfor %}</div></section>
+</div>
+{% endblock %}

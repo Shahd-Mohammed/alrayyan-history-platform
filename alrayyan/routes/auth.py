@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+import re
 from urllib.parse import urljoin, urlparse
 
 from flask import (
@@ -18,9 +20,10 @@ from flask_login import (
 from alrayyan.extensions import db
 from alrayyan.forms import (
     AccountSettingsForm,
+    InvitationRegistrationForm,
     LoginForm,
 )
-from alrayyan.models import User
+from alrayyan.models import ClassEnrollment, StudentInvitation, User
 
 
 auth_bp = Blueprint(
@@ -28,6 +31,29 @@ auth_bp = Blueprint(
     __name__,
     url_prefix="/auth",
 )
+
+
+@auth_bp.route("/join/<token>", methods=["GET", "POST"])
+def register_invitation(token):
+    if current_user.is_authenticated:
+        return redirect(get_user_homepage(current_user))
+    invitation = StudentInvitation.find_valid(token)
+    if invitation is None:
+        return render_template("invitation_invalid.html"), 410
+    form = InvitationRegistrationForm()
+    if form.validate_on_submit():
+        if User.query.filter_by(email=invitation.email).first():
+            flash("هذا البريد مستخدم مسبقًا", "error")
+        else:
+            user = User(full_name=form.full_name.data.strip(), email=invitation.email, role="student", is_active_account=True)
+            user.set_password(form.password.data)
+            db.session.add(user); db.session.flush()
+            if invitation.classroom_id:
+                db.session.add(ClassEnrollment(classroom_id=invitation.classroom_id, student_id=user.id))
+            invitation.accepted_at = datetime.now(timezone.utc).replace(tzinfo=None)
+            db.session.commit(); login_user(user)
+            return redirect(url_for("main.student_dashboard"))
+    return render_template("invitation_register.html", form=form, invitation=invitation)
 
 
 def is_safe_redirect_url(target):
@@ -190,6 +216,7 @@ def account_settings():
             .lower()
         )
 
+        email_is_valid = bool(re.fullmatch(r"[^@\s]+@[^@\s]+(?:\.[^@\s]+)?", normalized_email))
         duplicate_user = (
             User.query
             .filter(
@@ -199,7 +226,9 @@ def account_settings():
             .first()
         )
 
-        if duplicate_user:
+        if not email_is_valid:
+            form.email.errors.append("يرجى كتابة بريد إلكتروني صالح.")
+        elif duplicate_user:
             form.email.errors.append(
                 "هذا البريد مستخدم في حساب آخر."
             )
