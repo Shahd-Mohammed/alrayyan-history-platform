@@ -75,3 +75,13 @@
 .test-icon{position:relative;z-index:2;width:82px;height:82px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(145deg,#e5c77f,#a8751d);color:#102b4f;font-size:2.2rem;font-weight:900;box-shadow:0 18px 45px rgba(0,0,0,.25)}
 .test-hero-visual>span{position:absolute;bottom:0;right:0;padding:7px 11px;border-radius:10px;background:rgba(255,255,255,.08);color:#e5c77f;font-size:.72rem;font-weight:800;line-height:1.5}
 @media(max-width:700px){.test-editor-hero{grid-template-columns:1fr}.test-hero-visual{height:150px}.honor-hero .hero-ribbon{position:relative;bottom:auto;right:auto;transform:none;margin-top:16px}.honor-hero-stats{justify-content:center}.library-hero .library-hero-pills{justify-content:center}}
+
+
+/* Restored classic student page hero design - first section only */
+.historical-learning-hero.library-page-hero{background:radial-gradient(circle at 88% 15%,rgba(126,171,154,.22),transparent 28%),linear-gradient(135deg,#173b3a 0%,#245b59 55%,#123331 100%);border-color:rgba(180,215,194,.24)}
+.historical-learning-hero.honor-page-hero{background:radial-gradient(circle at 88% 15%,rgba(186,145,91,.22),transparent 28%),linear-gradient(135deg,#35263f 0%,#553653 55%,#2b2033 100%);border-color:rgba(235,207,159,.24)}
+.historical-learning-hero .hero-accent{display:block;margin-top:8px;color:#e7d39a;font-family:"Aref Ruqaa",serif}
+.historical-learning-hero>span{max-width:760px;color:rgba(255,255,255,.82);line-height:1.95}
+.historical-learning-hero .library-hero-pills,.historical-learning-hero .honor-hero-stats{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
+.historical-learning-hero .library-hero-pills span,.historical-learning-hero .honor-hero-stats span{padding:8px 13px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.07);color:#f2dda6;font-size:.78rem;font-weight:800}
+.historical-learning-hero .honor-hero-stats span{display:flex;align-items:baseline;gap:7px;border-radius:14px}.historical-learning-hero .honor-hero-stats b{font-size:1.25rem;color:#f2dda6}.historical-learning-hero .honor-hero-stats small{color:rgba(255,255,255,.72)}
