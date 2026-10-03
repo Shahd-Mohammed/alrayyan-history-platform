@@ -52,7 +52,7 @@
         .worksheet-more-menu summary::-webkit-details-marker { display:none; }
         .worksheet-more-menu > div { position:absolute; z-index:20; top:calc(100% + 8px); right:0; min-width:210px; padding:7px; display:grid; gap:3px; background:#fff; border:1px solid var(--border); border-radius:13px; box-shadow:0 16px 35px rgba(23,47,82,.14); }
         .worksheet-more-menu a,.worksheet-more-menu button { width:100%; padding:10px 11px; text-align:right; border:0; border-radius:9px; background:transparent; color:var(--navy); font:inherit; font-size:13px; cursor:pointer; }
-        .worksheet-more-menu a:hover,.worksheet-more-menu button:hover { background:#f8f3e8; }
+        .worksheet-more-menu a:hover,.worksheet-more-menu button:hover { background:#f8f3e8; color:var(--navy); box-shadow:inset -3px 0 0 var(--gold); }
         .worksheet-more-menu .danger-action { color:var(--danger); }
         .inline-form { margin:0; }
         .worksheet-pagination { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:20px; }
@@ -77,7 +77,7 @@
             <div>
                 <p class="eyebrow">مساحة إدارة أوراق العمل</p>
                 <h1>مركز أوراق العمل</h1>
-                <p>هنا تجدين كل ما يخص أوراق العمل: الإنشاء، إدارة الأسئلة، نتائج الطالبات، النشر، المسودات والأرشفة.</p>
+                <p>نظّمي أوراق العمل، أضيفي الأسئلة، وتابعي نتائج الطالبات من مساحة واحدة.</p>
             </div>
             <a class="primary-button" href="{{ url_for('teacher_dashboard.upload_worksheet') }}">＋ إضافة ورقة عمل</a>
         </section>
