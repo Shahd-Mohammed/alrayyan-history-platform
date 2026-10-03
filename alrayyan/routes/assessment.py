@@ -34,6 +34,9 @@ from alrayyan.models import (
     StudentAnswer,
     Worksheet,
     WorksheetAttempt,
+    Lesson,
+    Unit,
+    Curriculum,
 )
 from alrayyan.services.question_interactions import (
     INTERACTIVE_TYPES,
@@ -73,6 +76,43 @@ def teacher_required(view_function):
         )
 
     return wrapped_view
+
+
+@assessment_bp.route("/teacher/tests", methods=["GET", "POST"])
+@teacher_required
+def test_center():
+    lessons = (
+        Lesson.query.join(Unit).join(Curriculum)
+        .filter(Curriculum.is_active.is_(True), Curriculum.processing_status == "ready", Lesson.is_published.is_(True))
+        .order_by(Unit.order_index, Lesson.order_index)
+        .all()
+    )
+    if request.method == "POST":
+        title = (request.form.get("title") or "").strip()
+        lesson_id = request.form.get("lesson_id", type=int)
+        lesson = next((item for item in lessons if item.id == lesson_id), None)
+        if not title or lesson is None:
+            flash("اختاري درسًا نشطًا واكتبي اسم الاختبار.", "error")
+            return redirect(url_for("assessment.test_center"))
+        test = Worksheet(
+            lesson_id=lesson.id,
+            created_by_id=current_user.id,
+            title=title,
+            description=(request.form.get("description") or "").strip() or None,
+            creation_method="test",
+            difficulty_level="medium",
+            publication_status="draft",
+            is_published=False,
+        )
+        db.session.add(test)
+        db.session.commit()
+        flash("تم إنشاء الاختبار. الآن أضيفي أسئلته من نفس محرر الأسئلة.", "success")
+        return redirect(url_for("assessment.manage_questions", worksheet_id=test.id))
+    tests = Worksheet.query.filter_by(creation_method="test", is_archived=False)
+    if current_user.role != "admin":
+        tests = tests.filter_by(created_by_id=current_user.id)
+    tests = tests.order_by(Worksheet.created_at.desc()).all()
+    return render_template("assessment/test_center.html", tests=tests, lessons=lessons)
 
 
 def get_teacher_worksheet_or_404(
