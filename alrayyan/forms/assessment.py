@@ -57,7 +57,7 @@ class QuestionForm(FlaskForm):
                 "سؤال مقالي",
             ),
             ("fill_blank", "أكملي الفراغ"),
-            ("multiple_select", "اختيارات صحيحة متعددة"),
+            ("multiple_select", "تحديد عدة إجابات صحيحة"),
             ("ordering", "سحب وإفلات وترتيب"),
             ("matching", "مطابقة بين عمودين"),
         ],
