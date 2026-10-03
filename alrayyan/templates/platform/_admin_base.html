@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{% block title %}إدارة المنصة{% endblock %}</title>
+  <title>{% block title %}إدارة المحتوى{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static',filename='css/platform.css') }}">
   <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin.css') }}">
   <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin_premium.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin_refresh.css') }}">
 </head>
 <body class="platform-admin-body">
   {% include '_platform_header.html' %}
   <main class="platform-admin-page">
     <header class="platform-admin-hero">
-      <div><span>{% block eyebrow %}لوحة المعلمة{% endblock %}</span><h1>{% block heading %}إدارة المنصة{% endblock %}</h1><p>{% block intro %}{% endblock %}</p></div>
-      <nav><a href="{{ url_for('platform_admin.curricula') }}">المناهج</a><a href="{{ url_for('platform_admin.classrooms') }}">الصفوف</a><a href="{{ url_for('platform_admin.invitations') }}">الدعوات</a><a href="{{ url_for('platform_admin.resources') }}">الملخصات</a><a href="{{ url_for('platform_admin.concept_maps') }}">الخرائط</a><a href="{{ url_for('platform_admin.characters') }}">الشخصيات</a><a href="{{ url_for('platform_admin.honor_board') }}">لوحة الشرف</a><a href="{{ url_for('platform_admin.analytics') }}">التحليلات</a></nav>
+      <div><span>{% block eyebrow %}لوحة المعلمة{% endblock %}</span><h1>{% block heading %}إدارة المحتوى{% endblock %}</h1><p>{% block intro %}{% endblock %}</p></div>
+      <nav><a href="{{ url_for('worksheet_center.index') }}">أوراق العمل</a><a href="{{ url_for('platform_admin.curricula') }}">المناهج</a><a href="{{ url_for('platform_admin.classrooms') }}">الصفوف</a><a href="{{ url_for('platform_admin.invitations') }}">الدعوات</a><a href="{{ url_for('platform_admin.resources') }}">الملخصات</a><a href="{{ url_for('platform_admin.concept_maps') }}">الخرائط</a><a href="{{ url_for('platform_admin.characters') }}">الشخصيات</a><a href="{{ url_for('platform_admin.honor_board') }}">لوحة الشرف</a><a href="{{ url_for('platform_admin.analytics') }}">التحليلات</a></nav>
     </header>
     {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="platform-alert {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}
     {% block content %}{% endblock %}
