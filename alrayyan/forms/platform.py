@@ -47,7 +47,7 @@ class InvitationRegistrationForm(FlaskForm):
 class PlatformSettingsForm(FlaskForm):
     platform_name = StringField("اسم المنصة", validators=[DataRequired(), Length(max=150)])
     tagline = StringField("العبارة التعريفية", validators=[DataRequired(), Length(max=250)])
-    whatsapp_url = StringField("رابط واتساب العام", validators=[Optional(), URL(), Length(max=500)])
+    whatsapp_url = StringField("رقم واتساب المنصة", validators=[Optional(), Length(max=500)], description="أدخلي رقم واتساب مع مفتاح الدولة أو رابط واتساب مباشر. سيتم استخدام القيمة نفسها في أيقونة واتساب في الفوتر.")
     support_email = EmailField("بريد التواصل", validators=[Optional(), Email(), Length(max=255)])
     submit = SubmitField("حفظ الإعدادات")
 
