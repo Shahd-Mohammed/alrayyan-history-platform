@@ -1,7 +1,4 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css') }}">
-{% if request.endpoint == 'teacher_dashboard.dashboard' %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_cleanup.css') }}">
-{% endif %}
 
 <header class="platform-header">
     <a class="platform-brand" href="{{ url_for('main.home') }}">
