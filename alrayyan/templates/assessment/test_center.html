@@ -1,27 +1,95 @@
 {% extends "platform/_admin_base.html" %}
-{% block title %}الاختبارات | مركز المحتوى{% endblock %}
-{% block eyebrow %}مركز المحتوى{% endblock %}
-{% block heading %}الاختبارات{% endblock %}
-{% block intro %}أنشئي اختبارات مستقلة من نفس محرر الأسئلة المستخدم داخل أوراق العمل، مع بقاء نظام التصحيح والمحاولات كما هو.{% endblock %}
+{% block title %}استوديو الاختبارات | منصة الريان{% endblock %}
+{% block eyebrow %}استوديو الاختبارات{% endblock %}
+{% block heading %}ابني اختباركِ بطريقة أذكى{% endblock %}
+{% block intro %}أنشئي اختبارًا تاريخيًا، اربطيه بالدرس، ثم انتقلي مباشرة إلى محرر الأسئلة لإضافة الأسئلة وتصحيحها وإدارة محاولات الطالبات.{% endblock %}
 {% block content %}
-<section class="content-panel">
-  <div class="panel-heading"><div><span>اختبار جديد</span><h2>أنشئي اختبارًا ثم أضيفي أسئلته</h2></div></div>
-  <form method="post" class="content-form-grid">
-    <div class="field-group"><label for="title">اسم الاختبار</label><input id="title" name="title" required placeholder="مثال: اختبار الوحدة الأولى"></div>
-    <div class="field-group"><label for="lesson_id">الدرس المرتبط</label><select id="lesson_id" name="lesson_id" required><option value="">اختاري الدرس</option>{% for lesson in lessons %}<option value="{{ lesson.id }}">{{ lesson.unit.curriculum.subject }} — {{ lesson.unit.title }} — {{ lesson.title }}</option>{% endfor %}</select></div>
-    <div class="field-group full-width"><label for="description">وصف الاختبار</label><textarea id="description" name="description" rows="3" placeholder="اختبار لقياس فهم الطالب للمفاهيم الأساسية."></textarea></div>
-    <div class="full-width"><button class="gold-action" type="submit">إنشاء الاختبار وفتح محرر الأسئلة</button></div>
-  </form>
-</section>
-<section class="content-panel">
-  <div class="panel-heading"><div><span>الاختبارات المحفوظة</span><h2>اختباراتك</h2></div></div>
-  <div class="content-list">
-    {% for test in tests %}
-      <article class="content-list-item">
-        <div><small>{{ test.lesson.title if test.lesson else 'بدون درس' }}</small><h3>{{ test.title }}</h3><p>{{ test.questions|length }} سؤالًا · {{ test.publication_status }}</p></div>
-        <a class="button-gold" href="{{ url_for('assessment.manage_questions', worksheet_id=test.id) }}">إدارة الأسئلة</a>
-      </article>
-    {% else %}<p class="learning-empty">لا توجد اختبارات بعد.</p>{% endfor %}
-  </div>
-</section>
+<div class="test-center-page">
+  <section class="test-center-intro">
+    <div class="test-center-intro-copy">
+      <span>✦ مساحة المعلمة</span>
+      <h2>من فكرة السؤال إلى اختبار جاهز.</h2>
+      <p>كل ما تحتاجينه لإنشاء الاختبار موجود في مكان واحد، بتجربة مرتبة وواضحة بدون تشتيت.</p>
+    </div>
+    <div class="test-center-orbit" aria-hidden="true">
+      <div class="test-orbit-ring ring-one"></div>
+      <div class="test-orbit-ring ring-two"></div>
+      <div class="test-orbit-core">ريان</div>
+      <b class="test-orbit-label label-one">أنشئي</b>
+      <b class="test-orbit-label label-two">اسألي</b>
+      <b class="test-orbit-label label-three">قيّمي</b>
+    </div>
+  </section>
+
+  <section class="test-create-card">
+    <div class="test-section-heading">
+      <div class="test-section-icon">＋</div>
+      <div>
+        <span>اختبار جديد</span>
+        <h2>ابدئي اختبارًا جديدًا</h2>
+        <p>اكتبي البيانات الأساسية فقط، وبعدها سنفتح لكِ محرر الأسئلة.</p>
+      </div>
+    </div>
+
+    <form method="post" class="test-create-form">
+      <div class="test-field">
+        <label for="title">اسم الاختبار</label>
+        <input id="title" name="title" required placeholder="مثال: اختبار الوحدة الأولى">
+      </div>
+      <div class="test-field">
+        <label for="lesson_id">الدرس المرتبط</label>
+        <select id="lesson_id" name="lesson_id" required>
+          <option value="">اختاري الدرس</option>
+          {% for lesson in lessons %}
+            <option value="{{ lesson.id }}">{{ lesson.unit.curriculum.subject }} — {{ lesson.unit.title }} — {{ lesson.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="test-field test-field-full">
+        <label for="description">وصف الاختبار <small>اختياري</small></label>
+        <textarea id="description" name="description" rows="3" placeholder="اكتبي باختصار ماذا يقيس هذا الاختبار..."></textarea>
+      </div>
+      <div class="test-form-footer">
+        <p><strong>بعد الإنشاء:</strong> ستنتقلين مباشرة إلى محرر الأسئلة لإضافة كل الأنواع المتاحة.</p>
+        <button class="test-primary-button" type="submit">إنشاء الاختبار <span>←</span></button>
+      </div>
+    </form>
+  </section>
+
+  <section class="test-library-section">
+    <div class="test-library-heading">
+      <div>
+        <span>مكتبة الاختبارات</span>
+        <h2>اختباراتكِ المحفوظة</h2>
+      </div>
+      <div class="test-count">{{ tests|length }} <small>اختبار</small></div>
+    </div>
+
+    <div class="test-library-grid">
+      {% for test in tests %}
+        <article class="test-library-card">
+          <div class="test-card-top">
+            <span class="test-card-number">{{ "%02d"|format(loop.index) }}</span>
+            <span class="test-status {{ test.publication_status }}">{{ test.publication_status }}</span>
+          </div>
+          <div class="test-card-body">
+            <small>{{ test.lesson.title if test.lesson else 'بدون درس' }}</small>
+            <h3>{{ test.title }}</h3>
+            <p>{{ test.description or 'اختبار تاريخي جاهز لإضافة الأسئلة وإعداد تجربة الطالبات.' }}</p>
+          </div>
+          <div class="test-card-footer">
+            <span><b>{{ test.questions|length }}</b> سؤال</span>
+            <a href="{{ url_for('assessment.manage_questions', worksheet_id=test.id) }}">إدارة الاختبار <span>←</span></a>
+          </div>
+        </article>
+      {% else %}
+        <div class="test-empty-state">
+          <div>✦</div>
+          <h3>لم تنشئي أي اختبار بعد</h3>
+          <p>ابدئي من النموذج بالأعلى، وسيظهر اختبارك هنا مع جميع تفاصيله.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
 {% endblock %}
