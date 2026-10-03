@@ -430,7 +430,22 @@ def toggle_character(row_id):
 def settings():
     row = PlatformSettings.get_or_create(); form = PlatformSettingsForm(obj=row)
     if form.validate_on_submit():
-        form.populate_obj(row); db.session.commit(); flash("تم حفظ إعدادات المنصة", "success")
+        whatsapp_value = (form.whatsapp_url.data or "").strip()
+        if whatsapp_value:
+            compact_whatsapp = re.sub(r"[\\s\\-()]+", "", whatsapp_value)
+            if compact_whatsapp.startswith("00"):
+                compact_whatsapp = compact_whatsapp[2:]
+            if compact_whatsapp.startswith("+"):
+                compact_whatsapp = compact_whatsapp[1:]
+            if compact_whatsapp.isdigit():
+                if compact_whatsapp.startswith("0"):
+                    compact_whatsapp = "970" + compact_whatsapp[1:]
+                whatsapp_value = f"https://wa.me/{compact_whatsapp}"
+        row.platform_name = form.platform_name.data
+        row.tagline = form.tagline.data
+        row.whatsapp_url = whatsapp_value or None
+        row.support_email = form.support_email.data
+        db.session.commit(); flash("تم حفظ إعدادات المنصة", "success")
         return redirect(url_for("platform_admin.settings"))
     return render_template("platform/settings.html", form=form)
 
