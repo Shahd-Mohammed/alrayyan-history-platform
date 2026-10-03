@@ -214,8 +214,7 @@ def test_center():
             selected_test = get_teacher_worksheet_or_404(worksheet_id)
 
             if form.validate_on_submit():
-                create_question_from_form(selected_test, form)
-                if not form.errors:
+                if create_question_from_form(selected_test, form):
                     return redirect(
                         url_for(
                             "assessment.test_center",
