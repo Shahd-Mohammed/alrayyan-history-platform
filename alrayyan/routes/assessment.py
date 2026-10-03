@@ -37,6 +37,8 @@ from alrayyan.models import (
     Lesson,
     Unit,
     Curriculum,
+    User,
+    XPTransaction,
 )
 from alrayyan.services.question_interactions import (
     INTERACTIVE_TYPES,
@@ -952,6 +954,34 @@ def calculate_attempt_result(attempt):
         and attempt.percentage
         >= attempt.worksheet.passing_score
     )
+
+    # الاختبار يكافئ الطالبة بالنقاط المكتسبة مرة واحدة فقط.
+    if (
+        attempt.worksheet.creation_method == "test"
+        and not has_pending_manual_grading
+    ):
+        earned_points = int(round(attempt.score or 0))
+        if earned_points > 0:
+            existing_award = XPTransaction.query.filter_by(
+                student_id=attempt.student_id,
+                reason="test_completed",
+                source_type="worksheet_attempt",
+                source_id=attempt.id,
+            ).first()
+            if existing_award is None:
+                db.session.add(
+                    XPTransaction(
+                        student_id=attempt.student_id,
+                        amount=earned_points,
+                        reason="test_completed",
+                        source_type="worksheet_attempt",
+                        source_id=attempt.id,
+                    )
+                )
+                student = db.session.get(User, attempt.student_id)
+                if student is not None:
+                    student.points += earned_points
+                    student.level = max(1, student.points // 500 + 1)
 
 
 @assessment_bp.post(
