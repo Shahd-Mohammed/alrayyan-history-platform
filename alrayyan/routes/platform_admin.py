@@ -47,6 +47,40 @@ def lesson_choices():
     return [(lesson.id, f"{lesson.unit.curriculum.subject} — {lesson.title}") for lesson in teacher_lessons()]
 
 
+def curriculum_ready_for_activation(curriculum):
+    if curriculum.processing_status != "ready" or not curriculum.sources:
+        return False
+    chunks = ContentChunk.query.join(SourceDocument).filter(
+        SourceDocument.curriculum_id == curriculum.id,
+    ).all()
+    return bool(chunks) and all(
+        chunk.embedding and chunk.embedding_model and chunk.embedding_dimensions
+        for chunk in chunks
+    )
+
+
+def activate_curriculum(curriculum):
+    if not curriculum_ready_for_activation(curriculum):
+        raise ValueError("المنهج لم يكتمل تجهيزه وفهرسته بعد")
+    teacher_curricula().filter(
+        Curriculum.id != curriculum.id,
+        Curriculum.subject == curriculum.subject,
+        Curriculum.grade == curriculum.grade,
+    ).update({Curriculum.is_active: False}, synchronize_session=False)
+    SourceDocument.query.filter(
+        SourceDocument.curriculum_id != curriculum.id,
+        SourceDocument.curriculum_id.in_(db.session.query(Curriculum.id).filter(
+            Curriculum.subject == curriculum.subject,
+            Curriculum.grade == curriculum.grade,
+        )),
+    ).update({SourceDocument.is_active: False}, synchronize_session=False)
+    curriculum.is_active = True
+    curriculum.processing_status = "ready"
+    curriculum.activated_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    for source in curriculum.sources:
+        source.is_active = True
+
+
 def owned_lesson_or_404(lesson_id):
     lesson = db.session.get(Lesson, lesson_id)
     if lesson is None or lesson.id not in {item.id for item in teacher_lessons()}:
@@ -74,13 +108,40 @@ def curricula():
         stored_path = None
         try:
             original, stored_path, relative = save_upload(form.document.data, "curricula", {"pdf", "docx"})
-            curriculum = teacher_curricula().filter_by(subject=form.subject.data.strip(), grade=form.grade.data.strip(), semester=form.semester.data, academic_year=form.academic_year.data.strip()).first()
-            if curriculum is None:
-                curriculum = Curriculum(created_by_id=current_user.id, name=form.curriculum_name.data.strip(), subject=form.subject.data.strip(), grade=form.grade.data.strip(), semester=form.semester.data, academic_year=form.academic_year.data.strip(), version="1.0", is_active=False, processing_status="processing")
+            curriculum_query = teacher_curricula().filter_by(
+                subject=form.subject.data.strip(),
+                grade=form.grade.data.strip(),
+                semester=form.semester.data,
+                academic_year=form.academic_year.data.strip(),
+            ).order_by(Curriculum.created_at.desc())
+            curriculum = curriculum_query.first()
+            if curriculum is None or curriculum.is_active:
+                versions = [str(item.version) for item in curriculum_query.all()]
+                version_numbers = []
+                for version in versions:
+                    try:
+                        version_numbers.append(float(version))
+                    except (TypeError, ValueError):
+                        continue
+                next_version = f"{(max(version_numbers) + 1.0) if version_numbers else 1.0:.1f}"
+                curriculum = Curriculum(
+                    created_by_id=current_user.id,
+                    name=form.curriculum_name.data.strip(),
+                    subject=form.subject.data.strip(),
+                    grade=form.grade.data.strip(),
+                    semester=form.semester.data,
+                    academic_year=form.academic_year.data.strip(),
+                    version=next_version,
+                    is_active=False,
+                    processing_status="processing",
+                )
                 db.session.add(curriculum); db.session.flush()
             else:
                 curriculum.processing_status = "processing"
                 curriculum.processing_error = None
+                curriculum.is_active = False
+                for source in curriculum.sources:
+                    source.is_active = False
             checksum = calculate_checksum(stored_path)
             if SourceDocument.query.filter_by(curriculum_id=curriculum.id, checksum=checksum).first():
                 raise ValueError("هذا الملف موجود مسبقًا داخل المنهج نفسه")
@@ -119,13 +180,7 @@ def curricula():
                     chunk.embedding_dimensions = len(vector)
                     chunk.embedded_at = embedded_at
             curriculum.processing_status = "ready"
-            curriculum.is_active = True
-            curriculum.activated_at = datetime.now(timezone.utc).replace(tzinfo=None)
-            teacher_curricula().filter(
-                Curriculum.id != curriculum.id,
-                Curriculum.subject == curriculum.subject,
-                Curriculum.grade == curriculum.grade,
-            ).update({Curriculum.is_active: False}, synchronize_session=False)
+            activate_curriculum(curriculum)
             db.session.commit()
             flash(f"تم تحليل وفهرسة {index} مقطعًا وتفعيل منهج الفصل {curriculum.semester} في جميع أقسام المنصة.", "success")
             return redirect(url_for("platform_admin.curricula"))
@@ -143,16 +198,19 @@ def toggle_curriculum(curriculum_id):
     curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
     new_state = not curriculum.is_active
     if new_state:
-        teacher_curricula().filter(
-            Curriculum.id != curriculum.id,
-            Curriculum.subject == curriculum.subject,
-            Curriculum.grade == curriculum.grade,
-        ).update({Curriculum.is_active: False}, synchronize_session=False)
-        curriculum.activated_at = datetime.now(timezone.utc).replace(tzinfo=None)
-    curriculum.is_active = new_state
-    for source in curriculum.sources:
-        source.is_active = curriculum.is_active
-    db.session.commit(); flash("تم تحديث حالة المنهج ومصادره", "success")
+        try:
+            activate_curriculum(curriculum)
+            db.session.commit()
+        except Exception as error:
+            db.session.rollback()
+            flash(str(error), "error")
+            return redirect(url_for("platform_admin.curricula"))
+    else:
+        curriculum.is_active = False
+        for source in curriculum.sources:
+            source.is_active = False
+        db.session.commit()
+    flash("تم تحديث حالة المنهج ومصادره", "success")
     return redirect(url_for("platform_admin.curricula"))
 
 
