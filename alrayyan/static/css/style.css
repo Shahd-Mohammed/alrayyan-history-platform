@@ -262,6 +262,7 @@ a, button { font: inherit; }
 .history-hero{grid-template-columns:minmax(360px,.92fr) minmax(0,1.08fr);align-items:center;gap:clamp(28px,5vw,72px);direction:ltr}
 .history-hero-copy{max-width:760px;direction:rtl;text-align:right}
 .history-hero h1{font-size:clamp(2.9rem,5.35vw,5.2rem);line-height:1.16}
+.history-hero h1 em{display:block;margin-top:.32em;}
 .history-hero-art{min-width:360px;min-height:450px}
 .history-orbit-outer{animation:historyOrbitSpin 18s linear infinite}
 .history-orbit-inner{animation:historyOrbitSpinReverse 12s linear infinite}
