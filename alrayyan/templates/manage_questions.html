@@ -112,10 +112,14 @@ body{background:#f5f2eb!important;color:#172f52}
             {% endfor %}
         {% endwith %}
 
-        <section class="form-intro">
-            <span>محرر الاختبار</span>
-            <h1>{{ worksheet.title }}</h1>
-            <p>أنشئي الاختبار كاملًا من هذه الصفحة: الإعدادات، إضافة الأسئلة، ونوع كل سؤال وتفاصيله. كل الأنواع مدعومة داخل نفس المحرر.</p>
+        <section class="form-intro test-editor-hero">
+            <div class="test-hero-copy">
+                <span>✦ استوديو الاختبارات</span>
+                <h1>{{ worksheet.title }}</h1>
+                <p>ابني الاختبار كاملًا من مكان واحد: اضبطي طريقة الحل، أضيفي جميع الأسئلة، وشاهدي نوع كل سؤال وتفاصيله قبل النشر.</p>
+                <div class="test-hero-meta"><b>{{ worksheet.questions|length }}</b><small>سؤالًا في الاختبار</small></div>
+            </div>
+            <div class="test-hero-visual"><div class="test-ring"></div><div class="test-ring test-ring-small"></div><div class="test-icon">✓</div><span>أسئلة<br>متنوعة</span></div>
         </section>
     <nav class="assessment-tabs">
     <a
