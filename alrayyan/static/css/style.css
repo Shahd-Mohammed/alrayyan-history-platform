@@ -282,3 +282,6 @@ a, button { font: inherit; }
     .history-hero{grid-template-columns:1fr}
     .history-hero-art{min-height:330px;min-width:0}
 }
+
+/* Home hero typography spacing */
+.premium-hero h1 em{display:block;margin-top:.45em;}
