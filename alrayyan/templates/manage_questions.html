@@ -56,6 +56,45 @@
 @media(max-width:650px) {
     .builder-row { grid-template-columns:1fr; }
 }
+
+/* Premium single-page test editor */
+body{background:#f5f2eb!important;color:#172f52}
+.form-page{max-width:1180px!important;margin:0 auto!important;padding:34px 22px 70px!important}
+.form-intro{background:linear-gradient(135deg,#102b4f 0%,#1c4268 58%,#8c6a2b 140%);color:#fff!important;border:0!important;border-radius:26px!important;padding:38px!important;box-shadow:0 18px 45px rgba(16,43,79,.16)!important;margin-bottom:22px!important;position:relative;overflow:hidden}
+.form-intro:after{content:"";position:absolute;inset:auto -70px -100px auto;width:300px;height:300px;border:1px solid rgba(220,181,91,.28);border-radius:50%;box-shadow:0 0 0 28px rgba(220,181,91,.05),0 0 0 56px rgba(220,181,91,.04)}
+.form-intro span{color:#e5c77f!important;font-weight:800;letter-spacing:.03em}
+.form-intro h1{color:#fff!important;font-size:clamp(28px,4vw,44px)!important;margin:9px 0 8px!important}
+.form-intro p{color:rgba(255,255,255,.78)!important;max-width:760px;line-height:1.9!important}
+.assessment-tabs{display:flex!important;gap:8px!important;background:#fff!important;border:1px solid #e7dfd1!important;border-radius:16px!important;padding:7px!important;margin:0 0 20px!important;box-shadow:0 8px 24px rgba(23,47,82,.05)}
+.assessment-tabs a{flex:1;text-align:center!important;border-radius:11px!important;padding:12px 16px!important;color:#667487!important;font-weight:800!important;text-decoration:none!important}
+.assessment-tabs a.active{background:#172f52!important;color:#fff!important}
+.assessment-section{border:1px solid #e6dfd2!important;border-radius:22px!important;background:#fff!important;padding:25px!important;box-shadow:0 10px 30px rgba(23,47,82,.06)!important;margin-bottom:20px!important}
+.assessment-section>h2{font-size:21px!important;color:#172f52!important;margin:0 0 20px!important;display:flex;align-items:center;gap:10px}
+.assessment-section>h2:before{content:"";width:5px;height:25px;border-radius:5px;background:#c99a3d;display:block}
+.question-type-builder{background:linear-gradient(180deg,#fffdf8,#f8f4ea)!important;border:1px solid #e7d7b6!important;border-radius:18px!important;padding:20px!important}
+.current-file{background:#fff!important;border:1px solid #e5dfd4!important;border-radius:18px!important;padding:20px!important;margin:12px 0!important;box-shadow:0 7px 20px rgba(23,47,82,.045)!important;position:relative}
+.current-file:hover{border-color:#d5bd8b;box-shadow:0 12px 28px rgba(23,47,82,.08)!important}
+.question-card-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:14px}
+.question-number{width:42px;height:42px;border-radius:13px;background:#172f52;color:#fff;display:grid;place-items:center;font-weight:900;flex:0 0 auto}
+.question-card-title{flex:1;min-width:0}
+.question-card-title strong{display:block;color:#172f52;font-size:16px;line-height:1.8}
+.question-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.question-badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f5f0e6;color:#745724;font-size:12px;font-weight:800}
+.question-badge.points{background:#edf4ee;color:#28613b}
+.question-details{margin:12px 0 0;padding:14px 16px;border-radius:13px;background:#f8f8f6;border:1px solid #ece8df}
+.question-details-title{font-size:12px;font-weight:900;color:#6b7480;margin-bottom:8px}
+.question-details ul{margin:0;padding-right:20px;line-height:1.9}
+.question-details li.correct{font-weight:800;color:#28613b}
+.type-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.type-detail{padding:10px 12px;border-radius:11px;background:#fff;border:1px solid #e7e2d8}
+.type-detail small{display:block;color:#7a8490;font-size:11px;margin-bottom:3px}
+.type-detail strong{color:#172f52}
+.question-actions{display:flex!important;gap:8px!important;margin-top:16px!important;padding-top:14px!important;border-top:1px solid #eee9df!important}
+.question-edit-action,.question-delete-action{border-radius:10px!important;padding:9px 14px!important;font-weight:800!important}
+.question-edit-action{background:#172f52!important;color:#fff!important;text-decoration:none!important}
+.question-delete-action{background:#fff!important;color:#a43e3e!important;border:1px solid #e2bcbc!important}
+@media(max-width:700px){.form-page{padding:20px 12px 50px!important}.form-intro{padding:28px 22px!important}.assessment-section{padding:18px}.question-card-head{align-items:flex-start}.type-detail-grid{grid-template-columns:1fr}.assessment-tabs{flex-direction:column}}
+
 </style>
 </head>
 
@@ -74,15 +113,9 @@
         {% endwith %}
 
         <section class="form-intro">
-            <span>إدارة النشاط التفاعلي</span>
-
-            <h1>
-                {{ worksheet.title }}
-            </h1>
-
-            <p>
-                أنشئي أسئلتك ونظّميها بطريقة تناسب طبيعة كل سؤال، مع الحفاظ على إعدادات النشاط.
-            </p>
+            <span>محرر الاختبار</span>
+            <h1>{{ worksheet.title }}</h1>
+            <p>أنشئي الاختبار كاملًا من هذه الصفحة: الإعدادات، إضافة الأسئلة، ونوع كل سؤال وتفاصيله. كل الأنواع مدعومة داخل نفس المحرر.</p>
         </section>
     <nav class="assessment-tabs">
     <a
@@ -312,51 +345,62 @@
 
             {% for question in worksheet.questions %}
                 <article class="current-file">
-                    <strong>
-                        {{ loop.index }}.
-                        {{ question.question_text }}
-                    </strong>
+                    <div class="question-card-head">
+                        <div class="question-number">{{ loop.index }}</div>
+                        <div class="question-card-title">
+                            <strong>{{ question.question_text }}</strong>
+                            <div class="question-meta">
+                                <span class="question-badge">
+                                    {% if question.question_type == "multiple_choice" %}اختيار من متعدد
+                                    {% elif question.question_type == "true_false" %}صح أو خطأ
+                                    {% elif question.question_type == "short_answer" %}إجابة قصيرة
+                                    {% elif question.question_type == "essay" %}سؤال مقالي
+                                    {% elif question.question_type == "fill_blank" %}إكمال فراغ
+                                    {% elif question.question_type == "multiple_select" %}اختيارات متعددة
+                                    {% elif question.question_type == "ordering" %}ترتيب
+                                    {% elif question.question_type == "matching" %}مطابقة
+                                    {% else %}سؤال تفاعلي{% endif %}
+                                </span>
+                                <span class="question-badge points">{{ question.points }} نقطة</span>
+                            </div>
+                        </div>
+                    </div>
 
-                    النوع:
+                    <div class="question-details">
+                        <div class="question-details-title">تفاصيل هذا النوع من السؤال</div>
+                        {% if question.question_type in ["multiple_choice", "multiple_select"] and question.choices %}
+                            <ul>
+                                {% for choice in question.choices %}
+                                    <li class="{% if choice.is_correct %}correct{% endif %}">
+                                        {{ choice.choice_text }}
+                                        {% if choice.is_correct %} ✓ الإجابة الصحيحة{% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% elif question.question_type == "true_false" %}
+                            <div class="type-detail-grid">
+                                <div class="type-detail"><small>طريقة الإجابة</small><strong>اختيار صح أو خطأ</strong></div>
+                                <div class="type-detail"><small>التصحيح</small><strong>إلكتروني تلقائي</strong></div>
+                            </div>
+                        {% elif question.question_type == "fill_blank" %}
+                            <div class="type-detail-grid">
+                                <div class="type-detail"><small>طريقة الإجابة</small><strong>كتابة الكلمة أو العبارة</strong></div>
+                                <div class="type-detail"><small>التصحيح</small><strong>إلكتروني حسب الإجابة المعتمدة</strong></div>
+                            </div>
+                        {% elif question.question_type == "ordering" %}
+                            <div class="type-detail"><small>طبيعة السؤال</small><strong>ترتيب العناصر بالترتيب الصحيح</strong></div>
+                        {% elif question.question_type == "matching" %}
+                            <div class="type-detail"><small>طبيعة السؤال</small><strong>مطابقة عناصر العمودين</strong></div>
+                        {% elif question.question_type == "essay" %}
+                            <div class="type-detail-grid">
+                                <div class="type-detail"><small>طريقة الإجابة</small><strong>إجابة مقالية مطولة</strong></div>
+                                <div class="type-detail"><small>التصحيح</small><strong>يحتاج تصحيحًا يدويًا</strong></div>
+                            </div>
+                        {% else %}
+                            <div class="type-detail"><small>طبيعة السؤال</small><strong>إجابة نصية</strong></div>
+                        {% endif %}
+                    </div>
 
-                    {% if question.question_type == "multiple_choice" %}
-                         اختيار من متعدد
-                    {% elif question.question_type == "true_false" %}
-                         صح أو خطأ
-                    {% elif question.question_type == "short_answer" %}
-                         إجابة قصيرة
-                    {% elif question.question_type == "essay" %}
-                         سؤال مقالي
-                    {% elif question.question_type == "fill_blank" %}
-                         إكمال فراغ
-                    {% elif question.question_type == "multiple_select" %}
-                         اختيارات صحيحة متعددة
-                    {% elif question.question_type == "ordering" %}
-                         ترتيب
-                    {% elif question.question_type == "matching" %}
-                         مطابقة
-                    {% else %}
-                         سؤال تفاعلي
-                    {% endif %}
-
-                    —
-
-                    الدرجة:
-                    {{ question.points }}
-
-                    {% if question.choices %}
-                        <ul>
-                            {% for choice in question.choices %}
-                                <li>
-                                    {{ choice.choice_text }}
-
-                                    {% if choice.is_correct %}
-                                        ✓ الإجابة الصحيحة
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
                     <div class="question-actions">
                     <a
                         class="question-edit-action"
