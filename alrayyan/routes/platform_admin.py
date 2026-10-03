@@ -61,7 +61,7 @@ def curriculum_ready_for_activation(curriculum):
 
 def activate_curriculum(curriculum):
     if not curriculum_ready_for_activation(curriculum):
-        raise ValueError("المنهج لم يكتمل تجهيزه وفهرسته بعد")
+        raise ValueError("المنهج لم يكتمل تجهيزه وفهرسته: يجب أن تكون كل المقاطع مستخرجة ومفهرسة بالـembeddings قبل التفعيل.")
     teacher_curricula().filter(
         Curriculum.id != curriculum.id,
         Curriculum.subject == curriculum.subject,
