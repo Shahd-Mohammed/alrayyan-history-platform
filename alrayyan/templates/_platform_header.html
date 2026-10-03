@@ -22,30 +22,21 @@
     </button>
 
     <nav class="platform-navigation" data-platform-menu>
-        <a href="{{ url_for('main.home') }}">
-             الرئيسية
-        </a>
+        <a href="{{ url_for('main.home') }}">الرئيسية</a>
 
-        <a href="{{ url_for('worksheets.worksheet_list') }}">
-             أوراق العمل
-        </a>
+        <a href="{{ url_for('main.about') }}">من نحن</a>
 
         {% if not current_user.is_authenticated %}
-            <a href="{{ url_for('teacher.teacher_page') }}">
-                 المعلّم الذكي
-            </a>
+            <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
         {% endif %}
-
-        <a href="{{ url_for('main.about') }}">
-             من نحن
-        </a>
 
         {% if current_user.is_authenticated %}
             {% if current_user.role in ['teacher', 'admin'] %}
                 <a href="{{ url_for('teacher_dashboard.dashboard') }}">لوحة المعلمة</a>
                 <details class="student-learning-menu platform-management-menu">
-                    <summary>إدارة المنصة</summary>
+                    <summary>إدارة المحتوى</summary>
                     <div>
+                        <a href="{{ url_for('worksheet_center.index') }}">مركز أوراق العمل</a>
                         <a href="{{ url_for('platform_admin.curricula') }}">المناهج والمصادر</a>
                         <a href="{{ url_for('platform_admin.analytics') }}">تحليلات التعلّم</a>
                         <a href="{{ url_for('platform_admin.classrooms') }}">الصفوف</a>
@@ -54,15 +45,17 @@
                         <a href="{{ url_for('platform_admin.concept_maps') }}">الخرائط المفاهيمية</a>
                         <a href="{{ url_for('platform_admin.characters') }}">الشخصيات التعليمية</a>
                         <a href="{{ url_for('platform_admin.honor_board') }}">لوحة الشرف</a>
+                        <a href="{{ url_for('teacher_dashboard.edit_about_page') }}">هوية المنصة</a>
                         <a href="{{ url_for('platform_admin.settings') }}">إعدادات المنصة</a>
                     </div>
                 </details>
             {% elif current_user.role == 'student' %}
                 <a href="{{ url_for('main.student_dashboard') }}">لوحتي</a>
-                <a href="{{ url_for('assessment.my_results') }}">نتائجي</a>
                 <details class="student-learning-menu">
-                    <summary>تعلّمي</summary>
+                    <summary>مساحتي التعليمية</summary>
                     <div>
+                        <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
+                        <a href="{{ url_for('assessment.my_results') }}">نتائجي</a>
                         <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
                         <a href="{{ url_for('learning.library') }}">مكتبة التعلّم</a>
                         <a href="{{ url_for('challenges.setup') }}">التحدي الذكي</a>
@@ -92,15 +85,9 @@
 
 <script>
     (() => {
-        const toggle = document.querySelector(
-            "[data-platform-menu-toggle]"
-        );
-        const menu = document.querySelector(
-            "[data-platform-menu]"
-        );
-
+        const toggle = document.querySelector("[data-platform-menu-toggle]");
+        const menu = document.querySelector("[data-platform-menu]");
         if (!toggle || !menu) return;
-
         toggle.addEventListener("click", () => {
             const isOpen = menu.classList.toggle("is-open");
             toggle.setAttribute("aria-expanded", String(isOpen));
