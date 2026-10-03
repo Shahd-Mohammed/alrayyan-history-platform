@@ -103,7 +103,7 @@
 
             {% if worksheets %}
             <div class="worksheet-list">
-                {% for worksheet in worksheets %}
+                {% for worksheet in worksheets if worksheet.creation_method != "test" %}
                 <article class="worksheet-card">
                     <div class="worksheet-main">
                         <h3>{{ worksheet.title }}</h3>
