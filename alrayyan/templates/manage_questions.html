@@ -1,371 +1,172 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        إدارة الأسئلة | الريان
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for(
-            'static',
-            filename='css/dashboard.css'
-        ) }}"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الأسئلة | الريان</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css') }}">
+    <style>
+        .question-builder{margin-top:18px;padding:22px;border:1px solid #e6dfd2;border-radius:18px;background:linear-gradient(135deg,#fffdf8,#fff8e8);display:none}.question-builder.is-visible{display:block}.builder-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:16px}.builder-heading h3{margin:0;color:#172f52}.builder-heading p{margin:4px 0 0;color:#6d7784;font-size:13px}.builder-badge{padding:6px 10px;border-radius:999px;background:#f3dfae;color:#815b17;font-size:12px;font-weight:800}.builder-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:10px;align-items:center}.builder-row input{width:100%;min-height:44px;padding:9px 11px;border:1px solid #d9c69e;border-radius:10px;background:#fff;font:inherit}.builder-row button,.builder-add{min-height:42px;padding:8px 12px;border:1px solid #d5c39d;border-radius:10px;background:#fff;color:#172f52;font:inherit;font-weight:800;cursor:pointer}.builder-row button:hover,.builder-add:hover{border-color:#c99a3d;background:#fff5dc}.builder-add{margin-top:4px;background:#fffaf0}.builder-help{margin:0 0 13px;color:#6d7784;line-height:1.8;font-size:13px}.order-list{display:grid;gap:8px}.order-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e5d6b8;border-radius:11px;background:#fff;cursor:grab}.order-row:active{cursor:grabbing}.drag-handle{color:#9a6817;font-size:20px}.order-row input{flex:1;min-height:40px;padding:8px;border:0;outline:0;background:transparent;font:inherit}.choice-builder .builder-row{grid-template-columns:1fr auto}.correct-choice{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 10px;border:1px solid #e5d6b8;border-radius:9px;background:#fffaf0;color:#172f52;font-size:13px;font-weight:700}.correct-choice input{accent-color:#c99a3d}.preview-note{padding:11px 13px;border-right:3px solid #c99a3d;border-radius:8px;background:#fff;color:#6d604d;line-height:1.8;font-size:13px;margin-top:12px}.hidden-builder-source{display:none!important}@media(max-width:700px){.builder-row{grid-template-columns:1fr}.choice-builder .builder-row{grid-template-columns:1fr}.correct-choice{justify-content:flex-start}}
+    </style>
 </head>
-
 <body>
     {% include '_platform_header.html' %}
-
     <main class="form-page">
-        {% with messages = get_flashed_messages(
-            with_categories=true
-        ) %}
-            {% for category, message in messages %}
-                <div class="alert {{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}<div class="alert {{ category }}">{{ message }}</div>{% endfor %}
         {% endwith %}
 
         <section class="form-intro">
             <span>إدارة النشاط التفاعلي</span>
-
-            <h1>
-                {{ worksheet.title }}
-            </h1>
-
-            <p>
-                أضيفي الأسئلة وحددي إعدادات
-                الحل والنجاح.
-            </p>
+            <h1>{{ worksheet.title }}</h1>
+            <p>أضيفي الأسئلة وحددي طريقة الحل والنجاح لكل ورقة عمل.</p>
         </section>
-    <nav class="assessment-tabs">
-    <a
-        class="active"
-        href="{{ url_for(
-            'assessment.manage_questions',
-            worksheet_id=worksheet.id
-        ) }}"
-    >
-        الأسئلة والإعدادات
-    </a>
 
-    <a
-        href="{{ url_for(
-            'assessment.worksheet_results',
-            worksheet_id=worksheet.id
-        ) }}"
-    >
-        نتائج الطلاب
-    </a>
-    </nav>
+        <nav class="assessment-tabs">
+            <a class="active" href="{{ url_for('assessment.manage_questions', worksheet_id=worksheet.id) }}">الأسئلة والإعدادات</a>
+            <a href="{{ url_for('assessment.worksheet_results', worksheet_id=worksheet.id) }}">نتائج الطلاب</a>
+        </nav>
+
         <section class="worksheet-form assessment-section">
             <h2>إعدادات الحل</h2>
-
-            <form
-                method="post"
-                action="{{ url_for(
-                    'assessment.save_worksheet_settings',
-                    worksheet_id=worksheet.id
-                ) }}"
-            >
+            <form method="post" action="{{ url_for('assessment.save_worksheet_settings', worksheet_id=worksheet.id) }}">
                 {{ settings_form.hidden_tag() }}
-
                 <div class="form-grid">
-                    <div class="field-group">
-                        {{
-                            settings_form
-                            .time_limit_minutes
-                            .label
-                        }}
-
-                        {{
-                            settings_form
-                            .time_limit_minutes()
-                        }}
-                    </div>
-
-                    <div class="field-group">
-                        {{
-                            settings_form
-                            .passing_score
-                            .label
-                        }}
-
-                        {{
-                            settings_form
-                            .passing_score()
-                        }}
-                    </div>
-
-                    <div class="field-group">
-                        {{ settings_form.max_attempts.label }}
-
-                        {{
-                            settings_form.max_attempts(
-                            min="1",
-                            max="20",
-                            placeholder="مثال: 3"
-                            )
-                        }}
-
-                        <small>
-                             حددي عدد المرات التي يستطيع
-                             الطالب حل الورقة فيها.
-                        </small>
-
-                        {% for error in
-                            settings_form.max_attempts.errors
-                        %}
-                            <small class="field-error">
-                                {{ error }}
-                            </small>
-                        {% endfor %}
-                    </div>
-
-                    <div class="field-group full-width score-policy-field">
-                        {{ settings_form.attempt_score_policy.label }}
-
-                        {{ settings_form.attempt_score_policy() }}
-
-                        <small>
-                            اختاري العلامة التي ستظهر كعلامة
-                            الطالب المعتمدة في لوحة النتائج
-                            والإحصائيات.
-                        </small>
-
-                        {% for error in
-                            settings_form.attempt_score_policy.errors
-                        %}
-                            <small class="field-error">
-                                {{ error }}
-                            </small>
-                        {% endfor %}
-                    </div>
-
-                    <label class="checkbox-field">
-                        {{
-                            settings_form
-                            .show_answers_after_submit()
-                        }}
-
-                        <span>
-                            {{
-                                settings_form
-                                .show_answers_after_submit
-                                .label.text
-                            }}
-                        </span>
-                    </label>
+                    <div class="field-group">{{ settings_form.time_limit_minutes.label }}{{ settings_form.time_limit_minutes() }}</div>
+                    <div class="field-group">{{ settings_form.passing_score.label }}{{ settings_form.passing_score() }}</div>
+                    <div class="field-group">{{ settings_form.max_attempts.label }}{{ settings_form.max_attempts(min="1",max="20",placeholder="مثال: 3") }}<small>حددي عدد المرات التي يستطيع الطالب حل الورقة فيها.</small>{% for error in settings_form.max_attempts.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+                    <div class="field-group full-width score-policy-field">{{ settings_form.attempt_score_policy.label }}{{ settings_form.attempt_score_policy() }}<small>اختاري العلامة التي ستظهر كعلامة الطالب المعتمدة في لوحة النتائج والإحصائيات.</small>{% for error in settings_form.attempt_score_policy.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+                    <label class="checkbox-field">{{ settings_form.show_answers_after_submit() }}<span>{{ settings_form.show_answers_after_submit.label.text }}</span></label>
                 </div>
-
-                {{
-                    settings_form.submit(
-                        class="primary-action"
-                    )
-                }}
+                {{ settings_form.submit(class="primary-action") }}
             </form>
         </section>
 
         <section class="worksheet-form assessment-section">
             <h2>إضافة سؤال جديد</h2>
-
-            <form method="post">
+            <form method="post" id="question-form">
                 {{ form.hidden_tag() }}
-
-                {% if form.errors %}
-                    <div class="alert error">
-                        {% for errors in form.errors.values() %}
-                            {% for error in errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                {% if form.errors %}<div class="alert error">{% for errors in form.errors.values() %}{% for error in errors %}<p>{{ error }}</p>{% endfor %}{% endfor %}</div>{% endif %}
 
                 <div class="form-grid">
-                    <div class="field-group full-width">
-                        {{ form.question_text.label }}
+                    <div class="field-group full-width">{{ form.question_text.label }}{{ form.question_text(rows="3",placeholder="اكتبي السؤال بوضوح...") }}</div>
+                    <div class="field-group">{{ form.question_type.label }}{{ form.question_type(id="question-type") }}</div>
+                    <div class="field-group">{{ form.points.label }}{{ form.points() }}</div>
 
-                        {{
-                            form.question_text(
-                                rows="3"
-                            )
-                        }}
+                    <div id="question-builder" class="question-builder full-width">
+                        <div class="builder-heading"><div><h3 id="builder-title">مصمم السؤال</h3><p id="builder-description">اختاري نوع السؤال من القائمة وسيتغير المصمم تلقائيًا.</p></div><span class="builder-badge" id="builder-badge">تفاعلي</span></div>
+                        <div id="builder-content"></div>
+                        <div class="preview-note" id="builder-preview">المصمم هنا يحول ما تكتبينه تلقائيًا إلى البيانات التي يفهمها النظام الحالي، لذلك لا نغير طريقة حفظ السؤال أو تصحيحه.</div>
                     </div>
 
-                    <div class="field-group">
-                        {{ form.question_type.label }}
-                        {{ form.question_type() }}
-                    </div>
-
-                    <div class="field-group">
-                        {{ form.points.label }}
-                        {{ form.points() }}
-                    </div>
-
-                    <div class="field-group full-width">
-                        {{ form.choices_text.label }}
-
-                        {{
-                            form.choices_text(
-                                rows="5",
-                                placeholder=(
-                                    "الخيار الأول\n"
-                                    "الخيار الثاني\n"
-                                    "الخيار الثالث"
-                                )
-                            )
-                        }}
-
-                        <small>
-                            للاختيار: كل خيار في سطر. للترتيب:
-                            اكتبي العناصر بالترتيب الصحيح. للمطابقة:
-                            اكتبي «المفهوم | الإجابة» في كل سطر.
-                        </small>
-                    </div>
-
-                    <div class="field-group full-width">
-                        {{
-                            form
-                            .correct_answer_text
-                            .label
-                        }}
-
-                        {{
-                            form.correct_answer_text(
-                                placeholder=(
-                                    "نص الخيار الصحيح، "
-                                    "أو صح/خطأ. للاختيارات المتعددة افصلي الصحيحة بعلامة |"
-                                )
-                            )
-                        }}
-                    </div>
-
-                    <div class="field-group full-width">
-                        {{ form.explanation.label }}
-
-                        {{
-                            form.explanation(
-                                rows="3"
-                            )
-                        }}
-                    </div>
+                    <div class="field-group full-width" id="choices-field">{{ form.choices_text.label }}{{ form.choices_text(rows="5",id="choices-text",placeholder="الخيار الأول\nالخيار الثاني\nالخيار الثالث") }}<small id="choices-help">كل خيار في سطر. للمطابقة: المفهوم | الإجابة. وللترتيب اكتبي العناصر بالترتيب الصحيح.</small></div>
+                    <div class="field-group full-width" id="correct-field">{{ form.correct_answer_text.label }}{{ form.correct_answer_text(id="correct-answer",placeholder="نص الخيار الصحيح، أو صح/خطأ") }}</div>
+                    <div class="field-group full-width">{{ form.explanation.label }}{{ form.explanation(rows="3",placeholder="اكتبي تفسيرًا يظهر للطالبة بعد الحل إذا كانت الإعدادات تسمح بذلك...") }}</div>
                 </div>
-
-                {{
-                    form.submit(
-                        class="primary-action"
-                    )
-                }}
+                {{ form.submit(class="primary-action") }}
             </form>
         </section>
 
         <section class="worksheet-form assessment-section">
-            <h2>
-                الأسئلة الحالية
-                ({{ worksheet.questions | length }})
-            </h2>
-
+            <h2>الأسئلة الحالية ({{ worksheet.questions | length }})</h2>
             {% for question in worksheet.questions %}
                 <article class="current-file">
-                    <strong>
-                        {{ loop.index }}.
-                        {{ question.question_text }}
-                    </strong>
-
-                    النوع:
-
-                    {% if question.question_type == "multiple_choice" %}
-                         اختيار من متعدد
-                    {% elif question.question_type == "true_false" %}
-                         صح أو خطأ
-                    {% elif question.question_type == "short_answer" %}
-                         إجابة قصيرة
-                    {% elif question.question_type == "essay" %}
-                         سؤال مقالي
-                    {% elif question.question_type == "fill_blank" %}
-                         إكمال فراغ
-                    {% elif question.question_type == "multiple_select" %}
-                         اختيارات صحيحة متعددة
-                    {% elif question.question_type == "ordering" %}
-                         ترتيب
-                    {% elif question.question_type == "matching" %}
-                         مطابقة
-                    {% else %}
-                         سؤال تفاعلي
-                    {% endif %}
-
-                    —
-
-                    الدرجة:
-                    {{ question.points }}
-
-                    {% if question.choices %}
-                        <ul>
-                            {% for choice in question.choices %}
-                                <li>
-                                    {{ choice.choice_text }}
-
-                                    {% if choice.is_correct %}
-                                        ✓ الإجابة الصحيحة
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                    <div class="question-actions">
-                    <a
-                        class="question-edit-action"
-                        href="{{ url_for(
-                            'assessment.edit_question',
-                            question_id=question.id
-                        ) }}"
-                    >
-                         تعديل السؤال
-                    </a>
-                    <form
-                        method="post"
-                        action="{{ url_for(
-                            'assessment.delete_question',
-                            question_id=question.id
-                        ) }}"
-                        onsubmit="return confirm(
-                            'هل تريدين حذف هذا السؤال؟'
-                        );"
-                    >
-                        <input
-                            type="hidden"
-                            name="csrf_token"
-                            value="{{ csrf_token() }}"
-                        >
-
-                        <button
-                            class="question-delete-action"
-                            type="submit"
-                        >
-                            حذف السؤال
-                        </button>
-                    </form>
-                    </div>
+                    <strong>{{ loop.index }}. {{ question.question_text }}</strong>
+                    <div style="margin-top:7px">النوع: {% if question.question_type == "multiple_choice" %}اختيار من متعدد{% elif question.question_type == "true_false" %}صح أو خطأ{% elif question.question_type == "short_answer" %}إجابة قصيرة{% elif question.question_type == "essay" %}سؤال مقالي{% elif question.question_type == "fill_blank" %}إكمال فراغ{% elif question.question_type == "multiple_select" %}اختيارات صحيحة متعددة{% elif question.question_type == "ordering" %}سحب وإفلات وترتيب{% elif question.question_type == "matching" %}مطابقة بين عمودين{% else %}سؤال تفاعلي{% endif %} — الدرجة: {{ question.points }}</div>
+                    {% if question.choices %}<ul>{% for choice in question.choices %}<li>{{ choice.choice_text }}{% if choice.is_correct %} ✓ الإجابة الصحيحة{% endif %}</li>{% endfor %}</ul>{% endif %}
+                    <div class="question-actions"><a class="question-edit-action" href="{{ url_for('assessment.edit_question', question_id=question.id) }}">تعديل السؤال</a><form method="post" action="{{ url_for('assessment.delete_question', question_id=question.id) }}" onsubmit="return confirm('هل تريدين حذف هذا السؤال؟');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="question-delete-action" type="submit">حذف السؤال</button></form></div>
                 </article>
-            {% else %}
-                <div class="current-file">
-                    لم تتم إضافة أسئلة بعد.
-                </div>
-            {% endfor %}
+            {% else %}<div class="current-file">لم تتم إضافة أسئلة بعد.</div>{% endfor %}
         </section>
     </main>
     {% include '_platform_footer.html' %}
-</body>
 
+<script>
+(() => {
+    const type = document.getElementById('question-type');
+    const builder = document.getElementById('question-builder');
+    const content = document.getElementById('builder-content');
+    const title = document.getElementById('builder-title');
+    const description = document.getElementById('builder-description');
+    const badge = document.getElementById('builder-badge');
+    const choices = document.getElementById('choices-text');
+    const correct = document.getElementById('correct-answer');
+    const choicesField = document.getElementById('choices-field');
+    const correctField = document.getElementById('correct-field');
+
+    const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const lines = () => choices.value.split('\n').map(v => v.trim()).filter(Boolean);
+
+    function syncOrder() {
+        choices.value = [...content.querySelectorAll('[data-order-item] input')].map(input => input.value.trim()).filter(Boolean).join('\n');
+    }
+
+    function syncPairs() {
+        choices.value = [...content.querySelectorAll('[data-pair]')].map(row => {
+            const left = row.querySelector('[data-left]').value.trim();
+            const right = row.querySelector('[data-right]').value.trim();
+            return left && right ? `${left} | ${right}` : '';
+        }).filter(Boolean).join('\n');
+    }
+
+    function syncMultiSelect() {
+        const rows = [...content.querySelectorAll('[data-multi]')];
+        choices.value = rows.map(row => row.querySelector('[data-value]').value.trim()).filter(Boolean).join('\n');
+        correct.value = rows.filter(row => row.querySelector('input[type=checkbox]').checked).map(row => row.querySelector('[data-value]').value.trim()).filter(Boolean).join(' | ');
+    }
+
+    function renderOrder() {
+        const items = lines();
+        const initial = items.length ? items : ['العنصر الأول','العنصر الثاني'];
+        content.innerHTML = `<p class="builder-help">اكتبي العناصر بالترتيب الصحيح. عند حفظ السؤال سيعرض النظام العناصر بشكل قابل للسحب والإفلات للطالبة.</p><div class="order-list">${initial.map((item,i)=>`<div class="order-row" draggable="true" data-order-item><span class="drag-handle">⠿</span><input value="${escapeHtml(item)}" aria-label="العنصر ${i+1}"><button type="button" data-remove>حذف</button></div>`).join('')}</div><button class="builder-add" type="button" data-add>＋ إضافة عنصر</button>`;
+        content.querySelectorAll('input').forEach(input => input.addEventListener('input', syncOrder));
+        content.querySelector('[data-add]').addEventListener('click', () => { const row=document.createElement('div'); row.className='order-row'; row.draggable=true; row.dataset.orderItem=''; row.innerHTML='<span class="drag-handle">⠿</span><input placeholder="عنصر جديد"><button type="button" data-remove>حذف</button>'; row.querySelector('input').addEventListener('input',syncOrder); row.querySelector('[data-remove]').addEventListener('click',()=>{row.remove();syncOrder();}); content.querySelector('.order-list').appendChild(row); syncOrder(); });
+        content.querySelectorAll('[data-remove]').forEach(btn => btn.addEventListener('click',()=>{btn.closest('[data-order-item]').remove();syncOrder();}));
+        enableDrag(); syncOrder();
+    }
+
+    function enableDrag() {
+        let dragged=null;
+        content.querySelectorAll('[data-order-item]').forEach(row=>{
+            row.addEventListener('dragstart',()=>{dragged=row;});
+            row.addEventListener('dragover',event=>{event.preventDefault(); if(dragged && dragged!==row){const rect=row.getBoundingClientRect(); const before=event.clientY<rect.top+rect.height/2; row.parentNode.insertBefore(dragged,before?row:row.nextSibling); syncOrder();}});
+        });
+    }
+
+    function renderMatching() {
+        const pairs = lines().map(line=>{const parts=line.split('|');return {left:(parts[0]||'').trim(),right:(parts.slice(1).join('|')||'').trim()};}).filter(p=>p.left||p.right);
+        const initial = pairs.length ? pairs : [{left:'المفهوم الأول',right:'الإجابة الأولى'},{left:'المفهوم الثاني',right:'الإجابة الثانية'}];
+        content.innerHTML = `<p class="builder-help">اكتبي كل زوج في صف مستقل. هذه البيانات ستتحول تلقائيًا إلى واجهة مطابقة بين عمودين عند حل الطالبة.</p><div class="choice-builder">${initial.map(pair=>`<div class="builder-row" data-pair><input data-left value="${escapeHtml(pair.left)}" placeholder="العنصر في العمود الأول"><input data-right value="${escapeHtml(pair.right)}" placeholder="العنصر في العمود الثاني"><button type="button" data-remove>حذف</button></div>`).join('')}</div><button class="builder-add" type="button" data-add>＋ إضافة زوج</button>`;
+        content.querySelectorAll('input').forEach(input=>input.addEventListener('input',syncPairs));
+        content.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click',()=>{btn.closest('[data-pair]').remove();syncPairs();}));
+        content.querySelector('[data-add]').addEventListener('click',()=>{const row=document.createElement('div');row.className='builder-row';row.dataset.pair='';row.innerHTML='<input data-left placeholder="العنصر في العمود الأول"><input data-right placeholder="العنصر في العمود الثاني"><button type="button" data-remove>حذف</button>';row.querySelectorAll('input').forEach(input=>input.addEventListener('input',syncPairs));row.querySelector('[data-remove]').addEventListener('click',()=>{row.remove();syncPairs();});content.querySelector('.choice-builder').appendChild(row);syncPairs();});
+        syncPairs();
+    }
+
+    function renderMultiSelect() {
+        const vals=lines(); const correctVals=correct.value.split('|').map(v=>v.trim()).filter(Boolean); const initial=vals.length?vals:['الخيار الأول','الخيار الثاني'];
+        content.innerHTML=`<p class="builder-help">أضيفي الخيارات وحددي الإجابات الصحيحة بعلامة ✓. النظام سيحفظ الاختيارات والإجابات في نفس البنية الحالية.</p><div class="choice-builder">${initial.map(value=>`<div class="builder-row" data-multi><input data-value value="${escapeHtml(value)}"><label class="correct-choice"><input type="checkbox" ${correctVals.includes(value)?'checked':''}> صحيحة</label><button type="button" data-remove>حذف</button></div>`).join('')}</div><button class="builder-add" type="button" data-add>＋ إضافة خيار</button>`;
+        content.querySelectorAll('input').forEach(input=>input.addEventListener('input',syncMultiSelect)); content.querySelectorAll('input[type=checkbox]').forEach(input=>input.addEventListener('change',syncMultiSelect));
+        content.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click',()=>{btn.closest('[data-multi]').remove();syncMultiSelect();}));
+        content.querySelector('[data-add]').addEventListener('click',()=>{const row=document.createElement('div');row.className='builder-row';row.dataset.multi='';row.innerHTML='<input data-value placeholder="خيار جديد"><label class="correct-choice"><input type="checkbox"> صحيحة</label><button type="button" data-remove>حذف</button>';row.querySelector('input[data-value]').addEventListener('input',syncMultiSelect);row.querySelector('input[type=checkbox]').addEventListener('change',syncMultiSelect);row.querySelector('[data-remove]').addEventListener('click',()=>{row.remove();syncMultiSelect();});content.querySelector('.choice-builder').appendChild(row);syncMultiSelect();});
+        syncMultiSelect();
+    }
+
+    function update() {
+        const selected=type.value;
+        builder.classList.remove('is-visible');
+        choicesField.classList.remove('hidden-builder-source'); correctField.classList.remove('hidden-builder-source');
+        if(selected==='ordering'){builder.classList.add('is-visible');title.textContent='مصمم السحب والإفلات';description.textContent='رتبي العناصر هنا كما يجب أن تظهر صحيحة.';badge.textContent='سحب وإفلات';choicesField.classList.add('hidden-builder-source');correctField.classList.add('hidden-builder-source');renderOrder();}
+        else if(selected==='matching'){builder.classList.add('is-visible');title.textContent='مصمم المطابقة بين عمودين';description.textContent='ابني الأزواج بصريًا بدل كتابة الصيغة يدويًا.';badge.textContent='مطابقة';choicesField.classList.add('hidden-builder-source');correctField.classList.add('hidden-builder-source');renderMatching();}
+        else if(selected==='multiple_select'){builder.classList.add('is-visible');title.textContent='مصمم الاختيارات المتعددة';description.textContent='حددي أكثر من إجابة صحيحة بسهولة.';badge.textContent='متعدد';choicesField.classList.add('hidden-builder-source');correctField.classList.add('hidden-builder-source');renderMultiSelect();}
+        else {content.innerHTML='';}
+        if(selected==='multiple_choice'){choicesField.classList.remove('hidden-builder-source');correctField.classList.remove('hidden-builder-source');}
+        if(selected==='true_false'){correctField.querySelector('input').placeholder='اكتبي: صح أو خطأ';}
+        if(selected==='short_answer'||selected==='fill_blank'){correctField.querySelector('input').placeholder='اكتبي الإجابة الصحيحة';}
+    }
+    type.addEventListener('change',update); update();
+})();
+</script>
+</body>
 </html>
