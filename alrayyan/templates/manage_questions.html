@@ -24,7 +24,7 @@
 <style>
 .question-type-builder {
     margin-top: 16px;
-    padding: 20px;
+    padding: 22px;
     border: 1px solid #e6dfd2;
     border-radius: 16px;
     background: #fffaf0;
@@ -32,7 +32,7 @@
 .question-type-builder[hidden] { display: none; }
 .question-type-builder__heading { margin-bottom: 14px; }
 .question-type-builder__heading strong { color: #172f52; display:block; margin-bottom:5px; }
-.question-type-builder__heading span { color:#6d7784; font-size:13px; line-height:1.7; }
+.question-type-builder__heading span { color:#6d7784; font-size:13px; line-height:1.7; }\n.type-specific-panel { display:grid; gap:12px; }\n.type-specific-panel[hidden] { display:none; }\n.type-specific-panel .builder-note { padding:11px 13px; border-radius:10px; background:#f8f4ea; color:#6d7784; font-size:13px; line-height:1.7; }\n.type-specific-panel .panel-title { color:#172f52; font-weight:800; font-size:15px; }\n.type-choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }\n.type-choice-card { padding:13px; border:1px solid #e6dfd2; border-radius:12px; background:#fff; }\n.type-choice-card strong { display:block; color:#172f52; margin-bottom:5px; }\n@media(max-width:650px) { .type-choice-grid { grid-template-columns:1fr; } }
 .builder-items { display:grid; gap:9px; }
 .builder-row { display:grid; grid-template-columns:1fr 1fr auto; gap:9px; align-items:center; }
 .builder-row input {
@@ -81,8 +81,7 @@
             </h1>
 
             <p>
-                أضيفي الأسئلة وحددي إعدادات
-                الحل والنجاح.
+                أنشئي أسئلتك ونظّميها بطريقة تناسب طبيعة كل سؤال، مع الحفاظ على إعدادات النشاط.
             </p>
         </section>
     <nav class="assessment-tabs">
@@ -512,4 +511,180 @@
 </script>
 </body>
 
-</html>
+</html><script>
+(() => {
+    const typeField = document.getElementById("question_type");
+    const choicesField = document.getElementById("choices_text");
+    const correctField = document.getElementById("correct_answer_text");
+    if (!typeField || !choicesField || !correctField) return;
+
+    const choicesGroup = choicesField.closest(".field-group");
+    const correctGroup = correctField.closest(".field-group");
+    const typeGroup = typeField.closest(".field-group");
+
+    const builder = document.createElement("div");
+    builder.id = "question-type-builder";
+    builder.className = "question-type-builder";
+    builder.hidden = true;
+    typeGroup.insertAdjacentElement("afterend", builder);
+
+    function addField(title, note, placeholder, target) {
+        return `
+            <div class="type-specific-panel">
+                <div class="panel-title">${title}</div>
+                <div class="builder-note">${note}</div>
+                <input class="builder-input" type="text" placeholder="${placeholder}">
+            </div>
+        `;
+    }
+
+    function renderSimple(type) {
+        const configs = {
+            multiple_choice: {
+                title: "إعداد الاختيار من متعدد",
+                note: "أضيفي الخيارات، ثم حددي خيارًا واحدًا كإجابة صحيحة.",
+                placeholder: "مثال: الدولة الأموية"
+            },
+            true_false: {
+                title: "إعداد صح أو خطأ",
+                note: "اختاري الإجابة الصحيحة من خلال حقل الإجابة أدناه.",
+                placeholder: "صح أو خطأ"
+            },
+            short_answer: {
+                title: "إعداد الإجابة القصيرة",
+                note: "اكتبي الإجابة المقبولة التي سيعتمد عليها التصحيح.",
+                placeholder: "الإجابة المقبولة"
+            },
+            fill_blank: {
+                title: "إعداد إكمال الفراغ",
+                note: "اكتبي الكلمة أو العبارة التي يجب أن تظهر في مكان الفراغ.",
+                placeholder: "الإجابة الصحيحة للفراغ"
+            },
+            multiple_select: {
+                title: "إعداد تحديد عدة إجابات",
+                note: "أضيفي عدة خيارات، ثم حددي جميع الإجابات الصحيحة.",
+                placeholder: "مثال: خيار صحيح"
+            },
+            essay: {
+                title: "إعداد السؤال المقالي",
+                note: "هذا النوع مخصص للإجابة النصية المطولة، لذلك لا يحتاج إلى قائمة خيارات.",
+                placeholder: ""
+            }
+        };
+        const config = configs[type];
+        if (!config) return false;
+
+        builder.innerHTML = `
+            <div class="question-type-builder__heading">
+                <strong>${config.title}</strong>
+                <span>${config.note}</span>
+            </div>
+            <div class="type-choice-grid">
+                <div class="type-choice-card">
+                    <strong>بيانات السؤال</strong>
+                    <span>${type === "essay" ? "استخدمي نص السؤال والتفسير والدرجة فقط." : "تظهر الحقول المطلوبة لهذا النوع فقط، بينما تبقى أسماء الحقول الأصلية كما هي."}</span>
+                </div>
+                <div class="type-choice-card">
+                    <strong>التصحيح</strong>
+                    <span>${type === "multiple_select" ? "يمكن تحديد أكثر من إجابة صحيحة." : type === "multiple_choice" ? "يتم تحديد إجابة صحيحة واحدة." : "يُحفظ بنفس البنية الحالية المستخدمة في المنصة."}</span>
+                </div>
+            </div>
+        `;
+        return true;
+    }
+
+    function renderOrdering() {
+        const items = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean);
+        builder.innerHTML = `
+            <div class="question-type-builder__heading">
+                <strong>بناء سؤال السحب والإفلات والترتيب</strong>
+                <span>أضيفي العناصر بالترتيب الصحيح. لن نغيّر طريقة تخزين الإجابة أو تصحيحها.</span>
+            </div>
+            <div class="builder-items" id="ordering-items"></div>
+            <button type="button" class="builder-add">＋ إضافة عنصر</button>
+        `;
+        const list = builder.querySelector("#ordering-items");
+
+        function addItem(value="") {
+            const row = document.createElement("div");
+            row.className = "builder-row";
+            row.innerHTML = `<input type="text" placeholder="مثال: الخطوة الأولى"><button type="button" aria-label="حذف العنصر">×</button>`;
+            row.querySelector("input").value = value;
+            row.querySelector("button").onclick = () => { row.remove(); sync(); };
+            list.appendChild(row);
+        }
+        (items.length ? items : ["", ""]).forEach(addItem);
+
+        function sync() {
+            choicesField.value = [...list.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean).join("\n");
+            correctField.value = choicesField.value;
+        }
+        list.addEventListener("input", sync);
+        builder.querySelector(".builder-add").onclick = () => { addItem(); sync(); };
+        sync();
+    }
+
+    function renderMatching() {
+        const pairs = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean).map(v => v.split("|"));
+        builder.innerHTML = `
+            <div class="question-type-builder__heading">
+                <strong>بناء سؤال المطابقة بين عمودين</strong>
+                <span>أضيفي كل عنصر مع إجابته المطابقة. تبقى صيغة التخزين الحالية كما هي.</span>
+            </div>
+            <div class="builder-items" id="matching-items"></div>
+            <button type="button" class="builder-add">＋ إضافة زوج</button>
+        `;
+        const list = builder.querySelector("#matching-items");
+
+        function addPair(left="", right="") {
+            const row = document.createElement("div");
+            row.className = "builder-row";
+            row.innerHTML = `<input type="text" placeholder="العمود الأول"><input type="text" placeholder="العمود الثاني"><button type="button" aria-label="حذف الزوج">×</button>`;
+            row.querySelectorAll("input")[0].value = left;
+            row.querySelectorAll("input")[1].value = right;
+            row.querySelector("button").onclick = () => { row.remove(); sync(); };
+            list.appendChild(row);
+        }
+        (pairs.length ? pairs : [["", ""], ["", ""]]).forEach(p => addPair(p[0] || "", p[1] || ""));
+
+        function sync() {
+            choicesField.value = [...list.querySelectorAll(".builder-row")].map(row => {
+                const inputs = row.querySelectorAll("input");
+                return (inputs[0].value.trim() && inputs[1].value.trim()) ? inputs[0].value.trim() + " | " + inputs[1].value.trim() : "";
+            }).filter(Boolean).join("\n");
+            correctField.value = "";
+        }
+        list.addEventListener("input", sync);
+        builder.querySelector(".builder-add").onclick = () => { addPair(); sync(); };
+        sync();
+    }
+
+    function render() {
+        const type = typeField.value;
+        const interactive = ["ordering", "matching"].includes(type);
+
+        choicesGroup.style.display = interactive ? "none" : "";
+        correctGroup.style.display = "";
+
+        if (renderSimple(type)) {
+            builder.hidden = false;
+        } else if (type === "ordering") {
+            builder.hidden = false;
+            renderOrdering();
+            choicesGroup.style.display = "none";
+            correctGroup.style.display = "none";
+        } else if (type === "matching") {
+            builder.hidden = false;
+            renderMatching();
+            choicesGroup.style.display = "none";
+            correctGroup.style.display = "none";
+        } else {
+            builder.hidden = true;
+            builder.innerHTML = "";
+        }
+    }
+
+    typeField.addEventListener("change", render);
+    render();
+})();
+</script>
