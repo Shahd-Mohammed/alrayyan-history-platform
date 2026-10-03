@@ -80,6 +80,7 @@ def create_app():
     )
     from alrayyan.routes.platform_admin import platform_admin_bp
     from alrayyan.routes.learning import learning_bp
+    from alrayyan.routes.worksheet_center import worksheet_center_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(teacher_bp)
@@ -102,6 +103,7 @@ def create_app():
     )
     app.register_blueprint(platform_admin_bp)
     app.register_blueprint(learning_bp)
+    app.register_blueprint(worksheet_center_bp)
 
     @app.context_processor
     def platform_context():
