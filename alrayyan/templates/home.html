@@ -13,17 +13,16 @@
     {% include '_platform_header.html' %}
 
     <main>
-        <section class="premium-hero history-hero">
-            <div class="history-hero-stars"></div>
-            <div class="history-hero-line history-hero-line-one"></div>
-            <div class="history-hero-line history-hero-line-two"></div>
+        <section class="premium-hero">
+            <div class="hero-glow hero-glow-one"></div>
+            <div class="hero-glow hero-glow-two"></div>
 
             <div class="premium-hero-copy">
                 <span class="premium-kicker"><i></i> الريان في الدراسات التاريخية</span>
                 <h1>التاريخ ليس ماضيًا بعيدًا…<br><em>إنه حكاية تستحق أن تعيشيها.</em></h1>
                 <p>
-                    خذي مكانكِ بين صفحات التاريخ؛ افهمي الأحداث، تعرّفي إلى الشخصيات،
-                    اربطي الأسباب بالنتائج، واختبري معرفتكِ بتجارب تفاعلية صُممت لتجعل التاريخ أقرب، أعمق، وأمتع.
+                    خذي مكانكِ بين صفحات التاريخ؛ افهمي الأحداث، تعرّفي إلى الشخصيات، اربطي الأسباب بالنتائج،
+                    واختبري معرفتكِ بتجارب تفاعلية صُممت لتجعل التاريخ أقرب، أعمق، وأمتع.
                 </p>
 
                 <div class="premium-hero-actions">
@@ -37,27 +36,27 @@
                     <a class="button-glass" href="{% if current_user.is_authenticated and current_user.role == 'student' %}{{ url_for('teacher.teacher_page') }}{% elif current_user.is_authenticated %}{{ url_for('teacher_dashboard.dashboard') }}{% else %}{{ url_for('auth.login', next=url_for('teacher.teacher_page')) }}{% endif %}">اسألي المعلّم الذكي</a>
                 </div>
 
-                <div class="hero-trust-row history-trust-row">
-                    <span><b>{{ public_stats.lessons }}</b> درسًا تاريخيًا</span>
-                    <span><b>{{ public_stats.characters }}</b> شخصية</span>
-                    <span><b>{{ public_stats.maps }}</b> خريطة مفاهيمية</span>
+                <div class="hero-trust-row">
+                    <span><b>{{ public_stats.lessons }}</b> دروس مترابطة</span>
+                    <span><b>{{ public_stats.knowledge_chunks }}</b> مقطعًا معرفيًا</span>
+                    <span><b>AI</b> إجابات موثّقة</span>
                 </div>
             </div>
 
-            <div class="history-hero-art">
-                <div class="history-orbit history-orbit-outer"></div>
-                <div class="history-orbit history-orbit-inner"></div>
-                <div class="history-compass">✦</div>
-                <div class="history-scroll">
-                    <span>سِجلّ الريان</span>
-                    <strong>رحلة في التاريخ</strong>
-                    <small>أحداث • شخصيات • حضارات • أفكار</small>
-                    <div class="history-scroll-line"></div>
-                    <em>اقرئي، اربطي، اكتشفي، ثم اتركي بصمتكِ.</em>
+            <div class="hero-experience-card">
+                <div class="experience-topline">
+                    <span>رحلتك في التعلّم</span>
+                    <i>✦</i>
                 </div>
-                <span class="history-art-label label-top">الأحداث</span>
-                <span class="history-art-label label-left">الشخصيات</span>
-                <span class="history-art-label label-right">الحضارات</span>
+                <div class="experience-orbit">
+                    <div class="orbit-ring ring-one"></div>
+                    <div class="orbit-ring ring-two"></div>
+                    <div class="orbit-core">الريان</div>
+                    <span class="orbit-label label-one">افهمي</span>
+                    <span class="orbit-label label-two">تدرّبي</span>
+                    <span class="orbit-label label-three">تقدّمي</span>
+                </div>
+                <p>محتوى أصيل، تجربة ذكية، وتقدّم يمكنكِ رؤيته.</p>
             </div>
         </section>
 
@@ -78,46 +77,6 @@
                 <a href="{% if current_user.is_authenticated %}{{ url_for('learning.library') }}{% else %}{{ url_for('auth.login', next=url_for('learning.library')) }}{% endif %}"><i>🧠</i><small>{{ public_stats.maps }} خرائط</small><h3>مكتبة التعلّم</h3><p>ملخصات ومراجعات وخرائط مفاهيمية ومحتوى مساند لكل درس.</p><b>افتحي المكتبة ←</b></a>
                 <a href="{% if current_user.is_authenticated %}{{ url_for('learning.characters') }}{% else %}{{ url_for('auth.login', next=url_for('learning.characters')) }}{% endif %}"><i>🏛</i><small>{{ public_stats.characters }} شخصيات</small><h3>من أنا؟</h3><p>تعرفي إلى شخصيات المنهج من تلميحات حقيقية واكسبي نقاطًا من إجابتك.</p><b>ابدئي اللعب ←</b></a>
                 <a href="{% if current_user.is_authenticated %}{{ url_for('learning.honor_board') }}{% else %}{{ url_for('auth.login', next=url_for('learning.honor_board')) }}{% endif %}"><i>🏆</i><small>تقدير عادل</small><h3>لوحة الشرف</h3><p>تحتفي بالنشاط والتحسن والإتقان، لا بالعلامة النهائية وحدها.</p><b>شاهدي المتميزين ←</b></a>
-            </div>
-        </section>
-
-        <section class="history-exploration-section">
-            <div class="premium-section-heading">
-                <div>
-                    <span>مغامرة المؤرخة الصغيرة</span>
-                    <h2>لا تكتفي بحفظ التاريخ… عيشيه واكتشفيه</h2>
-                    <p>مساحات تفاعلية تأخذكِ من السؤال إلى الاكتشاف، ومن الشخصية إلى الحدث، ومن المعلومة إلى الفهم.</p>
-                </div>
-            </div>
-            <div class="history-exploration-grid">
-                <a href="{% if current_user.is_authenticated %}{{ url_for('learning.characters') }}{% else %}{{ url_for('auth.login', next=url_for('learning.characters')) }}{% endif %}" class="history-game-card history-game-card-featured">
-                    <div class="history-card-icon">♜</div>
-                    <small>لعبة الشخصيات</small>
-                    <h3>من أنا؟</h3>
-                    <p>تلقّي تلميحات تاريخية، فكّري، ثم اكتشفي الشخصية قبل أن تكشفي الإجابة.</p>
-                    <b>ابدئي التخمين ←</b>
-                </a>
-                <a href="{% if current_user.is_authenticated and current_user.role == 'student' %}{{ url_for('challenges.setup') }}{% elif current_user.is_authenticated %}{{ url_for('teacher_dashboard.dashboard') }}{% else %}{{ url_for('auth.login', next=url_for('challenges.setup')) }}{% endif %}" class="history-game-card">
-                    <div class="history-card-icon">✦</div>
-                    <small>تحدي سريع</small>
-                    <h3>اختبري ذاكرتكِ التاريخية</h3>
-                    <p>جولات قصيرة وتحديات تفاعلية تساعدكِ على تثبيت ما تعلّمتِه بطريقة ممتعة.</p>
-                    <b>دخلي التحدي ←</b>
-                </a>
-                <a href="{% if current_user.is_authenticated %}{{ url_for('learning.library') }}{% else %}{{ url_for('auth.login', next=url_for('learning.library')) }}{% endif %}" class="history-game-card">
-                    <div class="history-card-icon">⌁</div>
-                    <small>مخطط المعرفة</small>
-                    <h3>اربطي الأحداث والأفكار</h3>
-                    <p>شاهدي المفاهيم والملخصات والخرائط في صورة تساعدكِ على رؤية الصورة كاملة.</p>
-                    <b>افتحي المكتبة ←</b>
-                </a>
-                <a href="{% if current_user.is_authenticated %}{{ url_for('learning.honor_board') }}{% else %}{{ url_for('auth.login', next=url_for('learning.honor_board')) }}{% endif %}" class="history-game-card">
-                    <div class="history-card-icon">♛</div>
-                    <small>إنجازكِ في الرحلة</small>
-                    <h3>اصنعي أثرًا في لوحة الشرف</h3>
-                    <p>تقدّمكِ التاريخي يُبنى خطوة خطوة؛ تعلّم، تدريب، إتقان، ثم إنجاز جديد.</p>
-                    <b>شاهدي لوحة الشرف ←</b>
-                </a>
             </div>
         </section>
 
