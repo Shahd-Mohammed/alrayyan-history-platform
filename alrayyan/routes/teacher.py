@@ -37,15 +37,6 @@ def restrict_ai_tutor_to_students():
     if current_user.role == "student":
         return None
 
-    flash(
-        (
-            "المعلّم الذكي التفاعلي والتحديات "
-            "مخصصة لحساب الطالب. "
-            "تم تحويلك إلى لوحة المعلمة."
-        ),
-        "info",
-    )
-
     return redirect(
         url_for(
             "teacher_dashboard.dashboard"
