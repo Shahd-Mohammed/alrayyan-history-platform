@@ -206,14 +206,16 @@ def create_conversation():
         action="ask_diagnostic",
         evaluation="not_evaluated",
         content=(
-            f"أهلًا {current_user.first_name}. سنراجع درس «{lesson.title}» معًا. "
-            + (
-                f"سنركز على مفهوم «{initial_concept}». ماذا تتذكرين عنه؟"
-                if initial_concept
-                else "اكتبي ما تريدين فهمه، وسأشرح وأسألك خطوة بخطوة."
+            (
+                f"يا هلا {current_user.first_name} 🤍 خلينا ناخذها على راحتنا. "
+                + (
+                    f"اليوم نركز على «{initial_concept}» من درس «{lesson.title}»؟ احكيلي من وين بدك نبدأ."
+                    if initial_concept
+                    else f"درس «{lesson.title}» جاهز إلنا، بس مش لازم نبلش رسمي 😄 احكيلي شو حابة نفهم أو نحكي عنه."
+                )
             )
             if lesson else
-            f"أهلًا {current_user.first_name}. اختاري موضوعًا أو اطرحي سؤالًا، وسنبنيه معًا خطوة بخطوة."
+            f"يا هلا {current_user.first_name} 🤍 خذي راحتك، أنا معك. بدك ندرس، نسولف شوي، ولا نعملها بطريقة ألطف؟"
         ),
     )
     db.session.add(greeting)
