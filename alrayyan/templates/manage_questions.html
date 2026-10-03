@@ -263,10 +263,8 @@
                             )
                         }}
 
-                        <small>
-                            للاختيار: كل خيار في سطر. للترتيب:
-                            اكتبي العناصر بالترتيب الصحيح. للمطابقة:
-                            اكتبي «المفهوم | الإجابة» في كل سطر.
+                        <small class="choices-help">
+                            أضيفي الخيارات حسب طبيعة السؤال. هذا الحقل يظهر فقط عندما يحتاج نوع السؤال إلى خيارات.
                         </small>
                     </div>
 
@@ -410,277 +408,232 @@
     const correctField = document.getElementById("correct_answer_text");
     if (!typeField || !choicesField || !correctField) return;
 
+    // نخفي النوع القديم من القائمة الجديدة، لكن نبقيه مدعومًا للأسئلة القديمة.
+    const legacyOption = [...typeField.options].find(
+        option => option.value === "short_answer"
+    );
+    if (legacyOption) legacyOption.hidden = true;
+
     const choicesGroup = choicesField.closest(".field-group");
     const correctGroup = correctField.closest(".field-group");
     const typeGroup = typeField.closest(".field-group");
 
-    const builder = document.createElement("div");
-    builder.id = "question-type-builder";
-    builder.className = "question-type-builder";
-    builder.hidden = true;
-    typeGroup.insertAdjacentElement("afterend", builder);
+    let builder = document.getElementById("question-type-builder");
+    if (!builder) {
+        builder = document.createElement("div");
+        builder.id = "question-type-builder";
+        builder.className = "question-type-builder";
+        typeGroup.insertAdjacentElement("afterend", builder);
+    }
 
-    const originalChoicesLabel = choicesGroup.querySelector("label");
     const originalCorrectLabel = correctGroup.querySelector("label");
 
-    function setInteractiveVisibility(show) {
-        choicesGroup.style.display = show ? "none" : "";
-        correctGroup.style.display = show ? "none" : "";
+    function setCorrectLabel(text, placeholder) {
+        if (originalCorrectLabel) originalCorrectLabel.textContent = text;
+        correctField.placeholder = placeholder || "";
+    }
+
+    function showBaseFields(showChoices, showCorrect) {
+        choicesGroup.style.display = showChoices ? "" : "none";
+        correctGroup.style.display = showCorrect ? "" : "none";
+    }
+
+    function showSimplePanel(title, note) {
+        builder.hidden = false;
+        builder.innerHTML = `
+            <div class="question-type-builder__heading">
+                <strong>${title}</strong>
+                <span>${note}</span>
+            </div>
+        `;
     }
 
     function renderOrdering() {
-        const items = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean);
-        builder.innerHTML = `
-            <div class="question-type-builder__heading">
-                <strong>بناء سؤال السحب والإفلات</strong>
-                <span>أضيفي العناصر بالترتيب الصحيح. ستظهر للطالبة بشكل غير مرتب لتسحبها وتضعها في الترتيب الصحيح.</span>
-            </div>
-            <div class="builder-items" id="ordering-items"></div>
-            <button type="button" class="builder-add">＋ إضافة عنصر</button>
-        `;
-        const list = builder.querySelector("#ordering-items");
+        const items = (choicesField.value || "")
+            .split("\n").map(v => v.trim()).filter(Boolean);
 
-        function addItem(value="") {
-            const row = document.createElement("div");
-            row.className = "builder-row";
-            row.innerHTML = `<input type="text" placeholder="مثال: الخطوة الأولى"><button type="button" aria-label="حذف العنصر">×</button>`;
-            row.querySelector("input").value = value;
-            row.querySelector("button").onclick = () => { row.remove(); sync(); };
-            list.appendChild(row);
-        }
-        (items.length ? items : ["", ""]).forEach(addItem);
-
-        function sync() {
-            choicesField.value = [...list.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean).join("\n");
-            correctField.value = choicesField.value;
-        }
-        list.addEventListener("input", sync);
-        builder.querySelector(".builder-add").onclick = () => { addItem(); sync(); };
-        sync();
-    }
-
-    function renderMatching() {
-        const pairs = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean)
-            .map(v => v.split("|"));
-        builder.innerHTML = `
-            <div class="question-type-builder__heading">
-                <strong>بناء سؤال المطابقة بين عمودين</strong>
-                <span>اكتبي العنصر في العمود الأول والإجابة المطابقة له في العمود الثاني.</span>
-            </div>
-            <div class="builder-items" id="matching-items"></div>
-            <button type="button" class="builder-add">＋ إضافة زوج</button>
-        `;
-        const list = builder.querySelector("#matching-items");
-
-        function addPair(left="", right="") {
-            const row = document.createElement("div");
-            row.className = "builder-row";
-            row.innerHTML = `<input type="text" placeholder="العمود الأول"><input type="text" placeholder="العمود الثاني"><button type="button" aria-label="حذف الزوج">×</button>`;
-            row.querySelectorAll("input")[0].value = left;
-            row.querySelectorAll("input")[1].value = right;
-            row.querySelector("button").onclick = () => { row.remove(); sync(); };
-            list.appendChild(row);
-        }
-        (pairs.length ? pairs : [["", ""], ["", ""]]).forEach(p => addPair(p[0] || "", p[1] || ""));
-
-        function sync() {
-            choicesField.value = [...list.querySelectorAll(".builder-row")].map(row => {
-                const inputs = row.querySelectorAll("input");
-                return (inputs[0].value.trim() && inputs[1].value.trim()) ? inputs[0].value.trim() + " | " + inputs[1].value.trim() : "";
-            }).filter(Boolean).join("\n");
-            correctField.value = "";
-        }
-        list.addEventListener("input", sync);
-        builder.querySelector(".builder-add").onclick = () => { addPair(); sync(); };
-        sync();
-    }
-
-    function render() {
-        const type = typeField.value;
-        const interactive = ["ordering", "matching"].includes(type);
-        setInteractiveVisibility(interactive);
-        builder.hidden = !interactive;
-        if (type === "ordering") renderOrdering();
-        else if (type === "matching") renderMatching();
-        else builder.innerHTML = "";
-    }
-
-    typeField.addEventListener("change", render);
-    render();
-})();
-</script>
-</body>
-
-</html><script>
-(() => {
-    const typeField = document.getElementById("question_type");
-    const choicesField = document.getElementById("choices_text");
-    const correctField = document.getElementById("correct_answer_text");
-    if (!typeField || !choicesField || !correctField) return;
-
-    const choicesGroup = choicesField.closest(".field-group");
-    const correctGroup = correctField.closest(".field-group");
-    const typeGroup = typeField.closest(".field-group");
-
-    const builder = document.createElement("div");
-    builder.id = "question-type-builder";
-    builder.className = "question-type-builder";
-    builder.hidden = true;
-    typeGroup.insertAdjacentElement("afterend", builder);
-
-    function addField(title, note, placeholder, target) {
-        return `
-            <div class="type-specific-panel">
-                <div class="panel-title">${title}</div>
-                <div class="builder-note">${note}</div>
-                <input class="builder-input" type="text" placeholder="${placeholder}">
-            </div>
-        `;
-    }
-
-    function renderSimple(type) {
-        const configs = {
-            multiple_choice: {
-                title: "إعداد الاختيار من متعدد",
-                note: "أضيفي الخيارات، ثم حددي خيارًا واحدًا كإجابة صحيحة.",
-                placeholder: "مثال: الدولة الأموية"
-            },
-            true_false: {
-                title: "إعداد صح أو خطأ",
-                note: "اختاري الإجابة الصحيحة من خلال حقل الإجابة أدناه.",
-                placeholder: "صح أو خطأ"
-            },
-            short_answer: {
-                title: "إعداد الإجابة القصيرة",
-                note: "اكتبي الإجابة المقبولة التي سيعتمد عليها التصحيح.",
-                placeholder: "الإجابة المقبولة"
-            },
-            fill_blank: {
-                title: "إعداد إكمال الفراغ",
-                note: "اكتبي الكلمة أو العبارة التي يجب أن تظهر في مكان الفراغ.",
-                placeholder: "الإجابة الصحيحة للفراغ"
-            },
-            multiple_select: {
-                title: "إعداد تحديد عدة إجابات",
-                note: "أضيفي عدة خيارات، ثم حددي جميع الإجابات الصحيحة.",
-                placeholder: "مثال: خيار صحيح"
-            },
-            essay: {
-                title: "إعداد السؤال المقالي",
-                note: "هذا النوع مخصص للإجابة النصية المطولة، لذلك لا يحتاج إلى قائمة خيارات.",
-                placeholder: ""
-            }
-        };
-        const config = configs[type];
-        if (!config) return false;
-
-        builder.innerHTML = `
-            <div class="question-type-builder__heading">
-                <strong>${config.title}</strong>
-                <span>${config.note}</span>
-            </div>
-            <div class="type-choice-grid">
-                <div class="type-choice-card">
-                    <strong>بيانات السؤال</strong>
-                    <span>${type === "essay" ? "استخدمي نص السؤال والتفسير والدرجة فقط." : "تظهر الحقول المطلوبة لهذا النوع فقط، بينما تبقى أسماء الحقول الأصلية كما هي."}</span>
-                </div>
-                <div class="type-choice-card">
-                    <strong>التصحيح</strong>
-                    <span>${type === "multiple_select" ? "يمكن تحديد أكثر من إجابة صحيحة." : type === "multiple_choice" ? "يتم تحديد إجابة صحيحة واحدة." : "يُحفظ بنفس البنية الحالية المستخدمة في المنصة."}</span>
-                </div>
-            </div>
-        `;
-        return true;
-    }
-
-    function renderOrdering() {
-        const items = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean);
+        showBaseFields(false, false);
+        builder.hidden = false;
         builder.innerHTML = `
             <div class="question-type-builder__heading">
                 <strong>بناء سؤال السحب والإفلات والترتيب</strong>
-                <span>أضيفي العناصر بالترتيب الصحيح. لن نغيّر طريقة تخزين الإجابة أو تصحيحها.</span>
+                <span>أضيفي العناصر بالترتيب الصحيح. ستظهر للطالبة بشكل غير مرتب، وطريقة التصحيح الحالية لن تتغير.</span>
             </div>
             <div class="builder-items" id="ordering-items"></div>
             <button type="button" class="builder-add">＋ إضافة عنصر</button>
         `;
+
         const list = builder.querySelector("#ordering-items");
 
-        function addItem(value="") {
+        function addItem(value = "") {
             const row = document.createElement("div");
             row.className = "builder-row";
-            row.innerHTML = `<input type="text" placeholder="مثال: الخطوة الأولى"><button type="button" aria-label="حذف العنصر">×</button>`;
+            row.innerHTML = `
+                <input type="text" placeholder="مثال: الخطوة الأولى">
+                <button type="button" aria-label="حذف العنصر">×</button>
+            `;
             row.querySelector("input").value = value;
-            row.querySelector("button").onclick = () => { row.remove(); sync(); };
+            row.querySelector("button").onclick = () => {
+                row.remove();
+                sync();
+            };
             list.appendChild(row);
         }
+
         (items.length ? items : ["", ""]).forEach(addItem);
 
         function sync() {
-            choicesField.value = [...list.querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean).join("\n");
+            choicesField.value = [...list.querySelectorAll("input")]
+                .map(input => input.value.trim())
+                .filter(Boolean)
+                .join("\n");
             correctField.value = choicesField.value;
         }
+
         list.addEventListener("input", sync);
-        builder.querySelector(".builder-add").onclick = () => { addItem(); sync(); };
+        builder.querySelector(".builder-add").onclick = () => {
+            addItem();
+            sync();
+        };
         sync();
     }
 
     function renderMatching() {
-        const pairs = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean).map(v => v.split("|"));
+        const pairs = (choicesField.value || "")
+            .split("\n")
+            .map(v => v.trim())
+            .filter(Boolean)
+            .map(v => v.split("|"));
+
+        showBaseFields(false, false);
+        builder.hidden = false;
         builder.innerHTML = `
             <div class="question-type-builder__heading">
                 <strong>بناء سؤال المطابقة بين عمودين</strong>
-                <span>أضيفي كل عنصر مع إجابته المطابقة. تبقى صيغة التخزين الحالية كما هي.</span>
+                <span>أضيفي كل عنصر مع إجابته المطابقة. ستبقى صيغة التخزين والتصحيح الحالية كما هي.</span>
             </div>
             <div class="builder-items" id="matching-items"></div>
             <button type="button" class="builder-add">＋ إضافة زوج</button>
         `;
+
         const list = builder.querySelector("#matching-items");
 
-        function addPair(left="", right="") {
+        function addPair(left = "", right = "") {
             const row = document.createElement("div");
             row.className = "builder-row";
-            row.innerHTML = `<input type="text" placeholder="العمود الأول"><input type="text" placeholder="العمود الثاني"><button type="button" aria-label="حذف الزوج">×</button>`;
+            row.innerHTML = `
+                <input type="text" placeholder="العمود الأول">
+                <input type="text" placeholder="العمود الثاني">
+                <button type="button" aria-label="حذف الزوج">×</button>
+            `;
             row.querySelectorAll("input")[0].value = left;
             row.querySelectorAll("input")[1].value = right;
-            row.querySelector("button").onclick = () => { row.remove(); sync(); };
+            row.querySelector("button").onclick = () => {
+                row.remove();
+                sync();
+            };
             list.appendChild(row);
         }
-        (pairs.length ? pairs : [["", ""], ["", ""]]).forEach(p => addPair(p[0] || "", p[1] || ""));
+
+        (pairs.length ? pairs : [["", ""], ["", ""]])
+            .forEach(pair => addPair(pair[0] || "", pair[1] || ""));
 
         function sync() {
-            choicesField.value = [...list.querySelectorAll(".builder-row")].map(row => {
-                const inputs = row.querySelectorAll("input");
-                return (inputs[0].value.trim() && inputs[1].value.trim()) ? inputs[0].value.trim() + " | " + inputs[1].value.trim() : "";
-            }).filter(Boolean).join("\n");
+            choicesField.value = [...list.querySelectorAll(".builder-row")]
+                .map(row => {
+                    const inputs = row.querySelectorAll("input");
+                    return (
+                        inputs[0].value.trim() &&
+                        inputs[1].value.trim()
+                    )
+                        ? inputs[0].value.trim() + " | " + inputs[1].value.trim()
+                        : "";
+                })
+                .filter(Boolean)
+                .join("\n");
+
             correctField.value = "";
         }
+
         list.addEventListener("input", sync);
-        builder.querySelector(".builder-add").onclick = () => { addPair(); sync(); };
+        builder.querySelector(".builder-add").onclick = () => {
+            addPair();
+            sync();
+        };
         sync();
     }
 
     function render() {
         const type = typeField.value;
-        const interactive = ["ordering", "matching"].includes(type);
 
-        choicesGroup.style.display = interactive ? "none" : "";
-        correctGroup.style.display = "";
+        builder.hidden = true;
+        builder.innerHTML = "";
 
-        if (renderSimple(type)) {
-            builder.hidden = false;
+        // نرجع الحقول الأساسية لوضعها الطبيعي قبل اختيار النوع.
+        showBaseFields(true, true);
+        setCorrectLabel("الإجابة الصحيحة", "الإجابة الصحيحة المعتمدة للتصحيح");
+
+        if (type === "multiple_choice") {
+            showBaseFields(true, true);
+            setCorrectLabel(
+                "الإجابة الصحيحة",
+                "اكتبي نص الخيار الصحيح تمامًا"
+            );
+            showSimplePanel(
+                "إعداد سؤال الاختيار من متعدد",
+                "أضيفي الخيارات في حقل الخيارات، ثم اكتبي الخيار الصحيح في حقل الإجابة الصحيحة."
+            );
+        } else if (type === "true_false") {
+            showBaseFields(false, true);
+            setCorrectLabel(
+                "الإجابة الصحيحة",
+                "اكتبي: صح أو خطأ"
+            );
+            showSimplePanel(
+                "إعداد سؤال صح أو خطأ",
+                "الطالبة ستختار صح أو خطأ، وأنت تحددين الإجابة الصحيحة المعتمدة للتصحيح."
+            );
+        } else if (type === "fill_blank") {
+            showBaseFields(false, true);
+            setCorrectLabel(
+                "الإجابة الصحيحة المعتمدة للتصحيح",
+                "اكتبي الكلمة أو العبارة الصحيحة"
+            );
+            showSimplePanel(
+                "إعداد سؤال إكمال الفراغ",
+                "الطالبة ستكتب الإجابة في حقل الإجابة. هنا نحدد فقط الإجابة الصحيحة التي سيقارن بها التصحيح."
+            );
+        } else if (type === "short_answer") {
+            // دعم الأسئلة القديمة فقط، ولن يظهر هذا النوع في قائمة الأسئلة الجديدة.
+            showBaseFields(false, true);
+            setCorrectLabel(
+                "الإجابة الصحيحة المعتمدة للتصحيح",
+                "اكتبي الإجابة المقبولة"
+            );
+            showSimplePanel(
+                "إجابة قصيرة (سؤال قديم)",
+                "هذا النوع محفوظ لدعم الأسئلة الموجودة مسبقًا، ولن يظهر كخيار جديد لتجنب تكرار طبيعة السؤال."
+            );
+        } else if (type === "multiple_select") {
+            showBaseFields(true, true);
+            setCorrectLabel(
+                "الإجابات الصحيحة",
+                "اكتبي الإجابات الصحيحة وافصلي بينها بعلامة |"
+            );
+            showSimplePanel(
+                "إعداد سؤال تحديد عدة إجابات صحيحة",
+                "أضيفي جميع الخيارات، ثم حددي أكثر من إجابة صحيحة باستخدام الفاصل المعتمد."
+            );
+        } else if (type === "essay") {
+            showBaseFields(false, false);
+            showSimplePanel(
+                "إعداد السؤال المقالي",
+                "الطالبة ستكتب إجابة مطولة، ويُحفظ السؤال للتصحيح اليدوي. لا توجد إجابة صحيحة آلية لهذا النوع."
+            );
         } else if (type === "ordering") {
-            builder.hidden = false;
             renderOrdering();
-            choicesGroup.style.display = "none";
-            correctGroup.style.display = "none";
         } else if (type === "matching") {
-            builder.hidden = false;
             renderMatching();
-            choicesGroup.style.display = "none";
-            correctGroup.style.display = "none";
-        } else {
-            builder.hidden = true;
-            builder.innerHTML = "";
         }
     }
 
