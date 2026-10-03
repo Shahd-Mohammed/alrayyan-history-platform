@@ -1,0 +1,27 @@
+{% extends "platform/_admin_base.html" %}
+{% block title %}الاختبارات | مركز المحتوى{% endblock %}
+{% block eyebrow %}مركز المحتوى{% endblock %}
+{% block heading %}الاختبارات{% endblock %}
+{% block intro %}أنشئي اختبارات مستقلة من نفس محرر الأسئلة المستخدم داخل أوراق العمل، مع بقاء نظام التصحيح والمحاولات كما هو.{% endblock %}
+{% block content %}
+<section class="content-panel">
+  <div class="panel-heading"><div><span>اختبار جديد</span><h2>أنشئي اختبارًا ثم أضيفي أسئلته</h2></div></div>
+  <form method="post" class="content-form-grid">
+    <div class="field-group"><label for="title">اسم الاختبار</label><input id="title" name="title" required placeholder="مثال: اختبار الوحدة الأولى"></div>
+    <div class="field-group"><label for="lesson_id">الدرس المرتبط</label><select id="lesson_id" name="lesson_id" required><option value="">اختاري الدرس</option>{% for lesson in lessons %}<option value="{{ lesson.id }}">{{ lesson.unit.curriculum.subject }} — {{ lesson.unit.title }} — {{ lesson.title }}</option>{% endfor %}</select></div>
+    <div class="field-group full-width"><label for="description">وصف الاختبار</label><textarea id="description" name="description" rows="3" placeholder="اختبار لقياس فهم الطالب للمفاهيم الأساسية."></textarea></div>
+    <div class="full-width"><button class="gold-action" type="submit">إنشاء الاختبار وفتح محرر الأسئلة</button></div>
+  </form>
+</section>
+<section class="content-panel">
+  <div class="panel-heading"><div><span>الاختبارات المحفوظة</span><h2>اختباراتك</h2></div></div>
+  <div class="content-list">
+    {% for test in tests %}
+      <article class="content-list-item">
+        <div><small>{{ test.lesson.title if test.lesson else 'بدون درس' }}</small><h3>{{ test.title }}</h3><p>{{ test.questions|length }} سؤالًا · {{ test.publication_status }}</p></div>
+        <a class="button-gold" href="{{ url_for('assessment.manage_questions', worksheet_id=test.id) }}">إدارة الأسئلة</a>
+      </article>
+    {% else %}<p class="learning-empty">لا توجد اختبارات بعد.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}
