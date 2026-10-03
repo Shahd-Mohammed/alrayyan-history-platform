@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import Blueprint, abort, render_template, request
 from flask_login import current_user, login_required
 
@@ -11,12 +13,20 @@ worksheet_center_bp = Blueprint(
 )
 
 
-@worksheet_center_bp.get("")
-@login_required
-def center():
-    if current_user.role not in {"teacher", "admin"}:
-        abort(403)
+def teacher_required(view_function):
+    @wraps(view_function)
+    @login_required
+    def wrapped(*args, **kwargs):
+        if current_user.role not in {"teacher", "admin"}:
+            abort(403)
+        return view_function(*args, **kwargs)
 
+    return wrapped
+
+
+@worksheet_center_bp.get("")
+@teacher_required
+def center():
     query = Worksheet.query
 
     if current_user.role != "admin":
