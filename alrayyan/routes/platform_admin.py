@@ -189,39 +189,21 @@ def curricula():
             if SourceDocument.query.filter_by(curriculum_id=curriculum.id, checksum=checksum).first():
                 raise ValueError("هذا الملف موجود مسبقًا داخل المنهج نفسه")
 
-            unit = Unit.query.filter_by(
-                curriculum_id=curriculum.id,
-                title=form.unit_title.data.strip(),
-            ).first()
-            if unit is None:
-                unit = Unit(
-                    curriculum_id=curriculum.id,
-                    title=form.unit_title.data.strip(),
-                    order_index=len(curriculum.units) + 1,
-                )
-                db.session.add(unit)
-                db.session.flush()
+            extracted = (
+                extract_pdf(stored_path)
+                if stored_path.suffix.lower() == ".pdf"
+                else extract_docx(stored_path)
+            )
 
-            lesson = Lesson.query.filter_by(
-                unit_id=unit.id,
-                title=form.lesson_title.data.strip(),
-            ).first()
-            if lesson is None:
-                lesson = Lesson(
-                    unit_id=unit.id,
-                    title=form.lesson_title.data.strip(),
-                    slug=f"lesson-{uuid4().hex[:16]}",
-                    order_index=len(unit.lessons) + 1,
-                    is_published=True,
-                )
-                db.session.add(lesson)
-                db.session.flush()
+            source_priority = {
+                "official_book": 1,
+                "supporting_book": 2,
+                "review_notes": 3,
+            }[form.source_type.data]
 
-            extracted = extract_pdf(stored_path) if stored_path.suffix.lower() == ".pdf" else extract_docx(stored_path)
-            source_priority = {"official_book": 1, "supporting_book": 2, "review_notes": 3}[form.source_type.data]
             source = SourceDocument(
                 curriculum_id=curriculum.id,
-                lesson_id=lesson.id,
+                lesson_id=None,
                 title=form.source_title.data.strip(),
                 source_type=form.source_type.data,
                 original_filename=original,
@@ -236,7 +218,11 @@ def curricula():
             db.session.add(source)
             db.session.flush()
 
-            extracted_count = process_source_document(source)
+            extracted_count = process_source_document(
+                source,
+                fallback_unit_title=(form.unit_title.data or "").strip(),
+                fallback_lesson_title=(form.lesson_title.data or "").strip(),
+            )
             activate_curriculum(curriculum)
             db.session.commit()
             flash(
