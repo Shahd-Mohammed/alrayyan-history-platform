@@ -60,76 +60,92 @@ _ARABIC_ORDINALS = (
 )
 
 
-def _is_heading(paragraph):
-    style_name = (getattr(paragraph.style, "name", "") or "").strip().lower()
-    if any(token in style_name for token in ("heading", "title", "subtitle", "عنوان", "عنوان رئيسي")):
-        return True
+def _normalize_heading(text):
+    """Normalize Word heading text before structural matching."""
+    text = (text or "").replace("\u200f", "").replace("\u200e", "")
+    text = text.replace("ـ", "")
+    text = re.sub(r"[\\t\\r\\n]+", " ", text)
+    return re.sub(r"\\s+", " ", text).strip()
 
-    runs = [run for run in paragraph.runs if run.text.strip()]
-    return bool(runs) and all(run.bold for run in runs)
+
+def _arabic_number_pattern():
+    ordinals = "|".join(map(re.escape, _ARABIC_ORDINALS))
+    return rf"(?:{ordinals}|\\d+|[٠-٩]+)"
 
 
 def _match_section_heading(text, kind):
-    normalized = re.sub(r"\s+", " ", text.strip())
-    if kind == "unit":
-        pattern = (
-            r"^(?:الوحدة|وحدة)\s+(?:"
-            + "|".join(map(re.escape, _ARABIC_ORDINALS))
-            + r"|\d+)(?:\s*[:\-–—.]\s*(.*))?$"
-        )
-    else:
-        pattern = (
-            r"^(?:الدرس|درس)\s+(?:"
-            + "|".join(map(re.escape, _ARABIC_ORDINALS))
-            + r"|\d+)(?:\s*[:\-–—.]\s*(.*))?$"
-        )
+    """
+    Detect common Arabic Word headings for units and lessons.
 
-    match = re.match(pattern, normalized, flags=re.IGNORECASE)
-    if not match:
+    The matcher deliberately accepts several real-world Word formats instead
+    of depending on one exact sentence:
+    - الوحدة الأولى
+    - الوحدة 1
+    - الوحدة (1)
+    - الوحدة رقم 1
+    - الدرس الأول: حركات التحرر الوطني
+    - الدرس 1 - حركات التحرر الوطني
+    - الدرس الثاني حركات التحرر الوطني
+    """
+    normalized = _normalize_heading(text)
+    if not normalized:
         return None
 
-    title = (match.group(1) or "").strip()
-    return normalized if not title else f"{normalized.split(':', 1)[0].strip()} — {title}"
-
-
-def _docx_paragraph_texts(document):
-    """Read Word paragraphs in XML order, including text inside text boxes."""
-    paragraphs = []
-    for paragraph in document.element.body.iter(qn("w:p")):
-        parts = []
-        for node in paragraph.iter():
-            if node.tag == qn("w:t"):
-                parts.append(node.text or "")
-            elif node.tag == qn("w:tab"):
-                parts.append("\t")
-        text = re.sub(r"\s+", " ", "".join(parts)).strip()
-        if text:
-            paragraphs.append(text)
-    return paragraphs
-
-
-def _normalize_heading(text):
-    return re.sub(r"\s+", " ", text.strip().replace("ـ", ""))
-
-
-def _match_section_heading(text, kind):
-    normalized = _normalize_heading(text)
-    ordinals = "|".join(map(re.escape, _ARABIC_ORDINALS))
     label = r"(?:الوحدة|وحدة)" if kind == "unit" else r"(?:الدرس|درس)"
+    number = _arabic_number_pattern()
+
     match = re.match(
-        rf"^{label}\s+(?:{ordinals}|\d+|[٠-٩]+)(?:\s*[:\-–—.]\s*(.*))?\s*$",
+        rf"^{label}\\s*(?:رقم\\s*)?\\(?{number}\\)?"
+        rf"(?:\\s*[:：\\-–—.\\)]\\s*(.*)|\\s+(.+))?\\s*$",
         normalized,
         flags=re.IGNORECASE,
     )
     if not match:
         return None
 
+    trailing_title = (match.group(1) or match.group(2) or "").strip()
+
+    if kind == "lesson":
+        # Store the real lesson name when the heading contains one.
+        # If there is no title after the lesson number, keep the full heading.
+        return trailing_title or normalized
+
+    # Units are usually identified by their number. Keep an optional
+    # descriptive title when the Word file includes one.
     return normalized
+
+
+def _docx_paragraph_texts(document):
+    """
+    Read all body paragraphs in Word XML order.
+
+    This covers normal paragraphs, paragraphs inside tables, and text boxes /
+    shapes that are stored in the document body. It does not rely on Word's
+    visual page layout, so the parser works with different templates.
+    """
+    paragraphs = []
+
+    for paragraph in document.element.body.iter(qn("w:p")):
+        parts = []
+        for node in paragraph.iter():
+            if node.tag == qn("w:t"):
+                parts.append(node.text or "")
+            elif node.tag == qn("w:tab"):
+                parts.append("\\t")
+
+        text = _normalize_heading("".join(parts))
+        if text:
+            paragraphs.append(text)
+
+    return paragraphs
 
 
 def extract_docx(file_path):
     """
-    Extract a Word document and detect units/lessons, including text boxes.
+    Extract a Word curriculum and automatically build unit/lesson sections.
+
+    The Word file does not need a table of contents. The parser scans the
+    complete document and recognizes common Arabic unit/lesson headings.
     """
     document = Document(str(file_path))
     paragraphs = _docx_paragraph_texts(document)
@@ -182,7 +198,6 @@ def extract_docx(file_path):
         "text": "\n".join(section["text"] for section in sections),
         "sections": sections,
     }
-
 
 def inspect_document(file_path):
     """
