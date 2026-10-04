@@ -64,6 +64,7 @@ def _get_or_create_lesson(unit, title, order_index):
     db.session.flush()
     return lesson
 
+
 def process_source_document(
     source,
     fallback_unit_title=None,
@@ -180,11 +181,33 @@ def process_source_document(
         ))
 
     source.page_count = extracted.get("page_count")
-    for unit_index, unit in enumerate(sorted(source.curriculum.units, key=lambda item: (item.order_index if item.order_index > 0 else 9999, item.id)), start=1):
+
+    # Two-phase renumbering is required because (curriculum_id, order_index)
+    # and (unit_id, order_index) are UNIQUE constraints. Directly swapping
+    # 1 <-> 2 can fail even when the final order is valid.
+    units_sorted = sorted(
+        source.curriculum.units,
+        key=lambda item: (item.order_index if item.order_index > 0 else 9999, item.id),
+    )
+    for unit_index, unit in enumerate(units_sorted, start=1):
+        unit.order_index = -(100000 + unit.id)
+        lessons_sorted = sorted(
+            unit.lessons,
+            key=lambda item: (item.order_index if item.order_index > 0 else 9999, item.id),
+        )
+        for lesson_index, lesson in enumerate(lessons_sorted, start=1):
+            lesson.order_index = -(100000 + lesson.id)
+    db.session.flush()
+
+    for unit_index, unit in enumerate(units_sorted, start=1):
         unit.order_index = unit_index
-        for lesson_index, lesson in enumerate(sorted(unit.lessons, key=lambda item: (item.order_index if item.order_index > 0 else 9999, item.id)), start=1):
+        for lesson_index, lesson in enumerate(
+            sorted(unit.lessons, key=lambda item: (item.order_index, item.id)),
+            start=1,
+        ):
             lesson.order_index = lesson_index
     db.session.flush()
+
     source.lesson_id = (
         resolved_sections[0]["lesson_id"]
         if len({item["lesson_id"] for item in resolved_sections}) == 1
@@ -195,4 +218,3 @@ def process_source_document(
     source.curriculum.processing_error = None
     db.session.flush()
     return len(chunk_data)
-
