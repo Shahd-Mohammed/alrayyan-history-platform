@@ -13,11 +13,15 @@ from alrayyan.services.text_processing import chunk_text, create_text_hash
 
 
 def _prepare_curriculum_orders(curriculum):
-    """Temporarily move existing unit/lesson orders to avoid unique-key collisions."""
-    for unit_index, unit in enumerate(curriculum.units, start=1):
-        unit.order_index = -unit_index
-        for lesson_index, lesson in enumerate(unit.lessons, start=1):
-            lesson.order_index = -lesson_index
+    """Move existing orders to unique temporary values before reordering."""
+    # Use database IDs so every temporary order is unique even while
+    # SQLAlchemy updates rows one by one under the UNIQUE constraints.
+    for unit in curriculum.units:
+        unit.order_index = -(100000 + unit.id)
+
+        for lesson in unit.lessons:
+            lesson.order_index = -(200000 + lesson.id)
+
     db.session.flush()
 
 
@@ -187,25 +191,44 @@ def process_source_document(
     # 1 <-> 2 can fail even when the final order is valid.
     units_sorted = sorted(
         source.curriculum.units,
-        key=lambda item: (item.order_index if item.order_index > 0 else 9999, item.id),
+        key=lambda item: (
+            item.order_index if item.order_index > 0 else 9999,
+            item.id,
+        ),
     )
-    for unit_index, unit in enumerate(units_sorted, start=1):
-        unit.order_index = -(100000 + unit.id)
-        lessons_sorted = sorted(
+
+    # Preserve the intended lesson order before replacing order_index
+    # with temporary unique values.
+    lessons_by_unit = {
+        unit.id: sorted(
             unit.lessons,
-            key=lambda item: (item.order_index if item.order_index > 0 else 9999, item.id),
+            key=lambda item: (
+                item.order_index if item.order_index > 0 else 9999,
+                item.id,
+            ),
         )
-        for lesson_index, lesson in enumerate(lessons_sorted, start=1):
-            lesson.order_index = -(100000 + lesson.id)
+        for unit in units_sorted
+    }
+
+    # Move all existing rows to unique temporary values first.
+    for unit in units_sorted:
+        unit.order_index = -(100000 + unit.id)
+
+        for lesson in lessons_by_unit[unit.id]:
+            lesson.order_index = -(200000 + lesson.id)
+
     db.session.flush()
 
+    # Apply the final sequential order using the preserved lists.
     for unit_index, unit in enumerate(units_sorted, start=1):
         unit.order_index = unit_index
+
         for lesson_index, lesson in enumerate(
-            sorted(unit.lessons, key=lambda item: (item.order_index, item.id)),
+            lessons_by_unit[unit.id],
             start=1,
         ):
             lesson.order_index = lesson_index
+
     db.session.flush()
 
     source.lesson_id = (

@@ -59,10 +59,12 @@ def _normalize_heading(text):
 
 
 def _arabic_number_pattern():
+    """Build a pattern for Arabic ordinal numbers and numeric forms."""
     ordinals = "|".join(
-        map(re.escape, _ARABIC_ORDINALS + _ARABIC_MASCULINE_ORDINALS)
+        re.escape(_normalize_heading(value))
+        for value in (_ARABIC_ORDINALS + _ARABIC_MASCULINE_ORDINALS)
     )
-    return rf"(?:{ordinals}|\d+)"
+    return f"(?:{ordinals}|\\d+)"
 
 
 def _match_section_heading(text, kind):
@@ -71,28 +73,67 @@ def _match_section_heading(text, kind):
     if not normalized:
         return None
 
-    label = r"(?:الوحدة|وحدة)" if kind == "unit" else r"(?:الدرس|درس)"
+    # Some Word curriculum files place a grade/page number
+    # immediately before the heading, such as "11الوحدة الأولى".
+    normalized = re.sub(r"^\d+\s*", "", normalized)
+
+    if kind == "unit":
+        label = r"(?:الوحدة|وحدة)"
+    else:
+        label = r"(?:الدرس|درس)"
+
     number = _arabic_number_pattern()
 
+    # Numbered headings:
+    # الوحدة الأولى
+    # الوحدة 1
+    # الدرس الأول
+    # الدرس 1
+    # الدرس رقم 1
+    pattern = (
+        r"^"
+        + label
+        + r"\s*(?:رقم\s*)?\(?"
+        + number
+        + r"\)?"
+        + r"(?:\s*[:：\-–—.)]\s*(.*)|\s+(.+))?"
+        + r"\s*$"
+    )
+
     numbered_match = re.match(
-        rf"^{label}\s*(?:رقم\s*)?\(?{number}\)?"
-        rf"(?:\s*[:：\-–—.\)]\s*(.*)|\s+(.+))?\s*$",
+        pattern,
         normalized,
         flags=re.IGNORECASE,
     )
+
     if numbered_match:
         trailing_title = (
-            numbered_match.group(1) or numbered_match.group(2) or ""
+            numbered_match.group(1)
+            or numbered_match.group(2)
+            or ""
         ).strip()
+
         if kind == "lesson":
             return trailing_title or normalized
-        return normalized
+
+        return normalized.split(":", 1)[0].strip()
+
+    # Unnumbered headings:
+    # الوحدة: عنوان الوحدة
+    # الدرس: عنوان الدرس
+    unnumbered_pattern = (
+        r"^"
+        + label
+        + r"\s*[:：\-–—.]\s*(.+?)"
+        + r"\s*$"
+    )
 
     unnumbered_match = re.match(
-        rf"^{label}\s*[:：\-–—.]\s*(.+?)\s*$",
+        unnumbered_pattern,
         normalized,
         flags=re.IGNORECASE,
     )
+
     if unnumbered_match:
         return unnumbered_match.group(1).strip()
 
@@ -287,7 +328,13 @@ def _docx_paragraph_texts(document):
 def extract_docx(file_path):
     """
     Extract a Word curriculum and automatically build unit/lesson sections.
-    Supports explicit Arabic headings and Word Heading styles.
+
+    The parser supports:
+    - Unit headings with Arabic or numeric ordinals.
+    - Lesson headings with or without a title on the same line.
+    - Unit headings that also mention a lesson number.
+    - Lesson titles placed in the paragraph immediately after the lesson marker.
+    - Standard Word heading styles when available.
     """
     document = Document(str(file_path))
     records = _docx_paragraph_records(document)
@@ -296,57 +343,114 @@ def extract_docx(file_path):
     current_unit = None
     current_lesson = None
     current_lines = []
+    pending_lesson = False
     found_structured_heading = False
 
     def flush_section():
         nonlocal current_lines
-        text = "\n".join(current_lines).strip()
-        if text:
+        text_value = "\n".join(current_lines).strip()
+
+        if text_value:
             sections.append({
                 "unit_title": current_unit,
                 "lesson_title": current_lesson,
-                "text": text,
+                "text": text_value,
             })
+
         current_lines = []
 
     for record in records:
-        text = record["text"]
+        text_value = record["text"].strip()
         style_level = _heading_level_from_style(record["style_name"])
 
-        unit_heading = _match_section_heading(text, "unit")
-        lesson_heading = _match_section_heading(text, "lesson")
+        unit_heading = _match_section_heading(text_value, "unit")
+        lesson_heading = _match_section_heading(text_value, "lesson")
 
         if not unit_heading and style_level == 1:
-            unit_heading = text
-        if not lesson_heading and style_level is not None and style_level >= 2:
-            lesson_heading = text
+            unit_heading = text_value
 
+        if not lesson_heading and style_level is not None and style_level >= 2:
+            lesson_heading = text_value
+
+        # Detect a unit heading first.
         if unit_heading:
             flush_section()
+
             current_unit = unit_heading
             current_lesson = None
+            current_lines = []
+            pending_lesson = False
             found_structured_heading = True
+
+            # Example:
+            # "الوحدة الأولى: الدرس الثاني"
+            # The unit matcher returns "الوحدة الأولى".
+            # If the original line also contains "الدرس", remember that
+            # the next meaningful paragraph is the lesson title.
+            normalized = _normalize_heading(text_value)
+            normalized_without_prefix = re.sub(r"^\d+\s*", "", normalized)
+
+            if "الدرس" in normalized_without_prefix or "درس" in normalized_without_prefix:
+                pending_lesson = True
+
             continue
 
+        # Detect a lesson heading.
         if lesson_heading:
             flush_section()
+
             current_lesson = lesson_heading
+            current_lines = []
+            pending_lesson = False
             found_structured_heading = True
+
+            # If the heading contains only "الدرس الرابع" or similar,
+            # the next paragraph is expected to contain the actual title.
+            normalized_lesson = _normalize_heading(text_value)
+            normalized_lesson_without_prefix = re.sub(
+                r"^\d+\s*",
+                "",
+                normalized_lesson,
+            )
+
+            if lesson_heading == normalized_lesson_without_prefix:
+                pending_lesson = True
+
             continue
 
-        current_lines.append(text)
+        # Ignore standalone grade/page markers such as "11".
+        # They appear between structural headings and real content.
+        if re.fullmatch(r"\d+", _normalize_heading(text_value)):
+            if not current_lines:
+                continue
+
+        # If a lesson marker was found without its title, use the next
+        # meaningful paragraph as the actual lesson title.
+        if pending_lesson:
+            # Word files may place the grade/page number on a separate
+            # paragraph between the lesson heading and its real title.
+            if re.fullmatch(r"\d+", _normalize_heading(text_value)):
+                continue
+
+            current_lesson = text_value
+            pending_lesson = False
+            continue
+
+        current_lines.append(text_value)
 
     flush_section()
 
     if found_structured_heading and sections:
         first_structured_index = next(
             (
-                index for index, section in enumerate(sections)
+                index
+                for index, section in enumerate(sections)
                 if section["unit_title"] is not None
                 or section["lesson_title"] is not None
             ),
             None,
         )
+
         if first_structured_index is not None:
             sections = sections[first_structured_index:]
 
@@ -363,6 +467,7 @@ def extract_docx(file_path):
         "text": "\n".join(section["text"] for section in sections),
         "sections": sections,
     }
+
 
 def inspect_document(file_path):
     """Read a supported source and return its basic information."""
