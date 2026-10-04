@@ -20,22 +20,40 @@ def calculate_checksum(file_path):
 
 
 _ARABIC_ORDINALS = (
-    "الأولى", "الثانية", "الثالثة", "الرابعة", "الخامسة",
+    "الاولى", "الثانية", "الثالثة", "الرابعة", "الخامسة",
     "السادسة", "السابعة", "الثامنة", "التاسعة", "العاشرة",
     "الحادية عشرة", "الثانية عشرة", "الثالثة عشرة", "الرابعة عشرة",
 )
 
 _ARABIC_MASCULINE_ORDINALS = (
-    "الأول", "الثاني", "الثالث", "الرابع", "الخامس",
+    "الاول", "الثاني", "الثالث", "الرابع", "الخامس",
     "السادس", "السابع", "الثامن", "التاسع", "العاشر",
     "الحادي عشر", "الثاني عشر", "الثالث عشر", "الرابع عشر",
 )
 
 
 def _normalize_heading(text):
-    """Normalize text before structural matching."""
+    """Normalize Arabic variations before structural matching."""
     text = (text or "").replace("\u200f", "").replace("\u200e", "")
     text = text.replace("ـ", "")
+    text = re.sub(r"[\u064B-\u065F\u0670\u06D6-\u06ED]", "", text)
+    text = text.translate(str.maketrans({
+        "أ": "ا",
+        "إ": "ا",
+        "آ": "ا",
+        "ٱ": "ا",
+        "ى": "ي",
+        "٠": "0",
+        "١": "1",
+        "٢": "2",
+        "٣": "3",
+        "٤": "4",
+        "٥": "5",
+        "٦": "6",
+        "٧": "7",
+        "٨": "8",
+        "٩": "9",
+    }))
     text = re.sub(r"[\t\r\n]+", " ", text)
     return re.sub(r"\s+", " ", text).strip()
 
@@ -44,7 +62,7 @@ def _arabic_number_pattern():
     ordinals = "|".join(
         map(re.escape, _ARABIC_ORDINALS + _ARABIC_MASCULINE_ORDINALS)
     )
-    return rf"(?:{ordinals}|\d+|[٠-٩]+)"
+    return rf"(?:{ordinals}|\d+)"
 
 
 def _match_section_heading(text, kind):
@@ -56,19 +74,29 @@ def _match_section_heading(text, kind):
     label = r"(?:الوحدة|وحدة)" if kind == "unit" else r"(?:الدرس|درس)"
     number = _arabic_number_pattern()
 
-    match = re.match(
+    numbered_match = re.match(
         rf"^{label}\s*(?:رقم\s*)?\(?{number}\)?"
         rf"(?:\s*[:：\-–—.\)]\s*(.*)|\s+(.+))?\s*$",
         normalized,
         flags=re.IGNORECASE,
     )
-    if not match:
-        return None
+    if numbered_match:
+        trailing_title = (
+            numbered_match.group(1) or numbered_match.group(2) or ""
+        ).strip()
+        if kind == "lesson":
+            return trailing_title or normalized
+        return normalized
 
-    trailing_title = (match.group(1) or match.group(2) or "").strip()
-    if kind == "lesson":
-        return trailing_title or normalized
-    return normalized
+    unnumbered_match = re.match(
+        rf"^{label}\s*[:：\-–—.]\s*(.+?)\s*$",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+    if unnumbered_match:
+        return unnumbered_match.group(1).strip()
+
+    return None
 
 
 def _text_is_usable(text):
@@ -205,12 +233,25 @@ def extract_pdf(file_path):
         document.close()
 
 
-def _docx_paragraph_texts(document):
-    """Read Word paragraphs in document order, including XML text boxes."""
-    paragraphs = []
+def _docx_paragraph_records(document):
+    """Read Word paragraphs in document order, including text boxes and styles."""
+    style_names = {
+        style.style_id: style.name
+        for style in document.styles
+        if getattr(style, "style_id", None)
+    }
+    records = []
 
     for paragraph in document.element.body.iter(qn("w:p")):
         parts = []
+        style_id = None
+
+        p_pr = paragraph.find(qn("w:pPr"))
+        if p_pr is not None:
+            p_style = p_pr.find(qn("w:pStyle"))
+            if p_style is not None:
+                style_id = p_style.get(qn("w:val"))
+
         for node in paragraph.iter():
             if node.tag == qn("w:t"):
                 parts.append(node.text or "")
@@ -219,23 +260,43 @@ def _docx_paragraph_texts(document):
 
         text = _normalize_heading("".join(parts))
         if text:
-            paragraphs.append(text)
+            records.append({
+                "text": text,
+                "style_name": style_names.get(style_id, style_id or ""),
+            })
 
-    return paragraphs
+    return records
 
+
+def _heading_level_from_style(style_name):
+    """Return Word heading level when a standard/custom heading style is used."""
+    normalized = _normalize_heading(style_name).lower()
+    match = re.search(r"(?:heading|عنوان|العنوان)\s*([1-9])", normalized)
+    if match:
+        return int(match.group(1))
+
+    compact = re.sub(r"\s+", "", normalized)
+    match = re.search(r"(?:heading|عنوان|العنوان)([1-9])", compact)
+    return int(match.group(1)) if match else None
+
+
+def _docx_paragraph_texts(document):
+    """Keep the original simple text-only helper for compatibility."""
+    return [record["text"] for record in _docx_paragraph_records(document)]
 
 def extract_docx(file_path):
     """
     Extract a Word curriculum and automatically build unit/lesson sections.
-    No table of contents is required.
+    Supports explicit Arabic headings and Word Heading styles.
     """
     document = Document(str(file_path))
-    paragraphs = _docx_paragraph_texts(document)
+    records = _docx_paragraph_records(document)
 
     sections = []
     current_unit = None
     current_lesson = None
     current_lines = []
+    found_structured_heading = False
 
     def flush_section():
         nonlocal current_lines
@@ -248,30 +309,52 @@ def extract_docx(file_path):
             })
         current_lines = []
 
-    for text in paragraphs:
+    for record in records:
+        text = record["text"]
+        style_level = _heading_level_from_style(record["style_name"])
+
         unit_heading = _match_section_heading(text, "unit")
         lesson_heading = _match_section_heading(text, "lesson")
+
+        if not unit_heading and style_level == 1:
+            unit_heading = text
+        if not lesson_heading and style_level is not None and style_level >= 2:
+            lesson_heading = text
 
         if unit_heading:
             flush_section()
             current_unit = unit_heading
             current_lesson = None
+            found_structured_heading = True
             continue
 
         if lesson_heading:
             flush_section()
             current_lesson = lesson_heading
+            found_structured_heading = True
             continue
 
         current_lines.append(text)
 
     flush_section()
 
-    if not sections and paragraphs:
+    if found_structured_heading and sections:
+        first_structured_index = next(
+            (
+                index for index, section in enumerate(sections)
+                if section["unit_title"] is not None
+                or section["lesson_title"] is not None
+            ),
+            None,
+        )
+        if first_structured_index is not None:
+            sections = sections[first_structured_index:]
+
+    if not sections and records:
         sections = [{
             "unit_title": None,
             "lesson_title": None,
-            "text": "\n".join(paragraphs),
+            "text": "\n".join(record["text"] for record in records),
         }]
 
     return {
@@ -280,7 +363,6 @@ def extract_docx(file_path):
         "text": "\n".join(section["text"] for section in sections),
         "sections": sections,
     }
-
 
 def inspect_document(file_path):
     """Read a supported source and return its basic information."""
