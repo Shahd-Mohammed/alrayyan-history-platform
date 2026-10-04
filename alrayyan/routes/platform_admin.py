@@ -37,10 +37,18 @@ def teacher_curricula():
 
 
 def teacher_lessons():
+    # Resource selectors must only use the currently active, ready curriculum.
+    # Ignore legacy placeholder lessons left by older curriculum parsing.
+    placeholder_titles = {
+        "محتوى المنهج",
+        "الدرس احتياطي",
+        "الوحدة — الدرس احتياطي",
+    }
     return Lesson.query.join(Unit).join(Curriculum).filter(
         ((Curriculum.created_by_id == current_user.id) | (Curriculum.created_by_id.is_(None))),
         Curriculum.is_active.is_(True),
         Curriculum.processing_status == "ready",
+        Lesson.title.notin_(placeholder_titles),
     ).order_by(Curriculum.subject, Unit.order_index, Lesson.order_index).all()
 
 
