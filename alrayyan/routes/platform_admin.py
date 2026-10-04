@@ -60,21 +60,60 @@ def curriculum_ready_for_activation(curriculum):
     )
 
 
+def normalize_active_curricula():
+    """Keep exactly one active curriculum for each subject and grade."""
+    curricula = Curriculum.query.order_by(
+        Curriculum.subject,
+        Curriculum.grade,
+        Curriculum.activated_at.desc().nullslast(),
+        Curriculum.created_at.desc(),
+        Curriculum.id.desc(),
+    ).all()
+
+    active_by_group = {}
+    changed = False
+
+    for curriculum in curricula:
+        if not curriculum.is_active:
+            continue
+
+        group = (curriculum.subject, curriculum.grade)
+        if group in active_by_group:
+            curriculum.is_active = False
+            for source in curriculum.sources:
+                source.is_active = False
+            changed = True
+        else:
+            active_by_group[group] = curriculum
+
+    if changed:
+        db.session.commit()
+
+    return active_by_group
+
+
 def activate_curriculum(curriculum):
     if not curriculum_ready_for_activation(curriculum):
         raise ValueError("المنهج لم يكتمل تجهيزه وفهرسته: يجب أن تكون كل المقاطع مستخرجة ومفهرسة بالـembeddings قبل التفعيل.")
-    teacher_curricula().filter(
+
+    # The active curriculum is a platform-wide choice for the same
+    # subject and grade, so never limit this update to the current teacher.
+    Curriculum.query.filter(
         Curriculum.id != curriculum.id,
         Curriculum.subject == curriculum.subject,
         Curriculum.grade == curriculum.grade,
     ).update({Curriculum.is_active: False}, synchronize_session=False)
+
     SourceDocument.query.filter(
         SourceDocument.curriculum_id != curriculum.id,
-        SourceDocument.curriculum_id.in_(db.session.query(Curriculum.id).filter(
-            Curriculum.subject == curriculum.subject,
-            Curriculum.grade == curriculum.grade,
-        )),
+        SourceDocument.curriculum_id.in_(
+            db.session.query(Curriculum.id).filter(
+                Curriculum.subject == curriculum.subject,
+                Curriculum.grade == curriculum.grade,
+            )
+        ),
     ).update({SourceDocument.is_active: False}, synchronize_session=False)
+
     curriculum.is_active = True
     curriculum.processing_status = "ready"
     curriculum.activated_at = datetime.now(timezone.utc).replace(tzinfo=None)
@@ -212,6 +251,8 @@ def curricula():
             current_app.logger.exception("Curriculum upload failed")
             flash(f"تعذر تجهيز المصدر: {error}", "error")
 
+    normalize_active_curricula()
+
     return render_template(
         "platform/curricula.html",
         form=form,
@@ -296,6 +337,23 @@ def toggle_curriculum(curriculum_id):
         curriculum.is_active = False
         for source in curriculum.sources:
             source.is_active = False
+
+        # Do not leave the platform pointing at an older active version
+        # when this curriculum is being switched off.
+        remaining = Curriculum.query.filter(
+            Curriculum.id != curriculum.id,
+            Curriculum.subject == curriculum.subject,
+            Curriculum.grade == curriculum.grade,
+            Curriculum.processing_status == "ready",
+        ).order_by(
+            Curriculum.activated_at.desc().nullslast(),
+            Curriculum.created_at.desc(),
+            Curriculum.id.desc(),
+        ).first()
+
+        if remaining:
+            activate_curriculum(remaining)
+
         db.session.commit()
     flash("تم تحديث حالة المنهج ومصادره", "success")
     return redirect(url_for("platform_admin.curricula"))
