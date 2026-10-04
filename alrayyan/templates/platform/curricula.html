@@ -1,1 +1,53 @@
-{% extends 'platform/_admin_base.html' %}{% from 'platform/_form_fields.html' import fields %}{% block title %}المناهج والمصادر{% endblock %}{% block eyebrow %}المصدر الذي يقود المنصة{% endblock %}{% block heading %}المناهج والمصادر{% endblock %}{% block intro %}ارفعي الكتاب الرسمي أو مصدرًا مساندًا أو ملزمة. تحلل المنصة الملف، تقسّمه، تفهرسه، ثم تجعل دروس المنهج النشط متاحة في جميع الأدوات.{% endblock %}{% block content %}<div class="source-priority"><article><b>01</b><h3>الكتاب الرسمي</h3><p>المصدر الأساسي والأعلى أولوية.</p></article><article><b>02</b><h3>المصادر المساندة</h3><p>شرح أو مرجع يدعم الكتاب.</p></article><article><b>03</b><h3>الملازم والمراجعات</h3><p>مراجعات منظمة تعتمدها المعلمة.</p></article></div><div class="platform-two-columns"><section class="platform-panel"><div class="panel-title"><span>01</span><div><h2>رفع وفهرسة مصدر</h2><p>قد يستغرق إنشاء Embeddings عدة دقائق حسب حجم الملف.</p></div></div><form method="post" enctype="multipart/form-data" class="platform-form">{{ form.hidden_tag() }}{{ fields(form,[form.subject,form.grade,form.semester,form.academic_year,form.curriculum_name,form.unit_title,form.lesson_title,form.source_title,form.source_type,form.document]) }}{{ form.submit(class_='platform-gold-button') }}</form></section><section class="platform-panel"><div class="panel-title"><span>02</span><div><h2>المناهج الحالية</h2><p>لكل مادة وصف منهج نشط واحد في الوقت نفسه.</p></div></div><div class="platform-list">{% for item in curricula %}<article><div><strong>{{ item.subject }} — {{ item.grade }}</strong><p>{{ item.name }} · الفصل {{ item.semester }} · {{ item.academic_year }}</p><small>{{ item.units|length }} وحدات · {{ item.sources|length }} مصادر · {{ {'ready':'جاهز','processing':'قيد التحليل','failed':'فشل'}.get(item.processing_status,item.processing_status) }}</small></div><form method="post" action="{{ url_for('platform_admin.toggle_curriculum',curriculum_id=item.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="status-pill {{ 'used' if item.is_active else '' }}">{{ 'المنهج النشط' if item.is_active else 'تفعيل' }}</button></form></article>{% else %}<div class="platform-empty">لا توجد مناهج بعد.</div>{% endfor %}</div></section></div>{% endblock %}
+{% extends 'platform/_admin_base.html' %}
+{% from 'platform/_form_fields.html' import fields %}
+{% block title %}المناهج والمصادر{% endblock %}
+{% block eyebrow %}المصدر الذي يقود المنصة{% endblock %}
+{% block heading %}المناهج والمصادر{% endblock %}
+{% block intro %}ارفعي الكتاب الرسمي أو مصدرًا مساندًا أو ملزمة. تحلل المنصة الملف، تقسّمه، تفهرسه، ثم تجعل دروس المنهج النشط متاحة في جميع الأدوات.{% endblock %}
+{% block content %}
+<div class="source-priority">
+  <article><b>01</b><h3>الكتاب الرسمي</h3><p>المصدر الأساسي والأعلى أولوية.</p></article>
+  <article><b>02</b><h3>المصادر المساندة</h3><p>شرح أو مرجع يدعم الكتاب.</p></article>
+  <article><b>03</b><h3>الملازم والمراجعات</h3><p>مراجعات منظمة تعتمدها المعلمة.</p></article>
+</div>
+<div class="platform-two-columns">
+  <section class="platform-panel">
+    <div class="panel-title"><span>01</span><div><h2>رفع وفهرسة مصدر</h2><p>قد يستغرق إنشاء Embeddings عدة دقائق حسب حجم الملف.</p></div></div>
+    <form method="post" enctype="multipart/form-data" class="platform-form">
+      {{ form.hidden_tag() }}
+      {{ fields(form,[form.subject,form.grade,form.semester,form.academic_year,form.curriculum_name,form.unit_title,form.lesson_title,form.source_title,form.source_type,form.document]) }}
+      {{ form.submit(class_='platform-gold-button') }}
+    </form>
+  </section>
+  <section class="platform-panel">
+    <div class="panel-title"><span>02</span><div><h2>المناهج الحالية</h2><p>يمكنك إعادة فهرسة منهج موجود أو حذفه نهائيًا عند الانتهاء منه.</p></div></div>
+    <div class="platform-list">
+      {% for item in curricula %}
+      <article>
+        <div>
+          <strong>{{ item.subject }} — {{ item.grade }}</strong>
+          <p>{{ item.name }} · الفصل {{ item.semester }} · {{ item.academic_year }}</p>
+          <small>{{ item.units|length }} وحدات · {{ item.sources|length }} مصادر · {{ {'ready':'جاهز','processing':'قيد التحليل','failed':'فشل'}.get(item.processing_status,item.processing_status) }}</small>
+        </div>
+        <div class="curriculum-actions">
+          <form method="post" action="{{ url_for('platform_admin.toggle_curriculum',curriculum_id=item.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="status-pill {{ 'used' if item.is_active else '' }}">{{ 'المنهج النشط' if item.is_active else 'تفعيل' }}</button>
+          </form>
+          <form method="post" action="{{ url_for('platform_admin.reindex_curriculum',curriculum_id=item.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="status-pill curriculum-reindex" type="submit">إعادة الفهرسة</button>
+          </form>
+          <form method="post" action="{{ url_for('platform_admin.delete_curriculum',curriculum_id=item.id) }}" onsubmit="return confirm('هل أنتِ متأكدة من حذف هذا المنهج؟ سيتم حذف مصادره وملفاته نهائيًا ولا يمكن التراجع عن العملية.');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="status-pill curriculum-delete" type="submit">حذف المنهج</button>
+          </form>
+        </div>
+      </article>
+      {% else %}
+      <div class="platform-empty">لا توجد مناهج بعد.</div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
