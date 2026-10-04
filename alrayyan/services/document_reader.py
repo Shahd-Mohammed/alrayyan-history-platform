@@ -25,6 +25,12 @@ _ARABIC_ORDINALS = (
     "الحادية عشرة", "الثانية عشرة", "الثالثة عشرة", "الرابعة عشرة",
 )
 
+_ARABIC_MASCULINE_ORDINALS = (
+    "الأول", "الثاني", "الثالث", "الرابع", "الخامس",
+    "السادس", "السابع", "الثامن", "التاسع", "العاشر",
+    "الحادي عشر", "الثاني عشر", "الثالث عشر", "الرابع عشر",
+)
+
 
 def _normalize_heading(text):
     """Normalize text before structural matching."""
@@ -35,7 +41,9 @@ def _normalize_heading(text):
 
 
 def _arabic_number_pattern():
-    ordinals = "|".join(map(re.escape, _ARABIC_ORDINALS))
+    ordinals = "|".join(
+        map(re.escape, _ARABIC_ORDINALS + _ARABIC_MASCULINE_ORDINALS)
+    )
     return rf"(?:{ordinals}|\d+|[٠-٩]+)"
 
 
@@ -76,12 +84,9 @@ def _text_is_usable(text):
     if replacement_count > 0 or control_count > 3:
         return False
 
-    # This platform's curriculum sources are Arabic. A page with meaningful
-    # Arabic text is considered extractable; otherwise OCR is attempted.
     if arabic_count >= 5:
         return True
 
-    # Keep genuinely text-based non-Arabic documents usable too.
     word_count = len(re.findall(r"[A-Za-z]{2,}", text))
     return word_count >= 5
 
@@ -179,8 +184,6 @@ def extract_pdf(file_path):
                 try:
                     text = _ocr_pdf_page(page)
                 except Exception:
-                    # Keep the original result so the caller can report a
-                    # meaningful extraction error instead of hiding the cause.
                     pass
 
             pages.append({
