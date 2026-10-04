@@ -12,6 +12,7 @@ from alrayyan.forms import ClassroomForm, ConceptMapForm, ConceptMapUploadForm, 
 from alrayyan.models import Classroom, ConceptMap, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorMessage, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession
 from alrayyan.services.document_reader import calculate_checksum, extract_docx, extract_pdf
 from alrayyan.services.text_processing import chunk_text, create_text_hash
+from alrayyan.services.curriculum_processing import process_source_document
 from alrayyan.services.learning_content_ai import (
     generate_character_drafts,
     generate_concept_map_draft,
@@ -107,6 +108,7 @@ def curricula():
     if form.validate_on_submit():
         stored_path = None
         try:
+            stored_path = None
             original, stored_path, relative = save_upload(form.document.data, "curricula", {"pdf", "docx"})
             curriculum_query = teacher_curricula().filter_by(
                 subject=form.subject.data.strip(),
@@ -135,54 +137,73 @@ def curricula():
                     is_active=False,
                     processing_status="processing",
                 )
-                db.session.add(curriculum); db.session.flush()
+                db.session.add(curriculum)
+                db.session.flush()
             else:
                 curriculum.processing_status = "processing"
                 curriculum.processing_error = None
                 curriculum.is_active = False
                 for source in curriculum.sources:
                     source.is_active = False
+
             checksum = calculate_checksum(stored_path)
             if SourceDocument.query.filter_by(curriculum_id=curriculum.id, checksum=checksum).first():
                 raise ValueError("هذا الملف موجود مسبقًا داخل المنهج نفسه")
-            unit = Unit.query.filter_by(curriculum_id=curriculum.id, title=form.unit_title.data.strip()).first()
+
+            unit = Unit.query.filter_by(
+                curriculum_id=curriculum.id,
+                title=form.unit_title.data.strip(),
+            ).first()
             if unit is None:
-                unit = Unit(curriculum_id=curriculum.id, title=form.unit_title.data.strip(), order_index=len(curriculum.units) + 1)
-                db.session.add(unit); db.session.flush()
-            lesson = Lesson.query.filter_by(unit_id=unit.id, title=form.lesson_title.data.strip()).first()
+                unit = Unit(
+                    curriculum_id=curriculum.id,
+                    title=form.unit_title.data.strip(),
+                    order_index=len(curriculum.units) + 1,
+                )
+                db.session.add(unit)
+                db.session.flush()
+
+            lesson = Lesson.query.filter_by(
+                unit_id=unit.id,
+                title=form.lesson_title.data.strip(),
+            ).first()
             if lesson is None:
-                lesson = Lesson(unit_id=unit.id, title=form.lesson_title.data.strip(), slug=f"lesson-{uuid4().hex[:16]}", order_index=len(unit.lessons) + 1, is_published=True)
-                db.session.add(lesson); db.session.flush()
+                lesson = Lesson(
+                    unit_id=unit.id,
+                    title=form.lesson_title.data.strip(),
+                    slug=f"lesson-{uuid4().hex[:16]}",
+                    order_index=len(unit.lessons) + 1,
+                    is_published=True,
+                )
+                db.session.add(lesson)
+                db.session.flush()
+
             extracted = extract_pdf(stored_path) if stored_path.suffix.lower() == ".pdf" else extract_docx(stored_path)
             source_priority = {"official_book": 1, "supporting_book": 2, "review_notes": 3}[form.source_type.data]
-            source = SourceDocument(curriculum_id=curriculum.id, lesson_id=lesson.id, title=form.source_title.data.strip(), source_type=form.source_type.data, original_filename=original, stored_path=relative, page_count=extracted.get("page_count"), checksum=checksum, academic_year=curriculum.academic_year, priority=source_priority, is_primary=form.source_type.data == "official_book", is_active=True)
-            db.session.add(source); db.session.flush()
-            pages = extracted.get("pages") or [{"page_number": None, "text": extracted.get("text", "")}]
-            index = 0
-            created_chunks = []
-            for page in pages:
-                for text in chunk_text(page["text"]):
-                    chunk = ContentChunk(source_id=source.id, lesson_id=lesson.id, page_number=page.get("page_number"), chunk_index=index, text=text, text_hash=create_text_hash(text), token_count=len(text.split()))
-                    db.session.add(chunk)
-                    created_chunks.append(chunk)
-                    index += 1
-            if index == 0:
-                raise ValueError("لم نستطع استخراج نص؛ قد يكون PDF عبارة عن صور ويحتاج OCR")
+            source = SourceDocument(
+                curriculum_id=curriculum.id,
+                lesson_id=lesson.id,
+                title=form.source_title.data.strip(),
+                source_type=form.source_type.data,
+                original_filename=original,
+                stored_path=relative,
+                page_count=extracted.get("page_count"),
+                checksum=checksum,
+                academic_year=curriculum.academic_year,
+                priority=source_priority,
+                is_primary=form.source_type.data == "official_book",
+                is_active=True,
+            )
+            db.session.add(source)
             db.session.flush()
-            embedding_settings = get_embedding_settings()
-            for start in range(0, len(created_chunks), current_app.config.get("EMBEDDING_BATCH_SIZE", 20)):
-                batch = created_chunks[start:start + current_app.config.get("EMBEDDING_BATCH_SIZE", 20)]
-                vectors = generate_embeddings([chunk.text for chunk in batch])
-                embedded_at = datetime.now(timezone.utc).replace(tzinfo=None)
-                for chunk, vector in zip(batch, vectors):
-                    chunk.embedding = json.dumps(vector)
-                    chunk.embedding_model = embedding_settings["model"]
-                    chunk.embedding_dimensions = len(vector)
-                    chunk.embedded_at = embedded_at
-            curriculum.processing_status = "ready"
+
+            extracted_count = process_source_document(source)
             activate_curriculum(curriculum)
             db.session.commit()
-            flash(f"تم تحليل وفهرسة {index} مقطعًا وتفعيل منهج الفصل {curriculum.semester} في جميع أقسام المنصة.", "success")
+            flash(
+                f"تم تحليل وفهرسة {extracted_count} مقطعًا وتفعيل منهج الفصل {curriculum.semester} في جميع أقسام المنصة.",
+                "success",
+            )
             return redirect(url_for("platform_admin.curricula"))
         except Exception as error:
             db.session.rollback()
@@ -190,27 +211,72 @@ def curricula():
                 stored_path.unlink()
             current_app.logger.exception("Curriculum upload failed")
             flash(f"تعذر تجهيز المصدر: {error}", "error")
-    return render_template("platform/curricula.html", form=form, curricula=teacher_curricula().order_by(Curriculum.created_at.desc()).all())
+
+    return render_template(
+        "platform/curricula.html",
+        form=form,
+        curricula=teacher_curricula().order_by(Curriculum.created_at.desc()).all(),
+    )
 
 
-@platform_admin_bp.post("/curricula/<int:curriculum_id>/toggle")
-def toggle_curriculum(curriculum_id):
+@platform_admin_bp.post("/curricula/<int:curriculum_id>/reindex")
+def reindex_curriculum(curriculum_id):
     curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
-    new_state = not curriculum.is_active
-    if new_state:
-        try:
-            activate_curriculum(curriculum)
-            db.session.commit()
-        except Exception as error:
-            db.session.rollback()
-            flash(str(error), "error")
-            return redirect(url_for("platform_admin.curricula"))
-    else:
-        curriculum.is_active = False
+    if not curriculum.sources:
+        flash("لا يوجد ملف مصدر لإعادة تجهيزه داخل هذا المنهج.", "error")
+        return redirect(url_for("platform_admin.curricula"))
+
+    try:
+        curriculum.processing_status = "processing"
+        curriculum.processing_error = None
+        total_chunks = 0
         for source in curriculum.sources:
-            source.is_active = False
+            total_chunks += process_source_document(source)
+
+        curriculum.processing_status = "ready"
         db.session.commit()
-    flash("تم تحديث حالة المنهج ومصادره", "success")
+        flash(
+            f"تمت إعادة تجهيز وفهرسة {total_chunks} مقطعًا. يمكنك الآن تفعيل المنهج.",
+            "success",
+        )
+    except Exception as error:
+        db.session.rollback()
+        current_app.logger.exception("Curriculum reindex failed")
+        flash(f"تعذر إعادة تجهيز المنهج: {error}", "error")
+
+    return redirect(url_for("platform_admin.curricula"))
+
+
+@platform_admin_bp.post("/curricula/<int:curriculum_id>/delete")
+def delete_curriculum(curriculum_id):
+    curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
+    relative_paths = [source.stored_path for source in curriculum.sources if source.stored_path]
+    was_active = curriculum.is_active
+
+    try:
+        db.session.delete(curriculum)
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        current_app.logger.exception("Curriculum deletion failed")
+        flash(f"تعذر حذف المنهج: {error}", "error")
+        return redirect(url_for("platform_admin.curricula"))
+
+    upload_root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
+    for relative_path in relative_paths:
+        target = (upload_root / relative_path).resolve()
+        if target.is_relative_to(upload_root) and target.is_file():
+            try:
+                target.unlink()
+            except OSError:
+                current_app.logger.warning("Could not remove curriculum file: %s", target)
+
+    flash(
+        "تم حذف المنهج ومصادره وملفاته نهائيًا."
+        if was_active
+        else "تم حذف المنهج ومصادره وملفاته نهائيًا.",
+        "success",
+    )
     return redirect(url_for("platform_admin.curricula"))
 
 
