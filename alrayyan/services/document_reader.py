@@ -3,6 +3,7 @@ import re
 from pathlib import Path
 
 from docx import Document
+from docx.oxml.ns import qn
 import pymupdf
 
 
@@ -91,11 +92,48 @@ def _match_section_heading(text, kind):
     return normalized if not title else f"{normalized.split(':', 1)[0].strip()} — {title}"
 
 
+def _docx_paragraph_texts(document):
+    """Read Word paragraphs in XML order, including text inside text boxes."""
+    paragraphs = []
+    for paragraph in document.element.body.iter(qn("w:p")):
+        parts = []
+        for node in paragraph.iter():
+            if node.tag == qn("w:t"):
+                parts.append(node.text or "")
+            elif node.tag == qn("w:tab"):
+                parts.append("\t")
+        text = re.sub(r"\s+", " ", "".join(parts)).strip()
+        if text:
+            paragraphs.append(text)
+    return paragraphs
+
+
+def _normalize_heading(text):
+    return re.sub(r"\s+", " ", text.strip().replace("ـ", ""))
+
+
+def _match_section_heading(text, kind):
+    normalized = _normalize_heading(text)
+    ordinals = "|".join(map(re.escape, _ARABIC_ORDINALS))
+    label = r"(?:الوحدة|وحدة)" if kind == "unit" else r"(?:الدرس|درس)"
+    match = re.match(
+        rf"^{label}\s+(?:{ordinals}|\d+|[٠-٩]+)(?:\s*[:\-–—.]\s*(.*))?\s*$",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+    if not match:
+        return None
+
+    return normalized
+
+
 def extract_docx(file_path):
     """
-    Extract a Word document and detect explicit Arabic unit/lesson headings.
+    Extract a Word document and detect units/lessons, including text boxes.
     """
     document = Document(str(file_path))
+    paragraphs = _docx_paragraph_texts(document)
+
     sections = []
     current_unit = None
     current_lesson = None
@@ -112,11 +150,7 @@ def extract_docx(file_path):
             })
         current_lines = []
 
-    for paragraph in document.paragraphs:
-        text = paragraph.text.strip()
-        if not text:
-            continue
-
+    for text in paragraphs:
         unit_heading = _match_section_heading(text, "unit")
         lesson_heading = _match_section_heading(text, "lesson")
 
@@ -135,41 +169,12 @@ def extract_docx(file_path):
 
     flush_section()
 
-    # Tables are appended as source text, while headings remain paragraph-driven.
-    table_lines = []
-    for table in document.tables:
-        for row in table.rows:
-            cells = [
-                cell.text.strip()
-                for cell in row.cells
-                if cell.text.strip()
-            ]
-            if cells:
-                table_lines.append(" | ".join(cells))
-
-    if table_lines:
-        table_text = "\n".join(table_lines)
-        if sections:
-            sections[-1]["text"] = (sections[-1]["text"] + "\n" + table_text).strip()
-        else:
-            sections.append({
-                "unit_title": None,
-                "lesson_title": None,
-                "text": table_text,
-            })
-
-    # If no explicit headings were detected, preserve the old single-section behavior.
-    if not sections:
-        plain_text = "\n".join(
-            paragraph.text.strip()
-            for paragraph in document.paragraphs
-            if paragraph.text.strip()
-        )
+    if not sections and paragraphs:
         sections = [{
             "unit_title": None,
             "lesson_title": None,
-            "text": plain_text,
-        }] if plain_text else []
+            "text": "\n".join(paragraphs),
+        }]
 
     return {
         "document_type": "docx",
