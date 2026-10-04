@@ -45,7 +45,7 @@ def teacher_lessons():
 
 
 def lesson_choices():
-    return [(lesson.id, f"{lesson.unit.curriculum.subject} — {lesson.title}") for lesson in teacher_lessons()]
+    return [(lesson.id, f"{lesson.unit.title} — {lesson.title}") for lesson in teacher_lessons()]
 
 
 def curriculum_ready_for_activation(curriculum):
