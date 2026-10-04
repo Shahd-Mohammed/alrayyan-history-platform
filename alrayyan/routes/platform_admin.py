@@ -280,6 +280,27 @@ def delete_curriculum(curriculum_id):
     return redirect(url_for("platform_admin.curricula"))
 
 
+@platform_admin_bp.post("/curricula/<int:curriculum_id>/toggle")
+def toggle_curriculum(curriculum_id):
+    curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
+    new_state = not curriculum.is_active
+    if new_state:
+        try:
+            activate_curriculum(curriculum)
+            db.session.commit()
+        except Exception as error:
+            db.session.rollback()
+            flash(str(error), "error")
+            return redirect(url_for("platform_admin.curricula"))
+    else:
+        curriculum.is_active = False
+        for source in curriculum.sources:
+            source.is_active = False
+        db.session.commit()
+    flash("تم تحديث حالة المنهج ومصادره", "success")
+    return redirect(url_for("platform_admin.curricula"))
+
+
 @platform_admin_bp.route("/classrooms", methods=["GET", "POST"])
 def classrooms():
     form = ClassroomForm()
