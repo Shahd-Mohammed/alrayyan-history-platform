@@ -12,59 +12,57 @@ from alrayyan.services.embeddings import generate_embeddings, get_embedding_sett
 from alrayyan.services.text_processing import chunk_text, create_text_hash
 
 
-def _get_or_create_unit(curriculum, title):
-    title = (title or "").strip()
-    if not title:
-        title = "الوحدة الأولى"
+def _prepare_curriculum_orders(curriculum):
+    """Temporarily move existing unit/lesson orders to avoid unique-key collisions."""
+    for unit_index, unit in enumerate(curriculum.units, start=1):
+        unit.order_index = -unit_index
+        for lesson_index, lesson in enumerate(unit.lessons, start=1):
+            lesson.order_index = -lesson_index
+    db.session.flush()
+
+
+def _get_or_create_unit(curriculum, title, order_index):
+    title = (title or "").strip() or "الوحدة الأولى"
 
     unit = Unit.query.filter_by(
         curriculum_id=curriculum.id,
         title=title,
     ).first()
     if unit:
+        unit.order_index = order_index
         return unit
 
-    next_order = max(
-        (item.order_index for item in curriculum.units),
-        default=0,
-    ) + 1
     unit = Unit(
         curriculum_id=curriculum.id,
         title=title[:200],
-        order_index=next_order,
+        order_index=order_index,
     )
     db.session.add(unit)
     db.session.flush()
     return unit
 
 
-def _get_or_create_lesson(unit, title):
-    title = (title or "").strip()
-    if not title:
-        title = "محتوى المنهج"
+def _get_or_create_lesson(unit, title, order_index):
+    title = (title or "").strip() or "محتوى المنهج"
 
     lesson = Lesson.query.filter_by(
         unit_id=unit.id,
         title=title,
     ).first()
     if lesson:
+        lesson.order_index = order_index
         return lesson
 
-    next_order = max(
-        (item.order_index for item in unit.lessons),
-        default=0,
-    ) + 1
     lesson = Lesson(
         unit_id=unit.id,
         title=title[:250],
         slug=f"lesson-{uuid4().hex[:16]}",
-        order_index=next_order,
+        order_index=order_index,
         is_published=True,
     )
     db.session.add(lesson)
     db.session.flush()
     return lesson
-
 
 def process_source_document(
     source,
@@ -98,18 +96,31 @@ def process_source_document(
     }]
 
     resolved_sections = []
+    _prepare_curriculum_orders(source.curriculum)
+    unit_orders = {}
+    lesson_orders = {}
     for section in sections:
         text = (section.get("text") or "").strip()
         if not text:
             continue
 
+        unit_title = section.get("unit_title") or fallback_unit_title
+        unit_key = (unit_title or "الوحدة الأولى").strip()
+        unit_orders.setdefault(unit_key, len(unit_orders) + 1)
         unit = _get_or_create_unit(
             source.curriculum,
-            section.get("unit_title") or fallback_unit_title,
+            unit_key,
+            unit_orders[unit_key],
         )
+
+        lesson_title = section.get("lesson_title") or fallback_lesson_title
+        lesson_key = (lesson_title or "محتوى المنهج").strip()
+        lesson_key_full = (unit.id, lesson_key)
+        lesson_orders.setdefault(lesson_key_full, len([key for key in lesson_orders if key[0] == unit.id]) + 1)
         lesson = _get_or_create_lesson(
             unit,
-            section.get("lesson_title") or fallback_lesson_title,
+            lesson_key,
+            lesson_orders[lesson_key_full],
         )
         resolved_sections.append({
             "unit_title": unit.title,
@@ -169,6 +180,11 @@ def process_source_document(
         ))
 
     source.page_count = extracted.get("page_count")
+    for unit_index, unit in enumerate(sorted(source.curriculum.units, key=lambda item: (item.order_index if item.order_index > 0 else 9999, item.id)), start=1):
+        unit.order_index = unit_index
+        for lesson_index, lesson in enumerate(sorted(unit.lessons, key=lambda item: (item.order_index if item.order_index > 0 else 9999, item.id)), start=1):
+            lesson.order_index = lesson_index
+    db.session.flush()
     source.lesson_id = (
         resolved_sections[0]["lesson_id"]
         if len({item["lesson_id"] for item in resolved_sections}) == 1
