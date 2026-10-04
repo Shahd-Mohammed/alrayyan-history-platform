@@ -1,4 +1,5 @@
 import hashlib
+import re
 from pathlib import Path
 
 from docx import Document
@@ -51,19 +52,91 @@ def extract_pdf(file_path):
     finally:
         document.close()
 
+_ARABIC_ORDINALS = (
+    "الأولى", "الثانية", "الثالثة", "الرابعة", "الخامسة",
+    "السادسة", "السابعة", "الثامنة", "التاسعة", "العاشرة",
+    "الحادية عشرة", "الثانية عشرة", "الثالثة عشرة", "الرابعة عشرة",
+)
+
+
+def _is_heading(paragraph):
+    style_name = (getattr(paragraph.style, "name", "") or "").strip().lower()
+    if any(token in style_name for token in ("heading", "title", "subtitle", "عنوان", "عنوان رئيسي")):
+        return True
+
+    runs = [run for run in paragraph.runs if run.text.strip()]
+    return bool(runs) and all(run.bold for run in runs)
+
+
+def _match_section_heading(text, kind):
+    normalized = re.sub(r"\s+", " ", text.strip())
+    if kind == "unit":
+        pattern = (
+            r"^(?:الوحدة|وحدة)\s+(?:"
+            + "|".join(map(re.escape, _ARABIC_ORDINALS))
+            + r"|\d+)(?:\s*[:\-–—.]\s*(.*))?$"
+        )
+    else:
+        pattern = (
+            r"^(?:الدرس|درس)\s+(?:"
+            + "|".join(map(re.escape, _ARABIC_ORDINALS))
+            + r"|\d+)(?:\s*[:\-–—.]\s*(.*))?$"
+        )
+
+    match = re.match(pattern, normalized, flags=re.IGNORECASE)
+    if not match:
+        return None
+
+    title = (match.group(1) or "").strip()
+    return normalized if not title else f"{normalized.split(':', 1)[0].strip()} — {title}"
+
+
 def extract_docx(file_path):
     """
-    Extract paragraphs and tables from a Word document.
+    Extract a Word document and detect explicit Arabic unit/lesson headings.
     """
     document = Document(str(file_path))
-    content = []
+    sections = []
+    current_unit = None
+    current_lesson = None
+    current_lines = []
+
+    def flush_section():
+        nonlocal current_lines
+        text = "\n".join(current_lines).strip()
+        if text:
+            sections.append({
+                "unit_title": current_unit,
+                "lesson_title": current_lesson,
+                "text": text,
+            })
+        current_lines = []
 
     for paragraph in document.paragraphs:
         text = paragraph.text.strip()
+        if not text:
+            continue
 
-        if text:
-            content.append(text)
+        unit_heading = _match_section_heading(text, "unit")
+        lesson_heading = _match_section_heading(text, "lesson")
 
+        if unit_heading:
+            flush_section()
+            current_unit = unit_heading
+            current_lesson = None
+            continue
+
+        if lesson_heading:
+            flush_section()
+            current_lesson = lesson_heading
+            continue
+
+        current_lines.append(text)
+
+    flush_section()
+
+    # Tables are appended as source text, while headings remain paragraph-driven.
+    table_lines = []
     for table in document.tables:
         for row in table.rows:
             cells = [
@@ -71,14 +144,38 @@ def extract_docx(file_path):
                 for cell in row.cells
                 if cell.text.strip()
             ]
-
             if cells:
-                content.append(" | ".join(cells))
+                table_lines.append(" | ".join(cells))
+
+    if table_lines:
+        table_text = "\n".join(table_lines)
+        if sections:
+            sections[-1]["text"] = (sections[-1]["text"] + "\n" + table_text).strip()
+        else:
+            sections.append({
+                "unit_title": None,
+                "lesson_title": None,
+                "text": table_text,
+            })
+
+    # If no explicit headings were detected, preserve the old single-section behavior.
+    if not sections:
+        plain_text = "\n".join(
+            paragraph.text.strip()
+            for paragraph in document.paragraphs
+            if paragraph.text.strip()
+        )
+        sections = [{
+            "unit_title": None,
+            "lesson_title": None,
+            "text": plain_text,
+        }] if plain_text else []
 
     return {
         "document_type": "docx",
         "page_count": None,
-        "text": "\n".join(content),
+        "text": "\n".join(section["text"] for section in sections),
+        "sections": sections,
     }
 
 
