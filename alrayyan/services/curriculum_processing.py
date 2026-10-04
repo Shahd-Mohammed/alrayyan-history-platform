@@ -1,18 +1,77 @@
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from uuid import uuid4
 
 from flask import current_app
 
 from alrayyan.extensions import db
-from alrayyan.models import ContentChunk
+from alrayyan.models import ContentChunk, Lesson, Unit
 from alrayyan.services.document_reader import extract_docx, extract_pdf
 from alrayyan.services.embeddings import generate_embeddings, get_embedding_settings
 from alrayyan.services.text_processing import chunk_text, create_text_hash
 
 
-def process_source_document(source):
-    """Extract, chunk, and embed an already stored source document."""
+def _get_or_create_unit(curriculum, title):
+    title = (title or "").strip()
+    if not title:
+        title = "الوحدة الأولى"
+
+    unit = Unit.query.filter_by(
+        curriculum_id=curriculum.id,
+        title=title,
+    ).first()
+    if unit:
+        return unit
+
+    next_order = max(
+        (item.order_index for item in curriculum.units),
+        default=0,
+    ) + 1
+    unit = Unit(
+        curriculum_id=curriculum.id,
+        title=title[:200],
+        order_index=next_order,
+    )
+    db.session.add(unit)
+    db.session.flush()
+    return unit
+
+
+def _get_or_create_lesson(unit, title):
+    title = (title or "").strip()
+    if not title:
+        title = "محتوى المنهج"
+
+    lesson = Lesson.query.filter_by(
+        unit_id=unit.id,
+        title=title,
+    ).first()
+    if lesson:
+        return lesson
+
+    next_order = max(
+        (item.order_index for item in unit.lessons),
+        default=0,
+    ) + 1
+    lesson = Lesson(
+        unit_id=unit.id,
+        title=title[:250],
+        slug=f"lesson-{uuid4().hex[:16]}",
+        order_index=next_order,
+        is_published=True,
+    )
+    db.session.add(lesson)
+    db.session.flush()
+    return lesson
+
+
+def process_source_document(
+    source,
+    fallback_unit_title=None,
+    fallback_lesson_title=None,
+):
+    """Extract, section, chunk, and embed a curriculum source."""
     if not source.stored_path:
         raise ValueError("ملف المصدر غير موجود")
 
@@ -21,32 +80,65 @@ def process_source_document(source):
     if not file_path.is_relative_to(upload_root) or not file_path.is_file():
         raise ValueError("ملف المصدر غير موجود على الخادم")
 
+    extension = file_path.suffix.lower()
     extracted = (
         extract_pdf(file_path)
-        if file_path.suffix.lower() == ".pdf"
+        if extension == ".pdf"
         else extract_docx(file_path)
-        if file_path.suffix.lower() == ".docx"
+        if extension == ".docx"
         else None
     )
     if extracted is None:
         raise ValueError("صيغة ملف المصدر غير مدعومة")
 
-    pages = extracted.get("pages") or [{"page_number": None, "text": extracted.get("text", "")}]
+    sections = extracted.get("sections") or [{
+        "unit_title": fallback_unit_title,
+        "lesson_title": fallback_lesson_title,
+        "text": extracted.get("text", ""),
+    }]
+
+    resolved_sections = []
+    for section in sections:
+        text = (section.get("text") or "").strip()
+        if not text:
+            continue
+
+        unit = _get_or_create_unit(
+            source.curriculum,
+            section.get("unit_title") or fallback_unit_title,
+        )
+        lesson = _get_or_create_lesson(
+            unit,
+            section.get("lesson_title") or fallback_lesson_title,
+        )
+        resolved_sections.append({
+            "unit_title": unit.title,
+            "lesson_title": lesson.title,
+            "lesson_id": lesson.id,
+            "text": text,
+        })
+
+    if not resolved_sections:
+        raise ValueError("لم نستطع استخراج نص؛ قد يكون الملف فارغًا أو عبارة عن صور ويحتاج OCR")
+
     chunk_data = []
     index = 0
-    for page in pages:
-        for text in chunk_text(page.get("text", "")):
+    for section in resolved_sections:
+        context_prefix = f"{section['unit_title']}\n{section['lesson_title']}\n"
+        for text in chunk_text(section["text"]):
+            contextual_text = f"{context_prefix}{text}".strip()
             chunk_data.append({
-                "page_number": page.get("page_number"),
+                "lesson_id": section["lesson_id"],
+                "page_number": None,
                 "chunk_index": index,
-                "text": text,
-                "text_hash": create_text_hash(text),
-                "token_count": len(text.split()),
+                "text": contextual_text,
+                "text_hash": create_text_hash(contextual_text),
+                "token_count": len(contextual_text.split()),
             })
             index += 1
 
     if not chunk_data:
-        raise ValueError("لم نستطع استخراج نص؛ قد يكون PDF عبارة عن صور ويحتاج OCR")
+        raise ValueError("لم نستطع تقسيم محتوى الملف إلى مقاطع")
 
     embedding_settings = get_embedding_settings()
     vectors = []
@@ -57,11 +149,14 @@ def process_source_document(source):
 
     embedded_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
-    ContentChunk.query.filter_by(source_id=source.id).delete(synchronize_session=False)
+    ContentChunk.query.filter_by(
+        source_id=source.id,
+    ).delete(synchronize_session=False)
+
     for item, vector in zip(chunk_data, vectors):
         db.session.add(ContentChunk(
             source_id=source.id,
-            lesson_id=source.lesson_id,
+            lesson_id=item["lesson_id"],
             page_number=item["page_number"],
             chunk_index=item["chunk_index"],
             text=item["text"],
@@ -74,8 +169,14 @@ def process_source_document(source):
         ))
 
     source.page_count = extracted.get("page_count")
+    source.lesson_id = (
+        resolved_sections[0]["lesson_id"]
+        if len({item["lesson_id"] for item in resolved_sections}) == 1
+        else None
+    )
     source.is_active = True
     source.curriculum.processing_status = "ready"
     source.curriculum.processing_error = None
     db.session.flush()
     return len(chunk_data)
+
