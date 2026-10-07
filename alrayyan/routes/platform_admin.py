@@ -194,10 +194,16 @@ def curricula():
                 fallback_unit_title=(form.unit_title.data or "").strip(),
                 fallback_lesson_title=(form.lesson_title.data or "").strip(),
             )
-            activate_curriculum(curriculum)
+            # Uploading and indexing a curriculum does not activate it.
+            # Activation remains an explicit manual choice from the curriculum
+            # management screen.
+            curriculum.is_active = False
+            for item in curriculum.sources:
+                item.is_active = False
+            curriculum.processing_status = "ready"
             db.session.commit()
             flash(
-                f"تم تحليل وفهرسة {extracted_count} مقطعًا وتفعيل منهج الفصل {curriculum.semester} في جميع أقسام المنصة.",
+                f"تم تحليل وفهرسة {extracted_count} مقطعًا. المنهج جاهز ويمكنك تفعيله يدويًا من قائمة المناهج.",
                 "success",
             )
             return redirect(url_for("platform_admin.curricula"))
