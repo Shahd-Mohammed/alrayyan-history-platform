@@ -306,32 +306,45 @@ def _extract_toc_lessons(pages):
 
 
 def _lesson_title_match(line, toc_titles):
-    """Match a noisy OCR line against a lesson title from the TOC."""
+    """Match noisy OCR lesson headings using fuzzy token similarity."""
     normalized_line = _normalize_heading(line)
-    line_words = set(re.findall(r"[\u0600-\u06FF]{2,}", normalized_line))
+    line_words = re.findall(r"[\u0600-\u06FF]{2,}", normalized_line)
     if len(line_words) < 2:
         return None
+
+    def word_similarity(a, b):
+        if a == b:
+            return 1.0
+        return SequenceMatcher(None, a, b).ratio()
 
     best_title = None
     best_score = 0.0
 
     for title in toc_titles:
         title_normalized = _normalize_heading(title)
-        title_words = set(re.findall(r"[\u0600-\u06FF]{2,}", title_normalized))
+        title_words = re.findall(r"[\u0600-\u06FF]{2,}", title_normalized)
         if len(title_words) < 2:
             continue
 
-        overlap = len(line_words & title_words) / len(title_words)
-        similarity = SequenceMatcher(None, normalized_line, title_normalized).ratio()
+        matched = 0
+        for title_word in title_words:
+            if max((word_similarity(title_word, line_word) for line_word in line_words), default=0) >= 0.68:
+                matched += 1
 
-        # Token overlap handles OCR mistakes such as التحرر -> التحزر.
+        overlap = matched / len(title_words)
+        similarity = SequenceMatcher(None, normalized_line, title_normalized).ratio()
         score = max(overlap, similarity)
+
         if score > best_score:
             best_score = score
             best_title = title
 
     if best_score >= 0.50:
-        return best_title
+        # Remove common OCR page-number garbage from the title.
+        clean_title = re.sub(r"\s+[A-Za-z]{1,4}\s*$", "", best_title).strip()
+        clean_title = re.sub(r"\s+[0-9٠-٩]{1,3}\s*$", "", clean_title).strip()
+        clean_title = clean_title.replace("التحزر", "التحرر")
+        return clean_title
 
     return None
 
