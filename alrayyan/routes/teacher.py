@@ -162,9 +162,29 @@ def refresh_learning_plan(student_id):
 @teacher_bp.get("/")
 @login_required
 def teacher_page():
+    # The AI teacher must follow the same active-curriculum rule as
+    # teacher-facing lesson selectors. Legacy indexed lessons from an
+    # inactive semester must never appear here.
+    from alrayyan.models import Curriculum, Unit
+
+    Curriculum.query.filter(
+        Curriculum.is_active.is_(True),
+        Curriculum.processing_status == "ready",
+    ).order_by(Curriculum.subject, Curriculum.grade).all()
+
     lessons = (
-        Lesson.query.join(ContentChunk, ContentChunk.lesson_id == Lesson.id)
-        .filter(ContentChunk.embedding.isnot(None)).distinct().order_by(Lesson.id).all()
+        Lesson.query
+        .join(ContentChunk, ContentChunk.lesson_id == Lesson.id)
+        .join(Unit, Unit.id == Lesson.unit_id)
+        .join(Curriculum, Curriculum.id == Unit.curriculum_id)
+        .filter(
+            ContentChunk.embedding.isnot(None),
+            Curriculum.is_active.is_(True),
+            Curriculum.processing_status == "ready",
+        )
+        .distinct()
+        .order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index)
+        .all()
     )
     conversations = (
         TutorConversation.query.filter_by(student_id=current_user.id)
