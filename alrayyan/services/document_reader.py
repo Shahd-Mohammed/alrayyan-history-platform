@@ -290,7 +290,29 @@ def _build_sections_from_pages(pages):
 
     for page in pages:
         page_number = page["page_number"]
-        for raw_line in (page.get("text") or "").splitlines():
+        raw_lines = [
+            raw_line.strip()
+            for raw_line in (page.get("text") or "").splitlines()
+            if _normalize_heading(raw_line)
+        ]
+
+        # Table-of-contents pages often contain many lesson markers in a
+        # compact list. They are navigation metadata, not lesson content.
+        structural_hits = 0
+        for raw_line in raw_lines:
+            normalized_line = _normalize_heading(raw_line)
+            if (
+                _is_standalone_section_marker(normalized_line, "unit")
+                or _is_standalone_section_marker(normalized_line, "lesson")
+                or _match_section_heading(normalized_line, "unit")
+                or _match_section_heading(normalized_line, "lesson")
+            ):
+                structural_hits += 1
+
+        if structural_hits >= 3:
+            continue
+
+        for raw_line in raw_lines:
             text = _normalize_heading(raw_line)
             if not text:
                 continue
