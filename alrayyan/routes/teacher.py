@@ -15,8 +15,8 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.models import (
-    ChallengeSession, ConceptMastery, ContentChunk, LearningPlanItem,
-    Lesson, TutorConversation, TutorMessage, TutorMessageSource,
+    ChallengeSession, ConceptMastery, ContentChunk, Curriculum, LearningPlanItem,
+    Lesson, TutorConversation, TutorMessage, TutorMessageSource, Unit,
     XPTransaction,
 )
 from alrayyan.services.tutor_engine import tutor_reply
@@ -165,13 +165,6 @@ def teacher_page():
     # The AI teacher must follow the same active-curriculum rule as
     # teacher-facing lesson selectors. Legacy indexed lessons from an
     # inactive semester must never appear here.
-    from alrayyan.models import Curriculum, Unit
-
-    Curriculum.query.filter(
-        Curriculum.is_active.is_(True),
-        Curriculum.processing_status == "ready",
-    ).order_by(Curriculum.subject, Curriculum.grade).all()
-
     lessons = (
         Lesson.query
         .join(ContentChunk, ContentChunk.lesson_id == Lesson.id)
