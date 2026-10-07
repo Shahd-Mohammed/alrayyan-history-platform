@@ -54,7 +54,7 @@ def teacher_lessons():
         Curriculum.is_active.is_(True),
         Curriculum.processing_status == "ready",
         Lesson.title.notin_(placeholder_titles),
-    ).order_by(Curriculum.subject, Curriculum.grade, Curriculum.subject, Unit.order_index, Lesson.order_index).all()
+    ).order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index).all()
 
 
 def lesson_choices():
