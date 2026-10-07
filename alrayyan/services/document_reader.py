@@ -419,6 +419,23 @@ def _build_sections_from_pages(pages):
                     semantic_lesson = candidate
                     break
 
+        # If OCR completely mangles a lesson title, use the TOC order as a
+        # fallback when the page clearly starts a new lesson. This is
+        # intentionally generic: it does not hardcode any lesson names.
+        if semantic_lesson is None and toc_titles and page_number > 8:
+            top_text = " ".join(_normalize_heading(value) for value in raw_lines[:18])
+            starts_lesson = (
+                "يتوقع من الطلبة" in top_text
+                or "يتوقع للطلبة" in top_text
+                or "بعد الانتهاء من الدرس" in top_text
+                or "الطلبة بعد الانتهاء" in top_text
+            )
+            if starts_lesson:
+                for toc_title in toc_titles:
+                    if toc_title not in detected_lessons:
+                        semantic_lesson = toc_title
+                        break
+
         if semantic_lesson and semantic_lesson not in detected_lessons:
             flush_section()
             current_lesson = semantic_lesson
