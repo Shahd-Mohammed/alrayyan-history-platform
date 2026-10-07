@@ -1,5 +1,9 @@
 import hashlib
+import os
 import re
+import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 
 from docx import Document
@@ -121,10 +125,12 @@ def _match_section_heading(text, kind):
     # Unnumbered headings:
     # الوحدة: عنوان الوحدة
     # الدرس: عنوان الدرس
+    # الوحدة عنوان الوحدة
+    # الدرس عنوان الدرس
     unnumbered_pattern = (
         r"^"
         + label
-        + r"\s*[:：\-–—.]\s*(.+?)"
+        + r"(?:\s*[:：\-–—.]\s*|\s+)(.+?)"
         + r"\s*$"
     )
 
@@ -138,6 +144,27 @@ def _match_section_heading(text, kind):
         return unnumbered_match.group(1).strip()
 
     return None
+
+
+def _is_standalone_section_marker(text, kind):
+    """Return True when an OCR line is only a unit/lesson marker."""
+    normalized = _normalize_heading(text)
+    normalized = re.sub(r"^\d+\s*", "", normalized)
+
+    if kind == "unit":
+        label = r"(?:الوحدة|وحدة)"
+    else:
+        label = r"(?:الدرس|درس)"
+
+    number = _arabic_number_pattern()
+    return bool(
+        re.fullmatch(
+            rf"{label}\s*(?:رقم\s*)?\(?{number}\)?",
+            normalized,
+            flags=re.IGNORECASE,
+        )
+        or re.fullmatch(label, normalized, flags=re.IGNORECASE)
+    )
 
 
 def _text_is_usable(text):
@@ -160,14 +187,83 @@ def _text_is_usable(text):
     return word_count >= 5
 
 
+def _tesseract_command():
+    """Resolve Tesseract across local Windows and Linux/Render."""
+    configured = os.getenv("TESSERACT_CMD")
+    if configured:
+        return configured
+
+    discovered = shutil.which("tesseract")
+    if discovered:
+        return discovered
+
+    windows_path = Path(r"C:\Program Files\Tesseract-OCR\tesseract.exe")
+    if windows_path.exists():
+        return str(windows_path)
+
+    return None
+
+
 def _ocr_pdf_page(page):
-    """Run Arabic OCR through PyMuPDF/Tesseract when normal extraction fails."""
-    text_page = page.get_textpage_ocr(
-        language="ara+eng",
-        dpi=200,
-        full=True,
-    )
-    return page.get_text("text", textpage=text_page).strip()
+    """Run direct Tesseract OCR on a rendered PDF page."""
+    tesseract = _tesseract_command()
+    if not tesseract:
+        raise RuntimeError("Tesseract executable was not found.")
+
+    dpi = int(os.getenv("CURRICULUM_OCR_DPI", "300"))
+    psm = os.getenv("CURRICULUM_OCR_PSM", "6")
+
+    with tempfile.TemporaryDirectory(prefix="curriculum_ocr_") as temp_dir:
+        image_path = Path(temp_dir) / "page.png"
+        pixmap = page.get_pixmap(dpi=dpi, alpha=False)
+        pixmap.save(str(image_path))
+
+        result = subprocess.run(
+            [
+                tesseract,
+                str(image_path),
+                "stdout",
+                "-l",
+                "ara+eng",
+                "--psm",
+                psm,
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"Tesseract OCR failed with exit code {result.returncode}: "
+                f"{result.stderr.strip()}"
+            )
+
+        text = result.stdout.strip()
+
+        if len(text) < 50 and psm != "3":
+            fallback = subprocess.run(
+                [
+                    tesseract,
+                    str(image_path),
+                    "stdout",
+                    "-l",
+                    "ara+eng",
+                    "--psm",
+                    "3",
+                ],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                check=False,
+            )
+            if fallback.returncode == 0 and len(fallback.stdout.strip()) > len(text):
+                text = fallback.stdout.strip()
+
+        return text
 
 
 def _build_sections_from_pages(pages):
@@ -177,6 +273,7 @@ def _build_sections_from_pages(pages):
     current_lesson = None
     current_lines = []
     current_start_page = None
+    pending_heading = None
 
     def flush_section():
         nonlocal current_lines, current_start_page
@@ -201,17 +298,49 @@ def _build_sections_from_pages(pages):
             unit_heading = _match_section_heading(text, "unit")
             lesson_heading = _match_section_heading(text, "lesson")
 
+            if _is_standalone_section_marker(text, "unit"):
+                flush_section()
+                current_unit = None
+                current_lesson = None
+                current_start_page = page_number
+                pending_heading = "unit"
+                continue
+
+            if _is_standalone_section_marker(text, "lesson"):
+                flush_section()
+                current_lesson = None
+                current_start_page = page_number
+                pending_heading = "lesson"
+                continue
+
             if unit_heading:
                 flush_section()
                 current_unit = unit_heading
                 current_lesson = None
                 current_start_page = page_number
+                pending_heading = None
                 continue
 
             if lesson_heading:
                 flush_section()
                 current_lesson = lesson_heading
                 current_start_page = page_number
+                pending_heading = None
+                continue
+
+            if pending_heading:
+                if re.fullmatch(r"\d+", text):
+                    continue
+
+                if pending_heading == "unit":
+                    current_unit = text
+                    current_lesson = None
+                else:
+                    current_lesson = text
+
+                pending_heading = None
+                if current_start_page is None:
+                    current_start_page = page_number
                 continue
 
             if current_start_page is None:
@@ -250,10 +379,7 @@ def extract_pdf(file_path):
             text = (page.get_text("text") or "").strip()
 
             if not _text_is_usable(text):
-                try:
-                    text = _ocr_pdf_page(page)
-                except Exception:
-                    pass
+                text = _ocr_pdf_page(page)
 
             pages.append({
                 "page_number": page_number,
