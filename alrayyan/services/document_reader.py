@@ -279,9 +279,9 @@ def _extract_toc_lessons(pages):
                 continue
 
             match = re.match(
-                r"^(?:الدرس|درس)\\s*(?:رقم\\s*)?(?:\\(?[0-9]+\\)?|"
+                r"^(?:الدرس|درس)\s*(?:رقم\s*)?(?:\(?[0-9]+\)?|"
                 r"(?:الاول|الثاني|الثالث|الرابع|الخامس|السادس|السابع|الثامن|"
-                r"التاسع|العاشر|الحادي عشر|الثاني عشر))?\\s*(.+?)\\s*$",
+                r"التاسع|العاشر|الحادي عشر|الثاني عشر))?\s*(.+?)\s*$",
                 line,
                 flags=re.IGNORECASE,
             )
@@ -289,11 +289,11 @@ def _extract_toc_lessons(pages):
                 continue
 
             title = match.group(1).strip()
-            title = re.sub(r"\\s+[0-9٠-٩]{1,3}\\s*$", "", title).strip()
-            title = re.sub(r"\\s+[ivxlcdm]+\\s*$", "", title, flags=re.IGNORECASE).strip()
+            title = re.sub(r"\s+[0-9٠-٩]{1,3}\s*$", "", title).strip()
+            title = re.sub(r"\s+[ivxlcdm]+\s*$", "", title, flags=re.IGNORECASE).strip()
 
             # Ignore OCR lines that contain no real lesson title.
-            words = re.findall(r"[\\u0600-\\u06FF]{2,}", title)
+            words = re.findall(r"[\u0600-\u06FF]{2,}", title)
             if len(words) < 2:
                 continue
 
@@ -308,7 +308,7 @@ def _extract_toc_lessons(pages):
 def _lesson_title_match(line, toc_titles):
     """Match a noisy OCR line against a lesson title from the TOC."""
     normalized_line = _normalize_heading(line)
-    line_words = set(re.findall(r"[\\u0600-\\u06FF]{2,}", normalized_line))
+    line_words = set(re.findall(r"[\u0600-\u06FF]{2,}", normalized_line))
     if len(line_words) < 2:
         return None
 
@@ -317,7 +317,7 @@ def _lesson_title_match(line, toc_titles):
 
     for title in toc_titles:
         title_normalized = _normalize_heading(title)
-        title_words = set(re.findall(r"[\\u0600-\\u06FF]{2,}", title_normalized))
+        title_words = set(re.findall(r"[\u0600-\u06FF]{2,}", title_normalized))
         if len(title_words) < 2:
             continue
 
@@ -453,7 +453,7 @@ def _build_sections_from_pages(pages):
                 continue
 
             if pending_heading:
-                if re.fullmatch(r"\\d+", text):
+                if re.fullmatch(r"\d+", text):
                     continue
 
                 if pending_heading == "unit":
