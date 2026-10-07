@@ -37,6 +37,11 @@ def teacher_curricula():
 
 
 def teacher_lessons():
+    # Keep the database normalized before building lesson selectors so a
+    # stale duplicate active curriculum can never leak old lessons into
+    # teacher-facing dropdowns.
+    normalize_active_curricula()
+
     # Resource selectors must only use the currently active, ready curriculum.
     # Ignore legacy placeholder lessons left by older curriculum parsing.
     placeholder_titles = {
@@ -49,7 +54,7 @@ def teacher_lessons():
         Curriculum.is_active.is_(True),
         Curriculum.processing_status == "ready",
         Lesson.title.notin_(placeholder_titles),
-    ).order_by(Curriculum.subject, Unit.order_index, Lesson.order_index).all()
+    ).order_by(Curriculum.subject, Curriculum.grade, Curriculum.subject, Unit.order_index, Lesson.order_index).all()
 
 
 def lesson_choices():
