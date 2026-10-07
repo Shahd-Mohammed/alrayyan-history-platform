@@ -4,6 +4,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+from difflib import SequenceMatcher
 from pathlib import Path
 
 from docx import Document
@@ -266,14 +267,85 @@ def _ocr_pdf_page(page):
         return text
 
 
+def _extract_toc_lessons(pages):
+    """Extract lesson titles from the early table-of-contents pages."""
+    lessons = []
+    seen = set()
+
+    for page in pages[:12]:
+        for raw_line in (page.get("text") or "").splitlines():
+            line = _normalize_heading(raw_line)
+            if not line:
+                continue
+
+            match = re.match(
+                r"^(?:الدرس|درس)\\s*(?:رقم\\s*)?(?:\\(?[0-9]+\\)?|"
+                r"(?:الاول|الثاني|الثالث|الرابع|الخامس|السادس|السابع|الثامن|"
+                r"التاسع|العاشر|الحادي عشر|الثاني عشر))?\\s*(.+?)\\s*$",
+                line,
+                flags=re.IGNORECASE,
+            )
+            if not match:
+                continue
+
+            title = match.group(1).strip()
+            title = re.sub(r"\\s+[0-9٠-٩]{1,3}\\s*$", "", title).strip()
+            title = re.sub(r"\\s+[ivxlcdm]+\\s*$", "", title, flags=re.IGNORECASE).strip()
+
+            # Ignore OCR lines that contain no real lesson title.
+            words = re.findall(r"[\\u0600-\\u06FF]{2,}", title)
+            if len(words) < 2:
+                continue
+
+            key = _normalize_heading(title)
+            if key not in seen:
+                seen.add(key)
+                lessons.append(title)
+
+    return lessons
+
+
+def _lesson_title_match(line, toc_titles):
+    """Match a noisy OCR line against a lesson title from the TOC."""
+    normalized_line = _normalize_heading(line)
+    line_words = set(re.findall(r"[\\u0600-\\u06FF]{2,}", normalized_line))
+    if len(line_words) < 2:
+        return None
+
+    best_title = None
+    best_score = 0.0
+
+    for title in toc_titles:
+        title_normalized = _normalize_heading(title)
+        title_words = set(re.findall(r"[\\u0600-\\u06FF]{2,}", title_normalized))
+        if len(title_words) < 2:
+            continue
+
+        overlap = len(line_words & title_words) / len(title_words)
+        similarity = SequenceMatcher(None, normalized_line, title_normalized).ratio()
+
+        # Token overlap handles OCR mistakes such as التحرر -> التحزر.
+        score = max(overlap, similarity)
+        if score > best_score:
+            best_score = score
+            best_title = title
+
+    if best_score >= 0.50:
+        return best_title
+
+    return None
+
+
 def _build_sections_from_pages(pages):
-    """Turn page text into unit/lesson sections without requiring a TOC."""
+    """Turn page text into unit/lesson sections using headings and TOC-aware OCR."""
     sections = []
     current_unit = None
     current_lesson = None
     current_lines = []
     current_start_page = None
     pending_heading = None
+    toc_titles = _extract_toc_lessons(pages)
+    detected_lessons = set()
 
     def flush_section():
         nonlocal current_lines, current_start_page
@@ -296,8 +368,6 @@ def _build_sections_from_pages(pages):
             if _normalize_heading(raw_line)
         ]
 
-        # Table-of-contents pages often contain many lesson markers in a
-        # compact list. They are navigation metadata, not lesson content.
         structural_hits = 0
         for raw_line in raw_lines:
             normalized_line = _normalize_heading(raw_line)
@@ -309,7 +379,39 @@ def _build_sections_from_pages(pages):
             ):
                 structural_hits += 1
 
+        # TOC pages are navigation metadata. Keep them out of lesson content.
         if structural_hits >= 3:
+            continue
+
+        # Some scanned Arabic books do not print "الدرس" on lesson pages.
+        # Instead, the real lesson title appears near the top of the page and
+        # is followed by the standard learning-objectives paragraph.
+        semantic_lesson = None
+        if toc_titles and page_number > 8:
+            for index, raw_line in enumerate(raw_lines[:35]):
+                candidate = _lesson_title_match(raw_line, toc_titles)
+                if not candidate:
+                    continue
+
+                nearby = " ".join(
+                    _normalize_heading(value)
+                    for value in raw_lines[index:index + 12]
+                )
+                if (
+                    "يتوقع من الطلبة" in nearby
+                    or "يتوقع للطلبة" in nearby
+                    or "بعد الانتهاء من الدرس" in nearby
+                    or "الطلبة بعد الانتهاء" in nearby
+                ):
+                    semantic_lesson = candidate
+                    break
+
+        if semantic_lesson and semantic_lesson not in detected_lessons:
+            flush_section()
+            current_lesson = semantic_lesson
+            current_start_page = page_number
+            detected_lessons.add(semantic_lesson)
+            pending_heading = None
             continue
 
         for raw_line in raw_lines:
@@ -351,7 +453,7 @@ def _build_sections_from_pages(pages):
                 continue
 
             if pending_heading:
-                if re.fullmatch(r"\d+", text):
+                if re.fullmatch(r"\\d+", text):
                     continue
 
                 if pending_heading == "unit":
@@ -379,8 +481,8 @@ def _build_sections_from_pages(pages):
         ).strip()
         if combined:
             sections = [{
-                "unit_title": None,
-                "lesson_title": None,
+                "unit_title": current_unit,
+                "lesson_title": current_lesson,
                 "page_number": pages[0]["page_number"] if pages else None,
                 "text": combined,
             }]
