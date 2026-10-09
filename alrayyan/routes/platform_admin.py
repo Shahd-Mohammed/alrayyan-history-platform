@@ -562,7 +562,7 @@ def concept_maps():
             owned_lesson_or_404(form.lesson_id.data)
             nodes_data = nodes_data[:80]
             edges_data = edges_data[:160]
-            concept_map = ConceptMap(lesson_id=form.lesson_id.data, created_by_id=current_user.id, title=form.title.data.strip(), map_type=form.map_type.data, creation_method="manual", publication_status=form.publication_status.data)
+            concept_map = ConceptMap(lesson_id=form.lesson_id.data, created_by_id=current_user.id, title=form.title.data.strip(), map_type="concept", creation_method="manual", publication_status=form.publication_status.data)
             db.session.add(concept_map); db.session.flush()
             nodes = {}
             for index, item in enumerate(nodes_data):
