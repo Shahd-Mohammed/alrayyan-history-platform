@@ -69,21 +69,26 @@
         .archived-worksheet-list button { padding:8px 12px; border:1px solid var(--gold); border-radius:9px; background:#fff; color:var(--navy); font-weight:700; cursor:pointer; }
         @media (max-width:760px) { .center-hero { flex-direction:column; align-items:stretch; padding:24px; } .center-hero .primary-button { width:100%; } .statistics { grid-template-columns:1fr; } .worksheet-filter-bar { grid-template-columns:1fr; } .worksheets-section { padding:18px; } .section-heading { align-items:stretch; flex-direction:column; } .worksheet-card { grid-template-columns:1fr; } .worksheet-actions { grid-column:auto; } .worksheet-actions>* { flex:1 1 145px; } .worksheet-more-menu>div { position:static; margin-top:6px; } .archived-worksheet-list article { flex-direction:column; align-items:stretch; } }
     
-        /* Harmonized teacher worksheet center colors */
-        .center-hero{background:radial-gradient(circle at 10% 10%,rgba(211,229,194,.18),transparent 28%),linear-gradient(125deg,#173d3b 0%,#245c57 58%,#17384a 100%);border:1px solid rgba(201,154,61,.35)}
-        .eyebrow{color:#f2d995}
-        .primary-button{background:linear-gradient(135deg,#e0bd69,#c99a3d);border-color:#c99a3d;color:#173d3b;box-shadow:0 8px 18px rgba(201,154,61,.18)}
+        /* Brand palette: navy, gold, ivory and white only — no green. */
+        :root { --success:#9a6b16; --success-bg:#fff4d8; }
+        .center-hero{position:relative;overflow:hidden;background:radial-gradient(circle at 8% 12%,rgba(210,161,59,.22),transparent 30%),radial-gradient(circle at 95% 100%,rgba(88,121,162,.22),transparent 34%),linear-gradient(125deg,#071a35 0%,#0d294d 58%,#244a75 100%);border:1px solid rgba(210,161,59,.6);box-shadow:0 22px 54px rgba(7,26,53,.19)}
+        .center-hero:after{position:absolute;left:-48px;bottom:-125px;width:230px;height:230px;content:"";border:1px solid rgba(241,214,148,.2);border-radius:50%;box-shadow:0 0 0 25px rgba(241,214,148,.035),0 0 0 50px rgba(241,214,148,.02);pointer-events:none}
+        .center-hero>div,.center-hero>.primary-button{position:relative;z-index:1}
+        .eyebrow{color:#f1d694;letter-spacing:.02em}
+        .primary-button{background:linear-gradient(135deg,#f1d694,#d2a13b);border-color:#d2a13b;color:#071a35;box-shadow:0 10px 24px rgba(210,161,59,.22)}
         .primary-button:hover{filter:brightness(1.04);transform:translateY(-1px)}
-        .stat-card strong,.section-heading h2{color:#1d514c}
-        .worksheets-section{border-color:#dfe7df}
-        .worksheet-filter-bar{background:#f3f8f4;border-color:#d8e5dd}
-        .worksheet-filter-bar input:focus,.worksheet-filter-bar select:focus{outline:3px solid rgba(36,92,87,.13);border-color:#397a70}
-        .worksheet-filter-bar button{background:#245c57;border-color:#245c57;color:#fff}
-        .worksheet-filter-bar a{border-color:#c7d9d1;color:#24534e;background:#fff}
-        .worksheet-action-primary{background:#24534e;border-color:#24534e}
-        .worksheet-action-results{background:#f7f3e7;border-color:#d8bd79;color:#6e541e}
-        .worksheet-policy-chip{background:#f6f3e7;border-color:#e5d7ad;color:#705821}
-        .worksheet-card:hover{border-color:#9abbb0}
+        .stat-card strong,.section-heading h2{color:#0d294d}
+        .worksheets-section{border-color:#e5d6b8}
+        .worksheet-filter-bar{background:#fff8e8;border-color:#e5d6b8}
+        .worksheet-filter-bar input:focus,.worksheet-filter-bar select:focus{outline:3px solid rgba(210,161,59,.16);border-color:#c99a3d}
+        .worksheet-filter-bar button{background:linear-gradient(135deg,#0d294d,#244a75);border-color:#0d294d;color:#fff}
+        .worksheet-filter-bar a{border-color:#e0c982;color:#0d294d;background:#fffdf8}
+        .worksheet-action-primary{background:#0d294d;border-color:#0d294d}
+        .worksheet-action-results{background:#fff4d8;border-color:#d2a13b;color:#795513}
+        .worksheet-policy-chip{background:#fff4d8;border-color:#e5d6b8;color:#795513}
+        .worksheet-card:hover{border-color:#d2a13b}
+        .status-badge.published{color:#795513;background:#fff4d8}
+        .status-badge.draft{color:#795513;background:#fff8e8}
 
     </style>
 </head>
