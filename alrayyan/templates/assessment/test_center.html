@@ -160,7 +160,7 @@
         <h3>تبنينه خطوة خطوة</h3>
         <p>كل سؤال تضيفينه يظهر مباشرة في القائمة هنا. يمكنكِ الاستمرار في الإضافة دون فتح صفحة أخرى.</p>
         <div class="summary-line"><span>الدرس</span><b>{{ selected_test.lesson.title if selected_test.lesson else 'بدون درس' }}</b></div>
-        <div class="summary-line"><span>الحالة</span><b>مسودة</b></div>
+        <div class="summary-line"><span>الحالة</span><b>{{ "منشور" if selected_test.publication_status == "published" else "مسودة" }}</b></div>
       </aside>
     </div>
 
