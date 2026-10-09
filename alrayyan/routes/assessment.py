@@ -661,6 +661,16 @@ def build_saved_answers(attempt):
             )
 
     return saved_answers
+@assessment_bp.get("/teacher/tests/<int:worksheet_id>/preview")
+@teacher_required
+def preview_test(worksheet_id):
+    """Show a read-only preview of a teacher-owned test."""
+    worksheet = get_teacher_worksheet_or_404(worksheet_id)
+    if worksheet.creation_method != "test":
+        abort(404)
+    return render_template("assessment/test_preview.html", test=worksheet)
+
+
 @assessment_bp.route(
     "/teacher/worksheets/"
     "<int:worksheet_id>/questions",
