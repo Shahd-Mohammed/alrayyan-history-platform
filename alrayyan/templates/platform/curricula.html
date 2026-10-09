@@ -3,7 +3,7 @@
 {% block title %}المناهج والمصادر{% endblock %}
 {% block eyebrow %}المصدر الذي يقود المنصة{% endblock %}
 {% block heading %}المناهج والمصادر{% endblock %}
-{% block intro %}ارفعي الكتاب الرسمي أو مصدرًا مساندًا أو ملزمة. تحلل المنصة الملف، تقسّمه، تفهرسه، ثم تجعل دروس المنهج النشط متاحة في جميع الأدوات.{% endblock %}
+{% block intro %}ارفعي ملف الكتاب أو الملزمة، وسنجهّزه لتستخدمه أدوات المنصة في البحث عن الدروس وبناء الأنشطة.{% endblock %}
 {% block content %}
 <div class="source-priority">
   <article><b>01</b><h3>الكتاب الرسمي</h3><p>المصدر الأساسي والأعلى أولوية.</p></article>
@@ -12,12 +12,12 @@
 </div>
 <div class="platform-two-columns">
   <section class="platform-panel">
-    <div class="panel-title"><span>01</span><div><h2>رفع وفهرسة مصدر</h2><p>سيُستخدم اسم الملف تلقائيًا للمصدر، وتُنشأ تسمية المنهج من المادة والصف والفصل والعام الدراسي.</p></div></div>
+    <div class="panel-title"><span>01</span><div><h2>رفع وفهرسة مصدر</h2><p>لا تحتاجين إلى كتابة اسم منفصل للمنهج أو المصدر؛ تُنشأ التسميات تلقائيًا من بيانات المادة والصف والملف.</p></div></div>
     <form method="post" enctype="multipart/form-data" class="platform-form">
       {{ form.hidden_tag() }}
       {{ fields(form,[form.subject,form.grade,form.semester,form.academic_year,form.source_type,form.document]) }}
       <details class="curriculum-fallback-fields">
-        <summary>خيارات إضافية عند الحاجة فقط</summary>
+        <summary>عناوين بديلة (اختيارية)</summary>
         <p>اتركي هذين الحقلين فارغين عادةً؛ تحاول المنصة استخراج أسماء الوحدات والدروس من الملف تلقائيًا. استخدميهما فقط إذا كان الملف لا يحتوي على عناوين واضحة.</p>
         {{ fields(form,[form.unit_title,form.lesson_title]) }}
       </details>
