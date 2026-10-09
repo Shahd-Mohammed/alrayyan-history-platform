@@ -220,3 +220,41 @@
   .historical-learning-hero.library-page-hero>span,
   .historical-learning-hero.honor-page-hero>span{font-size:.91rem!important}
 }
+
+
+/* Consistent premium navy-and-gold hero design, matching worksheet upload */
+.learning-hero.historical-learning-hero.library-page-hero,
+.learning-hero.historical-learning-hero.honor-page-hero{
+  background:
+    radial-gradient(circle at 10% 12%,rgba(225,190,104,.24),transparent 27%),
+    radial-gradient(circle at 90% 88%,rgba(94,137,181,.16),transparent 29%),
+    linear-gradient(130deg,#0b203d 0%,#173b64 58%,#244b73 100%)!important;
+  border:1px solid rgba(201,154,61,.42)!important;
+  color:#fff!important;
+  box-shadow:0 22px 55px rgba(11,32,61,.18)!important;
+}
+.learning-hero.historical-learning-hero.library-page-hero>p,
+.learning-hero.historical-learning-hero.honor-page-hero>p{color:#f1d694!important}
+.learning-hero.historical-learning-hero.library-page-hero .hero-accent,
+.learning-hero.historical-learning-hero.honor-page-hero .hero-accent{color:#f1d694!important}
+.learning-hero.historical-learning-hero.library-page-hero .library-hero-pills span,
+.learning-hero.historical-learning-hero.honor-page-hero .honor-hero-stats span{
+  color:#f5e4b5!important;border-color:rgba(241,214,148,.32)!important;
+  background:rgba(255,255,255,.07)!important;
+}
+.learning-hero.historical-learning-hero.library-page-hero,
+.learning-hero.historical-learning-hero.honor-page-hero{
+  min-height:0!important;padding:clamp(28px,4vw,44px) clamp(24px,5vw,58px)!important;
+  gap:0;border-radius:28px!important;
+}
+.learning-page{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}
+.learning-hero.historical-learning-hero.library-page-hero h1,
+.learning-hero.historical-learning-hero.honor-page-hero h1{
+  font-family:"Aref Ruqaa",serif;line-height:1.28;font-size:clamp(2.15rem,4.2vw,3.5rem);
+}
+@media(max-width:620px){
+ .learning-hero.historical-learning-hero.library-page-hero,
+ .learning-hero.historical-learning-hero.honor-page-hero{padding:29px 22px!important}
+ .learning-hero.historical-learning-hero.library-page-hero h1,
+ .learning-hero.historical-learning-hero.honor-page-hero h1{font-size:2rem!important}
+}
