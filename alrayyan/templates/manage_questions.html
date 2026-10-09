@@ -193,6 +193,13 @@ button,.assessment-tabs a,input[type="submit"],input[type="button"],.primary-act
 }
 @media(max-width:760px){.assessment-tabs{overflow-x:auto!important}.assessment-tabs a{flex:0 0 auto!important}}
 
+/* Keep tabs in one readable row and prevent action buttons from stretching */
+.assessment-tabs{flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto!important}
+.assessment-tabs a{flex:0 0 auto!important;white-space:nowrap!important}
+.question-actions>*{flex:0 1 auto!important;width:auto!important;max-width:100%!important}
+.question-actions form{width:auto!important;flex:0 1 auto!important}
+.question-actions button,.question-actions a{width:auto!important;max-width:100%!important}
+
 </style>
 </head>
 
