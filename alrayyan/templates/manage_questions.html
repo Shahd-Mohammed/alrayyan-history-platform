@@ -17,7 +17,7 @@
         rel="stylesheet"
         href="{{ url_for(
             'static',
-            filename='css/dashboard.css'
+            filename='css/dashboard.css', v='20261009-question-editor-gold-2'
         ) }}"
     >
 
@@ -154,6 +154,16 @@ body{background:radial-gradient(circle at 95% 2%,rgba(201,154,61,.14),transparen
 .question-delete-action{background:#fff7f7!important;color:#a33d3d!important;border-color:#e6c1c1!important}
 .assessment-section form[action*="save_worksheet_settings"]>button.primary-action{display:inline-flex;margin-top:20px!important;background:linear-gradient(135deg,#d8b55f,#b7862e)!important;color:#102b4f!important;border:1px solid #c99a3d!important;border-radius:12px!important;font-weight:900!important}
 @media(max-width:760px){.form-page{width:calc(100% - 22px)!important;margin-top:18px!important}.form-intro,.form-intro.test-editor-hero{align-items:flex-start;padding:27px 22px!important;border-radius:23px!important}.test-hero-visual{display:none}.assessment-tabs{flex-direction:column}.assessment-section{padding:19px!important}.question-card-head{gap:10px}.question-actions{flex-wrap:wrap}.question-actions>*{flex:1}}
+
+/* Final worksheet-inspired palette for question editor */
+body,.form-page{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.assessment-tabs{display:flex!important;flex-wrap:nowrap!important;gap:12px!important;padding:8px!important;margin-bottom:26px!important;border-color:#e6d6b4!important;background:linear-gradient(135deg,#fffdf8,#f8f1e2)!important}
+.assessment-tabs a{flex:1 1 0!important;min-width:max-content!important;padding:13px 20px!important;white-space:nowrap!important;color:#173455!important;border:1px solid transparent!important}
+.assessment-tabs a.active{background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important;border-color:#c99a3d!important;box-shadow:0 8px 20px rgba(169,122,34,.18)!important}
+.assessment-tabs a:hover{background:#fff4d5!important;color:#8b651e!important}
+.assessment-section form[action*="save_worksheet_settings"]>button.primary-action,.assessment-section button.primary-action{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:145px!important;max-width:fit-content!important;min-height:42px!important;margin-top:16px!important;padding:9px 19px!important;background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important;border:1px solid #c99a3d!important;border-radius:11px!important;font-size:.92rem!important;font-weight:900!important;box-shadow:0 7px 16px rgba(169,122,34,.15)!important}
+@media(max-width:760px){.assessment-tabs{overflow-x:auto!important;flex-direction:row!important}.assessment-tabs a{flex:0 0 auto!important}.assessment-section form[action*="save_worksheet_settings"]>button.primary-action,.assessment-section button.primary-action{width:auto!important}}
+
 </style>
 </head>
 
