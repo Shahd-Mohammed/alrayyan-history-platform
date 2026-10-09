@@ -117,3 +117,38 @@
 .platform-ai-box .platform-form select{width:100%;min-height:48px;padding:11px 13px;border:1px solid #d6dfd7;border-radius:12px;background:#fff;color:#173c4a;font:inherit}
 .platform-ai-box .platform-gold-button{width:100%;min-height:48px;justify-content:center}
 @media(max-width:700px){.classroom-row-actions{align-items:stretch;flex-direction:column}.classroom-row-actions form,.classroom-delete-button{width:100%}.excel-file-label{align-items:flex-start}.platform-ai-box{padding:20px!important}}
+
+
+/* Premium honor board cards */
+.honor-board-page{align-items:start;gap:24px}
+.honor-create-panel,.honor-entries-panel{padding:28px!important;border:1px solid #e5d7b7!important;border-radius:26px!important;background:linear-gradient(155deg,#fff,#fffdf7)!important;box-shadow:0 18px 46px rgba(7,26,53,.075)!important}
+.honor-create-heading{display:flex;align-items:center;gap:15px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #eee5d4}
+.honor-medal{display:grid;flex:0 0 54px;width:54px;height:54px;place-items:center;border:1px solid #e5cb8d;border-radius:18px;background:linear-gradient(145deg,#fff6da,#f1d58b);color:#8c621d;font-size:1.8rem;box-shadow:0 9px 20px rgba(169,126,39,.12)}
+.honor-eyebrow{display:block;color:#a67828;font-size:.77rem;font-weight:900}
+.honor-create-heading h2,.honor-entries-heading h2{margin:4px 0;color:#102f50;font-family:"Aref Ruqaa",serif;font-size:1.8rem}
+.honor-create-heading p,.honor-entries-heading p{margin:0;color:#788394;line-height:1.8;font-size:.88rem}
+.honor-create-form{gap:17px}
+.honor-create-form label{display:grid;gap:7px;color:#253d5d;font-weight:850}
+.honor-create-form input,.honor-create-form select,.honor-create-form textarea{width:100%;box-sizing:border-box;min-height:48px;padding:12px 14px;border:1px solid #e1d7c6;border-radius:13px;background:#fcfbf8;color:#173455;font:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
+.honor-create-form textarea{min-height:105px;resize:vertical}
+.honor-create-form input:focus,.honor-create-form select:focus,.honor-create-form textarea:focus{border-color:#c99a3d;box-shadow:0 0 0 4px rgba(201,154,61,.12);background:#fff}
+.honor-submit-button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;margin-top:8px;border-radius:14px;font-weight:900}
+.honor-entries-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #eee5d4}
+.honor-count{display:grid;min-width:48px;height:48px;place-items:center;border:1px solid #e4d0a0;border-radius:15px;background:#fff7df;color:#93691f;font-size:1.3rem;font-weight:900}
+.honor-entry-grid{display:grid;gap:14px}
+.honor-entry-card{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;overflow:hidden;padding:22px;border:1px solid #e8dcc3;border-radius:20px;background:radial-gradient(circle at 100% 0,rgba(211,171,80,.13),transparent 35%),linear-gradient(145deg,#fff,#fcfaf5);box-shadow:0 9px 25px rgba(16,47,80,.045);transition:transform .2s,border-color .2s,box-shadow .2s}
+.honor-entry-card:hover{transform:translateY(-2px);border-color:#d8bd7b;box-shadow:0 14px 30px rgba(16,47,80,.08)}
+.honor-entry-ribbon{position:absolute;top:17px;left:18px;color:#d0a74b;font-size:1.35rem}
+.honor-entry-copy{min-width:0}
+.honor-category{display:inline-flex;align-items:center;padding:6px 10px;border:1px solid #e7d4a6;border-radius:999px;background:#fff8e7;color:#91691f;font-size:.75rem;font-weight:900}
+.honor-entry-copy h3{margin:11px 0 5px;color:#102f50;font-family:"Aref Ruqaa",serif;font-size:1.45rem}
+.honor-entry-copy p{margin:0;color:#667587;line-height:1.85;overflow-wrap:anywhere}
+.honor-entry-copy small{display:inline-block;margin-top:8px;color:#9b7b3d;font-weight:800}
+.honor-entry-card form{align-self:end;margin:0}
+.honor-remove-button{padding:8px 11px;border:1px solid #ead0d0;border-radius:11px;background:#fff6f6;color:#9a4343;font:inherit;font-size:.78rem;font-weight:850;cursor:pointer}
+.honor-remove-button:hover{background:#fbe7e7}
+.honor-empty{grid-column:1/-1;padding:40px 20px;text-align:center}
+.honor-empty-star{color:#d0a74b;font-size:2rem}
+.honor-empty strong{display:block;margin:7px 0;color:#102f50}
+.honor-empty p{margin:0;color:#788394}
+@media(max-width:700px){.honor-create-panel,.honor-entries-panel{padding:20px!important}.honor-entry-card{grid-template-columns:1fr}.honor-entry-card form{justify-self:start}.honor-entries-heading{align-items:flex-start}.honor-create-heading h2,.honor-entries-heading h2{font-size:1.55rem}}
