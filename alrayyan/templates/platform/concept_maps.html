@@ -58,7 +58,7 @@
   </form>
 </section>
 
-<section class="platform-panel maps-library concept-map-library">
+<section id="concept-map-library" class="platform-panel maps-library concept-map-library">
   <div class="concept-section-heading library-heading"><div class="concept-section-icon library">▤</div><div><span class="concept-kicker">مكتبة الخرائط</span><h2>خرائطك ومسوداتك</h2><p>تابعي حالة كل خريطة، عاينيها، انشريها أو أعيديها إلى المسودات، واحذفي ما لم تعودي بحاجة إليه.</p></div><span class="library-count">{{ maps|length }} خريطة</span></div>
   <div class="concept-map-list">
   {% for row in maps %}
@@ -80,5 +80,5 @@
   {% endfor %}
   </div>
 </section>
-<script src="{{ url_for('static',filename='js/concept_map_builder.js',v='20261009-tree-2') }}" defer></script>
+<script src="{{ url_for('static',filename='js/concept_map_builder.js',v='20261009-final-tree-auto-1') }}" defer></script>
 {% endblock %}
