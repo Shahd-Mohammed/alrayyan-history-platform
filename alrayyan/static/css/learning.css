@@ -160,3 +160,63 @@
     margin-top:18px;
   }
 }
+
+
+/* Compact student library and honor-board heroes: navy, ivory, and gold */
+.historical-learning-hero.library-page-hero,
+.historical-learning-hero.honor-page-hero{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:0;
+  min-height:0!important;
+  padding:clamp(27px,4vw,43px) clamp(23px,5vw,58px)!important;
+  border-radius:26px!important;
+  box-shadow:0 17px 40px rgba(13,39,68,.12);
+}
+.historical-learning-hero.library-page-hero{
+  background:
+    radial-gradient(circle at 88% 12%,rgba(222,187,103,.19),transparent 25%),
+    linear-gradient(125deg,#102b4b 0%,#1d4269 58%,#173554 100%)!important;
+  border-color:rgba(222,187,103,.34)!important;
+}
+.historical-learning-hero.honor-page-hero{
+  background:
+    radial-gradient(circle at 88% 12%,rgba(222,187,103,.2),transparent 25%),
+    linear-gradient(125deg,#102b4b 0%,#1c3e62 58%,#142f4d 100%)!important;
+  border-color:rgba(222,187,103,.34)!important;
+}
+.historical-learning-hero.library-page-hero>p,
+.historical-learning-hero.honor-page-hero>p{margin:0 0 8px!important}
+.historical-learning-hero.library-page-hero h1,
+.historical-learning-hero.honor-page-hero h1{
+  margin:5px 0 10px!important;
+  font-size:clamp(2rem,4vw,3.35rem)!important;
+  line-height:1.2!important;
+}
+.historical-learning-hero.library-page-hero>span,
+.historical-learning-hero.honor-page-hero>span{
+  display:block;
+  max-width:780px;
+  font-size:.98rem!important;
+  line-height:1.8!important;
+}
+.library-hero .library-hero-pills{gap:7px;margin-top:15px!important}
+.library-hero-pills span{padding:6px 11px!important;font-size:.76rem!important}
+.honor-hero .honor-hero-stats{gap:8px;margin-top:15px!important}
+.honor-hero-stats span{padding:7px 12px!important;border-radius:12px!important}
+.honor-hero-stats b{font-size:1.12rem!important}
+.learning-page>section{margin-top:1.5rem!important}
+.learning-heading{margin-bottom:12px}
+@media(max-width:620px){
+  .historical-learning-hero.library-page-hero,
+  .historical-learning-hero.honor-page-hero{
+    padding:26px 21px!important;
+    border-radius:21px!important;
+  }
+  .historical-learning-hero.library-page-hero h1,
+  .historical-learning-hero.honor-page-hero h1{font-size:2rem!important}
+  .historical-learning-hero.library-page-hero>span,
+  .historical-learning-hero.honor-page-hero>span{font-size:.91rem!important}
+}
