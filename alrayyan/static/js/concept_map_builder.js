@@ -6,6 +6,15 @@
       if (!button) return;
       tabs.querySelectorAll("button").forEach((item) => item.classList.toggle("is-active", item === button));
       document.querySelectorAll("[data-panel]").forEach((panel) => panel.classList.toggle("is-active", panel.dataset.panel === button.dataset.tab));
+      if (button.dataset.tab === "ai") {
+        const aiForm = document.querySelector("[data-ai-generate-form]");
+        const aiLesson = aiForm && aiForm.querySelector("[name='lesson_id']");
+        const manualLesson = document.querySelector("[data-map-form] [name='lesson_id']");
+        if (aiForm && aiLesson) {
+          if (manualLesson && manualLesson.value) aiLesson.value = manualLesson.value;
+          if (aiLesson.value) aiForm.requestSubmit();
+        }
+      }
     });
   }
 
