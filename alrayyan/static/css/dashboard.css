@@ -1184,3 +1184,19 @@ textarea {
 .archived-worksheet-list article { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem; border-radius: 14px; background: #fff; }
 .archived-worksheet-list small { display: block; margin-top: 0.25rem; color: #748095; }
 .archived-worksheet-list button { padding: 0.65rem 1rem; border: 0; border-radius: 10px; color: #fff; background: #c89936; font: inherit; font-weight: 800; cursor: pointer; }
+
+
+/* Site-wide Arabic button typography: consistent weight and no artificial letter spacing */
+button,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+.button,
+.btn,
+a.button,
+a.btn {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-weight:750!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
