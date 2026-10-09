@@ -14,7 +14,7 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.forms import ClassroomForm, ConceptMapForm, ConceptMapUploadForm, CurriculumUploadForm, HistoricalCharacterForm, InvitationForm, LearningResourceForm, PlatformSettingsForm
-from alrayyan.models import Classroom, ConceptMap, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorMessage, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession
+from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
 from alrayyan.services.document_reader import calculate_checksum, extract_docx, extract_pdf
 from alrayyan.services.text_processing import chunk_text, create_text_hash
 from alrayyan.services.curriculum_processing import process_source_document
@@ -864,57 +864,140 @@ def settings():
 
 @platform_admin_bp.get("/analytics")
 def analytics():
-    """Teacher-facing learning analytics, aggregated and per student."""
+    """Summarize assessment, practice, AI tutor, character, and points activity."""
     worksheet_query = Worksheet.query
     if current_user.role != "admin":
         worksheet_query = worksheet_query.filter_by(created_by_id=current_user.id)
-    worksheet_ids = [row.id for row in worksheet_query.all()]
-    attempts = []
-    if worksheet_ids:
-        attempts = WorksheetAttempt.query.filter(
-            WorksheetAttempt.worksheet_id.in_(worksheet_ids),
-            WorksheetAttempt.submitted_at.isnot(None),
-        ).all()
+    owned_worksheets = worksheet_query.all()
+    worksheet_ids = [item.id for item in owned_worksheets]
 
-    student_ids = {attempt.student_id for attempt in attempts}
     classroom_query = Classroom.query
     if current_user.role != "admin":
         classroom_query = classroom_query.filter_by(teacher_id=current_user.id)
     classrooms = classroom_query.all()
-    for classroom in classrooms:
-        student_ids.update(enrollment.student_id for enrollment in classroom.enrollments)
+    student_ids = {
+        enrollment.student_id
+        for classroom in classrooms
+        for enrollment in classroom.enrollments
+    }
 
-    students = User.query.filter(User.id.in_(student_ids)).all() if student_ids else []
+    if worksheet_ids:
+        student_ids.update(
+            student_id for (student_id,) in
+            db.session.query(WorksheetAttempt.student_id)
+            .filter(WorksheetAttempt.worksheet_id.in_(worksheet_ids))
+            .distinct().all()
+        )
+
+    if current_user.role == "admin":
+        student_ids.update(
+            student_id for (student_id,) in
+            db.session.query(User.id).filter_by(
+                role="student", is_active_account=True
+            ).all()
+        )
+
+    students = (
+        User.query.filter(User.id.in_(student_ids), User.role == "student")
+        .order_by(User.full_name).all()
+        if student_ids else []
+    )
+    scoped_student_ids = [student.id for student in students]
+
+    all_attempts = []
+    if scoped_student_ids:
+        all_attempts = WorksheetAttempt.query.filter(
+            WorksheetAttempt.student_id.in_(scoped_student_ids),
+            WorksheetAttempt.submitted_at.isnot(None),
+        ).all()
+
+    all_transactions = (
+        XPTransaction.query.filter(
+            XPTransaction.student_id.in_(scoped_student_ids)
+        ).all()
+        if scoped_student_ids else []
+    )
+
     rows = []
     for student in students:
-        student_attempts = [attempt for attempt in attempts if attempt.student_id == student.id]
+        student_attempts = [
+            attempt for attempt in all_attempts
+            if attempt.student_id == student.id
+        ]
+        test_attempts = [
+            attempt for attempt in student_attempts
+            if attempt.worksheet and attempt.worksheet.creation_method == "test"
+        ]
+        worksheet_attempts = [
+            attempt for attempt in student_attempts
+            if not attempt.worksheet or attempt.worksheet.creation_method != "test"
+        ]
         percentages = [attempt.percentage for attempt in student_attempts]
         mastery_rows = ConceptMastery.query.filter_by(student_id=student.id).all()
-        challenges = ChallengeSession.query.filter_by(student_id=student.id, status="completed").all()
-        evaluated_messages = TutorMessage.query.join(TutorMessage.conversation).filter(
-            TutorMessage.conversation.has(student_id=student.id),
-            TutorMessage.evaluation.in_(["correct", "partially_correct", "incorrect", "needs_explanation"]),
+        challenges = ChallengeSession.query.filter_by(
+            student_id=student.id, status="completed"
+        ).all()
+        evaluated_messages = TutorMessage.query.join(TutorConversation).filter(
+            TutorConversation.student_id == student.id,
+            TutorMessage.evaluation.in_([
+                "correct", "partially_correct", "incorrect", "needs_explanation"
+            ]),
         ).count()
+        character_attempts = CharacterAttempt.query.filter_by(
+            student_id=student.id
+        ).count()
+        student_transactions = [
+            transaction for transaction in all_transactions
+            if transaction.student_id == student.id
+        ]
+        points_earned = sum(transaction.amount for transaction in student_transactions)
         average = round(sum(percentages) / len(percentages), 1) if percentages else 0.0
-        mastery_average = round(sum(item.mastery_score for item in mastery_rows) / len(mastery_rows), 1) if mastery_rows else 0.0
-        activity_score = len(student_attempts) + len(challenges) + evaluated_messages
+        mastery_average = (
+            round(sum(item.mastery_score for item in mastery_rows) / len(mastery_rows), 1)
+            if mastery_rows else 0.0
+        )
+        activity_score = (
+            len(student_attempts) + len(challenges) + evaluated_messages
+            + character_attempts
+        )
         rows.append({
             "student": student,
-            "worksheet_count": len(student_attempts),
+            "test_count": len(test_attempts),
+            "worksheet_count": len(worksheet_attempts),
             "average": average,
             "mastery_average": mastery_average,
             "challenge_count": len(challenges),
             "tutor_interactions": evaluated_messages,
+            "character_attempts": character_attempts,
+            "points_earned": points_earned,
             "activity_score": activity_score,
-            "needs_support": (bool(percentages) and average < 50) or (bool(mastery_rows) and mastery_average < 50),
+            "needs_support": (
+                (bool(percentages) and average < 50)
+                or (bool(mastery_rows) and mastery_average < 50)
+            ),
         })
-    rows.sort(key=lambda item: (item["activity_score"], item["average"]), reverse=True)
-    class_percentages = [attempt.percentage for attempt in attempts]
+
+    rows.sort(
+        key=lambda item: (item["activity_score"], item["average"]),
+        reverse=True,
+    )
+    class_percentages = [attempt.percentage for attempt in all_attempts]
+    total_tutor_interactions = sum(row["tutor_interactions"] for row in rows)
+    total_character_attempts = sum(row["character_attempts"] for row in rows)
     overview = {
         "students": len(students),
-        "worksheets": len(worksheet_ids),
-        "submissions": len(attempts),
-        "average": round(sum(class_percentages) / len(class_percentages), 1) if class_percentages else 0.0,
+        "worksheets": sum(1 for item in owned_worksheets if item.creation_method != "test"),
+        "tests": sum(1 for item in owned_worksheets if item.creation_method == "test"),
+        "submissions": len(all_attempts),
+        "average": round(sum(class_percentages) / len(class_percentages), 1)
+        if class_percentages else 0.0,
+        "challenge_completions": sum(
+            ChallengeSession.query.filter_by(student_id=student.id, status="completed").count()
+            for student in students
+        ),
+        "tutor_interactions": total_tutor_interactions,
+        "character_attempts": total_character_attempts,
+        "points_awarded": sum(transaction.amount for transaction in all_transactions),
         "support_count": sum(1 for row in rows if row["needs_support"]),
     }
     return render_template("platform/analytics.html", rows=rows, overview=overview)
