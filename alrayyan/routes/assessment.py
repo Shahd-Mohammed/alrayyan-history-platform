@@ -207,7 +207,7 @@ def test_center():
             db.session.add(test)
             db.session.commit()
             flash("تم إنشاء الاختبار هنا. الآن يمكنكِ إضافة الأسئلة من نفس الصفحة.", "success")
-            return redirect(url_for("assessment.test_center", worksheet_id=test.id))
+            return redirect(url_for("assessment.test_center", worksheet_id=test.id) + "#inline-test-workspace")
 
         if action == "add_question":
             worksheet_id = request.form.get("worksheet_id", type=int)
@@ -219,7 +219,7 @@ def test_center():
                         url_for(
                             "assessment.test_center",
                             worksheet_id=selected_test.id,
-                        )
+                        ) + "#inline-test-workspace"
                     )
 
     worksheet_id = request.args.get("worksheet_id", type=int)
