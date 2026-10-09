@@ -85,3 +85,78 @@
 .historical-learning-hero .library-hero-pills,.historical-learning-hero .honor-hero-stats{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
 .historical-learning-hero .library-hero-pills span,.historical-learning-hero .honor-hero-stats span{padding:8px 13px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.07);color:#f2dda6;font-size:.78rem;font-weight:800}
 .historical-learning-hero .honor-hero-stats span{display:flex;align-items:baseline;gap:7px;border-radius:14px}.historical-learning-hero .honor-hero-stats b{font-size:1.25rem;color:#f2dda6}.historical-learning-hero .honor-hero-stats small{color:rgba(255,255,255,.72)}
+
+
+/* Student library and honor-board hero: page-specific colors take priority over shared premium styles */
+.learning-hero.historical-learning-hero.library-page-hero{
+  color:#fff!important;
+  background:
+    radial-gradient(circle at 12% 15%,rgba(205,226,185,.18),transparent 27%),
+    radial-gradient(circle at 88% 85%,rgba(227,199,126,.14),transparent 30%),
+    linear-gradient(125deg,#143a38 0%,#245b55 54%,#173b46 100%)!important;
+  border:1px solid rgba(205,226,185,.28);
+  box-shadow:0 26px 65px rgba(20,58,56,.2)!important;
+}
+.learning-hero.historical-learning-hero.honor-page-hero{
+  color:#fff!important;
+  background:
+    radial-gradient(circle at 12% 15%,rgba(231,211,154,.16),transparent 27%),
+    radial-gradient(circle at 88% 85%,rgba(190,145,188,.18),transparent 30%),
+    linear-gradient(125deg,#30243e 0%,#573650 54%,#332840 100%)!important;
+  border:1px solid rgba(231,211,154,.28);
+  box-shadow:0 26px 65px rgba(48,36,62,.22)!important;
+}
+.learning-hero.historical-learning-hero.library-page-hero>p,
+.learning-hero.historical-learning-hero.honor-page-hero>p{
+  color:#f2dda6!important;
+  border-color:rgba(242,221,166,.3);
+  background:rgba(255,255,255,.07);
+}
+.learning-hero.historical-learning-hero.library-page-hero h1,
+.learning-hero.historical-learning-hero.honor-page-hero h1{
+  color:#fff!important;
+  max-width:900px;
+  font-size:clamp(2.15rem,4.8vw,3.8rem);
+  line-height:1.25;
+}
+.learning-hero.historical-learning-hero .hero-accent{
+  color:#f2dda6!important;
+}
+.learning-hero.historical-learning-hero.library-page-hero>span,
+.learning-hero.historical-learning-hero.honor-page-hero>span{
+  color:rgba(255,255,255,.84)!important;
+  max-width:720px;
+  font-size:1.04rem;
+  line-height:2;
+}
+.learning-hero.historical-learning-hero .library-hero-pills span,
+.learning-hero.historical-learning-hero .honor-hero-stats span{
+  color:#f5e4b5!important;
+  border-color:rgba(245,228,181,.28);
+  background:rgba(255,255,255,.075);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.learning-hero.historical-learning-hero .honor-hero-stats b{
+  color:#f5d783!important;
+}
+.learning-hero.historical-learning-hero .honor-hero-stats small{
+  color:rgba(255,255,255,.76)!important;
+}
+@media(max-width:620px){
+  .learning-page{margin-top:18px}
+  .learning-hero.historical-learning-hero.library-page-hero,
+  .learning-hero.historical-learning-hero.honor-page-hero{
+    padding:32px 22px!important;
+    border-radius:24px!important;
+  }
+  .learning-hero.historical-learning-hero.library-page-hero h1,
+  .learning-hero.historical-learning-hero.honor-page-hero h1{
+    font-size:clamp(2rem,8vw,2.7rem);
+    line-height:1.35;
+  }
+  .learning-hero.historical-learning-hero .library-hero-pills,
+  .learning-hero.historical-learning-hero .honor-hero-stats{
+    gap:8px;
+    margin-top:18px;
+  }
+}
