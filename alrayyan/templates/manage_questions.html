@@ -173,6 +173,25 @@ body,.form-page{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
 .assessment-section form[action*="save_worksheet_settings"]>button.primary-action,.assessment-section button.primary-action{width:auto!important;min-width:145px!important;max-width:max-content!important;min-height:42px!important;padding:9px 18px!important;background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important;font-size:.92rem!important;font-weight:850!important}
 @media(max-width:760px){.assessment-tabs{overflow-x:auto!important}.assessment-tabs a{flex:0 0 auto!important;min-width:max-content!important}}
 
+
+/* Final button and tab typography tune */
+button,.assessment-tabs a,input[type="submit"],input[type="button"],.primary-action,.question-actions a,.question-actions button{
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:750!important;letter-spacing:0!important;
+}
+.assessment-tabs{margin-top:28px!important;margin-bottom:30px!important;gap:12px!important}
+.assessment-tabs a{white-space:nowrap!important;line-height:1.35!important;padding:14px 16px!important;font-size:.94rem!important;font-weight:750!important}
+.assessment-tabs a.active{background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important}
+.assessment-section form[action*="save_worksheet_settings"]>button.primary-action,
+.assessment-section button.primary-action,.assessment-section input.primary-action,
+.question-form button[type="submit"],.question-form input[type="submit"]{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;max-width:max-content!important;min-width:0!important;min-height:40px!important;
+ padding:8px 16px!important;background:linear-gradient(135deg,#dfbd68,#b9872d)!important;
+ border:1px solid #c99a3d!important;border-radius:10px!important;color:#fff!important;
+ font-size:.9rem!important;font-weight:750!important;box-shadow:0 5px 13px rgba(169,122,34,.12)!important;
+}
+@media(max-width:760px){.assessment-tabs{overflow-x:auto!important}.assessment-tabs a{flex:0 0 auto!important}}
+
 </style>
 </head>
 
