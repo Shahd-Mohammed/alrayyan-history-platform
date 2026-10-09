@@ -642,13 +642,13 @@ def layout_concept_tree(node_by_key, edge_rows):
 def generate_concept_map():
     lesson = owned_lesson_or_404(request.form.get("lesson_id", type=int))
     try:
-        map_type = request.form.get("map_type", "concept")
+        map_type = "tree"
         payload = generate_concept_map_draft(lesson, map_type)
         row = ConceptMap(
             lesson_id=lesson.id,
             created_by_id=current_user.id,
             title=payload.get("title") or f"خريطة {lesson.title}",
-            map_type=map_type,
+            map_type="concept",
             creation_method="ai",
             publication_status="draft",
         )
