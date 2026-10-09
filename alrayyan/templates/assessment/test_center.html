@@ -230,7 +230,7 @@
           </div>
           <div class="test-card-footer">
             <span><b>{{ test.questions|length }}</b> سؤال</span>
-            <a href="{{ url_for('assessment.manage_questions', worksheet_id=test.id) }}" class="test-card-preview">معاينة وإدارة</a>
+            <a href="{{ url_for('assessment.preview_test', worksheet_id=test.id) }}" target="_blank" rel="noopener noreferrer" class="test-card-preview">معاينة الاختبار</a>
             <a href="{{ url_for('assessment.test_center', worksheet_id=test.id) }}">متابعة البناء <span>←</span></a>
           </div>
           <div class="test-card-actions">
