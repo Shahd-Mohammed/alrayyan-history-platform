@@ -15,7 +15,12 @@
     <div class="panel-title"><span>01</span><div><h2>رفع وفهرسة مصدر</h2><p>قد يستغرق إنشاء Embeddings عدة دقائق حسب حجم الملف.</p></div></div>
     <form method="post" enctype="multipart/form-data" class="platform-form">
       {{ form.hidden_tag() }}
-      {{ fields(form,[form.subject,form.grade,form.semester,form.academic_year,form.curriculum_name,form.unit_title,form.lesson_title,form.source_title,form.source_type,form.document]) }}
+      {{ fields(form,[form.subject,form.grade,form.semester,form.academic_year,form.curriculum_name,form.source_title,form.source_type,form.document]) }}
+      <details class="curriculum-fallback-fields">
+        <summary>خيارات إضافية عند الحاجة فقط</summary>
+        <p>اتركي هذين الحقلين فارغين عادةً؛ تحاول المنصة استخراج أسماء الوحدات والدروس من الملف تلقائيًا. استخدميهما فقط إذا كان الملف لا يحتوي على عناوين واضحة.</p>
+        {{ fields(form,[form.unit_title,form.lesson_title]) }}
+      </details>
       {{ form.submit(class_='platform-gold-button') }}
     </form>
   </section>
