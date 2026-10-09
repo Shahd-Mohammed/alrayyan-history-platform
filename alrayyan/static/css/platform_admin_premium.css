@@ -566,3 +566,11 @@
  .classroom-admin-page{gap:18px!important;padding-inline:0}
  .test-library-section.test-library-premium{margin-top:42px!important;padding-inline:0}
 }
+
+.classroom-admin-page .platform-form input.platform-gold-button{
+  display:inline-flex!important;width:auto!important;min-width:135px;min-height:44px;
+  align-items:center;justify-content:center;padding:10px 20px!important;
+  background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important;
+  border:1px solid #c99a3d!important;border-radius:12px!important;
+  font-size:1rem!important;font-weight:900!important;cursor:pointer;
+}
