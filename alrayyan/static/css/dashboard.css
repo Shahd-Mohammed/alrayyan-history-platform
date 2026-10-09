@@ -1206,3 +1206,16 @@ a.btn {
 body,input,select,textarea,button{
   font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
 }
+
+
+/* Keep form action buttons sized to their labels instead of stretching across the page */
+button[type="submit"],
+input[type="submit"],
+input[type="button"]{
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
