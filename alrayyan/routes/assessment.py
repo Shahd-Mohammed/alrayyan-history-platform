@@ -185,7 +185,7 @@ def test_center():
     if request.method == "POST":
         action = request.form.get("action", "create_test")
 
-        if action in {"publish_test", "draft_test", "archive_test"}:
+        if action in {"publish_test", "draft_test", "archive_test", "delete_test"}:
             worksheet_id = request.form.get("worksheet_id", type=int)
             worksheet = get_teacher_worksheet_or_404(worksheet_id)
 
@@ -200,11 +200,20 @@ def test_center():
                 worksheet.publication_status = "draft"
                 worksheet.is_published = False
                 flash("تمت إعادة الاختبار إلى المسودات.", "success")
-            else:
-                # Archive instead of permanently deleting student records.
+            elif action == "archive_test":
+                # Keep student attempts and scores available in the archive.
                 worksheet.is_archived = True
                 worksheet.archived_at = utc_now()
                 flash("تم نقل الاختبار إلى الأرشيف مع الحفاظ على سجلات الطالبات.", "success")
+            else:
+                # Never delete a test that already has student attempts.
+                if worksheet.attempts:
+                    worksheet.is_archived = True
+                    worksheet.archived_at = utc_now()
+                    flash("لأن هذا الاختبار يحتوي على محاولات طالبات، نُقل إلى الأرشيف بدل حذفه للحفاظ على النتائج.", "warning")
+                else:
+                    db.session.delete(worksheet)
+                    flash("تم حذف الاختبار لأنه لا يحتوي على محاولات طالبات.", "success")
 
             db.session.commit()
             return redirect(url_for("assessment.test_center"))
