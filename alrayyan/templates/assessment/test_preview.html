@@ -1,0 +1,48 @@
+{% extends "platform/_admin_base.html" %}
+{% block title %}معاينة الاختبار | منصة الريان{% endblock %}
+{% block eyebrow %}معاينة الاختبارات{% endblock %}
+{% block heading %}{{ test.title }}{% endblock %}
+{% block intro %}معاينة للمعلمة قبل نشر الاختبار. هذه الصفحة للعرض فقط ولا تسجّل إجابات أو محاولات للطالبات.{% endblock %}
+{% block content %}
+<div class="test-preview-page">
+  <div class="test-preview-toolbar">
+    <div>
+      <span class="test-preview-label">{{ 'اختبار منشور' if test.publication_status == 'published' else 'مسودة' }}</span>
+      <h2>{{ test.title }}</h2>
+      <p>{{ test.description or 'لا يوجد وصف إضافي للاختبار.' }}</p>
+      <small>الدرس: {{ test.lesson.title if test.lesson else 'بدون درس' }} · {{ test.questions|length }} سؤالًا</small>
+    </div>
+    <a class="test-primary-button" href="{{ url_for('assessment.test_center', worksheet_id=test.id) }}">العودة لبناء الاختبار ←</a>
+  </div>
+  <div class="test-preview-questions">
+    {% for question in test.questions|sort(attribute='order_index') %}
+      <article class="test-preview-question">
+        <div class="test-preview-question-number">{{ "%02d"|format(loop.index) }}</div>
+        <div class="test-preview-question-body">
+          <div class="test-preview-question-meta">
+            <span>{{ {'multiple_choice':'اختيار من متعدد','true_false':'صح أو خطأ','short_answer':'إجابة قصيرة','essay':'سؤال مقالي','fill_blank':'إكمال فراغ','multiple_select':'اختيارات متعددة','ordering':'ترتيب','matching':'مطابقة'}.get(question.question_type,'سؤال تفاعلي') }}</span>
+            <b>{{ question.points }} نقطة</b>
+          </div>
+          <h3>{{ question.question_text }}</h3>
+          {% if question.choices %}
+            <ul class="test-preview-choices">
+              {% for choice in question.choices|sort(attribute='order_index') %}
+                <li><span></span>{{ choice.choice_text }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {% if question.explanation %}
+            <p class="test-preview-explanation">شرح المعلمة: {{ question.explanation }}</p>
+          {% endif %}
+        </div>
+      </article>
+    {% else %}
+      <div class="test-empty-state">
+        <div>✦</div>
+        <h3>لا توجد أسئلة في هذا الاختبار بعد</h3>
+        <p>ارجعي إلى مساحة البناء لإضافة الأسئلة أولًا.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
