@@ -14,7 +14,7 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.forms import ClassroomForm, ConceptMapForm, ConceptMapUploadForm, CurriculumUploadForm, HistoricalCharacterForm, InvitationForm, LearningResourceForm, PlatformSettingsForm
-from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
+from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
 from alrayyan.services.document_reader import calculate_checksum, extract_docx, extract_pdf
 from alrayyan.services.text_processing import chunk_text, create_text_hash
 from alrayyan.services.curriculum_processing import process_source_document
@@ -948,6 +948,8 @@ def analytics():
         character_attempts = CharacterAttempt.query.filter_by(
             student_id=student.id
         ).count()
+        plan_items = LearningPlanItem.query.filter_by(student_id=student.id).all()
+        plan_verifications = sum(1 for item in plan_items if item.verified_at is not None)
         student_transactions = [
             transaction for transaction in all_transactions
             if transaction.student_id == student.id
@@ -960,7 +962,7 @@ def analytics():
         )
         activity_score = (
             len(student_all_attempts) + len(challenge_sessions) + tutor_interactions
-            + character_attempts
+            + character_attempts + plan_verifications
         )
         rows.append({
             "student": student,
@@ -971,6 +973,8 @@ def analytics():
             "challenge_count": len(challenges),
             "tutor_interactions": tutor_interactions,
             "character_attempts": character_attempts,
+            "plan_items": len(plan_items),
+            "plan_verifications": plan_verifications,
             "points_earned": points_earned,
             "activity_score": activity_score,
             "needs_support": (
@@ -987,6 +991,7 @@ def analytics():
     class_percentages = [attempt.percentage or 0 for attempt in submitted_attempts]
     total_tutor_interactions = sum(row["tutor_interactions"] for row in rows)
     total_character_attempts = sum(row["character_attempts"] for row in rows)
+    total_plan_verifications = sum(row["plan_verifications"] for row in rows)
     overview = {
         "students": len(students),
         "worksheets": sum(1 for item in owned_worksheets if item.creation_method != "test"),
@@ -1000,6 +1005,7 @@ def analytics():
         ),
         "tutor_interactions": total_tutor_interactions,
         "character_attempts": total_character_attempts,
+        "plan_verifications": total_plan_verifications,
         "points_awarded": sum(transaction.amount for transaction in all_transactions),
         "support_count": sum(1 for row in rows if row["needs_support"]),
     }
