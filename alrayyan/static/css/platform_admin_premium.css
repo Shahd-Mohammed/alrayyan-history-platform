@@ -605,3 +605,88 @@
 .test-card-action.delete,.test-card-action.archive{border-color:#d8c49a!important;background:#fff8e8!important;color:#8b651e!important}
 .test-center-page .test-library-section{margin-top:42px!important;padding-inline:clamp(14px,2.2vw,28px)!important}
 @media(max-width:700px){.concept-map-tabs{overflow-x:auto!important}.concept-map-tabs button{flex:0 0 auto!important}.classroom-admin-page{padding-inline:10px!important}.test-library-section.test-library-premium,.test-center-page .test-library-section{padding-inline:10px!important}.test-card-actions{gap:7px!important}}
+
+
+/* Shared finishing pass: worksheet-upload palette, balanced whitespace and compact actions */
+.platform-admin-body,
+.platform-admin-page{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.platform-admin-page{padding-inline:clamp(4px,1.4vw,18px)!important}
+.platform-admin-hero{margin-bottom:30px!important}
+.platform-panel{min-width:0}
+.platform-two-columns{gap:26px!important;margin-top:30px!important}
+.platform-gold-button,
+.platform-form button.platform-gold-button,
+.platform-form input.platform-gold-button,
+button.concept-action,
+.concept-map-card-actions .concept-action,
+.tree-builder-toolbar .tree-add-button,
+.review-actions button,
+.review-actions a,
+.classroom-delete-button,
+.curriculum-actions button,
+.test-center-page button,
+.test-center-page .test-card-action,
+.inline-manage-link{
+  width:auto!important;max-width:100%!important;min-width:0!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:7px!important;min-height:39px!important;padding:8px 15px!important;
+  border-radius:10px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.9rem!important;font-weight:750!important;line-height:1.35!important;
+  letter-spacing:0!important;white-space:normal!important;text-align:center!important;
+}
+.platform-gold-button,
+.platform-form button.platform-gold-button,
+.platform-form input.platform-gold-button,
+.tree-builder-toolbar .tree-add-button,
+.concept-map-card-actions .concept-action,
+.review-actions button,
+.review-actions a,
+.classroom-delete-button,
+.curriculum-actions button{
+  background:linear-gradient(135deg,#dfbd68,#b9872d)!important;
+  border:1px solid #c99a3d!important;color:#fff!important;
+  box-shadow:0 5px 13px rgba(169,122,34,.12)!important;
+}
+.platform-gold-button:hover,
+.platform-form button.platform-gold-button:hover,
+.platform-form input.platform-gold-button:hover,
+.tree-builder-toolbar .tree-add-button:hover,
+.concept-map-card-actions .concept-action:hover,
+.review-actions button:hover,
+.review-actions a:hover,
+.classroom-delete-button:hover,
+.curriculum-actions button:hover{
+  color:#fff!important;filter:brightness(1.04);transform:translateY(-1px)
+}
+.concept-map-tabs{margin-top:28px!important;margin-bottom:32px!important}
+.concept-map-workspace{margin-top:0!important}
+.concept-map-tabs button{font-weight:750!important;font-size:.94rem!important}
+.concept-map-tabs button span{font-weight:700!important}
+.tree-builder-toolbar .tree-add-button,
+.tree-builder-toolbar .tree-add-button span,
+.tree-builder-toolbar .tree-add-button *{color:#fff!important}
+.concept-map-card-actions .concept-action.delete,
+.test-card-action.delete{background:#fff2ef!important;color:#963c35!important;border-color:#e8c4bf!important;box-shadow:none!important}
+.concept-map-card-actions .concept-action.delete:hover,
+.test-card-action.delete:hover{background:#ffe8e4!important;color:#8c302a!important}
+.classroom-admin-page{padding-inline:clamp(14px,2.4vw,30px)!important;gap:28px!important}
+.classroom-list-panel{margin-inline:0!important;padding-inline:clamp(18px,2.5vw,30px)!important}
+.classroom-admin-row{margin-inline:0!important}
+.classroom-admin-page .platform-form button.platform-gold-button,
+.classroom-admin-page .platform-form input.platform-gold-button{width:auto!important;max-width:max-content!important}
+.test-center-page .test-library-section{margin-top:46px!important;padding-inline:clamp(14px,2vw,26px)!important}
+.test-library-section.test-library-premium .test-library-heading{margin-bottom:22px!important}
+.test-library-card{min-width:0}
+.test-card-actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
+.test-card-actions form{margin:0!important}
+.test-card-action{width:auto!important;flex:0 0 auto!important}
+.analytics-note-secondary{color:#66758a}
+@media(max-width:760px){
+ .platform-admin-page{padding-inline:0!important}
+ .platform-two-columns{gap:18px!important;margin-top:22px!important}
+ .concept-map-tabs{overflow-x:auto!important;gap:8px!important;margin-top:22px!important;margin-bottom:24px!important}
+ .concept-map-tabs button{flex:0 0 auto!important;min-width:max-content!important;padding:11px 14px!important}
+ .classroom-admin-page{padding-inline:10px!important}
+ .test-center-page .test-library-section{padding-inline:8px!important}
+ .platform-gold-button,.platform-form button.platform-gold-button,.platform-form input.platform-gold-button{min-height:38px!important;padding:8px 13px!important}
+}
