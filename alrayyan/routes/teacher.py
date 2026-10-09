@@ -174,6 +174,12 @@ def teacher_page():
             ContentChunk.embedding.isnot(None),
             Curriculum.is_active.is_(True),
             Curriculum.processing_status == "ready",
+            # Exclude legacy placeholder lessons left by the old PDF parser.
+            Lesson.title.notin_({
+                "محتوى المنهج",
+                "الدرس احتياطي",
+                "الوحدة — الدرس احتياطي",
+            }),
         )
         .distinct()
         .order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index)
