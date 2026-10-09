@@ -1,8 +1,13 @@
+import csv
 import json
+import os
 import re
+import smtplib
+from email.message import EmailMessage
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
+from io import BytesIO, StringIO
 
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
@@ -334,33 +339,161 @@ def classrooms():
     return render_template("platform/classrooms.html", form=form, classrooms=query.order_by(Classroom.created_at.desc()).all())
 
 
+@platform_admin_bp.post("/classrooms/<int:classroom_id>/delete")
+def delete_classroom(classroom_id):
+    classroom = Classroom.query.filter_by(id=classroom_id, teacher_id=current_user.id).first_or_404()
+    try:
+        # Removing a class only removes enrollments; student accounts and worksheet results stay intact.
+        db.session.delete(classroom)
+        db.session.commit()
+        flash("تم حذف الصف وإزالة ارتباط الطالبات به، مع الحفاظ على حساباتهن ونتائجهن.", "success")
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Classroom deletion failed")
+        flash("تعذر حذف الصف. لم يتم تغيير البيانات.", "error")
+    return redirect(url_for("platform_admin.classrooms"))
+
+
+def invitation_mail_settings():
+    return all(os.getenv(key) for key in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL"))
+
+
+def send_student_invitation(email, invitation_url, teacher_name):
+    host, username, password, sender = (os.getenv(key) for key in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL"))
+    if not all((host, username, password, sender)):
+        raise RuntimeError("إعدادات البريد غير مكتملة")
+    message = EmailMessage()
+    message["Subject"] = "دعوة للانضمام إلى منصة الريان للدراسات التاريخية"
+    message["From"] = sender
+    message["To"] = email
+    message.set_content(f"مرحبًا،\n\nدعتك المعلمة {teacher_name} للانضمام إلى منصة الريان للدراسات التاريخية.\nافتحي الرابط التالي لإنشاء حسابك: {invitation_url}\n\nإذا لم تتوقعي هذه الدعوة، يمكنك تجاهل هذه الرسالة.")
+    with smtplib.SMTP(host, int(os.getenv("SMTP_PORT", "587")), timeout=20) as server:
+        if os.getenv("SMTP_USE_TLS", "1").lower() not in {"0", "false", "no"}:
+            server.starttls()
+        server.login(username, password)
+        server.send_message(message)
+
+
+def extract_invitation_emails(upload):
+    extension = Path(upload.filename or "").suffix.lower()
+    if extension not in {".xlsx", ".csv"}:
+        raise ValueError("ارفعي ملف Excel بصيغة ‎.xlsx أو ملف ‎.csv.")
+    raw = upload.read()
+    values = []
+    if extension == ".csv":
+        try:
+            content = raw.decode("utf-8-sig")
+        except UnicodeDecodeError as error:
+            raise ValueError("تعذر قراءة ملف CSV؛ احفظيه بترميز UTF-8.") from error
+        for row in csv.reader(StringIO(content)):
+            values.extend(str(cell).strip() for cell in row if cell is not None)
+    else:
+        try:
+            from openpyxl import load_workbook
+            workbook = load_workbook(BytesIO(raw), read_only=True, data_only=True)
+            for sheet in workbook.worksheets:
+                for row in sheet.iter_rows(values_only=True):
+                    values.extend(str(cell).strip() for cell in row if cell is not None)
+            workbook.close()
+        except Exception as error:
+            raise ValueError("تعذر قراءة ملف Excel. تأكدي أنه ملف ‎.xlsx سليم.") from error
+    pattern = re.compile(r"[^@\s]+@[^@\s]+\.[^@\s]+")
+    emails = []
+    malformed = []
+    for value in values:
+        candidates = re.split(r"[\s,;]+", value.lower())
+        for candidate in candidates:
+            candidate = candidate.strip().strip("<>()[]{}\\"'.,")
+            if not candidate:
+                continue
+            if "@" in candidate:
+                if pattern.fullmatch(candidate):
+                    if candidate not in emails:
+                        emails.append(candidate)
+                else:
+                    malformed.append(candidate)
+    if malformed:
+        raise ValueError("يوجد عنوان بريد غير صالح في الملف: " + "، ".join(malformed[:5]))
+    if not emails:
+        raise ValueError("لم أجد عناوين بريد إلكتروني صالحة داخل الملف.")
+    return emails
+
+
 @platform_admin_bp.route("/invitations", methods=["GET", "POST"])
 def invitations():
     form = InvitationForm()
     classes = Classroom.query.filter_by(teacher_id=current_user.id, is_active=True).all()
     form.classroom_id.choices = [(0, "بدون صف محدد")] + [(row.id, row.name) for row in classes]
     invitation_urls = []
-    if form.validate_on_submit():
+    upload = request.files.get("emails_file")
+    is_file_upload = request.method == "POST" and upload is not None and bool(upload.filename)
+    if is_file_upload:
+        try:
+            emails = extract_invitation_emails(upload)
+            classroom_id = request.form.get("classroom_id", default=0, type=int) or None
+            if classroom_id and not any(row.id == classroom_id for row in classes):
+                abort(403)
+            valid_days = request.form.get("valid_days", default=7, type=int)
+            if not 1 <= valid_days <= 30:
+                raise ValueError("مدة صلاحية الدعوة يجب أن تكون بين يوم و30 يومًا.")
+            invitation_urls = create_invitation_batch(emails, classroom_id, valid_days)
+        except ValueError as error:
+            flash(str(error), "error")
+        except Exception as error:
+            db.session.rollback()
+            current_app.logger.exception("Bulk invitation upload failed")
+            flash(f"تعذر معالجة الملف: {error}", "error")
+    elif form.validate_on_submit():
         emails = []
         for email in re.split(r"[\s,;]+", form.emails.data or ""):
             normalized = email.strip().lower()
             if normalized and normalized not in emails:
                 emails.append(normalized)
         invalid = [email for email in emails if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email)]
-        existing = {row.email for row in User.query.filter(User.email.in_(emails)).all()} if emails else set()
         if invalid:
             form.emails.errors.append("بعض العناوين غير صالحة: " + "، ".join(invalid[:5]))
         else:
-            for email in emails:
-                if email in existing:
-                    continue
-                invitation, token = StudentInvitation.create(current_user.id, email, form.classroom_id.data or None, form.valid_days.data)
-                db.session.add(invitation)
-                invitation_urls.append({"email": email, "url": url_for("auth.register_invitation", token=token, _external=True)})
-            db.session.commit()
-            flash(f"تم إنشاء {len(invitation_urls)} دعوة خاصة، وتجاوز {len(existing)} حسابًا موجودًا.", "success")
+            invitation_urls = create_invitation_batch(emails, form.classroom_id.data or None, form.valid_days.data)
     query = StudentInvitation.query if current_user.role == "admin" else StudentInvitation.query.filter_by(teacher_id=current_user.id)
-    return render_template("platform/invitations.html", form=form, invitations=query.order_by(StudentInvitation.created_at.desc()).limit(200).all(), invitation_urls=invitation_urls)
+    return render_template("platform/invitations.html", form=form, invitations=query.order_by(StudentInvitation.created_at.desc()).limit(200).all(), invitation_urls=invitation_urls, classrooms=classes)
+
+
+def create_invitation_batch(emails, classroom_id, valid_days):
+    existing = {row.email for row in User.query.filter(User.email.in_(emails)).all()} if emails else set()
+    pending = StudentInvitation.query.filter(
+        StudentInvitation.teacher_id == current_user.id,
+        StudentInvitation.email.in_(emails),
+        StudentInvitation.accepted_at.is_(None),
+        StudentInvitation.expires_at > datetime.utcnow(),
+    ).all() if emails else []
+    existing_invites = {row.email for row in pending}
+    invitation_urls = []
+    for email in emails:
+        if email in existing or email in existing_invites:
+            continue
+        invitation, token = StudentInvitation.create(current_user.id, email, classroom_id, valid_days)
+        db.session.add(invitation)
+        invitation_urls.append({"email": email, "url": url_for("auth.register_invitation", token=token, _external=True)})
+    db.session.commit()
+    if not invitation_urls:
+        flash(f"لم تُنشأ دعوات جديدة؛ تم تجاوز {len(existing)} حسابًا موجودًا و{len(existing_invites)} دعوة سارية.", "warning")
+        return []
+    if invitation_mail_settings():
+        sent, failed = 0, []
+        for item in invitation_urls:
+            try:
+                send_student_invitation(item["email"], item["url"], current_user.full_name or "معلمة منصة الريان")
+                sent += 1
+            except Exception:
+                current_app.logger.exception("Could not email student invitation")
+                failed.append(item["email"])
+        if failed:
+            flash(f"تم إنشاء {len(invitation_urls)} دعوة. أُرسلت {sent} رسالة، وتعذر إرسال {len(failed)}؛ الروابط متاحة للنسخ أدناه.", "warning")
+        else:
+            flash(f"تم إنشاء وإرسال {sent} دعوة بالبريد الإلكتروني بنجاح.", "success")
+    else:
+        flash(f"تم إنشاء {len(invitation_urls)} دعوة، لكن إرسال البريد غير مفعّل بعد. أضيفي إعدادات SMTP في Render ليرسل النظام الرسائل تلقائيًا؛ الروابط متاحة للنسخ أدناه.", "warning")
+    return invitation_urls
 
 
 @platform_admin_bp.route("/resources", methods=["GET", "POST"])
