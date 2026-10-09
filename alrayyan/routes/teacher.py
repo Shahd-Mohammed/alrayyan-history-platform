@@ -479,6 +479,7 @@ def my_points():
         "tutor_evaluated_answer": "إجابة قيّمها المعلم الذكي",
         "challenge_answer": "إجابة في التحدي",
         "challenge_completed": "إكمال تحدٍ",
+        "character_identified": "التعرّف على شخصية تاريخية",
     }
     totals_by_reason = {}
     for transaction in transactions:
