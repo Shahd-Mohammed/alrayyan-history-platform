@@ -158,7 +158,7 @@ def curricula():
                 next_version = f"{(max(version_numbers) + 1.0) if version_numbers else 1.0:.1f}"
                 curriculum = Curriculum(
                     created_by_id=current_user.id,
-                    name=form.curriculum_name.data.strip(),
+                    name=(form.curriculum_name.data or "").strip() or f"{form.subject.data.strip()} — {form.grade.data.strip()} — الفصل {form.semester.data} — {form.academic_year.data.strip()}",
                     subject=form.subject.data.strip(),
                     grade=form.grade.data.strip(),
                     semester=form.semester.data,
@@ -195,7 +195,7 @@ def curricula():
             source = SourceDocument(
                 curriculum_id=curriculum.id,
                 lesson_id=None,
-                title=form.source_title.data.strip(),
+                title=(form.source_title.data or "").strip() or Path(original).stem,
                 source_type=form.source_type.data,
                 original_filename=original,
                 stored_path=relative,
