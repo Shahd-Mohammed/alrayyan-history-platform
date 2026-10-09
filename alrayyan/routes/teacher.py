@@ -480,6 +480,8 @@ def my_points():
         "challenge_answer": "إجابة في التحدي",
         "challenge_completed": "إكمال تحدٍ",
         "character_identified": "التعرّف على شخصية تاريخية",
+        "concept_map_viewed": "استكشاف خريطة مفاهيمية",
+        "resource_downloaded": "تنزيل مادة تعليمية",
         "test_completed": "إكمال اختبار",
         "worksheet_completed": "إكمال ورقة عمل",
     }
