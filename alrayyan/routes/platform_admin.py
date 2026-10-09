@@ -908,7 +908,6 @@ def analytics():
     if scoped_student_ids:
         all_attempts = WorksheetAttempt.query.filter(
             WorksheetAttempt.student_id.in_(scoped_student_ids),
-            WorksheetAttempt.submitted_at.isnot(None),
         ).all()
 
     all_transactions = (
@@ -920,9 +919,13 @@ def analytics():
 
     rows = []
     for student in students:
-        student_attempts = [
+        student_all_attempts = [
             attempt for attempt in all_attempts
             if attempt.student_id == student.id
+        ]
+        student_attempts = [
+            attempt for attempt in student_all_attempts
+            if attempt.submitted_at is not None
         ]
         test_attempts = [
             attempt for attempt in student_attempts
@@ -934,14 +937,13 @@ def analytics():
         ]
         percentages = [attempt.percentage for attempt in student_attempts]
         mastery_rows = ConceptMastery.query.filter_by(student_id=student.id).all()
-        challenges = ChallengeSession.query.filter_by(
-            student_id=student.id, status="completed"
+        challenge_sessions = ChallengeSession.query.filter_by(
+            student_id=student.id
         ).all()
-        evaluated_messages = TutorMessage.query.join(TutorConversation).filter(
+        challenges = [session for session in challenge_sessions if session.status == "completed"]
+        tutor_interactions = TutorMessage.query.join(TutorConversation).filter(
             TutorConversation.student_id == student.id,
-            TutorMessage.evaluation.in_([
-                "correct", "partially_correct", "incorrect", "needs_explanation"
-            ]),
+            TutorMessage.role == "student",
         ).count()
         character_attempts = CharacterAttempt.query.filter_by(
             student_id=student.id
@@ -957,7 +959,7 @@ def analytics():
             if mastery_rows else 0.0
         )
         activity_score = (
-            len(student_attempts) + len(challenges) + evaluated_messages
+            len(student_all_attempts) + len(challenge_sessions) + tutor_interactions
             + character_attempts
         )
         rows.append({
@@ -967,7 +969,7 @@ def analytics():
             "average": average,
             "mastery_average": mastery_average,
             "challenge_count": len(challenges),
-            "tutor_interactions": evaluated_messages,
+            "tutor_interactions": tutor_interactions,
             "character_attempts": character_attempts,
             "points_earned": points_earned,
             "activity_score": activity_score,
@@ -981,14 +983,15 @@ def analytics():
         key=lambda item: (item["activity_score"], item["average"]),
         reverse=True,
     )
-    class_percentages = [attempt.percentage for attempt in all_attempts]
+    submitted_attempts = [attempt for attempt in all_attempts if attempt.submitted_at is not None]
+    class_percentages = [attempt.percentage or 0 for attempt in submitted_attempts]
     total_tutor_interactions = sum(row["tutor_interactions"] for row in rows)
     total_character_attempts = sum(row["character_attempts"] for row in rows)
     overview = {
         "students": len(students),
         "worksheets": sum(1 for item in owned_worksheets if item.creation_method != "test"),
         "tests": sum(1 for item in owned_worksheets if item.creation_method == "test"),
-        "submissions": len(all_attempts),
+        "submissions": len(submitted_attempts),
         "average": round(sum(class_percentages) / len(class_percentages), 1)
         if class_percentages else 0.0,
         "challenge_completions": sum(
