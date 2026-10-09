@@ -13,22 +13,23 @@
     <article><span>التحديات المكتملة</span><strong>{{ overview.challenge_completions }}</strong></article>
     <article><span>تفاعلات المعلم الذكي</span><strong>{{ overview.tutor_interactions }}</strong></article>
     <article><span>محاولات الشخصيات</span><strong>{{ overview.character_attempts }}</strong></article>
+    <article><span>تحققات خطة المراجعة</span><strong>{{ overview.plan_verifications }}</strong></article>
     <article><span>النقاط المسجّلة</span><strong>{{ overview.points_awarded }}</strong></article>
     <article><span>يحتجن متابعة</span><strong>{{ overview.support_count }}</strong></article>
 </section>
 <section class="platform-panel analytics-panel">
     <div class="analytics-heading"><div><h2>الأداء الفردي</h2><p>تجمع هذه النظرة أنشطة التعلّم المسجّلة للطالبات، ولا تعتمد على علامة اختبار واحدة.</p></div></div>
-    <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات</th><th>المعلم الذكي</th><th>محاولات الشخصيات</th><th>النقاط المكتسبة</th><th>الحالة</th></tr></thead><tbody>
+    <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات</th><th>المعلم الذكي</th><th>محاولات الشخصيات</th><th>خطة المراجعة</th><th>النقاط المكتسبة</th><th>الحالة</th></tr></thead><tbody>
     {% for row in rows %}
     <tr>
       <td><strong>{{ row.student.full_name }}</strong><small>{{ row.student.email }}</small></td>
       <td>{{ row.test_count }}</td><td>{{ row.worksheet_count }}</td>
       <td><div class="metric-bar"><i style="width:{{ [row.average,100]|min }}%"></i></div>{{ row.average }}%</td>
       <td><div class="metric-bar mastery"><i style="width:{{ [row.mastery_average,100]|min }}%"></i></div>{{ row.mastery_average }}%</td>
-      <td>{{ row.challenge_count }}</td><td>{{ row.tutor_interactions }}</td><td>{{ row.character_attempts }}</td><td>{{ row.points_earned }}</td>
+      <td>{{ row.challenge_count }}</td><td>{{ row.tutor_interactions }}</td><td>{{ row.character_attempts }}</td><td>{{ row.plan_verifications }}</td><td>{{ row.points_earned }}</td>
       <td>{% if row.needs_support %}<span class="analytics-status support">تحتاج متابعة</span>{% elif row.activity_score %}<span class="analytics-status active">متفاعلة</span>{% else %}<span class="analytics-status quiet">لم تبدأ</span>{% endif %}</td>
     </tr>
-    {% else %}<tr><td colspan="10" class="platform-empty">ستظهر التحليلات بعد انضمام الطالبات وبدء الأنشطة.</td></tr>{% endfor %}
+    {% else %}<tr><td colspan="11" class="platform-empty">ستظهر التحليلات بعد انضمام الطالبات وبدء الأنشطة.</td></tr>{% endfor %}
     </tbody></table></div>
 </section>
 <section class="platform-panel analytics-note">
