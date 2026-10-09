@@ -86,3 +86,34 @@
 .curriculum-actions .curriculum-delete{color:#9a3434;background:#fff2f2;border-color:#e8baba}
 .curriculum-actions .curriculum-delete:hover{background:#fbe0e0}
 @media(max-width:700px){.curriculum-actions{align-items:stretch}.curriculum-actions form{flex:1}.curriculum-actions .status-pill{width:100%}}
+
+
+/* Requested polish: breathing room and elevated teacher management cards */
+.analytics-stats{margin-top:26px!important}
+.classroom-list-panel,.invite-method-card,.invite-history-panel{border:1px solid #e7dcc8;border-radius:24px;box-shadow:0 16px 42px rgba(7,26,53,.065)}
+.classroom-admin-row{gap:18px!important;padding:20px 0!important}
+.classroom-details>strong{display:block;color:#102f50;font-size:1.08rem}
+.classroom-details>p{margin:5px 0;color:#66788b}
+.classroom-details>small{display:inline-flex;margin-top:3px;padding:5px 10px;border-radius:999px;background:#edf6f2;color:#28645b;font-weight:800}
+.classroom-row-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.classroom-row-actions form{margin:0}
+.classroom-delete-button{display:inline-flex;align-items:center;justify-content:center;min-height:39px;padding:8px 14px;border:1px solid #e6b8b8;border-radius:12px;background:linear-gradient(135deg,#fff7f7,#fdeaea);color:#9a3434;font:inherit;font-size:.84rem;font-weight:900;cursor:pointer;transition:transform .18s,box-shadow .18s}
+.classroom-delete-button:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(154,52,52,.12);background:#fbe0e0}
+.excel-invite-card{background:linear-gradient(160deg,#fff,#fbfaf4)}
+.excel-invite-form{gap:18px}
+.excel-file-label{display:flex;align-items:center;gap:14px;padding:18px;border:1px dashed #d9c28f;border-radius:17px;background:linear-gradient(135deg,#fffaf0,#f5f8f5);cursor:pointer}
+.excel-file-icon{display:grid;place-items:center;min-width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#1d6a58,#2e8b71);color:#fff;font-size:.8rem;font-weight:900;box-shadow:0 8px 18px rgba(29,106,88,.17)}
+.excel-file-label>span:last-child{display:grid;gap:4px}
+.excel-file-label strong{color:#102f50}
+.excel-file-label small,.excel-mail-note{color:#778393;font-size:.82rem;line-height:1.8}
+.excel-invite-form input[type=file]{width:100%;padding:11px;border:1px solid #e2dccf;border-radius:12px;background:#fff;color:#536175}
+.excel-invite-form input[type=number],.excel-invite-form select{width:100%;min-height:47px;padding:10px 13px;border:1px solid #ddd3c2;border-radius:12px;background:#fcfbf8;color:#173455;font:inherit}
+.platform-ai-box{position:relative;overflow:hidden;margin-top:28px!important;padding:26px!important;border:1px solid #d9c79b!important;border-radius:24px!important;background:radial-gradient(circle at 92% 8%,rgba(210,161,59,.15),transparent 30%),linear-gradient(145deg,#fffdf7,#f2f8f4)!important;box-shadow:0 16px 38px rgba(15,50,64,.07)}
+.platform-ai-box:before{display:block;width:48px;height:4px;margin-bottom:17px;border-radius:99px;background:linear-gradient(90deg,#c99a3d,#1d6a58);content:""}
+.platform-ai-box h3{margin:0 0 8px!important;color:#123d49!important;font-size:1.3rem!important}
+.platform-ai-box>p{margin:0 0 20px!important;color:#627483!important;line-height:1.9}
+.platform-ai-box .platform-form{gap:15px}
+.platform-ai-box .platform-form label{font-weight:800;color:#173c4a}
+.platform-ai-box .platform-form select{width:100%;min-height:48px;padding:11px 13px;border:1px solid #d6dfd7;border-radius:12px;background:#fff;color:#173c4a;font:inherit}
+.platform-ai-box .platform-gold-button{width:100%;min-height:48px;justify-content:center}
+@media(max-width:700px){.classroom-row-actions{align-items:stretch;flex-direction:column}.classroom-row-actions form,.classroom-delete-button{width:100%}.excel-file-label{align-items:flex-start}.platform-ai-box{padding:20px!important}}
