@@ -78,10 +78,10 @@ def generate_concept_map_draft(lesson, map_type):
     payload, results = _grounded_request(
         lesson,
         (
-            f"أنشئ خريطة من النوع {map_type}. JSON: "
+            f"أنشئ خريطة مفاهيمية شجرية متفرعة {map_type}. اجعل لها جذرًا واحدًا واضحًا، ثم فروعًا رئيسية وفرعية متوازنة، ولا تجعلها قائمة مسطحة. JSON: "
             '{"title":"...","nodes":[{"key":"n1","label":"...","description":"..."}],'
             '"edges":[{"source":"n1","target":"n2","label":"..."}]}. '
-            "من 5 إلى 9 عقد وروابط صحيحة فقط."
+            "من 5 إلى 9 عقد وروابط صحيحة فقط. اجعل الروابط تبدأ من الجذر إلى الفروع ثم الفروع الفرعية، وتجنب الدورات وتعدد الآباء للعقدة الواحدة."
         ),
     )
     nodes = payload.get("nodes")
