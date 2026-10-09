@@ -27,7 +27,8 @@
     </div>
   </section>
 
-  <section class="test-builder-shell">
+  {% if not selected_test %}
+<section class="test-builder-shell">
     <div class="test-builder-heading">
       <div class="test-builder-icon">＋</div>
       <div>
@@ -70,18 +71,22 @@
       </div>
     </form>
   </section>
+{% endif %}
 
   {% if selected_test %}
-  <section class="inline-test-workspace">
+  <section class="inline-test-workspace" id="inline-test-workspace">
     <div class="inline-workspace-head">
       <div>
         <span>الاختبار المفتوح الآن</span>
         <h2>{{ selected_test.title }}</h2>
         <p>{{ selected_test.description or 'اختبار تاريخي جديد جاهز لبناء الأسئلة.' }}</p>
       </div>
-      <div class="inline-test-counter">
+      <div class="inline-workspace-actions">
+        <a class="test-secondary-button" href="{{ url_for('assessment.test_center') }}">＋ اختبار جديد</a>
+        <div class="inline-test-counter">
         <b>{{ selected_test.questions|length }}</b>
         <small>سؤالًا</small>
+        </div>
       </div>
     </div>
 
