@@ -1,1 +1,26 @@
-{% extends 'platform/_admin_base.html' %}{% block title %}لوحة الشرف{% endblock %}{% block eyebrow %}تقدير عادل ومحفّز{% endblock %}{% block heading %}لوحة شرف ترى أكثر من العلامة{% endblock %}{% block intro %}كرّمي النشاط والتحسن والمواظبة والإنجاز، حتى ترى كل طالبة طريقًا حقيقيًا للتميّز.{% endblock %}{% block content %}<div class="platform-two-columns"><section class="platform-panel"><div class="panel-title"><span>01</span><div><h2>إضافة بطاقة تكريم</h2><p>اختيار المعلمة يكمل الترشيحات الآلية ولا يستبدلها.</p></div></div><form method="post" class="platform-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label>الطالبة<select name="student_id" required>{% for student in students %}<option value="{{ student.id }}">{{ student.full_name }}</option>{% endfor %}</select></label><label>نوع التكريم<select name="category"><option value="teacher_choice">اختيار المعلمة</option><option value="most_improved">الأكثر تحسنًا</option><option value="most_active">الأكثر نشاطًا</option><option value="challenge_star">بطلة التحديات</option><option value="consistency">نجمة المواظبة</option><option value="worksheet_star">متفوقة أوراق العمل</option></select></label><label>الفترة<input name="period_label" placeholder="الأسبوع الأول أو سبتمبر"></label><label>كلمة تقدير<textarea name="note" maxlength="300"></textarea></label><button class="platform-gold-button" type="submit">إضافة إلى لوحة الشرف</button></form></section><section class="platform-panel"><div class="platform-list">{% for row in entries %}<article><div><strong>{{ row.student.full_name }}</strong><p>{{ {'teacher_choice':'اختيار المعلمة','most_improved':'الأكثر تحسنًا','most_active':'الأكثر نشاطًا','challenge_star':'بطلة التحديات','consistency':'نجمة المواظبة','worksheet_star':'متفوقة أوراق العمل'}.get(row.category,row.category) }}</p><small>{{ row.note or row.period_label or 'إنجاز يستحق التقدير' }}</small></div><form method="post" action="{{ url_for('platform_admin.remove_honor_entry',entry_id=row.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger-action">إزالة</button></form></article>{% else %}<div class="platform-empty">لم تضيفي بطاقات بعد.</div>{% endfor %}</div></section></div>{% endblock %}
+{% extends 'platform/_admin_base.html' %}
+{% block title %}لوحة الشرف{% endblock %}
+{% block eyebrow %}تقدير عادل ومحفّز{% endblock %}
+{% block heading %}لوحة شرف ترى أكثر من العلامة{% endblock %}
+{% block intro %}كرّمي النشاط والتحسن والمواظبة والإنجاز، حتى ترى كل طالبة طريقًا حقيقيًا للتميّز.{% endblock %}
+{% block content %}
+<div class="platform-two-columns honor-board-page">
+  <section class="platform-panel honor-create-panel">
+    <div class="honor-create-heading"><span class="honor-medal">✦</span><div><span class="honor-eyebrow">تكريم يصنع فرقًا</span><h2>إضافة بطاقة تكريم</h2><p>اختيار المعلمة يكمل الترشيحات الآلية ولا يستبدلها.</p></div></div>
+    <form method="post" class="platform-form honor-create-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>الطالبة<select name="student_id" required>{% for student in students %}<option value="{{ student.id }}">{{ student.full_name }}</option>{% endfor %}</select></label>
+      <label>نوع التكريم<select name="category"><option value="teacher_choice">اختيار المعلمة</option><option value="most_improved">الأكثر تحسنًا</option><option value="most_active">الأكثر نشاطًا</option><option value="challenge_star">بطلة التحديات</option><option value="consistency">نجمة المواظبة</option><option value="worksheet_star">متفوقة أوراق العمل</option></select></label>
+      <label>الفترة<input name="period_label" placeholder="الأسبوع الأول أو سبتمبر"></label>
+      <label>كلمة تقدير<textarea name="note" maxlength="300" placeholder="اكتبي كلمة تشجيعية قصيرة..."></textarea></label>
+      <button class="platform-gold-button honor-submit-button" type="submit"><span>✦</span> إضافة إلى لوحة الشرف</button>
+    </form>
+  </section>
+  <section class="platform-panel honor-entries-panel">
+    <div class="honor-entries-heading"><div><span class="honor-eyebrow">لحظات تستحق الاحتفاء</span><h2>بطاقات التكريم</h2><p>كل بطاقة تذكير بإنجاز يستحق أن يُرى.</p></div><span class="honor-count">{{ entries|length }}</span></div>
+    <div class="honor-entry-grid">{% for row in entries %}
+      <article class="honor-entry-card"><div class="honor-entry-ribbon">✦</div><div class="honor-entry-copy"><span class="honor-category">{{ {'teacher_choice':'اختيار المعلمة','most_improved':'الأكثر تحسنًا','most_active':'الأكثر نشاطًا','challenge_star':'بطلة التحديات','consistency':'نجمة المواظبة','worksheet_star':'متفوقة أوراق العمل'}.get(row.category,row.category) }}</span><h3>{{ row.student.full_name }}</h3><p>{{ row.note or row.period_label or 'إنجاز يستحق التقدير' }}</p>{% if row.period_label and row.note %}<small>{{ row.period_label }}</small>{% endif %}</div><form method="post" action="{{ url_for('platform_admin.remove_honor_entry',entry_id=row.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="honor-remove-button" type="submit">إزالة البطاقة</button></form></article>
+    {% else %}<div class="platform-empty honor-empty"><div class="honor-empty-star">✧</div><strong>مساحة لإنجازات قادمة</strong><p>ستظهر بطاقات التكريم هنا بعد إضافتها.</p></div>{% endfor %}</div>
+  </section>
+</div>
+{% endblock %}
