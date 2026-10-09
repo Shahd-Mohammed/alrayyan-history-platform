@@ -59,10 +59,6 @@
     } else {
       parentSelect.value = "";
     }
-    if (root) {
-      const rootOption = parentSelect.querySelector('option[value="' + root.key + '"]');
-      if (rootOption) rootOption.disabled = true;
-    }
   };
 
   const assignPositions = () => {
@@ -186,9 +182,6 @@
     tree.className = "concept-tree";
     tree.appendChild(renderNode(root, 0));
     canvas.appendChild(tree);
-    canvas.addEventListener("dragover", (event) => {
-      if (event.target === canvas && draggedKey && draggedKey !== rootNode()?.key) event.preventDefault();
-    });
     canvas.ondrop = (event) => {
       if (event.target !== canvas) return;
       event.preventDefault();
