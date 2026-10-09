@@ -16,7 +16,7 @@
         href="{{ url_for(
             'static',
             filename='css/dashboard.css',
-            v='20260922-6'
+            v='20261009-results-polish-1'
         ) }}"
     >
 
@@ -99,6 +99,19 @@ body,.results-dashboard{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!imp
 .assessment-tabs a{flex:1 1 0!important;min-width:0!important;white-space:nowrap!important;padding:14px 12px!important;font-size:.96rem!important}
 .assessment-tabs a.active{background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important;border:1px solid #c99a3d!important;box-shadow:0 8px 20px rgba(169,122,34,.18)!important}
 @media(max-width:650px){.assessment-tabs{overflow-x:auto!important}.assessment-tabs a{flex:0 0 auto!important;min-width:max-content!important}}
+
+
+/* Consistent worksheet-upload inspired typography and compact controls */
+body,.results-dashboard,.results-dashboard button,.results-dashboard a{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.results-dashboard button,.results-dashboard input[type="submit"],.results-dashboard .results-primary-link,.results-dashboard .score-policy-banner a{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;max-width:max-content!important;min-width:0!important;min-height:39px!important;
+ padding:8px 15px!important;border-radius:10px!important;font-size:.9rem!important;
+ font-weight:750!important;letter-spacing:0!important;line-height:1.35!important;
+}
+.results-dashboard .assessment-tabs{margin-top:28px!important;margin-bottom:28px!important;gap:12px!important}
+.results-dashboard .assessment-tabs a{white-space:nowrap!important;font-weight:750!important}
+.results-dashboard .assessment-tabs a.active{background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important}
 
 </style>
 
