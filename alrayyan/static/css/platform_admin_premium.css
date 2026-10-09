@@ -339,3 +339,34 @@
   .inline-workspace-actions{align-items:stretch}
   .test-secondary-button{flex:1}
 }
+
+
+/* Concept map studio: restore gold tab and action buttons */
+.concept-map-tabs button.is-active{
+  border-color:#c18c28!important;
+  background:linear-gradient(135deg,#d8ad4f 0%,#b98222 100%)!important;
+  color:#fff!important;
+  box-shadow:0 8px 20px rgba(169,111,20,.22)!important;
+}
+.concept-map-tabs button.is-active>span{
+  background:#fff7e3!important;
+  color:#8c6017!important;
+}
+.concept-map-tabs button:hover{
+  border-color:#d2a13b;
+  background:#fff3d2;
+  color:#805813;
+}
+.concept-map-card-actions .concept-action.preview,
+.concept-map-card-actions .concept-action.publish,
+.concept-map-card-actions .concept-action.delete{
+  border:1px solid #c18c28!important;
+  background:linear-gradient(135deg,#d8ad4f 0%,#b98222 100%)!important;
+  color:#fff!important;
+  box-shadow:0 5px 12px rgba(169,111,20,.13);
+}
+.concept-map-card-actions .concept-action:hover{
+  filter:brightness(1.05);
+  box-shadow:0 8px 16px rgba(169,111,20,.2);
+  transform:translateY(-1px);
+}
