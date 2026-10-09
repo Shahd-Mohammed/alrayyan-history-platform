@@ -670,18 +670,58 @@ def generate_concept_map():
             db.session.flush()
             node_by_key[str(item.get("key"))] = node
 
-        for edge in payload["edges"]:
-            source = node_by_key.get(str(edge.get("source")))
-            target = node_by_key.get(str(edge.get("target")))
-            if source and target and source.id != target.id:
-                db.session.add(ConceptMapEdge(
-                    concept_map_id=row.id,
-                    source_node_id=source.id,
-                    target_node_id=target.id,
-                    label=str(edge.get("label", ""))[:150] or None,
-                ))
+        if len(node_by_key) < 2:
+            raise RuntimeError("لم ينتج المقترح مفاهيم كافية لبناء شجرة.")
 
-        layout_concept_tree(node_by_key, payload["edges"])
+        # Normalize the AI relationships into a real tree: one root and one parent per node.
+        node_keys = list(node_by_key)
+        root_key = node_keys[0]
+        tree_edges = []
+        parent_by_target = {}
+        for edge in payload["edges"]:
+            source_key = str(edge.get("source"))
+            target_key = str(edge.get("target"))
+            if (
+                source_key not in node_by_key
+                or target_key not in node_by_key
+                or source_key == target_key
+                or target_key == root_key
+                or target_key in parent_by_target
+            ):
+                continue
+            cursor = source_key
+            creates_cycle = False
+            while cursor in parent_by_target:
+                if cursor == target_key:
+                    creates_cycle = True
+                    break
+                cursor = parent_by_target[cursor]
+            if creates_cycle:
+                continue
+            tree_edges.append({
+                "source": source_key,
+                "target": target_key,
+                "label": str(edge.get("label", ""))[:150] or "",
+            })
+            parent_by_target[target_key] = source_key
+
+        # Attach any disconnected concepts to the root so the result is never a loose grid.
+        for key in node_keys[1:]:
+            if key not in parent_by_target:
+                tree_edges.append({"source": root_key, "target": key, "label": "فرع"})
+                parent_by_target[key] = root_key
+
+        for edge in tree_edges:
+            source = node_by_key[edge["source"]]
+            target = node_by_key[edge["target"]]
+            db.session.add(ConceptMapEdge(
+                concept_map_id=row.id,
+                source_node_id=source.id,
+                target_node_id=target.id,
+                label=edge["label"] or None,
+            ))
+
+        layout_concept_tree(node_by_key, tree_edges)
         db.session.commit()
         flash("أنشأ الذكاء الاصطناعي خريطة شجرية كمسودة. راجعيها قبل نشرها.", "success")
     except Exception as error:
