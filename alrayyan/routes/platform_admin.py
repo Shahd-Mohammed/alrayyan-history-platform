@@ -403,7 +403,7 @@ def extract_invitation_emails(upload):
     for value in values:
         candidates = re.split(r"[\s,;]+", value.lower())
         for candidate in candidates:
-                        candidate = candidate.strip().strip("()<>[]{}'".replace("'", ""))
+            candidate = candidate.strip().strip("()<>[]{}.,")
             if not candidate:
                 continue
             if "@" in candidate:
