@@ -480,6 +480,8 @@ def my_points():
         "challenge_answer": "إجابة في التحدي",
         "challenge_completed": "إكمال تحدٍ",
         "character_identified": "التعرّف على شخصية تاريخية",
+        "test_completed": "إكمال اختبار",
+        "worksheet_completed": "إكمال ورقة عمل",
     }
     totals_by_reason = {}
     for transaction in transactions:
