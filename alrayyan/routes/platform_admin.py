@@ -728,25 +728,66 @@ def toggle_character(row_id):
 
 @platform_admin_bp.route("/settings", methods=["GET", "POST"])
 def settings():
-    row = PlatformSettings.get_or_create(); form = PlatformSettingsForm(obj=row)
+    row = PlatformSettings.get_or_create()
+    form = PlatformSettingsForm(obj=row)
+
     if form.validate_on_submit():
-        whatsapp_value = (form.whatsapp_url.data or "").strip()
-        if whatsapp_value:
-            compact_whatsapp = re.sub(r"[\\s\\-()]+", "", whatsapp_value)
-            if compact_whatsapp.startswith("00"):
-                compact_whatsapp = compact_whatsapp[2:]
-            if compact_whatsapp.startswith("+"):
-                compact_whatsapp = compact_whatsapp[1:]
-            if compact_whatsapp.isdigit():
-                if compact_whatsapp.startswith("0"):
-                    compact_whatsapp = "970" + compact_whatsapp[1:]
-                whatsapp_value = f"https://wa.me/{compact_whatsapp}"
-        row.platform_name = form.platform_name.data
-        row.tagline = form.tagline.data
-        row.whatsapp_url = whatsapp_value or None
-        row.support_email = form.support_email.data
-        db.session.commit(); flash("تم حفظ إعدادات المنصة", "success")
-        return redirect(url_for("platform_admin.settings"))
+        entered_whatsapp = (form.whatsapp_url.data or "").strip()
+        whatsapp_value = None
+
+        if entered_whatsapp:
+            # Keep only secure, direct WhatsApp links from trusted WhatsApp domains.
+            from urllib.parse import urlparse
+
+            if entered_whatsapp.lower().startswith(("https://", "http://")):
+                parsed = urlparse(entered_whatsapp)
+                allowed_hosts = {
+                    "wa.me",
+                    "www.wa.me",
+                    "api.whatsapp.com",
+                    "chat.whatsapp.com",
+                    "web.whatsapp.com",
+                }
+                if parsed.scheme == "https" and parsed.hostname and parsed.hostname.lower() in allowed_hosts:
+                    whatsapp_value = entered_whatsapp
+                else:
+                    form.whatsapp_url.errors.append(
+                        "أدخلي رقمًا مع مفتاح الدولة أو رابط واتساب مباشر يبدأ بـ https ومن نطاق واتساب."
+                    )
+                    return render_template("platform/settings.html", form=form)
+            elif re.fullmatch(r"[\d\s()+.\-]+", entered_whatsapp):
+                digits = re.sub(r"\D", "", entered_whatsapp)
+                if digits.startswith("00"):
+                    digits = digits[2:]
+                elif digits.startswith("0"):
+                    digits = "970" + digits[1:]
+
+                if 8 <= len(digits) <= 15:
+                    whatsapp_value = f"https://wa.me/{digits}"
+                else:
+                    form.whatsapp_url.errors.append(
+                        "تأكدي من رقم واتساب ومفتاح الدولة؛ يجب أن يكون الرقم بين 8 و15 رقمًا."
+                    )
+                    return render_template("platform/settings.html", form=form)
+            else:
+                form.whatsapp_url.errors.append(
+                    "أدخلي رقمًا فقط مع مفتاح الدولة أو رابط واتساب مباشر."
+                )
+                return render_template("platform/settings.html", form=form)
+
+        try:
+            row.platform_name = form.platform_name.data.strip()
+            row.tagline = form.tagline.data.strip()
+            row.whatsapp_url = whatsapp_value
+            row.support_email = (form.support_email.data or "").strip() or None
+            db.session.commit()
+            flash("تم حفظ إعدادات المنصة وتحديث رابط واتساب.", "success")
+            return redirect(url_for("platform_admin.settings"))
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception("Platform settings save failed")
+            flash("تعذر حفظ الإعدادات. لم يتم اعتماد التغييرات؛ حاولي مرة أخرى.", "error")
+
     return render_template("platform/settings.html", form=form)
 
 
