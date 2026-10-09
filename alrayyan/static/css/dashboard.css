@@ -1264,3 +1264,45 @@ button,input[type="submit"],input[type="button"],input[type="reset"],a.button,.b
  .assessment-tabs a{flex:0 0 auto!important}
  .question-actions{flex-wrap:wrap!important}
 }
+
+
+/* Compact gold action system for question editing and student results */
+body,.form-page,.results-dashboard,.form-page button,.results-dashboard button,
+.form-page input,.results-dashboard input,.form-page select,.results-dashboard select,
+.form-page textarea,.results-dashboard textarea{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+}
+.form-page button,.form-page input[type="submit"],.results-dashboard button,
+.results-dashboard input[type="submit"],.results-dashboard .results-primary-link,
+.results-dashboard .score-policy-banner a{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:100%!important;min-width:0!important;min-height:38px!important;
+  padding:8px 15px!important;border-radius:10px!important;
+  font-size:.9rem!important;font-weight:750!important;line-height:1.4!important;
+  white-space:normal!important;text-align:center!important;
+}
+.form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action,
+.form-page button.save-question-button,.form-page .question-save-button,
+.form-page .assessment-section button[type="submit"],
+.results-dashboard .results-primary-link,.results-dashboard .score-policy-banner a{
+  background:linear-gradient(135deg,#d4ad50,#b8872d)!important;color:#fff!important;
+  border:1px solid #b8872d!important;box-shadow:0 5px 14px rgba(157,112,31,.12)!important;
+}
+.form-page .assessment-tabs{
+  display:flex!important;align-items:center!important;gap:8px!important;
+  margin:26px 0 28px!important;padding:8px!important;overflow-x:auto!important;
+  flex-wrap:nowrap!important;border:1px solid #e5dcc9!important;border-radius:16px!important;background:#fff!important;
+}
+.form-page .assessment-tabs a{
+  flex:0 0 auto!important;white-space:nowrap!important;padding:10px 18px!important;
+  font-size:.9rem!important;font-weight:750!important;border-radius:10px!important;
+}
+.form-page .assessment-tabs a.active{background:linear-gradient(135deg,#d4ad50,#b8872d)!important;color:#fff!important}
+.form-page .form-intro,.results-dashboard .results-intro{margin-bottom:28px!important}
+.form-page .assessment-section,.results-dashboard .results-panel{border-radius:22px!important}
+.form-page .question-actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
+.form-page .question-actions>*{flex:0 1 auto!important;width:auto!important}
+@media(max-width:650px){
+ .form-page .assessment-tabs{margin-top:26px!important;margin-bottom:24px!important}
+ .results-dashboard .score-policy-banner a{width:auto!important}
+}
