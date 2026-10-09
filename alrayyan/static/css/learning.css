@@ -270,3 +270,34 @@
 .learning-hero.historical-learning-hero.library-page-hero h1,.learning-hero.historical-learning-hero.honor-page-hero h1{font-size:clamp(2rem,4vw,3.25rem)!important;line-height:1.22!important;margin:8px 0 12px!important}
 .learning-hero.historical-learning-hero.library-page-hero .page-hero-visual,.learning-hero.historical-learning-hero.honor-page-hero .page-hero-visual{min-height:190px!important}
 @media(max-width:620px){.learning-hero.historical-learning-hero.character-hero{grid-template-columns:1fr!important;padding:28px 22px!important}.learning-hero.historical-learning-hero.character-hero>p,.learning-hero.historical-learning-hero.character-hero>h1,.learning-hero.historical-learning-hero.character-hero>span{grid-column:1!important}.character-hero .hero-score{grid-column:1!important;grid-row:auto!important;min-height:auto!important;min-width:100px!important;margin-top:12px!important}.learning-hero.historical-learning-hero.character-hero h1{font-size:2rem!important}}
+
+
+/* Student learning headers: compact, balanced and consistent with the worksheet studio */
+body{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.learning-page{width:min(1180px,calc(100% - 36px))!important}
+.historical-learning-hero{min-height:0!important;gap:10px!important;padding:clamp(26px,4vw,42px)!important;margin-bottom:26px!important;border-radius:26px!important}
+.historical-learning-hero h1{font-size:clamp(1.9rem,3.5vw,3.1rem)!important;line-height:1.25!important;margin:.3rem 0 .55rem!important}
+.historical-learning-hero>span{max-width:800px!important;font-size:1rem!important;line-height:1.85!important}
+.library-page-hero .library-hero-pills{margin-top:12px!important}
+.honor-page-hero .honor-hero-stats{margin-top:12px!important}
+.character-hero{padding-left:clamp(24px,4vw,42px)!important;padding-right:clamp(24px,4vw,42px)!important}
+.character-hero .hero-score{position:static!important;align-self:flex-start!important;min-width:0!important;min-height:0!important;margin-top:12px!important;padding:10px 15px!important;display:inline-flex!important;flex-direction:row!important;gap:10px!important;border-radius:14px!important}
+.character-hero .hero-score b{font-size:1.35rem!important}
+.character-hero .hero-score small{margin:0!important}
+.character-grid{align-items:stretch!important;gap:18px!important}
+.character-card{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.character-actions{display:flex!important;flex-wrap:wrap!important;gap:9px!important}
+.character-actions button,.learning-grid a,.character-card summary{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;max-width:max-content!important;min-width:0!important;min-height:38px!important;
+ padding:8px 14px!important;border-radius:10px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+ font-size:.9rem!important;font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;
+}
+.character-actions .gold-action,.learning-grid a,.character-card summary{background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important;border:1px solid #c99a3d!important}
+.character-actions .hint-action{background:#fff!important;color:#173455!important;border:1px solid #d8c49a!important}
+.learning-grid article{min-width:0}
+@media(max-width:620px){
+ .learning-page{width:calc(100% - 22px)!important;margin-top:20px!important}
+ .historical-learning-hero{padding:25px 20px!important;margin-bottom:22px!important}
+ .character-actions button{flex:0 1 auto!important}
+}
