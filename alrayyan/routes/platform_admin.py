@@ -46,12 +46,27 @@ def teacher_lessons():
         "الدرس احتياطي",
         "الوحدة — الدرس احتياطي",
     }
-    return Lesson.query.join(Unit).join(Curriculum).filter(
-        ((Curriculum.created_by_id == current_user.id) | (Curriculum.created_by_id.is_(None))),
+    query = Lesson.query.join(Unit).join(Curriculum).filter(
         Curriculum.is_active.is_(True),
         Curriculum.processing_status == "ready",
         Lesson.title.notin_(placeholder_titles),
-    ).order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index).all()
+    )
+
+    # Admins manage shared platform curricula, including curricula uploaded
+    # by another teacher. Non-admin teachers only see their own or shared
+    # (ownerless) curricula, matching teacher_curricula().
+    if current_user.role != "admin":
+        query = query.filter(
+            (Curriculum.created_by_id == current_user.id)
+            | (Curriculum.created_by_id.is_(None))
+        )
+
+    return query.order_by(
+        Curriculum.subject,
+        Curriculum.grade,
+        Unit.order_index,
+        Lesson.order_index,
+    ).all()
 
 
 def lesson_choices():
