@@ -964,7 +964,8 @@ def analytics():
         )
         activity_score = (
             len(student_all_attempts) + len(challenge_sessions) + tutor_interactions
-            + character_attempts + plan_verifications
+            + character_attempts + plan_verifications + resource_downloads
+            + concept_map_views
         )
         rows.append({
             "student": student,
