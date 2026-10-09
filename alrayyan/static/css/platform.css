@@ -392,3 +392,19 @@ button[type="submit"]:hover {
     max-height: min(70vh, 520px);
     overflow-y: auto;
 }
+
+
+/* Site-wide Arabic button typography: consistent weight and no artificial letter spacing */
+button,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+.button,
+.btn,
+a.button,
+a.btn {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-weight:750!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
