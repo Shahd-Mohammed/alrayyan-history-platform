@@ -211,7 +211,7 @@
       <div>
         <span>مكتبة الاختبارات</span>
         <h2>اختباراتكِ المحفوظة</h2>
-        <p>اختاري أي اختبار للعودة إليه ومتابعة بنائه من نفس الصفحة.</p>
+        <p>افتحي الاختبار لمتابعة الأسئلة، عاينيه، وانقليه بين المسودة والنشر أو الأرشيف.</p>
       </div>
       <div class="test-count">{{ tests|length }} <small>اختبار</small></div>
     </div>
@@ -253,7 +253,7 @@
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="action" value="archive_test">
               <input type="hidden" name="worksheet_id" value="{{ test.id }}">
-              <button type="submit" class="test-card-action archive">أرشفة الاختبار</button>
+              <button type="submit" class="test-card-action archive">إزالة من المكتبة</button>
             </form>
           </div>
         </article>
