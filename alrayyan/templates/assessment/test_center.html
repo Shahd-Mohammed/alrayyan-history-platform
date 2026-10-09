@@ -221,7 +221,7 @@
         <article class="test-library-card">
           <div class="test-card-top">
             <span class="test-card-number">{{ "%02d"|format(loop.index) }}</span>
-            <span class="test-status {{ test.publication_status }}">{{ test.publication_status }}</span>
+            <span class="test-status {{ test.publication_status }}">{{ 'منشور' if test.publication_status == 'published' else 'مسودة' }}</span>
           </div>
           <div class="test-card-body">
             <small>{{ test.lesson.title if test.lesson else 'بدون درس' }}</small>
@@ -230,7 +230,31 @@
           </div>
           <div class="test-card-footer">
             <span><b>{{ test.questions|length }}</b> سؤال</span>
+            <a href="{{ url_for('assessment.manage_questions', worksheet_id=test.id) }}" class="test-card-preview">معاينة وإدارة</a>
             <a href="{{ url_for('assessment.test_center', worksheet_id=test.id) }}">متابعة البناء <span>←</span></a>
+          </div>
+          <div class="test-card-actions">
+            {% if test.publication_status == 'published' %}
+              <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="draft_test">
+                <input type="hidden" name="worksheet_id" value="{{ test.id }}">
+                <button type="submit" class="test-card-action draft">إعادة إلى المسودة</button>
+              </form>
+            {% else %}
+              <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="publish_test">
+                <input type="hidden" name="worksheet_id" value="{{ test.id }}">
+                <button type="submit" class="test-card-action publish">نشر الاختبار</button>
+              </form>
+            {% endif %}
+            <form method="post" onsubmit="return confirm('سيُنقل الاختبار إلى الأرشيف مع الحفاظ على سجلات الطالبات. هل تريدين المتابعة؟');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="action" value="archive_test">
+              <input type="hidden" name="worksheet_id" value="{{ test.id }}">
+              <button type="submit" class="test-card-action archive">حذف / أرشفة</button>
+            </form>
           </div>
         </article>
       {% else %}
