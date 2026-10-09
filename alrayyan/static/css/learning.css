@@ -258,3 +258,15 @@
  .learning-hero.historical-learning-hero.library-page-hero h1,
  .learning-hero.historical-learning-hero.honor-page-hero h1{font-size:2rem!important}
 }
+
+
+/* Compact student activity heroes: keep the story visible without an oversized banner */
+.learning-hero.historical-learning-hero.character-hero{min-height:0!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:10px 26px!important;padding:clamp(25px,4vw,42px) clamp(22px,5vw,58px)!important;border-radius:28px!important}
+.learning-hero.historical-learning-hero.character-hero>p,.learning-hero.historical-learning-hero.character-hero>h1,.learning-hero.historical-learning-hero.character-hero>span{grid-column:1!important}
+.learning-hero.historical-learning-hero.character-hero h1{font-size:clamp(2.1rem,4.2vw,3.35rem)!important;line-height:1.25!important;margin:8px 0!important}
+.learning-hero.historical-learning-hero.character-hero>span{max-width:760px!important;line-height:1.8!important}
+.character-hero .hero-score{position:relative!important;left:auto!important;bottom:auto!important;grid-column:2!important;grid-row:1/4!important;align-self:center!important;min-width:112px!important;min-height:112px!important;margin:0!important;border-radius:22px!important}
+.learning-hero.historical-learning-hero.library-page-hero,.learning-hero.historical-learning-hero.honor-page-hero{min-height:0!important;padding:clamp(26px,4vw,42px) clamp(22px,5vw,58px)!important;border-radius:28px!important}
+.learning-hero.historical-learning-hero.library-page-hero h1,.learning-hero.historical-learning-hero.honor-page-hero h1{font-size:clamp(2rem,4vw,3.25rem)!important;line-height:1.22!important;margin:8px 0 12px!important}
+.learning-hero.historical-learning-hero.library-page-hero .page-hero-visual,.learning-hero.historical-learning-hero.honor-page-hero .page-hero-visual{min-height:190px!important}
+@media(max-width:620px){.learning-hero.historical-learning-hero.character-hero{grid-template-columns:1fr!important;padding:28px 22px!important}.learning-hero.historical-learning-hero.character-hero>p,.learning-hero.historical-learning-hero.character-hero>h1,.learning-hero.historical-learning-hero.character-hero>span{grid-column:1!important}.character-hero .hero-score{grid-column:1!important;grid-row:auto!important;min-height:auto!important;min-width:100px!important;margin-top:12px!important}.learning-hero.historical-learning-hero.character-hero h1{font-size:2rem!important}}
