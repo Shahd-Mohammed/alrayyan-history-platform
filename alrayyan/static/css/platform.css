@@ -408,3 +408,9 @@ a.btn {
   letter-spacing:0!important;
   text-transform:none!important;
 }
+
+
+/* Shared Arabic typography for form controls and page content */
+body,input,select,textarea,button{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
