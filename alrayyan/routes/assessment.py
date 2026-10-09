@@ -931,33 +931,33 @@ def calculate_attempt_result(attempt):
         >= attempt.worksheet.passing_score
     )
 
-    # الاختبار يكافئ الطالبة بالنقاط المكتسبة مرة واحدة فقط.
-    if (
-        attempt.worksheet.creation_method == "test"
-        and not has_pending_manual_grading
-    ):
-        earned_points = int(round(attempt.score or 0))
-        if earned_points > 0:
-            existing_award = XPTransaction.query.filter_by(
-                student_id=attempt.student_id,
-                reason="test_completed",
-                source_type="worksheet_attempt",
-                source_id=attempt.id,
-            ).first()
-            if existing_award is None:
-                db.session.add(
-                    XPTransaction(
-                        student_id=attempt.student_id,
-                        amount=earned_points,
-                        reason="test_completed",
-                        source_type="worksheet_attempt",
-                        source_id=attempt.id,
-                    )
+    # تُكافأ الطالبة عند إكمال اختبار أو ورقة عمل، مرة واحدة لكل محاولة.
+    if not has_pending_manual_grading and attempt.submitted_at:
+        is_test = attempt.worksheet.creation_method == "test"
+        award_reason = "test_completed" if is_test else "worksheet_completed"
+        score_points = int(round(attempt.score or 0))
+        completion_bonus = 5
+        earned_points = completion_bonus + max(0, score_points)
+        existing_award = XPTransaction.query.filter_by(
+            student_id=attempt.student_id,
+            reason=award_reason,
+            source_type="worksheet_attempt",
+            source_id=attempt.id,
+        ).first()
+        if existing_award is None:
+            db.session.add(
+                XPTransaction(
+                    student_id=attempt.student_id,
+                    amount=earned_points,
+                    reason=award_reason,
+                    source_type="worksheet_attempt",
+                    source_id=attempt.id,
                 )
-                student = db.session.get(User, attempt.student_id)
-                if student is not None:
-                    student.points += earned_points
-                    student.level = max(1, student.points // 500 + 1)
+            )
+            student = db.session.get(User, attempt.student_id)
+            if student is not None:
+                student.points = (student.points or 0) + earned_points
+                student.level = max(1, student.points // 500 + 1)
 
 
 @assessment_bp.post(
