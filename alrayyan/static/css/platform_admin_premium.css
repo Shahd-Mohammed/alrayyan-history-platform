@@ -690,3 +690,17 @@ button.concept-action,
  .test-center-page .test-library-section{padding-inline:8px!important}
  .platform-gold-button,.platform-form button.platform-gold-button,.platform-form input.platform-gold-button{min-height:38px!important;padding:8px 13px!important}
 }
+
+
+/* Concept-map library actions intentionally share the same gold button treatment */
+.concept-map-card-actions .concept-action.preview,
+.concept-map-card-actions .concept-action.publish,
+.concept-map-card-actions .concept-action.delete{
+  background:linear-gradient(135deg,#dfbd68,#b9872d)!important;
+  border-color:#c99a3d!important;color:#fff!important;
+}
+.concept-map-card-actions .concept-action.preview:hover,
+.concept-map-card-actions .concept-action.publish:hover,
+.concept-map-card-actions .concept-action.delete:hover{
+  background:linear-gradient(135deg,#e7cb7e,#c09236)!important;color:#fff!important;
+}
