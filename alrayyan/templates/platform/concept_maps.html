@@ -44,7 +44,6 @@
   <form method="post" action="{{ url_for('platform_admin.generate_concept_map') }}" class="platform-form concept-ai-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>الدرس<select name="lesson_id" required>{% for value,label in form.lesson_id.choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></label>
-    <input type="hidden" name="map_type" value="concept">
     <div class="ai-draft-note"><span>✦</span><p><strong>الحالة الافتراضية: مسودة</strong><br>لن تُنشر الخريطة تلقائيًا. ستجدينها في مكتبة الخرائط لتراجعيها ثم تعتمديها أو تحذفيها.</p></div>
     <button class="platform-gold-button" type="submit">إنشاء مسودة بالذكاء الاصطناعي <span>←</span></button>
   </form>
