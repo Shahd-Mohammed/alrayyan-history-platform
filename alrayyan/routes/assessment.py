@@ -185,6 +185,30 @@ def test_center():
     if request.method == "POST":
         action = request.form.get("action", "create_test")
 
+        if action in {"publish_test", "draft_test", "archive_test"}:
+            worksheet_id = request.form.get("worksheet_id", type=int)
+            worksheet = get_teacher_worksheet_or_404(worksheet_id)
+
+            if worksheet.creation_method != "test":
+                abort(400)
+
+            if action == "publish_test":
+                worksheet.publication_status = "published"
+                worksheet.is_published = True
+                flash("تم نشر الاختبار بنجاح.", "success")
+            elif action == "draft_test":
+                worksheet.publication_status = "draft"
+                worksheet.is_published = False
+                flash("تمت إعادة الاختبار إلى المسودات.", "success")
+            else:
+                # Archive instead of permanently deleting student records.
+                worksheet.is_archived = True
+                worksheet.archived_at = utc_now()
+                flash("تم نقل الاختبار إلى الأرشيف مع الحفاظ على سجلات الطالبات.", "success")
+
+            db.session.commit()
+            return redirect(url_for("assessment.test_center"))
+
         if action == "create_test":
             title = (request.form.get("title") or "").strip()
             lesson_id = request.form.get("lesson_id", type=int)
