@@ -899,3 +899,14 @@ input[type="button"]{
   align-items:center;
   justify-content:center;
 }
+
+/* Unified button typography and compact sizing across teacher pages */
+button,input[type="submit"],input[type="button"],input[type="reset"],.button,.btn,a.button,a.btn{
+  width:auto!important;min-width:0!important;max-width:100%!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.9rem!important;font-weight:750!important;line-height:1.4!important;
+  letter-spacing:0!important;text-transform:none!important;
+}
+button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+}
