@@ -704,3 +704,112 @@ button.concept-action,
 .concept-map-card-actions .concept-action.delete:hover{
   background:linear-gradient(135deg,#e7cb7e,#c09236)!important;color:#fff!important;
 }
+
+
+/* Final visual pass: calm ivory surfaces, restrained gold, compact controls */
+.platform-admin-body,
+.platform-admin-page,
+.platform-form,
+.platform-panel,
+.platform-list{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.platform-admin-page{padding-inline:clamp(16px,3vw,34px)!important}
+.platform-admin-hero{margin-bottom:26px!important}
+.platform-admin-hero>div>p{max-width:820px;line-height:1.9!important}
+.platform-panel{border-color:#e7e0d4!important}
+.platform-panel p{line-height:1.85}
+.platform-gold-button,
+.platform-form button.platform-gold-button,
+.platform-form input.platform-gold-button,
+.platform-form button[type="submit"],
+.platform-form input[type="submit"],
+.concept-map-card-actions .concept-action,
+.classroom-delete-button,
+.honor-remove-button,
+.review-actions button,
+.review-actions a{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:100%!important;min-width:0!important;min-height:39px!important;
+  padding:8px 15px!important;border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;
+  font-weight:750!important;line-height:1.4!important;letter-spacing:0!important;
+  text-transform:none!important;white-space:normal!important;
+}
+.platform-gold-button,
+.platform-form button.platform-gold-button,
+.platform-form input.platform-gold-button,
+.platform-form button[type="submit"],
+.platform-form input[type="submit"]{
+  background:linear-gradient(135deg,#d4ad50,#b8872d)!important;
+  border:1px solid #b8872d!important;color:#fff!important;
+  box-shadow:0 4px 11px rgba(120,83,23,.12)!important;
+}
+.platform-gold-button:hover,
+.platform-form button.platform-gold-button:hover,
+.platform-form button[type="submit"]:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.platform-form{align-items:start}
+.platform-form>.platform-gold-button,
+.platform-form>button[type="submit"],
+.platform-form>input[type="submit"]{justify-self:start}
+.platform-ai-box .platform-gold-button{width:auto!important;min-height:39px!important;justify-content:center!important}
+.concept-map-tabs{
+  margin:30px 0 26px!important;padding:8px!important;gap:9px!important;
+  border-color:#e7e0d4!important;background:#fff!important;
+}
+.concept-map-tabs button{
+  flex:1 1 0!important;min-width:max-content!important;min-height:46px!important;
+  padding:9px 16px!important;border-radius:11px!important;background:#f6f3ed!important;
+  color:#53647a!important;font-size:.91rem!important;font-weight:750!important;
+}
+.concept-map-tabs button.is-active{
+  background:linear-gradient(135deg,#d4ad50,#b8872d)!important;
+  border-color:#b8872d!important;color:#fff!important;box-shadow:0 5px 12px rgba(120,83,23,.13)!important;
+}
+.concept-map-tabs button>span{background:rgba(255,255,255,.2)!important;color:#fff!important}
+.concept-map-tabs button:hover{background:#efe4cb!important;color:#173455!important}
+.concept-map-tabs button.is-active:hover{background:linear-gradient(135deg,#dfbd68,#c09236)!important;color:#fff!important}
+.concept-map-workspace,.concept-map-library{
+  margin-top:0!important;border-color:#e7e0d4!important;
+  background:linear-gradient(155deg,#fff 0%,#fbf8f1 100%)!important;
+}
+.concept-section-icon{box-shadow:none!important;border-color:#e8ddc7!important;background:#f6f0e4!important;color:#8b6a2c!important}
+.concept-kicker,.honor-eyebrow{color:#8d6a2c!important}
+.tree-add-button{
+  width:auto!important;min-width:0!important;min-height:39px!important;padding:8px 15px!important;
+  background:linear-gradient(135deg,#d4ad50,#b8872d)!important;border-color:#b8872d!important;
+  color:#fff!important;font-size:.9rem!important;font-weight:750!important;
+}
+.tree-add-button>span{color:#fff!important}
+.concept-map-card-actions{align-items:center!important;gap:8px!important}
+.concept-map-card-actions form{width:auto!important}
+.concept-map-card-actions .concept-action.preview,
+.concept-map-card-actions .concept-action.publish,
+.concept-map-card-actions .concept-action.delete{
+  min-height:38px!important;padding:8px 13px!important;background:linear-gradient(135deg,#d4ad50,#b8872d)!important;
+  color:#fff!important;border:1px solid #b8872d!important;font-size:.86rem!important;font-weight:750!important;
+}
+.concept-map-card-actions .concept-action:hover{filter:brightness(1.04)}
+.classroom-admin-page{margin-inline:0!important;gap:24px!important}
+.classroom-admin-page>.platform-panel{min-width:0!important}
+.classroom-admin-page .platform-gold-button{min-height:42px!important;padding:9px 17px!important;font-size:.92rem!important;font-weight:800!important}
+.test-center-page .test-center-hero{margin-bottom:28px!important}
+.test-center-page .test-library-section.test-library-premium{
+  width:100%!important;margin:30px 0 0!important;padding:clamp(22px,3vw,32px)!important;
+}
+.test-center-page .test-library-heading{margin-bottom:24px!important}
+.test-center-page .test-library-card{min-width:0}
+.test-center-page .test-card-actions{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important}
+.test-center-page .test-card-actions form{width:auto!important}
+.test-center-page .test-card-action,
+.test-center-page .test-card-preview,
+.test-center-page .test-card-footer>a{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;min-height:38px!important;padding:8px 13px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;font-weight:750!important;
+  line-height:1.4!important;white-space:normal!important;
+}
+@media(max-width:700px){
+  .concept-map-tabs{margin-top:24px!important;margin-bottom:20px!important}
+  .concept-map-tabs button{flex:0 0 auto!important}
+  .concept-map-card-actions{flex-wrap:wrap!important}
+  .test-center-page .test-library-section.test-library-premium{margin-top:24px!important;padding:20px 15px!important}
+}
