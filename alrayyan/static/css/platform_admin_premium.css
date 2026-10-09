@@ -574,3 +574,34 @@
   border:1px solid #c99a3d!important;border-radius:12px!important;
   font-size:1rem!important;font-weight:900!important;cursor:pointer;
 }
+
+
+/* Gold-first interaction polish requested for the worksheet-inspired admin pages */
+.concept-map-tabs{display:flex!important;flex-wrap:nowrap!important;gap:12px!important;padding:9px!important;margin-bottom:28px!important;border:1px solid #e5d3a7!important;border-radius:18px!important;background:linear-gradient(135deg,#fffdf8,#f7efdf)!important;box-shadow:0 12px 28px rgba(16,43,79,.06)!important}
+.concept-map-tabs button{flex:1 1 0!important;min-width:max-content!important;white-space:nowrap!important;padding:14px 20px!important;border:1px solid transparent!important;border-radius:12px!important;background:transparent!important;color:#173455!important;font:inherit!important;font-weight:900!important;transition:background .2s,transform .2s,box-shadow .2s!important}
+.concept-map-tabs button.is-active,.concept-map-tabs button[aria-selected="true"]{background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important;border-color:#c99a3d!important;box-shadow:0 8px 18px rgba(169,122,34,.2)!important}
+.concept-map-tabs button:hover{background:#fff4d5!important;color:#8b651e!important;transform:translateY(-1px)}
+.concept-map-tabs button.is-active:hover{color:#fff!important;background:linear-gradient(135deg,#e4c878,#b9872d)!important}
+.tree-add-button,.concept-map-card-actions .concept-action.publish,.concept-map-card-actions .concept-action.preview,.concept-map-card-actions .concept-action.delete{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:40px!important;width:auto!important;padding:9px 15px!important;border:1px solid #c99a3d!important;border-radius:11px!important;background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important;font:inherit!important;font-size:.9rem!important;font-weight:900!important;text-decoration:none!important;white-space:nowrap!important;box-shadow:0 7px 16px rgba(169,122,34,.14)!important;cursor:pointer!important}
+.tree-add-button:hover,.concept-map-card-actions .concept-action:hover{background:linear-gradient(135deg,#e7cb7e,#c09236)!important;color:#fff!important;transform:translateY(-1px)}
+.concept-map-card-actions .concept-action.delete{background:linear-gradient(135deg,#d9b05a,#a97922)!important;color:#fff!important}
+.concept-map-card-actions form{margin:0!important}
+.concept-map-card-actions{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important}
+.classroom-admin-page{width:100%!important;max-width:1240px!important;margin-inline:auto!important;padding-inline:clamp(12px,2.5vw,30px)!important;box-sizing:border-box!important}
+.classroom-admin-page>.platform-panel{min-width:0!important}
+.classroom-list-panel{padding-inline:clamp(18px,2.5vw,30px)!important}
+.classroom-admin-row{gap:18px!important;padding:20px!important;margin-inline:0!important;border:1px solid #e6dcc9!important;border-radius:18px!important;background:linear-gradient(145deg,#fff,#fffdf8)!important;box-shadow:0 8px 22px rgba(13,41,77,.045)!important}
+.classroom-details strong{font-size:1.12rem!important;font-weight:850!important;line-height:1.65!important;color:#102b4f!important}
+.classroom-details p,.classroom-details small{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;line-height:1.8!important}
+.classroom-admin-page .platform-form input.platform-gold-button{font-size:.95rem!important;font-weight:800!important;letter-spacing:0!important;min-height:42px!important;padding:9px 18px!important}
+.test-library-section.test-library-premium{margin-top:38px!important;padding:0 clamp(12px,2vw,24px)!important}
+.test-library-heading{padding-inline:clamp(4px,1vw,12px)!important}
+.test-library-grid{gap:20px!important}
+.test-library-card{margin:0!important}
+.test-card-actions{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:8px!important;margin-top:14px!important;padding-top:14px!important;border-top:1px solid #eee4d3!important}
+.test-card-actions form{margin:0!important}
+.test-card-action{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-height:38px!important;padding:8px 13px!important;border:1px solid #c99a3d!important;border-radius:10px!important;background:linear-gradient(135deg,#dfbd68,#b9872d)!important;color:#fff!important;font:inherit!important;font-size:.83rem!important;font-weight:850!important;white-space:nowrap!important;cursor:pointer!important}
+.test-card-action:hover{background:linear-gradient(135deg,#e7cb7e,#c09236)!important;color:#fff!important}
+.test-card-action.delete,.test-card-action.archive{border-color:#d8c49a!important;background:#fff8e8!important;color:#8b651e!important}
+.test-center-page .test-library-section{margin-top:42px!important;padding-inline:clamp(14px,2.2vw,28px)!important}
+@media(max-width:700px){.concept-map-tabs{overflow-x:auto!important}.concept-map-tabs button{flex:0 0 auto!important}.classroom-admin-page{padding-inline:10px!important}.test-library-section.test-library-premium,.test-center-page .test-library-section{padding-inline:10px!important}.test-card-actions{gap:7px!important}}
