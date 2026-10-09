@@ -430,3 +430,22 @@
   .test-card-actions{display:grid;grid-template-columns:1fr}
   .test-card-actions form,.test-card-action{width:100%;box-sizing:border-box}
 }
+
+
+.test-preview-page{display:grid;gap:20px;max-width:1050px;margin:22px auto 60px;padding:0 18px;box-sizing:border-box}
+.test-preview-toolbar{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:27px 30px;border:1px solid #e5d5b4;border-radius:23px;background:linear-gradient(135deg,#fffdf7,#fff);box-shadow:0 14px 35px rgba(23,47,82,.06)}
+.test-preview-toolbar h2{margin:8px 0;color:#172f52;font-family:"Aref Ruqaa",serif;font-size:2rem}
+.test-preview-toolbar p{margin:0 0 8px;color:#697789;line-height:1.8}
+.test-preview-toolbar small{color:#8a6a31;font-weight:800}
+.test-preview-label{display:inline-flex;padding:6px 10px;border-radius:999px;background:#fff1ce;color:#8d641d;font-size:.78rem;font-weight:900}
+.test-preview-questions{display:grid;gap:14px}
+.test-preview-question{display:grid;grid-template-columns:45px minmax(0,1fr);gap:15px;padding:22px;border:1px solid #e8ddc9;border-radius:19px;background:#fff;box-shadow:0 8px 25px rgba(23,47,82,.04)}
+.test-preview-question-number{display:grid;width:42px;height:42px;place-items:center;border-radius:13px;background:#fff1ce;color:#9a6b16;font-weight:900}
+.test-preview-question-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#9a6b16;font-size:.8rem;font-weight:900}
+.test-preview-question-meta b{padding:5px 9px;border-radius:999px;background:#f8f1e4;color:#7c642f}
+.test-preview-question h3{margin:12px 0;color:#172f52;font-size:1.15rem;line-height:1.9}
+.test-preview-choices{display:grid;gap:8px;margin:12px 0 0;padding:0;list-style:none}
+.test-preview-choices li{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e8e2d6;border-radius:11px;background:#fdfcf9;color:#344a65}
+.test-preview-choices li span{width:15px;height:15px;flex:0 0 15px;border:1px solid #c9ad6d;border-radius:50%;background:#fff}
+.test-preview-explanation{margin:14px 0 0;padding:11px 13px;border-right:3px solid #c99a3d;border-radius:8px;background:#fff9ed;color:#6f6042;line-height:1.8}
+@media(max-width:650px){.test-preview-toolbar{align-items:stretch;flex-direction:column;padding:22px 18px}.test-preview-toolbar .test-primary-button{width:100%}.test-preview-question{grid-template-columns:1fr}.test-preview-question-number{width:36px;height:36px}}
