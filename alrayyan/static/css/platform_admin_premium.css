@@ -503,3 +503,66 @@
 @media(max-width:640px){
   .test-library-section.test-library-premium{width:calc(100% - 12px);margin-top:32px!important;padding:20px 15px!important}
 }
+
+
+/* Unified gold actions and refined spacing */
+.concept-map-tabs{
+  display:flex; flex-wrap:nowrap; gap:12px; margin:0 0 24px;
+  padding:8px; border:1px solid #e6d6b4; border-radius:18px;
+  background:linear-gradient(135deg,#fffdf8,#f8f1e2);
+}
+.concept-map-tabs button{
+  flex:1 1 0; min-width:0; min-height:48px; padding:10px 16px;
+  border:1px solid transparent; border-radius:12px;
+  background:transparent; color:#173455; font:inherit; font-weight:900;
+  white-space:nowrap; transition:background .18s,box-shadow .18s,color .18s;
+}
+.concept-map-tabs button span{display:inline-grid;place-items:center;margin-left:7px;color:#9a6b16;font-size:.75rem}
+.concept-map-tabs button.is-active{
+  background:linear-gradient(135deg,#dfbd68,#b9872d);color:#fff;
+  box-shadow:0 7px 18px rgba(169,122,34,.18);
+}
+.concept-map-tabs button.is-active span{color:#fff}
+.concept-map-tabs button:hover{background:#f7edcf}
+.concept-map-tabs button.is-active:hover{background:linear-gradient(135deg,#e4c875,#b9872d)}
+.tree-builder-toolbar .tree-add-button{
+  background:linear-gradient(135deg,#dfbd68,#b9872d)!important;
+  border-color:#c99a3d!important;color:#fff!important;
+}
+.tree-builder-toolbar .tree-add-button,
+.tree-builder-toolbar .tree-add-button span,
+.tree-builder-toolbar .tree-add-button *{color:#fff!important}
+.concept-map-card-actions .concept-action.preview,
+.concept-map-card-actions .concept-action.publish,
+.concept-map-card-actions .concept-action.delete{
+  min-height:38px;padding:8px 13px;border:1px solid #c99a3d!important;
+  border-radius:10px;background:linear-gradient(135deg,#dfbd68,#b9872d)!important;
+  color:#fff!important;font-weight:900;
+}
+.concept-map-card-actions .concept-action:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.classroom-admin-page{gap:28px!important;padding-inline:clamp(10px,2vw,24px)}
+.classroom-list-panel{margin-inline:0!important}
+.classroom-admin-row{margin-inline:0!important;padding:22px!important}
+.classroom-details strong{font-size:1.08rem!important;font-weight:900!important;line-height:1.8}
+.classroom-details p{font-size:.92rem!important;font-weight:700}
+.classroom-admin-page .platform-form button.platform-gold-button{
+  display:inline-flex!important;width:auto!important;min-width:135px;min-height:44px;
+  align-items:center;justify-content:center;padding:10px 20px!important;
+  background:linear-gradient(135deg,#dfbd68,#b9872d)!important;
+  color:#fff!important;border:1px solid #c99a3d!important;
+  border-radius:12px!important;font-size:1rem!important;font-weight:900!important;
+}
+.test-library-section.test-library-premium{margin-top:68px!important;padding-inline:clamp(8px,1.8vw,22px)}
+.test-library-section.test-library-premium .test-library-grid{gap:22px}
+.test-library-section.test-library-premium .test-library-heading{margin-bottom:28px}
+.test-library-section.test-library-premium .test-card-actions{display:flex;flex-wrap:wrap;gap:9px}
+.test-library-section.test-library-premium .test-card-action{
+  min-height:38px;padding:8px 12px;border-radius:10px;font-size:.82rem;
+  font-weight:900;white-space:nowrap;
+}
+@media(max-width:700px){
+ .concept-map-tabs{display:grid;grid-template-columns:1fr;gap:7px}
+ .concept-map-tabs button{white-space:normal}
+ .classroom-admin-page{gap:18px!important;padding-inline:0}
+ .test-library-section.test-library-premium{margin-top:42px!important;padding-inline:0}
+}
