@@ -599,40 +599,91 @@ def upload_concept_map():
     return redirect(url_for("platform_admin.concept_maps"))
 
 
+def layout_concept_tree(node_by_key, edge_rows):
+    """Store a tree-shaped layout so generated maps open as branches, not a grid."""
+    children = {key: [] for key in node_by_key}
+    targeted = set()
+    for edge in edge_rows:
+        source_key = str(edge.get("source"))
+        target_key = str(edge.get("target"))
+        if source_key in node_by_key and target_key in node_by_key and source_key != target_key:
+            if target_key not in targeted:
+                children[source_key].append(target_key)
+                targeted.add(target_key)
+
+    leaf_index = 0
+    visited = set()
+
+    def place(key, depth):
+        nonlocal leaf_index
+        if key in visited:
+            return leaf_index * 155
+        visited.add(key)
+        node = node_by_key[key]
+        node.position_x = depth * 300
+        child_keys = [child for child in children.get(key, []) if child not in visited]
+        if not child_keys:
+            node.position_y = leaf_index * 155
+            leaf_index += 1
+            return node.position_y
+        child_positions = [place(child, depth + 1) for child in child_keys]
+        node.position_y = (child_positions[0] + child_positions[-1]) / 2
+        return node.position_y
+
+    roots = [key for key in node_by_key if key not in targeted]
+    for key in roots:
+        place(key, 0)
+    for key in node_by_key:
+        if key not in visited:
+            place(key, 0)
+
+
 @platform_admin_bp.post("/concept-maps/generate")
 def generate_concept_map():
     lesson = owned_lesson_or_404(request.form.get("lesson_id", type=int))
     try:
-        payload = generate_concept_map_draft(lesson, request.form.get("map_type", "concept"))
+        map_type = request.form.get("map_type", "concept")
+        payload = generate_concept_map_draft(lesson, map_type)
         row = ConceptMap(
             lesson_id=lesson.id,
             created_by_id=current_user.id,
             title=payload.get("title") or f"خريطة {lesson.title}",
-            map_type=request.form.get("map_type", "concept"),
+            map_type=map_type,
             creation_method="ai",
             publication_status="draft",
         )
-        db.session.add(row); db.session.flush()
+        db.session.add(row)
+        db.session.flush()
         node_by_key = {}
-        for index, item in enumerate(payload["nodes"]):
+        for item in payload["nodes"]:
+            label = str(item.get("label", "")).strip()[:250]
+            if not label:
+                continue
             node = ConceptMapNode(
                 concept_map_id=row.id,
-                label=str(item.get("label", "")).strip()[:250],
+                label=label,
                 description=str(item.get("description", "")).strip() or None,
-                position_x=(index % 3) * 260,
-                position_y=(index // 3) * 150,
+                position_x=0,
+                position_y=0,
             )
-            if not node.label:
-                continue
-            db.session.add(node); db.session.flush()
+            db.session.add(node)
+            db.session.flush()
             node_by_key[str(item.get("key"))] = node
+
         for edge in payload["edges"]:
             source = node_by_key.get(str(edge.get("source")))
             target = node_by_key.get(str(edge.get("target")))
             if source and target and source.id != target.id:
-                db.session.add(ConceptMapEdge(concept_map_id=row.id, source_node_id=source.id, target_node_id=target.id, label=str(edge.get("label", ""))[:150] or None))
+                db.session.add(ConceptMapEdge(
+                    concept_map_id=row.id,
+                    source_node_id=source.id,
+                    target_node_id=target.id,
+                    label=str(edge.get("label", ""))[:150] or None,
+                ))
+
+        layout_concept_tree(node_by_key, payload["edges"])
         db.session.commit()
-        flash("أنشأ AI خريطة كمسودة. راجعيها قبل نشرها.", "success")
+        flash("أنشأ الذكاء الاصطناعي خريطة شجرية كمسودة. راجعيها قبل نشرها.", "success")
     except Exception as error:
         db.session.rollback()
         current_app.logger.exception("Concept map AI generation failed")
@@ -645,7 +696,27 @@ def toggle_concept_map(row_id):
     row = owned_content_or_404(ConceptMap, row_id)
     row.publication_status = "draft" if row.publication_status == "published" else "published"
     db.session.commit()
-    flash("تم تحديث ظهور الخريطة للطلاب.", "success")
+    flash("تم تحديث حالة الخريطة.", "success")
+    return redirect(url_for("platform_admin.concept_maps"))
+
+
+@platform_admin_bp.post("/concept-maps/<int:row_id>/delete")
+def delete_concept_map(row_id):
+    row = owned_content_or_404(ConceptMap, row_id)
+    relative_path = row.stored_path
+    db.session.delete(row)
+    db.session.commit()
+
+    if relative_path:
+        root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
+        target = (root / relative_path).resolve()
+        if target.is_relative_to(root) and target.is_file():
+            try:
+                target.unlink()
+            except OSError:
+                current_app.logger.warning("Could not remove concept map file %s", target)
+
+    flash("تم حذف الخريطة المفاهيمية.", "success")
     return redirect(url_for("platform_admin.concept_maps"))
 
 
