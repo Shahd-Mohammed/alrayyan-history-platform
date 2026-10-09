@@ -730,7 +730,7 @@ def generate_concept_map():
         db.session.rollback()
         current_app.logger.exception("Concept map AI generation failed")
         flash(f"تعذر إنشاء الخريطة: {error}", "error")
-    return redirect(url_for("platform_admin.concept_maps"))
+    return redirect(url_for("platform_admin.concept_maps") + "#concept-map-library")
 
 
 @platform_admin_bp.post("/concept-maps/<int:row_id>/toggle")
