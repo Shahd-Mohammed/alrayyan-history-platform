@@ -954,6 +954,8 @@ def analytics():
             transaction for transaction in all_transactions
             if transaction.student_id == student.id
         ]
+        resource_downloads = sum(1 for transaction in student_transactions if transaction.reason == "resource_downloaded")
+        concept_map_views = sum(1 for transaction in student_transactions if transaction.reason == "concept_map_viewed")
         points_earned = sum(transaction.amount for transaction in student_transactions)
         average = round(sum(percentages) / len(percentages), 1) if percentages else 0.0
         mastery_average = (
@@ -975,6 +977,8 @@ def analytics():
             "character_attempts": character_attempts,
             "plan_items": len(plan_items),
             "plan_verifications": plan_verifications,
+            "resource_downloads": resource_downloads,
+            "concept_map_views": concept_map_views,
             "points_earned": points_earned,
             "activity_score": activity_score,
             "needs_support": (
