@@ -21,8 +21,10 @@ from alrayyan.models import (
     ChallengeSession,
     ConceptMastery,
     ContentChunk,
+    Curriculum,
     LearningPlanItem,
     Lesson,
+    Unit,
     Worksheet,
     XPTransaction,
 )
@@ -339,7 +341,7 @@ def start():
                 Curriculum.processing_status == "ready",
                 Lesson.title.notin_({
                     "محتوى المنهج",
-                    "الدرس الاحتياطي",
+                    "الدرس احتياطي",
                     "الوحدة — الدرس احتياطي",
                 }),
             )
