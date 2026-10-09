@@ -12,6 +12,30 @@ from alrayyan.models import CharacterAttempt, ConceptMap, Curriculum, Historical
 
 learning_bp = Blueprint("learning", __name__, url_prefix="/learn")
 
+def award_content_interaction(student, reason, source_type, source_id, amount=2):
+    """Award a one-time, auditable reward for a meaningful learning action."""
+    if student.role != "student":
+        return 0
+    existing = XPTransaction.query.filter_by(
+        student_id=student.id,
+        reason=reason,
+        source_type=source_type,
+        source_id=source_id,
+    ).first()
+    if existing:
+        return 0
+    db.session.add(XPTransaction(
+        student_id=student.id,
+        amount=amount,
+        reason=reason,
+        source_type=source_type,
+        source_id=source_id,
+    ))
+    student.points = (student.points or 0) + amount
+    student.level = max(1, student.points // 500 + 1)
+    return amount
+
+
 
 @learning_bp.get("/")
 @login_required
@@ -34,6 +58,8 @@ def concept_map(map_id):
         abort(404)
     if row.publication_status != "published" and current_user.role not in {"teacher", "admin"}:
         abort(404)
+    award_content_interaction(current_user, "concept_map_viewed", "concept_map", row.id)
+    db.session.commit()
     return render_template("learning/concept_map.html", concept_map=row)
 
 
@@ -115,4 +141,6 @@ def download_resource(resource_id):
     target = (upload_root / row.stored_path).resolve()
     if not target.is_relative_to(upload_root) or not target.is_file():
         abort(404)
+    award_content_interaction(current_user, "resource_downloaded", "learning_resource", row.id)
+    db.session.commit()
     return send_file(target, as_attachment=True, download_name=row.original_filename)
