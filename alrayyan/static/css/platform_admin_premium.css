@@ -868,3 +868,33 @@ button.concept-action,
  .platform-admin-page .concept-map-tabs{overflow-x:auto!important;flex-wrap:nowrap!important;margin-top:28px!important}
  .platform-admin-page .classroom-admin-page{padding-inline:8px!important;gap:18px!important}
 }
+
+
+/* Compact test controls and balanced map actions */
+.test-center-page .test-card-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important;margin-top:12px!important}
+.test-center-page .test-card-actions form{display:inline-flex!important;width:auto!important;max-width:100%!important}
+.test-center-page .test-card-actions .test-card-action{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;min-height:38px!important;
+ padding:8px 13px!important;border-radius:10px!important;
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;
+ font-weight:750!important;line-height:1.4!important;white-space:normal!important;
+ background:linear-gradient(135deg,#d4ad50,#b8872d)!important;color:#fff!important;
+ border:1px solid #b8872d!important;
+}
+.test-center-page .test-card-actions .test-card-action.delete{
+ background:#fff!important;color:#9d3d3d!important;border:1px solid #e5c5c5!important;box-shadow:none!important;
+}
+.test-center-page .test-card-actions .test-card-action:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.test-center-page .test-primary-button,.test-center-page .test-secondary-button,
+.test-center-page .inline-submit,.test-center-page .test-card-preview,.test-center-page .test-card-footer>a{
+ width:auto!important;max-width:100%!important;min-width:0!important;min-height:38px!important;
+ padding:8px 15px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+ font-size:.9rem!important;font-weight:750!important;line-height:1.4!important;
+}
+.test-center-page .test-primary-button,.test-center-page .inline-submit,.test-center-page .test-card-preview{
+ background:linear-gradient(135deg,#d4ad50,#b8872d)!important;color:#fff!important;border:1px solid #b8872d!important;
+}
+.test-center-page .test-secondary-button{background:#fff!important;color:#173455!important;border:1px solid #d8c49a!important}
+.concept-map-library .concept-map-card-actions{gap:8px!important}
+.concept-map-library .concept-map-card-actions .concept-action{font-weight:750!important}
