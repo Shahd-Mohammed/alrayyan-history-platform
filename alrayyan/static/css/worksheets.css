@@ -1636,3 +1636,13 @@ button {
 .lesson-resource-links a:hover { outline: 2px solid #c89936; }
 .lesson-resource-links small { color: #748095; }
 @media (max-width: 700px) { .lesson-resources-card { grid-template-columns: 1fr; } .lesson-resource-links { grid-template-columns: 1fr; } }
+
+/* Compact Arabic action buttons across the student dashboard */
+button,input[type="submit"],input[type="button"],input[type="reset"],.button,.btn,a.button,a.btn{
+  width:auto!important;min-width:0!important;max-width:100%!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;
+  font-weight:750!important;line-height:1.4!important;letter-spacing:0!important;text-transform:none!important;
+}
+button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+}
