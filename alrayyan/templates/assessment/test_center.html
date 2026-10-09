@@ -253,7 +253,13 @@
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="action" value="archive_test">
               <input type="hidden" name="worksheet_id" value="{{ test.id }}">
-              <button type="submit" class="test-card-action archive">إزالة من المكتبة</button>
+              <button type="submit" class="test-card-action archive">أرشفة الاختبار</button>
+            </form>
+            <form method="post" onsubmit="return confirm('إذا كان للاختبار محاولات طالبات فسيُنقل إلى الأرشيف حفاظًا على النتائج، وإذا لم تكن له محاولات فسيُحذف نهائيًا. متابعة؟');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="action" value="delete_test">
+              <input type="hidden" name="worksheet_id" value="{{ test.id }}">
+              <button type="submit" class="test-card-action delete">حذف الاختبار</button>
             </form>
           </div>
         </article>
