@@ -41,7 +41,7 @@
     <div><span class="concept-kicker">مساعدة ذكية موثّقة</span><h2>أنشئي شجرة مفاهيم تلقائيًا</h2><p>يقرأ النظام مقاطع الدرس النشطة ويبني شجرة مفاهيم متفرعة تلقائيًا من الفكرة الرئيسية إلى الفروع. تُحفظ النتيجة كمسودة لتراجعيها قبل النشر.</p></div>
   </div>
   <div class="ai-review-steps"><div><span>1</span><strong>اختاري الدرس</strong><small>من المنهج النشط</small></div><div><span>2</span><strong>أنشئي المقترح</strong><small>بناءً على المقاطع المتاحة</small></div><div><span>3</span><strong>راجعي وانشري</strong><small>أنتِ صاحبة القرار</small></div></div>
-  <form method="post" action="{{ url_for('platform_admin.generate_concept_map') }}" class="platform-form concept-ai-form">
+  <form method="post" action="{{ url_for('platform_admin.generate_concept_map') }}" class="platform-form concept-ai-form" data-ai-generate-form>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>الدرس<select name="lesson_id" required>{% for value,label in form.lesson_id.choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></label>
     <div class="ai-draft-note"><span>✦</span><p><strong>الحالة الافتراضية: مسودة</strong><br>لن تُنشر الخريطة تلقائيًا. ستجدينها في مكتبة الخرائط لتراجعيها ثم تعتمديها أو تحذفيها.</p></div>
