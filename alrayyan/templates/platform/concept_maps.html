@@ -14,7 +14,7 @@
 <section class="platform-panel map-creator-panel concept-map-workspace is-active" data-panel="manual">
   <div class="concept-section-heading">
     <div class="concept-section-icon">✦</div>
-    <div><span class="concept-kicker">مصمم الشجرة</span><h2>رتّبي المعرفة من الفكرة إلى الفروع</h2><p>أضيفي العنوان الرئيسي أولًا، ثم اختاري العنوان الأب لكل فرع. يمكنك سحب أي بطاقة وإفلاتها فوق فرع آخر لتغيير مكانها في الشجرة.</p></div>
+    <div><span class="concept-kicker">مصمم الشجرة</span><h2>رتّبي المعرفة من الفكرة إلى الفروع</h2><p>ابدئي بالفكرة الرئيسية ثم أضيفي الفروع المتصلة بها. يمكنك سحب أي بطاقة وإفلاتها فوق فرع آخر لتغيير مكانها في الشجرة.</p></div>
   </div>
   <form method="post" class="platform-form concept-map-form" data-map-form>
     {{ form.hidden_tag() }}
@@ -38,14 +38,14 @@
 <section class="platform-panel map-creator-panel concept-map-workspace concept-ai-workspace" data-panel="ai">
   <div class="concept-section-heading">
     <div class="concept-section-icon ai">✧</div>
-    <div><span class="concept-kicker">مساعدة ذكية موثّقة</span><h2>ابدئي بمقترح، ثم راجعيه بنفسك</h2><p>يقرأ النظام مقاطع الدرس النشطة ويقترح شجرة مفاهيم أولية. تُحفظ النتيجة كمسودة، ولا تظهر للطالبات إلا بعد مراجعتك ونشرها.</p></div>
+    <div><span class="concept-kicker">مساعدة ذكية موثّقة</span><h2>أنشئي شجرة مفاهيم تلقائيًا</h2><p>يقرأ النظام مقاطع الدرس النشطة ويبني شجرة مفاهيم متفرعة تلقائيًا من الفكرة الرئيسية إلى الفروع. تُحفظ النتيجة كمسودة لتراجعيها قبل النشر.</p></div>
   </div>
   <div class="ai-review-steps"><div><span>1</span><strong>اختاري الدرس</strong><small>من المنهج النشط</small></div><div><span>2</span><strong>أنشئي المقترح</strong><small>بناءً على المقاطع المتاحة</small></div><div><span>3</span><strong>راجعي وانشري</strong><small>أنتِ صاحبة القرار</small></div></div>
   <form method="post" action="{{ url_for('platform_admin.generate_concept_map') }}" class="platform-form concept-ai-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>الدرس<select name="lesson_id" required>{% for value,label in form.lesson_id.choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></label>
     <div class="ai-draft-note"><span>✦</span><p><strong>الحالة الافتراضية: مسودة</strong><br>لن تُنشر الخريطة تلقائيًا. ستجدينها في مكتبة الخرائط لتراجعيها ثم تعتمديها أو تحذفيها.</p></div>
-    <button class="platform-gold-button" type="submit">إنشاء مسودة بالذكاء الاصطناعي <span>←</span></button>
+    <button class="platform-gold-button" type="submit">إنشاء الشجرة تلقائيًا <span>←</span></button>
   </form>
 </section>
 
