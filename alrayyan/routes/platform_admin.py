@@ -642,8 +642,7 @@ def layout_concept_tree(node_by_key, edge_rows):
 def generate_concept_map():
     lesson = owned_lesson_or_404(request.form.get("lesson_id", type=int))
     try:
-        map_type = "tree"
-        payload = generate_concept_map_draft(lesson, map_type)
+        payload = generate_concept_map_draft(lesson)
         row = ConceptMap(
             lesson_id=lesson.id,
             created_by_id=current_user.id,
@@ -668,7 +667,10 @@ def generate_concept_map():
             )
             db.session.add(node)
             db.session.flush()
-            node_by_key[str(item.get("key"))] = node
+            node_key = str(item.get("key") or f"n{len(node_by_key) + 1}")
+            while node_key in node_by_key:
+                node_key = f"{node_key}-{len(node_by_key) + 1}"
+            node_by_key[node_key] = node
 
         if len(node_by_key) < 2:
             raise RuntimeError("لم ينتج المقترح مفاهيم كافية لبناء شجرة.")
