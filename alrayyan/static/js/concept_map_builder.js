@@ -190,6 +190,10 @@
     };
   };
 
+  canvas.addEventListener("dragover", (event) => {
+    if (event.target === canvas && draggedKey && draggedKey !== rootNode()?.key) event.preventDefault();
+  });
+
   form.querySelector("[data-add-node]").addEventListener("click", () => {
     const value = labelInput.value.trim();
     if (!value) { labelInput.focus(); return; }
