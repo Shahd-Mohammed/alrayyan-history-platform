@@ -127,6 +127,7 @@ def answer_character(character_id):
             existing.xp_awarded = xp
             db.session.add(XPTransaction(student_id=current_user.id, amount=xp, reason="character_identified", source_type="historical_character", source_id=row.id))
             current_user.points = (current_user.points or 0) + xp
+    current_user.level = max(1, (current_user.points or 0) // 500 + 1)
     db.session.commit()
     return jsonify(success=True, correct=correct, xp_awarded=xp, answer=row.name if correct else None, feedback=("إجابة موفقة! ربطتِ التلميحات بالشخصية الصحيحة." if correct else "محاولة حلوة. راجعي التلميحات وجرّبي مرة أخرى دون كشف الإجابة."))
 
