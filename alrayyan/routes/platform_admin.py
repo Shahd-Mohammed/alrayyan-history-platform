@@ -1011,6 +1011,8 @@ def analytics():
         "tutor_interactions": total_tutor_interactions,
         "character_attempts": total_character_attempts,
         "plan_verifications": total_plan_verifications,
+        "resource_downloads": sum(row["resource_downloads"] for row in rows),
+        "concept_map_views": sum(row["concept_map_views"] for row in rows),
         "points_awarded": sum(transaction.amount for transaction in all_transactions),
         "support_count": sum(1 for row in rows if row["needs_support"]),
     }
