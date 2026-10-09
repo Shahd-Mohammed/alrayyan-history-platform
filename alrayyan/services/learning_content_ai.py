@@ -74,11 +74,11 @@ def _grounded_request(lesson, task_prompt):
     raise RuntimeError("تعذر إكمال المسودة الآن. حُفظت بيانات النموذج؛ حاولي مرة أخرى بعد قليل.") from last_error
 
 
-def generate_concept_map_draft(lesson, map_type):
+def generate_concept_map_draft(lesson):
     payload, results = _grounded_request(
         lesson,
         (
-            f"أنشئ خريطة مفاهيمية شجرية متفرعة {map_type}. اجعل لها جذرًا واحدًا واضحًا، ثم فروعًا رئيسية وفرعية متوازنة، ولا تجعلها قائمة مسطحة. JSON: "
+            "أنشئ خريطة مفاهيمية شجرية متفرعة. اجعل لها جذرًا واحدًا واضحًا، ثم فروعًا رئيسية وفرعية متوازنة، ولا تجعلها قائمة مسطحة. JSON: "
             '{"title":"...","nodes":[{"key":"n1","label":"...","description":"..."}],'
             '"edges":[{"source":"n1","target":"n2","label":"..."}]}. '
             "من 5 إلى 9 عقد وروابط صحيحة فقط. اجعل الروابط تبدأ من الجذر إلى الفروع ثم الفروع الفرعية، وتجنب الدورات وتعدد الآباء للعقدة الواحدة."
