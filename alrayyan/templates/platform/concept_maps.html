@@ -3,7 +3,7 @@
 {% block title %}الخرائط المفاهيمية{% endblock %}
 {% block eyebrow %}استوديو بناء المعرفة{% endblock %}
 {% block heading %}حوّلي الدرس إلى شجرة أفكار واضحة{% endblock %}
-{% block intro %}ابني خريطة تبدأ بفكرة رئيسية وتتفرع إلى مفاهيم مترابطة، أو ابدئي بمسودة يقترحها الذكاء الاصطناعي ثم راجعيها قبل النشر.{% endblock %}
+{% block intro %}حوّلي الدرس إلى خريطة مترابطة، وراجعيها قبل اعتمادها للطالبات.{% endblock %}
 {% block content %}
 <section class="creation-tabs concept-map-tabs" data-creation-tabs aria-label="طرق إنشاء الخريطة">
   <button type="button" class="is-active" data-tab="manual"><span>01</span> إنشاء بصري</button>
@@ -21,7 +21,7 @@
     {{ fields(form,[form.lesson_id,form.title,form.publication_status]) }}
     <input type="hidden" name="map_type" value="concept">
     <div class="tree-builder">
-      <div class="tree-builder-topline"><div><strong>مساحة بناء الخريطة</strong><small>اسحبي الفروع لإعادة تنظيمها</small></div><span class="tree-count" data-tree-count>0 مفهوم</span></div>
+      <div class="tree-builder-topline"><div><strong>مساحة بناء الخريطة</strong><small>اسحبي الفروع لترتيبها</small></div><span class="tree-count" data-tree-count>0 مفهوم</span></div>
       <div class="tree-builder-toolbar">
         <label class="tree-node-entry"><span>عنوان الفكرة أو الفرع</span><input type="text" data-node-label maxlength="250" placeholder="مثال: أسباب الحدث التاريخي"></label>
         <label class="tree-parent-entry"><span>يتفرع من</span><select data-parent-node><option value="">الموضوع الرئيسي / بدون أصل</option></select></label>
