@@ -4,80 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مركز أوراق العمل | الريان</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='20260922-3') }}">
     <style>
-        :root{--navy:#172f52;--navy-2:#284b76;--gold:#c99a3d;--cream:#faf7f0;--muted:#6d7784;--border:#e6dfd2;--white:#fff;--green:#257a55;--green-bg:#eaf7f0;--warning:#9a6817;--warning-bg:#fff7df}
-        *{box-sizing:border-box}body{margin:0;background:var(--cream);color:#18273c;font-family:"IBM Plex Sans Arabic",sans-serif}.worksheet-center{width:min(1180px,calc(100% - 32px));margin:38px auto 75px}.center-hero{position:relative;overflow:hidden;padding:34px 38px;border-radius:26px;background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;box-shadow:0 20px 55px rgba(23,47,82,.14)}.center-hero:after{content:"";position:absolute;width:280px;height:280px;left:-110px;bottom:-170px;border:55px solid rgba(255,255,255,.05);border-radius:50%}.eyebrow{margin:0 0 7px;color:#f4cf7a;font-weight:800}.center-hero h1{margin:0 0 10px;font-family:"Aref Ruqaa",serif;font-size:clamp(32px,5vw,48px)}.center-hero p{max-width:700px;margin:0;color:rgba(255,255,255,.8);line-height:1.9}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;position:relative;z-index:2}.hero-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:45px;padding:10px 17px;border-radius:11px;font-weight:800;text-decoration:none}.hero-actions .primary{background:var(--gold);color:var(--navy)}.hero-actions .secondary{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:22px 0}.stat{padding:20px;border:1px solid var(--border);border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(23,47,82,.05)}.stat span{display:block;color:var(--muted);font-size:14px;margin-bottom:4px}.stat strong{color:var(--navy);font-size:29px}.workspace{padding:25px;border:1px solid var(--border);border-radius:23px;background:#fff;box-shadow:0 15px 40px rgba(23,47,82,.09)}.workspace-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:18px}.workspace-heading h2{margin:0 0 5px;color:var(--navy);font-size:25px}.workspace-heading p{margin:0;color:var(--muted)}.upload-link{padding:10px 15px;border-radius:10px;background:var(--gold);color:#fff;text-decoration:none;font-weight:800;white-space:nowrap}.filters{display:grid;grid-template-columns:1.5fr .75fr .75fr auto auto;gap:9px;padding:13px;margin-bottom:18px;border:1px solid #ead9b7;border-radius:15px;background:#fffaf0}.filters input,.filters select{min-height:43px;padding:8px 11px;border:1px solid #d9c69e;border-radius:10px;background:#fff;font:inherit}.filters button,.filters a{display:inline-flex;align-items:center;justify-content:center;min-height:43px;padding:8px 13px;border:1px solid var(--gold);border-radius:10px;background:var(--gold);color:#fff;font:inherit;font-weight:800;text-decoration:none;cursor:pointer}.filters a{background:#fff;color:var(--navy)}.worksheet-list{display:grid;gap:13px}.worksheet-card{padding:20px;border:1px solid var(--border);border-radius:17px;background:#fffdf9;transition:.2s}.worksheet-card:hover{transform:translateY(-2px);border-color:#dcc28c;box-shadow:0 12px 30px rgba(23,47,82,.07)}.card-top{display:grid;grid-template-columns:minmax(0,1.7fr) repeat(3,minmax(105px,.55fr));gap:18px;align-items:center}.worksheet-title h3{margin:0 0 7px;color:var(--navy);font-size:18px}.worksheet-title p{margin:0;color:var(--muted);line-height:1.7;font-size:14px}.policy{display:inline-flex;margin-top:10px;padding:5px 9px;border:1px solid #e8cf98;border-radius:999px;background:#fff7e4;color:#815b17;font-size:12px;font-weight:800}.detail{color:var(--muted);font-size:13px}.detail strong{display:block;margin-bottom:3px;color:#18273c}.badge{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:800}.badge.published{color:var(--green);background:var(--green-bg)}.badge.draft{color:var(--warning);background:var(--warning-bg)}.dot{width:7px;height:7px;border-radius:50%;background:currentColor}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:17px;padding-top:15px;border-top:1px solid var(--border)}.action{min-height:40px;padding:8px 14px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font:inherit;font-size:13px;font-weight:800;text-decoration:none;cursor:pointer}.action.primary{border-color:var(--navy);background:var(--navy);color:#fff}.action.results{border-color:var(--gold);background:linear-gradient(135deg,var(--gold),#b87e19);color:#fff}.more{position:relative}.more summary{list-style:none;min-height:40px;padding:8px 14px;display:inline-flex;align-items:center;border:1px solid #d7c59f;border-radius:10px;background:#fffaf0;color:var(--navy);font-weight:800;cursor:pointer}.more summary::-webkit-details-marker{display:none}.more[open] summary{border-color:var(--gold);background:#fff4d8}.more-panel{position:absolute;right:0;top:calc(100% + 7px);z-index:20;min-width:220px;padding:7px;border:1px solid var(--border);border-radius:13px;background:#fff;box-shadow:0 18px 45px rgba(7,26,53,.15)}.more-panel a,.more-panel button{display:block;width:100%;padding:10px 11px;border:0;border-radius:8px;background:transparent;color:var(--navy);font:inherit;text-align:right;text-decoration:none;font-weight:700;cursor:pointer}.more-panel a:hover,.more-panel button:hover{background:#fff5dc;color:#9a6817}.more-panel .danger{color:#b54444}.inline{margin:0}.pagination{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:20px}.pagination a{padding:8px 14px;border-radius:9px;background:var(--gold);color:#fff;font-weight:800;text-decoration:none}.empty{padding:45px 20px;text-align:center;border:1px dashed #d9c69e;border-radius:17px;background:#fffdf8}.empty-icon{width:65px;height:65px;margin:0 auto 14px;display:grid;place-items:center;border-radius:50%;background:#f9efd9;color:var(--gold);font-size:28px}.empty h3{margin:0 0 8px;color:var(--navy)}.empty p{max-width:520px;margin:0 auto 18px;color:var(--muted);line-height:1.8}.empty a{display:inline-flex;padding:10px 16px;border-radius:10px;background:var(--gold);color:#fff;font-weight:800;text-decoration:none}.archived{margin-top:18px;padding:14px 16px;border:1px solid var(--border);border-radius:14px;background:#fffaf0}.archived summary{color:var(--navy);font-weight:800;cursor:pointer}.archived-list{display:grid;gap:9px;margin-top:12px}.archived-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px;border-radius:10px;background:#fff;border:1px solid var(--border)}.archived-row small{display:block;color:var(--muted);margin-top:3px}.archived-row button{padding:8px 12px;border:1px solid var(--gold);border-radius:9px;background:#fff;color:var(--navy);font:inherit;font-weight:800;cursor:pointer}@media(max-width:850px){.stats{grid-template-columns:1fr}.card-top{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr}.workspace-heading{align-items:stretch;flex-direction:column}.upload-link{width:fit-content}}@media(max-width:560px){.worksheet-center{width:min(100% - 20px,1180px);margin-top:20px}.center-hero,.workspace{padding:20px}.card-top{grid-template-columns:1fr}.actions>*{flex:1 1 135px}.more-panel{position:fixed;right:15px;left:15px;top:auto}}
+        :root { --navy:#172f52; --navy-light:#284b76; --gold:#c99a3d; --cream:#faf7f0; --white:#fff; --text:#18273c; --muted:#6d7784; --border:#e6dfd2; --success:#257a55; --success-bg:#eaf7f0; --warning:#9a6817; --warning-bg:#fff7df; --danger:#b54444; --shadow:0 15px 40px rgba(23,47,82,.10); }
+        * { box-sizing:border-box; }
+        body { margin:0; color:var(--text); background:radial-gradient(circle at top right,rgba(201,154,61,.10),transparent 28rem),var(--cream); font-family:"IBM Plex Sans Arabic",sans-serif; }
+        button,input,select,textarea { font-family:inherit; }
+        a { color:inherit; text-decoration:none; }
+        .worksheet-center { width:min(1180px,calc(100% - 32px)); margin:36px auto 70px; }
+        .center-hero { padding:32px; display:flex; align-items:center; justify-content:space-between; gap:24px; color:var(--white); background:linear-gradient(135deg,var(--navy),var(--navy-light)); border-radius:24px; box-shadow:var(--shadow); }
+        .eyebrow { margin:0 0 8px; color:#f4cf7a; font-size:14px; font-weight:700; }
+        .center-hero h1 { margin:0 0 10px; font-family:"Aref Ruqaa",serif; font-size:clamp(30px,5vw,46px); }
+        .center-hero p { max-width:680px; margin:0; color:rgba(255,255,255,.82); line-height:1.9; }
+        .primary-button { min-height:48px; padding:12px 20px; display:inline-flex; align-items:center; justify-content:center; gap:8px; color:var(--navy); background:var(--gold); border:1px solid var(--gold); border-radius:12px; font-weight:700; }
+        .statistics { margin:24px 0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+        .stat-card { padding:20px; background:var(--white); border:1px solid var(--border); border-radius:18px; box-shadow:0 8px 24px rgba(23,47,82,.05); }
+        .stat-card span { display:block; margin-bottom:4px; color:var(--muted); font-size:14px; }
+        .stat-card strong { color:var(--navy); font-size:28px; }
+        .worksheets-section { margin-top:26px; padding:26px; background:var(--white); border:1px solid var(--border); border-radius:22px; box-shadow:var(--shadow); }
+        .section-heading { margin-bottom:22px; display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
+        .section-heading h2 { margin:0 0 4px; color:var(--navy); font-size:24px; }
+        .section-heading p { margin:0; color:var(--muted); }
+        .worksheet-filter-bar { display:grid; grid-template-columns:1.5fr .75fr .75fr auto auto; gap:10px; margin-bottom:18px; padding:14px; border:1px solid var(--border); border-radius:15px; background:#fffaf0; }
+        .worksheet-filter-bar input,.worksheet-filter-bar select { min-height:44px; padding:8px 11px; border:1px solid #d9c69e; border-radius:10px; background:#fff; font:inherit; }
+        .worksheet-filter-bar button,.worksheet-filter-bar a { display:inline-flex; min-height:44px; align-items:center; justify-content:center; padding:8px 13px; border:1px solid var(--gold); border-radius:10px; background:var(--gold); color:#fff; font-weight:800; cursor:pointer; }
+        .worksheet-filter-bar a { background:#fff; color:var(--navy); }
+        .worksheet-list { display:grid; gap:14px; }
+        .worksheet-card { padding:20px; display:grid; grid-template-columns:minmax(220px,1.6fr) minmax(150px,.8fr) minmax(110px,.5fr) minmax(120px,.55fr); align-items:center; gap:18px; border:1px solid var(--border); border-radius:16px; background:#fffdf9; transition:.2s ease; }
+        .worksheet-card:hover { transform:translateY(-2px); border-color:#dcc28c; box-shadow:0 10px 25px rgba(23,47,82,.07); }
+        .worksheet-main h3 { margin:0 0 7px; color:var(--navy); font-size:18px; }
+        .worksheet-main p { margin:0; color:var(--muted); font-size:14px; line-height:1.7; }
+        .worksheet-policy-chip { width:fit-content; margin-top:11px; padding:6px 10px; display:inline-flex; border:1px solid #e8cf98; border-radius:999px; background:#fff7e4; color:#815b17; font-size:12px; font-weight:700; }
+        .worksheet-detail { color:var(--muted); font-size:14px; }
+        .worksheet-detail strong { display:block; margin-bottom:3px; color:var(--text); }
+        .status-badge { width:fit-content; padding:7px 12px; display:inline-flex; align-items:center; gap:6px; border-radius:999px; font-size:13px; font-weight:700; }
+        .status-badge.published { color:var(--success); background:var(--success-bg); }
+        .status-badge.draft { color:var(--warning); background:var(--warning-bg); }
+        .status-dot { width:7px; height:7px; display:inline-block; border-radius:50%; background:currentColor; }
+        .worksheet-actions { grid-column:1/-1; margin-top:2px; padding-top:16px; display:flex; flex-wrap:wrap; gap:8px; border-top:1px solid var(--border); }
+        .worksheet-action { min-height:42px; padding:9px 15px; display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid var(--border); border-radius:11px; font-size:13px; font-weight:700; cursor:pointer; }
+        .worksheet-action-primary { color:#fff; border-color:var(--navy); background:var(--navy); }
+        .worksheet-action-results { color:var(--navy); border-color:var(--gold); background:#fffaf0; }
+        .worksheet-action-edit { color:var(--navy); background:#fff; }
+        .worksheet-more-menu { position:relative; }
+        .worksheet-more-menu summary { list-style:none; min-height:42px; padding:9px 15px; display:inline-flex; align-items:center; border:1px solid var(--border); border-radius:11px; background:#fff; color:var(--navy); font-size:13px; font-weight:700; cursor:pointer; }
+        .worksheet-more-menu summary::-webkit-details-marker { display:none; }
+        .worksheet-more-menu > div { position:absolute; z-index:20; top:calc(100% + 8px); right:0; min-width:210px; padding:7px; display:grid; gap:3px; background:#fff; border:1px solid var(--border); border-radius:13px; box-shadow:0 16px 35px rgba(23,47,82,.14); }
+        .worksheet-more-menu a,.worksheet-more-menu button { width:100%; padding:10px 11px; text-align:right; border:0; border-radius:9px; background:transparent; color:var(--navy); font:inherit; font-size:13px; cursor:pointer; }
+        .worksheet-more-menu a:hover,.worksheet-more-menu button:hover { background:#f8f3e8; color:var(--navy); box-shadow:inset -3px 0 0 var(--gold); }
+        .worksheet-more-menu .danger-action { color:var(--danger); }
+        .inline-form { margin:0; }
+        .worksheet-pagination { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:20px; }
+        .worksheet-pagination a { padding:8px 14px; border-radius:9px; background:var(--gold); color:#fff; font-weight:800; }
+        .empty-state { padding:52px 24px; text-align:center; border:1px dashed #d9c69e; border-radius:18px; background:#fffdf8; }
+        .empty-icon { width:72px; height:72px; margin:0 auto 18px; display:grid; place-items:center; color:var(--gold); background:#f9efd9; border-radius:50%; font-size:32px; }
+        .empty-state h3 { margin:0 0 8px; color:var(--navy); font-size:21px; }
+        .empty-state p { margin:0 auto 20px; max-width:540px; color:var(--muted); line-height:1.8; }
+        .archived-worksheets-panel { margin-top:22px; padding:16px; border:1px solid var(--border); border-radius:15px; background:#fffaf0; }
+        .archived-worksheets-panel summary { cursor:pointer; font-weight:700; color:var(--navy); }
+        .archived-worksheet-list { margin-top:12px; display:grid; gap:10px; }
+        .archived-worksheet-list article { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:12px; background:#fff; border:1px solid var(--border); border-radius:11px; }
+        .archived-worksheet-list small { display:block; margin-top:4px; color:var(--muted); }
+        .archived-worksheet-list button { padding:8px 12px; border:1px solid var(--gold); border-radius:9px; background:#fff; color:var(--navy); font-weight:700; cursor:pointer; }
+        @media (max-width:760px) { .center-hero { flex-direction:column; align-items:stretch; padding:24px; } .center-hero .primary-button { width:100%; } .statistics { grid-template-columns:1fr; } .worksheet-filter-bar { grid-template-columns:1fr; } .worksheets-section { padding:18px; } .section-heading { align-items:stretch; flex-direction:column; } .worksheet-card { grid-template-columns:1fr; } .worksheet-actions { grid-column:auto; } .worksheet-actions>* { flex:1 1 145px; } .worksheet-more-menu>div { position:static; margin-top:6px; } .archived-worksheet-list article { flex-direction:column; align-items:stretch; } }
+    
+        /* Brand palette: navy, gold, ivory and white only — no green. */
+        :root { --success:#9a6b16; --success-bg:#fff4d8; }
+        .center-hero{position:relative;overflow:hidden;background:radial-gradient(circle at 8% 12%,rgba(210,161,59,.22),transparent 30%),radial-gradient(circle at 95% 100%,rgba(88,121,162,.22),transparent 34%),linear-gradient(125deg,#071a35 0%,#0d294d 58%,#244a75 100%);border:1px solid rgba(210,161,59,.6);box-shadow:0 22px 54px rgba(7,26,53,.19)}
+        .center-hero:after{position:absolute;left:-48px;bottom:-125px;width:230px;height:230px;content:"";border:1px solid rgba(241,214,148,.2);border-radius:50%;box-shadow:0 0 0 25px rgba(241,214,148,.035),0 0 0 50px rgba(241,214,148,.02);pointer-events:none}
+        .center-hero>div,.center-hero>.primary-button{position:relative;z-index:1}
+        .eyebrow{color:#f1d694;letter-spacing:.02em}
+        .primary-button{background:linear-gradient(135deg,#f1d694,#d2a13b);border-color:#d2a13b;color:#071a35;box-shadow:0 10px 24px rgba(210,161,59,.22)}
+        .primary-button:hover{filter:brightness(1.04);transform:translateY(-1px)}
+        .stat-card strong,.section-heading h2{color:#0d294d}
+        .worksheets-section{border-color:#e5d6b8}
+        .worksheet-filter-bar{background:#fff8e8;border-color:#e5d6b8}
+        .worksheet-filter-bar input:focus,.worksheet-filter-bar select:focus{outline:3px solid rgba(210,161,59,.16);border-color:#c99a3d}
+        .worksheet-filter-bar button{background:linear-gradient(135deg,#0d294d,#244a75);border-color:#0d294d;color:#fff}
+        .worksheet-filter-bar a{border-color:#e0c982;color:#0d294d;background:#fffdf8}
+        .worksheet-action-primary{background:#0d294d;border-color:#0d294d}
+        .worksheet-action-results{background:#fff4d8;border-color:#d2a13b;color:#795513}
+        .worksheet-policy-chip{background:#fff4d8;border-color:#e5d6b8;color:#795513}
+        .worksheet-card:hover{border-color:#d2a13b}
+        .status-badge.published{color:#795513;background:#fff4d8}
+        .status-badge.draft{color:#795513;background:#fff8e8}
+
     </style>
 </head>
 <body>
-{% include '_platform_header.html' %}
-<main class="worksheet-center">
-    <section class="center-hero">
-        <p class="eyebrow">مساحة إدارة المحتوى</p>
-        <h1>مركز أوراق العمل</h1>
-        <p>أنشئي أوراقك، راجعي أسئلتها، تابعي نتائج الطالبات، ثم انشريها عندما تصبح جاهزة.</p>
-        <div class="hero-actions">
-            <a class="primary" href="{{ url_for('teacher_dashboard.upload_worksheet') }}">＋ رفع ورقة جديدة</a>
-            <a class="secondary" href="{{ url_for('teacher_dashboard.dashboard') }}">العودة إلى لوحة المعلمة</a>
-        </div>
-    </section>
+    {% include '_platform_header.html' %}
+    <main class="worksheet-center">
+        <section class="center-hero">
+            <div>
+                <p class="eyebrow">مساحة إدارة أوراق العمل</p>
+                <h1>مركز أوراق العمل</h1>
+                <p>نظّمي أوراق العمل، أضيفي الأسئلة، وتابعي نتائج الطالبات من مساحة واحدة.</p>
+            </div>
+            <a class="primary-button" href="{{ url_for('teacher_dashboard.upload_worksheet') }}">＋ إضافة ورقة عمل</a>
+        </section>
 
-    <section class="stats" aria-label="إحصاءات أوراق العمل">
-        <article class="stat"><span>جميع الأوراق</span><strong>{{ total_count }}</strong></article>
-        <article class="stat"><span>الأوراق المنشورة</span><strong>{{ published_count }}</strong></article>
-        <article class="stat"><span>المسودات</span><strong>{{ draft_count }}</strong></article>
-    </section>
+        <section class="statistics">
+            <article class="stat-card"><span>جميع أوراق العمل</span><strong>{{ total_count }}</strong></article>
+            <article class="stat-card"><span>الأوراق المنشورة</span><strong>{{ published_count }}</strong></article>
+            <article class="stat-card"><span>المسودات</span><strong>{{ draft_count }}</strong></article>
+        </section>
 
-    <section class="workspace">
-        <div class="workspace-heading">
-            <div><h2>أوراق العمل</h2><p>اختاري الورقة التي تريدين إدارتها.</p></div>
-            <a class="upload-link" href="{{ url_for('teacher_dashboard.upload_worksheet') }}">رفع ورقة جديدة</a>
-        </div>
+        <section class="worksheets-section">
+            <div class="section-heading">
+                <div><h2>أوراق العمل</h2><p>راجعي الأوراق وعدّلي حالتها قبل إتاحتها للطلاب.</p></div>
+                <a class="primary-button" href="{{ url_for('teacher_dashboard.upload_worksheet') }}">رفع ورقة جديدة</a>
+            </div>
 
-        <form class="filters" method="get">
-            <input type="search" name="q" value="{{ search_term }}" placeholder="ابحثي بعنوان ورقة العمل">
-            <select name="status"><option value="">كل الحالات</option><option value="published" {% if status_filter=='published' %}selected{% endif %}>منشورة</option><option value="draft" {% if status_filter=='draft' %}selected{% endif %}>مسودة</option></select>
-            <select name="difficulty"><option value="">كل المستويات</option><option value="easy" {% if difficulty_filter=='easy' %}selected{% endif %}>سهل</option><option value="medium" {% if difficulty_filter=='medium' %}selected{% endif %}>متوسط</option><option value="hard" {% if difficulty_filter=='hard' %}selected{% endif %}>متقدم</option></select>
-            <button type="submit">تطبيق</button><a href="{{ url_for('worksheet_center.index') }}">مسح</a>
-        </form>
+            <form class="worksheet-filter-bar" method="get">
+                <input type="search" name="q" value="{{ search_term }}" placeholder="ابحثي بعنوان ورقة العمل">
+                <select name="status"><option value="">كل الحالات</option><option value="published" {% if status_filter=='published' %}selected{% endif %}>منشورة</option><option value="draft" {% if status_filter=='draft' %}selected{% endif %}>مسودة</option></select>
+                <select name="difficulty"><option value="">كل المستويات</option><option value="easy" {% if difficulty_filter=='easy' %}selected{% endif %}>سهل</option><option value="medium" {% if difficulty_filter=='medium' %}selected{% endif %}>متوسط</option><option value="hard" {% if difficulty_filter=='hard' %}selected{% endif %}>متقدم</option></select>
+                <button type="submit">تطبيق الفلترة</button><a href="{{ url_for('worksheet_center.center') }}">مسح</a>
+            </form>
 
-        {% if worksheets %}
-        <div class="worksheet-list">
-        {% for worksheet in worksheets %}
-            <article class="worksheet-card">
-                <div class="card-top">
-                    <div class="worksheet-title"><h3>{{ worksheet.title }}</h3><p>{{ worksheet.description or 'لم تتم إضافة وصف لورقة العمل.' }}</p><span class="policy">العلامة: {% if worksheet.attempt_score_policy == 'latest' %}آخر محاولة{% elif worksheet.attempt_score_policy == 'first' %}أول محاولة{% elif worksheet.attempt_score_policy == 'average' %}متوسط المحاولات{% else %}أعلى محاولة{% endif %}</span></div>
-                    <div class="detail"><strong>الدرس</strong>{{ worksheet.lesson.title if worksheet.lesson else 'غير مرتبطة بدرس' }}</div>
-                    <div class="detail"><strong>المستوى</strong>{% if worksheet.difficulty_level == 'easy' %}سهل{% elif worksheet.difficulty_level == 'hard' %}متقدم{% else %}متوسط{% endif %}</div>
-                    <div>{% if worksheet.publication_status == 'published' %}<span class="badge published"><span class="dot"></span>منشورة</span>{% else %}<span class="badge draft"><span class="dot"></span>مسودة</span>{% endif %}</div>
-                </div>
-                <div class="actions">
-                    <a class="action primary" href="{{ url_for('assessment.manage_questions', worksheet_id=worksheet.id) }}">✦ إدارة الأسئلة</a>
-                    <a class="action results" href="{{ url_for('assessment.worksheet_results', worksheet_id=worksheet.id) }}">◉ نتائج الطلاب</a>
-                    <details class="more">
-                        <summary>••• المزيد</summary>
-                        <div class="more-panel">
+            {% if worksheets %}
+            <div class="worksheet-list">
+                {% for worksheet in worksheets if worksheet.creation_method != "test" %}
+                <article class="worksheet-card">
+                    <div class="worksheet-main">
+                        <h3>{{ worksheet.title }}</h3>
+                        <p>{{ worksheet.description or 'لم تتم إضافة وصف لورقة العمل.' }}</p>
+                        <span class="worksheet-policy-chip">العلامة المعتمدة: {% if worksheet.attempt_score_policy == 'latest' %}آخر محاولة{% elif worksheet.attempt_score_policy == 'first' %}أول محاولة{% elif worksheet.attempt_score_policy == 'average' %}متوسط المحاولات{% else %}أعلى محاولة{% endif %}</span>
+                    </div>
+                    <div class="worksheet-detail"><strong>الدرس</strong>{{ worksheet.lesson.title if worksheet.lesson else 'غير مرتبطة بدرس' }}</div>
+                    <div class="worksheet-detail"><strong>المستوى</strong>{% if worksheet.difficulty_level == 'easy' %}سهل{% elif worksheet.difficulty_level == 'hard' %}متقدم{% else %}متوسط{% endif %}</div>
+                    <div>{% if worksheet.publication_status == 'published' %}<span class="status-badge published"><span class="status-dot"></span>منشورة</span>{% else %}<span class="status-badge draft"><span class="status-dot"></span>مسودة</span>{% endif %}</div>
+                    <div class="worksheet-actions">
+                        <a class="worksheet-action worksheet-action-primary" href="{{ url_for('assessment.manage_questions', worksheet_id=worksheet.id) }}">✦ إدارة الأسئلة</a>
+                        <a class="worksheet-action worksheet-action-results" href="{{ url_for('assessment.worksheet_results', worksheet_id=worksheet.id) }}">◉ نتائج الطلاب</a>
+                        <details class="worksheet-more-menu"><summary>••• المزيد</summary><div>
                             <a href="{{ url_for('teacher_dashboard.edit_worksheet', worksheet_id=worksheet.id) }}">تعديل بيانات الورقة</a>
-                            <form class="inline" method="POST" action="{{ url_for('teacher_dashboard.toggle_publish', worksheet_id=worksheet.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">{{ 'إرجاع لمسودة' if worksheet.publication_status == 'published' else 'نشر الآن' }}</button></form>
-                            <form class="inline" method="POST" action="{{ url_for('teacher_dashboard.archive_worksheet', worksheet_id=worksheet.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">أرشفة مع حفظ النتائج</button></form>
-                            <form class="inline" method="POST" action="{{ url_for('teacher_dashboard.delete_worksheet', worksheet_id=worksheet.id) }}" onsubmit="return confirm('الحذف النهائي متاح فقط إذا لم توجد محاولات. هل تريدين المتابعة؟')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger" type="submit">حذف نهائي</button></form>
-                        </div>
-                    </details>
-                </div>
-            </article>
-        {% endfor %}
-        </div>
-        {% if pagination.pages > 1 %}<nav class="pagination" aria-label="صفحات أوراق العمل">{% if pagination.has_prev %}<a href="{{ url_for('worksheet_center.index',page=pagination.prev_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">السابق</a>{% endif %}<span>صفحة {{ pagination.page }} من {{ pagination.pages }}</span>{% if pagination.has_next %}<a href="{{ url_for('worksheet_center.index',page=pagination.next_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">التالي</a>{% endif %}</nav>{% endif %}
-        {% else %}
-        <div class="empty"><div class="empty-icon">📄</div><h3>لا توجد أوراق عمل حتى الآن</h3><p>ارفعي أول ورقة عمل من جهازك، ثم اختاري حفظها كمسودة أو نشرها للطالبات.</p><a href="{{ url_for('teacher_dashboard.upload_worksheet') }}">رفع أول ورقة عمل</a></div>
-        {% endif %}
+                            <form class="inline-form" method="POST" action="{{ url_for('teacher_dashboard.toggle_publish', worksheet_id=worksheet.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">{{ 'إرجاع لمسودة' if worksheet.publication_status == 'published' else 'نشر الآن' }}</button></form>
+                            <form class="inline-form" method="POST" action="{{ url_for('teacher_dashboard.archive_worksheet', worksheet_id=worksheet.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">أرشفة مع حفظ النتائج</button></form>
+                            <form class="inline-form" method="POST" action="{{ url_for('teacher_dashboard.delete_worksheet', worksheet_id=worksheet.id) }}" onsubmit="return confirm('الحذف النهائي متاح فقط إذا لم توجد محاولات. هل تريدين المتابعة؟')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger-action" type="submit">حذف نهائي</button></form>
+                        </div></details>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            {% if pagination.pages > 1 %}<nav class="worksheet-pagination" aria-label="صفحات أوراق العمل">{% if pagination.has_prev %}<a href="{{ url_for('worksheet_center.center',page=pagination.prev_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">السابق</a>{% endif %}<span>صفحة {{ pagination.page }} من {{ pagination.pages }}</span>{% if pagination.has_next %}<a href="{{ url_for('worksheet_center.center',page=pagination.next_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">التالي</a>{% endif %}</nav>{% endif %}
+            {% else %}
+            <div class="empty-state"><div class="empty-icon">📄</div><h3>لا توجد أوراق عمل حتى الآن</h3><p>ارفعي أول ورقة عمل من جهازك، ثم اختاري حفظها كمسودة أو نشرها مباشرة للطلاب.</p><a class="primary-button" href="{{ url_for('teacher_dashboard.upload_worksheet') }}">رفع أول ورقة عمل</a></div>
+            {% endif %}
 
-        {% if archived_worksheets %}
-        <details class="archived"><summary>الأوراق المؤرشفة ({{ archived_worksheets|length }})</summary><div class="archived-list">{% for worksheet in archived_worksheets %}<article class="archived-row"><div><strong>{{ worksheet.title }}</strong><small>محفوظة مع نتائجها ولا تظهر للطلاب.</small></div><form method="POST" action="{{ url_for('teacher_dashboard.restore_worksheet', worksheet_id=worksheet.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">استعادة كمسودة</button></form></article>{% endfor %}</div></details>
-        {% endif %}
-    </section>
-</main>
-{% include '_platform_footer.html' %}
+            {% if archived_worksheets %}<details class="archived-worksheets-panel"><summary>الأوراق المؤرشفة ({{ archived_worksheets|length }})</summary><div class="archived-worksheet-list">{% for worksheet in archived_worksheets %}<article><div><strong>{{ worksheet.title }}</strong><small>محفوظة مع نتائجها ولا تظهر للطلاب.</small></div><form method="POST" action="{{ url_for('teacher_dashboard.restore_worksheet', worksheet_id=worksheet.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">استعادة كمسودة</button></form></article>{% endfor %}</div></details>{% endif %}
+        </section>
+    </main>
+    {% include '_platform_footer.html' %}
 </body>
 </html>

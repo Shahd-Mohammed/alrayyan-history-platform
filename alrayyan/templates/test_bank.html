@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بنك الاختبارات | الريان</title>
+    <title>الاختبارات | الريان</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/challenge.css') }}">
 </head>
 <body>
@@ -17,10 +17,9 @@
         <section class="challenge-hero test-bank-hero">
             <div>
                 <span class="eyebrow">تدريب يقيس فهمك</span>
-                <h1>بنك الاختبارات والتحديات</h1>
-                <p>اختاري بين اختبار سريع من خمسة أسئلة، تحدٍّ مخصص، أو ورقة عمل منشورة.</p>
+                <h1>الاختبارات</h1>
+                <p>اختاري اختبارًا يناسب الدرس، وجرّبي فهمكِ، ثم تابعي نتيجتكِ بعد التسليم.</p>
             </div>
-            <a class="challenge-primary-button" href="{{ url_for('challenges.setup') }}">صممي تحديك</a>
         </section>
 
         <section class="bank-section">
@@ -30,7 +29,7 @@
                     <article class="bank-card">
                         <span>5 أسئلة · مستوى متوسط</span>
                         <h3>{{ lesson.title }}</h3>
-                        <p>اختبار قصير موثق من محتوى الدرس ويحدّث خطتك التعليمية.</p>
+                        <p>اختبار قصير موثّق من محتوى الدرس ويساعدكِ على معرفة ما أتقنتِه.</p>
                         <button class="challenge-primary-button quick-bank-quiz" type="button" data-lesson-id="{{ lesson.id }}">ابدأ الاختبار</button>
                     </article>
                 {% else %}
@@ -40,36 +39,20 @@
         </section>
 
         <section class="bank-section">
-            <div class="bank-heading"><span>تقييمات المعلمة</span><h2>أوراق العمل المنشورة</h2></div>
+            <div class="bank-heading"><span>اختبارات أعدّتها المعلمة</span><h2>الاختبارات المنشورة</h2></div>
             <div class="bank-grid">
-                {% for worksheet in worksheets %}
+                {% for test in tests %}
                     <article class="bank-card">
-                        <span>{{ worksheet.questions | length }} سؤالًا</span>
-                        <h3>{{ worksheet.title }}</h3>
-                        <p>{{ worksheet.description or 'ورقة عمل تفاعلية مع نتيجة ومحاولات محفوظة.' }}</p>
-                        <a class="challenge-primary-button" href="{{ url_for('worksheets.worksheet_details', worksheet_id=worksheet.id) }}">فتح ورقة العمل</a>
+                        <span>{{ test.questions | length }} سؤالًا</span>
+                        <h3>{{ test.title }}</h3>
+                        <p>{{ test.description or 'اختبار منشور من المعلمة مع حفظ النتيجة في سجلّك.' }}</p>
+                        <a class="challenge-primary-button" href="{{ url_for('worksheets.worksheet_details', worksheet_id=test.id) }}">ابدئي الاختبار</a>
                     </article>
                 {% else %}
-                    <p class="bank-empty">لا توجد أوراق عمل منشورة حاليًا.</p>
+                    <p class="bank-empty">لا توجد اختبارات منشورة من المعلمة حاليًا.</p>
                 {% endfor %}
             </div>
         </section>
-
-        {% if recent_sessions %}
-            <section class="bank-section">
-                <div class="bank-heading"><span>سجلك التعليمي</span><h2>آخر التحديات</h2></div>
-                <div class="bank-grid compact-bank-grid">
-                    {% for session in recent_sessions %}
-                        <article class="bank-card">
-                            <span>{{ session.total_rounds }} جولات</span>
-                            <h3>{{ session.lesson.title }}</h3>
-                            <p>{{ session.correct_count }} إجابات صحيحة · {{ session.xp_earned }} XP</p>
-                            <a class="challenge-secondary-button" href="{{ url_for('challenges.result', session_id=session.id) }}">عرض النتيجة</a>
-                        </article>
-                    {% endfor %}
-                </div>
-            </section>
-        {% endif %}
     </main>
     {% include '_platform_footer.html' %}
     <script src="{{ url_for('static', filename='js/test_bank.js') }}"></script>

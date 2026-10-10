@@ -1,17 +1,23 @@
+import csv
 import json
+import os
 import re
+import smtplib
+from email.message import EmailMessage
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
+from io import BytesIO, StringIO
 
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.forms import ClassroomForm, ConceptMapForm, ConceptMapUploadForm, CurriculumUploadForm, HistoricalCharacterForm, InvitationForm, LearningResourceForm, PlatformSettingsForm
-from alrayyan.models import Classroom, ConceptMap, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorMessage, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession
+from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, DateReview, HistoricalDate, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
 from alrayyan.services.document_reader import calculate_checksum, extract_docx, extract_pdf
 from alrayyan.services.text_processing import chunk_text, create_text_hash
+from alrayyan.services.curriculum_processing import process_source_document
 from alrayyan.services.learning_content_ai import (
     generate_character_drafts,
     generate_concept_map_draft,
@@ -36,15 +42,74 @@ def teacher_curricula():
 
 
 def teacher_lessons():
-    return Lesson.query.join(Unit).join(Curriculum).filter(
-        ((Curriculum.created_by_id == current_user.id) | (Curriculum.created_by_id.is_(None))),
+    # Lesson selectors include every curriculum that the teacher has
+    # explicitly activated. Activation is independent per curriculum.
+    # Inactive curricula must never leak into teacher-facing dropdowns.
+    # Ignore legacy placeholder lessons left by older curriculum parsing.
+    placeholder_titles = {
+        "محتوى المنهج",
+        "الدرس احتياطي",
+        "الوحدة — الدرس احتياطي",
+    }
+    query = Lesson.query.join(Unit).join(Curriculum).filter(
         Curriculum.is_active.is_(True),
         Curriculum.processing_status == "ready",
-    ).order_by(Curriculum.subject, Unit.order_index, Lesson.order_index).all()
+        Lesson.title.notin_(placeholder_titles),
+    )
+
+    # Admins manage shared platform curricula, including curricula uploaded
+    # by another teacher. Non-admin teachers only see their own or shared
+    # (ownerless) curricula, matching teacher_curricula().
+    if current_user.role != "admin":
+        query = query.filter(
+            (Curriculum.created_by_id == current_user.id)
+            | (Curriculum.created_by_id.is_(None))
+        )
+
+    return query.order_by(
+        Curriculum.subject,
+        Curriculum.grade,
+        Unit.order_index,
+        Lesson.order_index,
+    ).all()
 
 
 def lesson_choices():
-    return [(lesson.id, f"{lesson.unit.curriculum.subject} — {lesson.title}") for lesson in teacher_lessons()]
+    return [(lesson.id, f"{lesson.unit.title} — {lesson.title}") for lesson in teacher_lessons()]
+
+
+def curriculum_ready_for_activation(curriculum):
+    if curriculum.processing_status != "ready" or not curriculum.sources:
+        return False
+    chunks = ContentChunk.query.join(SourceDocument).filter(
+        SourceDocument.curriculum_id == curriculum.id,
+    ).all()
+    return bool(chunks) and all(
+        chunk.embedding and chunk.embedding_model and chunk.embedding_dimensions
+        for chunk in chunks
+    )
+
+
+def normalize_active_curricula():
+    """Compatibility hook: active curricula are controlled manually."""
+    return {
+        (curriculum.subject, curriculum.grade): curriculum
+        for curriculum in Curriculum.query.filter_by(is_active=True).all()
+    }
+
+
+def activate_curriculum(curriculum):
+    if not curriculum_ready_for_activation(curriculum):
+        raise ValueError("المنهج لم يكتمل تجهيزه وفهرسته: يجب أن تكون كل المقاطع مستخرجة ومفهرسة بالـembeddings قبل التفعيل.")
+
+    # Activation is an independent manual choice. Enabling one curriculum
+    # must never deactivate another curriculum.
+    curriculum.is_active = True
+    curriculum.processing_status = "ready"
+    curriculum.activated_at = datetime.now(timezone.utc).replace(tzinfo=None)
+
+    for source in curriculum.sources:
+        source.is_active = True
 
 
 def owned_lesson_or_404(lesson_id):
@@ -73,61 +138,94 @@ def curricula():
     if form.validate_on_submit():
         stored_path = None
         try:
+            stored_path = None
             original, stored_path, relative = save_upload(form.document.data, "curricula", {"pdf", "docx"})
-            curriculum = teacher_curricula().filter_by(subject=form.subject.data.strip(), grade=form.grade.data.strip(), semester=form.semester.data, academic_year=form.academic_year.data.strip()).first()
-            if curriculum is None:
-                curriculum = Curriculum(created_by_id=current_user.id, name=form.curriculum_name.data.strip(), subject=form.subject.data.strip(), grade=form.grade.data.strip(), semester=form.semester.data, academic_year=form.academic_year.data.strip(), version="1.0", is_active=False, processing_status="processing")
-                db.session.add(curriculum); db.session.flush()
+            curriculum_query = teacher_curricula().filter_by(
+                subject=form.subject.data.strip(),
+                grade=form.grade.data.strip(),
+                semester=form.semester.data,
+                academic_year=form.academic_year.data.strip(),
+            ).order_by(Curriculum.created_at.desc())
+            curriculum = curriculum_query.first()
+            if curriculum is None or curriculum.is_active:
+                versions = [str(item.version) for item in curriculum_query.all()]
+                version_numbers = []
+                for version in versions:
+                    try:
+                        version_numbers.append(float(version))
+                    except (TypeError, ValueError):
+                        continue
+                next_version = f"{(max(version_numbers) + 1.0) if version_numbers else 1.0:.1f}"
+                curriculum = Curriculum(
+                    created_by_id=current_user.id,
+                    name=(form.curriculum_name.data or "").strip() or f"{form.subject.data.strip()} — {form.grade.data.strip()} — الفصل {form.semester.data} — {form.academic_year.data.strip()}",
+                    subject=form.subject.data.strip(),
+                    grade=form.grade.data.strip(),
+                    semester=form.semester.data,
+                    academic_year=form.academic_year.data.strip(),
+                    version=next_version,
+                    is_active=False,
+                    processing_status="processing",
+                )
+                db.session.add(curriculum)
+                db.session.flush()
             else:
                 curriculum.processing_status = "processing"
                 curriculum.processing_error = None
+                curriculum.is_active = False
+                for source in curriculum.sources:
+                    source.is_active = False
+
             checksum = calculate_checksum(stored_path)
             if SourceDocument.query.filter_by(curriculum_id=curriculum.id, checksum=checksum).first():
                 raise ValueError("هذا الملف موجود مسبقًا داخل المنهج نفسه")
-            unit = Unit.query.filter_by(curriculum_id=curriculum.id, title=form.unit_title.data.strip()).first()
-            if unit is None:
-                unit = Unit(curriculum_id=curriculum.id, title=form.unit_title.data.strip(), order_index=len(curriculum.units) + 1)
-                db.session.add(unit); db.session.flush()
-            lesson = Lesson.query.filter_by(unit_id=unit.id, title=form.lesson_title.data.strip()).first()
-            if lesson is None:
-                lesson = Lesson(unit_id=unit.id, title=form.lesson_title.data.strip(), slug=f"lesson-{uuid4().hex[:16]}", order_index=len(unit.lessons) + 1, is_published=True)
-                db.session.add(lesson); db.session.flush()
-            extracted = extract_pdf(stored_path) if stored_path.suffix.lower() == ".pdf" else extract_docx(stored_path)
-            source_priority = {"official_book": 1, "supporting_book": 2, "review_notes": 3}[form.source_type.data]
-            source = SourceDocument(curriculum_id=curriculum.id, lesson_id=lesson.id, title=form.source_title.data.strip(), source_type=form.source_type.data, original_filename=original, stored_path=relative, page_count=extracted.get("page_count"), checksum=checksum, academic_year=curriculum.academic_year, priority=source_priority, is_primary=form.source_type.data == "official_book", is_active=True)
-            db.session.add(source); db.session.flush()
-            pages = extracted.get("pages") or [{"page_number": None, "text": extracted.get("text", "")}]
-            index = 0
-            created_chunks = []
-            for page in pages:
-                for text in chunk_text(page["text"]):
-                    chunk = ContentChunk(source_id=source.id, lesson_id=lesson.id, page_number=page.get("page_number"), chunk_index=index, text=text, text_hash=create_text_hash(text), token_count=len(text.split()))
-                    db.session.add(chunk)
-                    created_chunks.append(chunk)
-                    index += 1
-            if index == 0:
-                raise ValueError("لم نستطع استخراج نص؛ قد يكون PDF عبارة عن صور ويحتاج OCR")
+
+            extracted = (
+                extract_pdf(stored_path)
+                if stored_path.suffix.lower() == ".pdf"
+                else extract_docx(stored_path)
+            )
+
+            source_priority = {
+                "official_book": 1,
+                "supporting_book": 2,
+                "review_notes": 3,
+            }[form.source_type.data]
+
+            source = SourceDocument(
+                curriculum_id=curriculum.id,
+                lesson_id=None,
+                title=(form.source_title.data or "").strip() or Path(original).stem,
+                source_type=form.source_type.data,
+                original_filename=original,
+                stored_path=relative,
+                page_count=extracted.get("page_count"),
+                checksum=checksum,
+                academic_year=curriculum.academic_year,
+                priority=source_priority,
+                is_primary=form.source_type.data == "official_book",
+                is_active=True,
+            )
+            db.session.add(source)
             db.session.flush()
-            embedding_settings = get_embedding_settings()
-            for start in range(0, len(created_chunks), current_app.config.get("EMBEDDING_BATCH_SIZE", 20)):
-                batch = created_chunks[start:start + current_app.config.get("EMBEDDING_BATCH_SIZE", 20)]
-                vectors = generate_embeddings([chunk.text for chunk in batch])
-                embedded_at = datetime.now(timezone.utc).replace(tzinfo=None)
-                for chunk, vector in zip(batch, vectors):
-                    chunk.embedding = json.dumps(vector)
-                    chunk.embedding_model = embedding_settings["model"]
-                    chunk.embedding_dimensions = len(vector)
-                    chunk.embedded_at = embedded_at
+
+            extracted_count = process_source_document(
+                source,
+                fallback_unit_title=(form.unit_title.data or "").strip(),
+                fallback_lesson_title=(form.lesson_title.data or "").strip(),
+            )
+            # Uploading and indexing a curriculum does not activate it.
+            # Activation remains an explicit manual choice from the curriculum
+            # management screen.
+            curriculum.is_active = False
+            for item in curriculum.sources:
+                item.is_active = False
             curriculum.processing_status = "ready"
-            curriculum.is_active = True
-            curriculum.activated_at = datetime.now(timezone.utc).replace(tzinfo=None)
-            teacher_curricula().filter(
-                Curriculum.id != curriculum.id,
-                Curriculum.subject == curriculum.subject,
-                Curriculum.grade == curriculum.grade,
-            ).update({Curriculum.is_active: False}, synchronize_session=False)
             db.session.commit()
-            flash(f"تم تحليل وفهرسة {index} مقطعًا وتفعيل منهج الفصل {curriculum.semester} في جميع أقسام المنصة.", "success")
+            flash(
+                f"تم تحليل وفهرسة {extracted_count} مقطعًا. المنهج جاهز ويمكنك تفعيله يدويًا من قائمة المناهج.",
+                "success",
+            )
             return redirect(url_for("platform_admin.curricula"))
         except Exception as error:
             db.session.rollback()
@@ -135,7 +233,75 @@ def curricula():
                 stored_path.unlink()
             current_app.logger.exception("Curriculum upload failed")
             flash(f"تعذر تجهيز المصدر: {error}", "error")
-    return render_template("platform/curricula.html", form=form, curricula=teacher_curricula().order_by(Curriculum.created_at.desc()).all())
+
+    normalize_active_curricula()
+
+    return render_template(
+        "platform/curricula.html",
+        form=form,
+        curricula=teacher_curricula().order_by(Curriculum.created_at.desc()).all(),
+    )
+
+
+@platform_admin_bp.post("/curricula/<int:curriculum_id>/reindex")
+def reindex_curriculum(curriculum_id):
+    curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
+    if not curriculum.sources:
+        flash("لا يوجد ملف مصدر لإعادة تجهيزه داخل هذا المنهج.", "error")
+        return redirect(url_for("platform_admin.curricula"))
+
+    try:
+        curriculum.processing_status = "processing"
+        curriculum.processing_error = None
+        total_chunks = 0
+        for source in curriculum.sources:
+            total_chunks += process_source_document(source)
+
+        curriculum.processing_status = "ready"
+        db.session.commit()
+        flash(
+            f"تمت إعادة تجهيز وفهرسة {total_chunks} مقطعًا. يمكنك الآن تفعيل المنهج.",
+            "success",
+        )
+    except Exception as error:
+        db.session.rollback()
+        current_app.logger.exception("Curriculum reindex failed")
+        flash(f"تعذر إعادة تجهيز المنهج: {error}", "error")
+
+    return redirect(url_for("platform_admin.curricula"))
+
+
+@platform_admin_bp.post("/curricula/<int:curriculum_id>/delete")
+def delete_curriculum(curriculum_id):
+    curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
+    relative_paths = [source.stored_path for source in curriculum.sources if source.stored_path]
+    was_active = curriculum.is_active
+
+    try:
+        db.session.delete(curriculum)
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        current_app.logger.exception("Curriculum deletion failed")
+        flash(f"تعذر حذف المنهج: {error}", "error")
+        return redirect(url_for("platform_admin.curricula"))
+
+    upload_root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
+    for relative_path in relative_paths:
+        target = (upload_root / relative_path).resolve()
+        if target.is_relative_to(upload_root) and target.is_file():
+            try:
+                target.unlink()
+            except OSError:
+                current_app.logger.warning("Could not remove curriculum file: %s", target)
+
+    flash(
+        "تم حذف المنهج ومصادره وملفاته نهائيًا."
+        if was_active
+        else "تم حذف المنهج ومصادره وملفاته نهائيًا.",
+        "success",
+    )
+    return redirect(url_for("platform_admin.curricula"))
 
 
 @platform_admin_bp.post("/curricula/<int:curriculum_id>/toggle")
@@ -143,16 +309,22 @@ def toggle_curriculum(curriculum_id):
     curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
     new_state = not curriculum.is_active
     if new_state:
-        teacher_curricula().filter(
-            Curriculum.id != curriculum.id,
-            Curriculum.subject == curriculum.subject,
-            Curriculum.grade == curriculum.grade,
-        ).update({Curriculum.is_active: False}, synchronize_session=False)
-        curriculum.activated_at = datetime.now(timezone.utc).replace(tzinfo=None)
-    curriculum.is_active = new_state
-    for source in curriculum.sources:
-        source.is_active = curriculum.is_active
-    db.session.commit(); flash("تم تحديث حالة المنهج ومصادره", "success")
+        try:
+            activate_curriculum(curriculum)
+            db.session.commit()
+        except Exception as error:
+            db.session.rollback()
+            flash(str(error), "error")
+            return redirect(url_for("platform_admin.curricula"))
+    else:
+        curriculum.is_active = False
+        for source in curriculum.sources:
+            source.is_active = False
+
+        # Deactivation is also independent. Do not automatically
+        # activate another curriculum when this one is switched off.
+        db.session.commit()
+    flash("تم تحديث حالة المنهج ومصادره", "success")
     return redirect(url_for("platform_admin.curricula"))
 
 
@@ -167,33 +339,161 @@ def classrooms():
     return render_template("platform/classrooms.html", form=form, classrooms=query.order_by(Classroom.created_at.desc()).all())
 
 
+@platform_admin_bp.post("/classrooms/<int:classroom_id>/delete")
+def delete_classroom(classroom_id):
+    classroom = Classroom.query.filter_by(id=classroom_id, teacher_id=current_user.id).first_or_404()
+    try:
+        # Removing a class only removes enrollments; student accounts and worksheet results stay intact.
+        db.session.delete(classroom)
+        db.session.commit()
+        flash("تم حذف الصف وإزالة ارتباط الطالبات به، مع الحفاظ على حساباتهن ونتائجهن.", "success")
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Classroom deletion failed")
+        flash("تعذر حذف الصف. لم يتم تغيير البيانات.", "error")
+    return redirect(url_for("platform_admin.classrooms"))
+
+
+def invitation_mail_settings():
+    return all(os.getenv(key) for key in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL"))
+
+
+def send_student_invitation(email, invitation_url, teacher_name):
+    host, username, password, sender = (os.getenv(key) for key in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL"))
+    if not all((host, username, password, sender)):
+        raise RuntimeError("إعدادات البريد غير مكتملة")
+    message = EmailMessage()
+    message["Subject"] = "دعوة للانضمام إلى منصة الريان للدراسات التاريخية"
+    message["From"] = sender
+    message["To"] = email
+    message.set_content(f"مرحبًا،\n\nدعتك المعلمة {teacher_name} للانضمام إلى منصة الريان للدراسات التاريخية.\nافتحي الرابط التالي لإنشاء حسابك: {invitation_url}\n\nإذا لم تتوقعي هذه الدعوة، يمكنك تجاهل هذه الرسالة.")
+    with smtplib.SMTP(host, int(os.getenv("SMTP_PORT", "587")), timeout=20) as server:
+        if os.getenv("SMTP_USE_TLS", "1").lower() not in {"0", "false", "no"}:
+            server.starttls()
+        server.login(username, password)
+        server.send_message(message)
+
+
+def extract_invitation_emails(upload):
+    extension = Path(upload.filename or "").suffix.lower()
+    if extension not in {".xlsx", ".csv"}:
+        raise ValueError("ارفعي ملف Excel بصيغة ‎.xlsx أو ملف ‎.csv.")
+    raw = upload.read()
+    values = []
+    if extension == ".csv":
+        try:
+            content = raw.decode("utf-8-sig")
+        except UnicodeDecodeError as error:
+            raise ValueError("تعذر قراءة ملف CSV؛ احفظيه بترميز UTF-8.") from error
+        for row in csv.reader(StringIO(content)):
+            values.extend(str(cell).strip() for cell in row if cell is not None)
+    else:
+        try:
+            from openpyxl import load_workbook
+            workbook = load_workbook(BytesIO(raw), read_only=True, data_only=True)
+            for sheet in workbook.worksheets:
+                for row in sheet.iter_rows(values_only=True):
+                    values.extend(str(cell).strip() for cell in row if cell is not None)
+            workbook.close()
+        except Exception as error:
+            raise ValueError("تعذر قراءة ملف Excel. تأكدي أنه ملف ‎.xlsx سليم.") from error
+    pattern = re.compile(r"[^@\s]+@[^@\s]+\.[^@\s]+")
+    emails = []
+    malformed = []
+    for value in values:
+        candidates = re.split(r"[\s,;]+", value.lower())
+        for candidate in candidates:
+            candidate = candidate.strip().strip("()<>[]{}.,")
+            if not candidate:
+                continue
+            if "@" in candidate:
+                if pattern.fullmatch(candidate):
+                    if candidate not in emails:
+                        emails.append(candidate)
+                else:
+                    malformed.append(candidate)
+    if malformed:
+        raise ValueError("يوجد عنوان بريد غير صالح في الملف: " + "، ".join(malformed[:5]))
+    if not emails:
+        raise ValueError("لم أجد عناوين بريد إلكتروني صالحة داخل الملف.")
+    return emails
+
+
 @platform_admin_bp.route("/invitations", methods=["GET", "POST"])
 def invitations():
     form = InvitationForm()
     classes = Classroom.query.filter_by(teacher_id=current_user.id, is_active=True).all()
     form.classroom_id.choices = [(0, "بدون صف محدد")] + [(row.id, row.name) for row in classes]
     invitation_urls = []
-    if form.validate_on_submit():
+    upload = request.files.get("emails_file")
+    is_file_upload = request.method == "POST" and upload is not None and bool(upload.filename)
+    if is_file_upload:
+        try:
+            emails = extract_invitation_emails(upload)
+            classroom_id = request.form.get("classroom_id", default=0, type=int) or None
+            if classroom_id and not any(row.id == classroom_id for row in classes):
+                abort(403)
+            valid_days = request.form.get("valid_days", default=7, type=int)
+            if not 1 <= valid_days <= 30:
+                raise ValueError("مدة صلاحية الدعوة يجب أن تكون بين يوم و30 يومًا.")
+            invitation_urls = create_invitation_batch(emails, classroom_id, valid_days)
+        except ValueError as error:
+            flash(str(error), "error")
+        except Exception as error:
+            db.session.rollback()
+            current_app.logger.exception("Bulk invitation upload failed")
+            flash(f"تعذر معالجة الملف: {error}", "error")
+    elif form.validate_on_submit():
         emails = []
         for email in re.split(r"[\s,;]+", form.emails.data or ""):
             normalized = email.strip().lower()
             if normalized and normalized not in emails:
                 emails.append(normalized)
         invalid = [email for email in emails if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email)]
-        existing = {row.email for row in User.query.filter(User.email.in_(emails)).all()} if emails else set()
         if invalid:
             form.emails.errors.append("بعض العناوين غير صالحة: " + "، ".join(invalid[:5]))
         else:
-            for email in emails:
-                if email in existing:
-                    continue
-                invitation, token = StudentInvitation.create(current_user.id, email, form.classroom_id.data or None, form.valid_days.data)
-                db.session.add(invitation)
-                invitation_urls.append({"email": email, "url": url_for("auth.register_invitation", token=token, _external=True)})
-            db.session.commit()
-            flash(f"تم إنشاء {len(invitation_urls)} دعوة خاصة، وتجاوز {len(existing)} حسابًا موجودًا.", "success")
+            invitation_urls = create_invitation_batch(emails, form.classroom_id.data or None, form.valid_days.data)
     query = StudentInvitation.query if current_user.role == "admin" else StudentInvitation.query.filter_by(teacher_id=current_user.id)
-    return render_template("platform/invitations.html", form=form, invitations=query.order_by(StudentInvitation.created_at.desc()).limit(200).all(), invitation_urls=invitation_urls)
+    return render_template("platform/invitations.html", form=form, invitations=query.order_by(StudentInvitation.created_at.desc()).limit(200).all(), invitation_urls=invitation_urls, classrooms=classes)
+
+
+def create_invitation_batch(emails, classroom_id, valid_days):
+    existing = {row.email for row in User.query.filter(User.email.in_(emails)).all()} if emails else set()
+    pending = StudentInvitation.query.filter(
+        StudentInvitation.teacher_id == current_user.id,
+        StudentInvitation.email.in_(emails),
+        StudentInvitation.accepted_at.is_(None),
+        StudentInvitation.expires_at > datetime.utcnow(),
+    ).all() if emails else []
+    existing_invites = {row.email for row in pending}
+    invitation_urls = []
+    for email in emails:
+        if email in existing or email in existing_invites:
+            continue
+        invitation, token = StudentInvitation.create(current_user.id, email, classroom_id, valid_days)
+        db.session.add(invitation)
+        invitation_urls.append({"email": email, "url": url_for("auth.register_invitation", token=token, _external=True)})
+    db.session.commit()
+    if not invitation_urls:
+        flash(f"لم تُنشأ دعوات جديدة؛ تم تجاوز {len(existing)} حسابًا موجودًا و{len(existing_invites)} دعوة سارية.", "warning")
+        return []
+    if invitation_mail_settings():
+        sent, failed = 0, []
+        for item in invitation_urls:
+            try:
+                send_student_invitation(item["email"], item["url"], current_user.full_name or "معلمة منصة الريان")
+                sent += 1
+            except Exception:
+                current_app.logger.exception("Could not email student invitation")
+                failed.append(item["email"])
+        if failed:
+            flash(f"تم إنشاء {len(invitation_urls)} دعوة. أُرسلت {sent} رسالة، وتعذر إرسال {len(failed)}؛ الروابط متاحة للنسخ أدناه.", "warning")
+        else:
+            flash(f"تم إنشاء وإرسال {sent} دعوة بالبريد الإلكتروني بنجاح.", "success")
+    else:
+        flash(f"تم إنشاء {len(invitation_urls)} دعوة، لكن إرسال البريد غير مفعّل بعد. أضيفي إعدادات SMTP في Render ليرسل النظام الرسائل تلقائيًا؛ الروابط متاحة للنسخ أدناه.", "warning")
+    return invitation_urls
 
 
 @platform_admin_bp.route("/resources", methods=["GET", "POST"])
@@ -262,7 +562,7 @@ def concept_maps():
             owned_lesson_or_404(form.lesson_id.data)
             nodes_data = nodes_data[:80]
             edges_data = edges_data[:160]
-            concept_map = ConceptMap(lesson_id=form.lesson_id.data, created_by_id=current_user.id, title=form.title.data.strip(), map_type=form.map_type.data, creation_method="manual", publication_status=form.publication_status.data)
+            concept_map = ConceptMap(lesson_id=form.lesson_id.data, created_by_id=current_user.id, title=form.title.data.strip(), map_type="concept", creation_method="manual", publication_status=form.publication_status.data)
             db.session.add(concept_map); db.session.flush()
             nodes = {}
             for index, item in enumerate(nodes_data):
@@ -299,45 +599,138 @@ def upload_concept_map():
     return redirect(url_for("platform_admin.concept_maps"))
 
 
+def layout_concept_tree(node_by_key, edge_rows):
+    """Store a tree-shaped layout so generated maps open as branches, not a grid."""
+    children = {key: [] for key in node_by_key}
+    targeted = set()
+    for edge in edge_rows:
+        source_key = str(edge.get("source"))
+        target_key = str(edge.get("target"))
+        if source_key in node_by_key and target_key in node_by_key and source_key != target_key:
+            if target_key not in targeted:
+                children[source_key].append(target_key)
+                targeted.add(target_key)
+
+    leaf_index = 0
+    visited = set()
+
+    def place(key, depth):
+        nonlocal leaf_index
+        if key in visited:
+            return leaf_index * 155
+        visited.add(key)
+        node = node_by_key[key]
+        node.position_x = depth * 300
+        child_keys = [child for child in children.get(key, []) if child not in visited]
+        if not child_keys:
+            node.position_y = leaf_index * 155
+            leaf_index += 1
+            return node.position_y
+        child_positions = [place(child, depth + 1) for child in child_keys]
+        node.position_y = (child_positions[0] + child_positions[-1]) / 2
+        return node.position_y
+
+    roots = [key for key in node_by_key if key not in targeted]
+    for key in roots:
+        place(key, 0)
+    for key in node_by_key:
+        if key not in visited:
+            place(key, 0)
+
+
 @platform_admin_bp.post("/concept-maps/generate")
 def generate_concept_map():
     lesson = owned_lesson_or_404(request.form.get("lesson_id", type=int))
     try:
-        payload = generate_concept_map_draft(lesson, request.form.get("map_type", "concept"))
+        payload = generate_concept_map_draft(lesson)
         row = ConceptMap(
             lesson_id=lesson.id,
             created_by_id=current_user.id,
             title=payload.get("title") or f"خريطة {lesson.title}",
-            map_type=request.form.get("map_type", "concept"),
+            map_type="concept",
             creation_method="ai",
             publication_status="draft",
         )
-        db.session.add(row); db.session.flush()
+        db.session.add(row)
+        db.session.flush()
         node_by_key = {}
-        for index, item in enumerate(payload["nodes"]):
+        for item in payload["nodes"]:
+            label = str(item.get("label", "")).strip()[:250]
+            if not label:
+                continue
             node = ConceptMapNode(
                 concept_map_id=row.id,
-                label=str(item.get("label", "")).strip()[:250],
+                label=label,
                 description=str(item.get("description", "")).strip() or None,
-                position_x=(index % 3) * 260,
-                position_y=(index // 3) * 150,
+                position_x=0,
+                position_y=0,
             )
-            if not node.label:
-                continue
-            db.session.add(node); db.session.flush()
-            node_by_key[str(item.get("key"))] = node
+            db.session.add(node)
+            db.session.flush()
+            node_key = str(item.get("key") or f"n{len(node_by_key) + 1}")
+            while node_key in node_by_key:
+                node_key = f"{node_key}-{len(node_by_key) + 1}"
+            node_by_key[node_key] = node
+
+        if len(node_by_key) < 2:
+            raise RuntimeError("لم ينتج المقترح مفاهيم كافية لبناء شجرة.")
+
+        # Normalize the AI relationships into a real tree: one root and one parent per node.
+        node_keys = list(node_by_key)
+        root_key = node_keys[0]
+        tree_edges = []
+        parent_by_target = {}
         for edge in payload["edges"]:
-            source = node_by_key.get(str(edge.get("source")))
-            target = node_by_key.get(str(edge.get("target")))
-            if source and target and source.id != target.id:
-                db.session.add(ConceptMapEdge(concept_map_id=row.id, source_node_id=source.id, target_node_id=target.id, label=str(edge.get("label", ""))[:150] or None))
+            source_key = str(edge.get("source"))
+            target_key = str(edge.get("target"))
+            if (
+                source_key not in node_by_key
+                or target_key not in node_by_key
+                or source_key == target_key
+                or target_key == root_key
+                or target_key in parent_by_target
+            ):
+                continue
+            cursor = source_key
+            creates_cycle = False
+            while cursor in parent_by_target:
+                if cursor == target_key:
+                    creates_cycle = True
+                    break
+                cursor = parent_by_target[cursor]
+            if creates_cycle:
+                continue
+            tree_edges.append({
+                "source": source_key,
+                "target": target_key,
+                "label": str(edge.get("label", ""))[:150] or "",
+            })
+            parent_by_target[target_key] = source_key
+
+        # Attach any disconnected concepts to the root so the result is never a loose grid.
+        for key in node_keys[1:]:
+            if key not in parent_by_target:
+                tree_edges.append({"source": root_key, "target": key, "label": "فرع"})
+                parent_by_target[key] = root_key
+
+        for edge in tree_edges:
+            source = node_by_key[edge["source"]]
+            target = node_by_key[edge["target"]]
+            db.session.add(ConceptMapEdge(
+                concept_map_id=row.id,
+                source_node_id=source.id,
+                target_node_id=target.id,
+                label=edge["label"] or None,
+            ))
+
+        layout_concept_tree(node_by_key, tree_edges)
         db.session.commit()
-        flash("أنشأ AI خريطة كمسودة. راجعيها قبل نشرها.", "success")
+        flash("أنشأ الذكاء الاصطناعي خريطة شجرية كمسودة. راجعيها قبل نشرها.", "success")
     except Exception as error:
         db.session.rollback()
         current_app.logger.exception("Concept map AI generation failed")
         flash(f"تعذر إنشاء الخريطة: {error}", "error")
-    return redirect(url_for("platform_admin.concept_maps"))
+    return redirect(url_for("platform_admin.concept_maps") + "#concept-map-library")
 
 
 @platform_admin_bp.post("/concept-maps/<int:row_id>/toggle")
@@ -345,7 +738,27 @@ def toggle_concept_map(row_id):
     row = owned_content_or_404(ConceptMap, row_id)
     row.publication_status = "draft" if row.publication_status == "published" else "published"
     db.session.commit()
-    flash("تم تحديث ظهور الخريطة للطلاب.", "success")
+    flash("تم تحديث حالة الخريطة.", "success")
+    return redirect(url_for("platform_admin.concept_maps"))
+
+
+@platform_admin_bp.post("/concept-maps/<int:row_id>/delete")
+def delete_concept_map(row_id):
+    row = owned_content_or_404(ConceptMap, row_id)
+    relative_path = row.stored_path
+    db.session.delete(row)
+    db.session.commit()
+
+    if relative_path:
+        root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
+        target = (root / relative_path).resolve()
+        if target.is_relative_to(root) and target.is_file():
+            try:
+                target.unlink()
+            except OSError:
+                current_app.logger.warning("Could not remove concept map file %s", target)
+
+    flash("تم حذف الخريطة المفاهيمية.", "success")
     return redirect(url_for("platform_admin.concept_maps"))
 
 
@@ -428,69 +841,270 @@ def toggle_character(row_id):
 
 @platform_admin_bp.route("/settings", methods=["GET", "POST"])
 def settings():
-    row = PlatformSettings.get_or_create(); form = PlatformSettingsForm(obj=row)
+    row = PlatformSettings.get_or_create()
+    form = PlatformSettingsForm(obj=row)
+
     if form.validate_on_submit():
-        form.populate_obj(row); db.session.commit(); flash("تم حفظ إعدادات المنصة", "success")
-        return redirect(url_for("platform_admin.settings"))
+        entered_whatsapp = (form.whatsapp_url.data or "").strip()
+        whatsapp_value = None
+
+        if entered_whatsapp:
+            # Keep only secure, direct WhatsApp links from trusted WhatsApp domains.
+            from urllib.parse import urlparse
+
+            if entered_whatsapp.lower().startswith(("https://", "http://")):
+                parsed = urlparse(entered_whatsapp)
+                allowed_hosts = {
+                    "wa.me",
+                    "www.wa.me",
+                    "api.whatsapp.com",
+                    "chat.whatsapp.com",
+                    "web.whatsapp.com",
+                }
+                if parsed.scheme == "https" and parsed.hostname and parsed.hostname.lower() in allowed_hosts:
+                    whatsapp_value = entered_whatsapp
+                else:
+                    form.whatsapp_url.errors.append(
+                        "أدخلي رقمًا مع مفتاح الدولة أو رابط واتساب مباشر يبدأ بـ https ومن نطاق واتساب."
+                    )
+                    return render_template("platform/settings.html", form=form)
+            elif re.fullmatch(r"[\d\s()+.\-]+", entered_whatsapp):
+                digits = re.sub(r"\D", "", entered_whatsapp)
+                if digits.startswith("00"):
+                    digits = digits[2:]
+                elif digits.startswith("0"):
+                    digits = "970" + digits[1:]
+
+                if 8 <= len(digits) <= 15:
+                    whatsapp_value = f"https://wa.me/{digits}"
+                else:
+                    form.whatsapp_url.errors.append(
+                        "تأكدي من رقم واتساب ومفتاح الدولة؛ يجب أن يكون الرقم بين 8 و15 رقمًا."
+                    )
+                    return render_template("platform/settings.html", form=form)
+            else:
+                form.whatsapp_url.errors.append(
+                    "أدخلي رقمًا فقط مع مفتاح الدولة أو رابط واتساب مباشر."
+                )
+                return render_template("platform/settings.html", form=form)
+
+        try:
+            row.platform_name = form.platform_name.data.strip()
+            row.tagline = form.tagline.data.strip()
+            row.whatsapp_url = whatsapp_value
+            row.support_email = (form.support_email.data or "").strip() or None
+            db.session.commit()
+            flash("تم حفظ إعدادات المنصة وتحديث رابط واتساب.", "success")
+            return redirect(url_for("platform_admin.settings"))
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception("Platform settings save failed")
+            flash("تعذر حفظ الإعدادات. لم يتم اعتماد التغييرات؛ حاولي مرة أخرى.", "error")
+
     return render_template("platform/settings.html", form=form)
 
 
 @platform_admin_bp.get("/analytics")
 def analytics():
-    """Teacher-facing learning analytics, aggregated and per student."""
+    """Summarize assessment, practice, AI tutor, character, and points activity."""
     worksheet_query = Worksheet.query
     if current_user.role != "admin":
         worksheet_query = worksheet_query.filter_by(created_by_id=current_user.id)
-    worksheet_ids = [row.id for row in worksheet_query.all()]
-    attempts = []
-    if worksheet_ids:
-        attempts = WorksheetAttempt.query.filter(
-            WorksheetAttempt.worksheet_id.in_(worksheet_ids),
-            WorksheetAttempt.submitted_at.isnot(None),
-        ).all()
+    owned_worksheets = worksheet_query.all()
+    worksheet_ids = [item.id for item in owned_worksheets]
 
-    student_ids = {attempt.student_id for attempt in attempts}
     classroom_query = Classroom.query
     if current_user.role != "admin":
         classroom_query = classroom_query.filter_by(teacher_id=current_user.id)
     classrooms = classroom_query.all()
-    for classroom in classrooms:
-        student_ids.update(enrollment.student_id for enrollment in classroom.enrollments)
+    student_ids = {
+        enrollment.student_id
+        for classroom in classrooms
+        for enrollment in classroom.enrollments
+    }
 
-    students = User.query.filter(User.id.in_(student_ids)).all() if student_ids else []
+    if worksheet_ids:
+        student_ids.update(
+            student_id for (student_id,) in
+            db.session.query(WorksheetAttempt.student_id)
+            .filter(WorksheetAttempt.worksheet_id.in_(worksheet_ids))
+            .distinct().all()
+        )
+
+    if current_user.role == "admin":
+        student_ids.update(
+            student_id for (student_id,) in
+            db.session.query(User.id).filter_by(
+                role="student", is_active_account=True
+            ).all()
+        )
+
+    students = (
+        User.query.filter(User.id.in_(student_ids), User.role == "student")
+        .order_by(User.full_name).all()
+        if student_ids else []
+    )
+    scoped_student_ids = [student.id for student in students]
+
+    all_attempts = []
+    if scoped_student_ids:
+        all_attempts = WorksheetAttempt.query.filter(
+            WorksheetAttempt.student_id.in_(scoped_student_ids),
+        ).all()
+
+    all_transactions = (
+        XPTransaction.query.filter(
+            XPTransaction.student_id.in_(scoped_student_ids)
+        ).all()
+        if scoped_student_ids else []
+    )
+
     rows = []
     for student in students:
-        student_attempts = [attempt for attempt in attempts if attempt.student_id == student.id]
-        percentages = [attempt.percentage for attempt in student_attempts]
+        student_all_attempts = [
+            attempt for attempt in all_attempts
+            if attempt.student_id == student.id
+        ]
+        student_attempts = [
+            attempt for attempt in student_all_attempts
+            if attempt.submitted_at is not None
+        ]
+        test_attempts = [
+            attempt for attempt in student_attempts
+            if attempt.worksheet and attempt.worksheet.creation_method == "test"
+        ]
+        worksheet_attempts = [
+            attempt for attempt in student_attempts
+            if not attempt.worksheet or attempt.worksheet.creation_method != "test"
+        ]
+        # لا ندخل المحاولات التي تنتظر تصحيحًا يدويًا في متوسط النتائج.
+        graded_attempts = [
+            attempt for attempt in student_attempts
+            if not any(answer.is_correct is None for answer in attempt.answers)
+        ]
+        percentages = [attempt.percentage for attempt in graded_attempts]
         mastery_rows = ConceptMastery.query.filter_by(student_id=student.id).all()
-        challenges = ChallengeSession.query.filter_by(student_id=student.id, status="completed").all()
-        evaluated_messages = TutorMessage.query.join(TutorMessage.conversation).filter(
-            TutorMessage.conversation.has(student_id=student.id),
-            TutorMessage.evaluation.in_(["correct", "partially_correct", "incorrect", "needs_explanation"]),
+        challenge_sessions = ChallengeSession.query.filter_by(
+            student_id=student.id
+        ).all()
+        challenges = [session for session in challenge_sessions if session.status == "completed"]
+        tutor_interactions = TutorMessage.query.join(TutorConversation).filter(
+            TutorConversation.student_id == student.id,
+            TutorMessage.role == "student",
         ).count()
+        character_attempts = CharacterAttempt.query.filter_by(
+            student_id=student.id
+        ).count()
+        date_reviews = DateReview.query.filter_by(student_id=student.id).count()
+        plan_items = LearningPlanItem.query.filter_by(student_id=student.id).all()
+        plan_verifications = sum(1 for item in plan_items if item.verified_at is not None)
+        student_transactions = [
+            transaction for transaction in all_transactions
+            if transaction.student_id == student.id
+        ]
+        resource_downloads = sum(1 for transaction in student_transactions if transaction.reason == "resource_downloaded")
+        concept_map_views = sum(1 for transaction in student_transactions if transaction.reason == "concept_map_viewed")
+        points_earned = sum(transaction.amount for transaction in student_transactions)
         average = round(sum(percentages) / len(percentages), 1) if percentages else 0.0
-        mastery_average = round(sum(item.mastery_score for item in mastery_rows) / len(mastery_rows), 1) if mastery_rows else 0.0
-        activity_score = len(student_attempts) + len(challenges) + evaluated_messages
+        mastery_average = (
+            round(sum(item.mastery_score for item in mastery_rows) / len(mastery_rows), 1)
+            if mastery_rows else 0.0
+        )
+        activity_score = (
+            len(student_all_attempts) + len(challenge_sessions) + tutor_interactions
+            + character_attempts + date_reviews + plan_verifications + resource_downloads
+            + concept_map_views
+        )
         rows.append({
             "student": student,
-            "worksheet_count": len(student_attempts),
+            "test_count": len(test_attempts),
+            "worksheet_count": len(worksheet_attempts),
             "average": average,
             "mastery_average": mastery_average,
             "challenge_count": len(challenges),
-            "tutor_interactions": evaluated_messages,
+            "tutor_interactions": tutor_interactions,
+            "character_attempts": character_attempts,
+            "date_reviews": date_reviews,
+            "plan_items": len(plan_items),
+            "plan_verifications": plan_verifications,
+            "resource_downloads": resource_downloads,
+            "concept_map_views": concept_map_views,
+            "points_earned": points_earned,
             "activity_score": activity_score,
-            "needs_support": (bool(percentages) and average < 50) or (bool(mastery_rows) and mastery_average < 50),
+            "has_results": bool(percentages),
+            "needs_support": (
+                (bool(percentages) and average < 50)
+                or (bool(mastery_rows) and mastery_average < 50)
+            ),
         })
-    rows.sort(key=lambda item: (item["activity_score"], item["average"]), reverse=True)
-    class_percentages = [attempt.percentage for attempt in attempts]
+
+    rows.sort(
+        key=lambda item: (item["activity_score"], item["average"]),
+        reverse=True,
+    )
+    # Pearson correlation helps visualize whether participation and achievement
+    # tend to move together; it is descriptive, not proof of causation.
+    # احسبي الارتباط من الطالبات اللاتي لديهن نتائج مكتملة فقط؛ لا نعامل غياب النتيجة كعلامة صفرية.
+    correlation = None
+    correlation_label = "تحتاج اللوحة إلى نتائج فعلية لثلاث طالبات على الأقل"
+    correlation_rows = [row for row in rows if row["has_results"]]
+    if len(correlation_rows) >= 3:
+        activity_values = [float(row["activity_score"]) for row in correlation_rows]
+        score_values = [float(row["average"]) for row in correlation_rows]
+        activity_mean = sum(activity_values) / len(activity_values)
+        score_mean = sum(score_values) / len(score_values)
+        covariance = sum(
+            (x - activity_mean) * (y - score_mean)
+            for x, y in zip(activity_values, score_values)
+        )
+        activity_variance = sum((x - activity_mean) ** 2 for x in activity_values)
+        score_variance = sum((y - score_mean) ** 2 for y in score_values)
+        denominator = (activity_variance * score_variance) ** 0.5
+        if denominator:
+            correlation = round(max(-1.0, min(1.0, covariance / denominator)), 3)
+            if correlation >= 0.25:
+                correlation_label = "علاقة طردية ملحوظة في البيانات المتاحة"
+            elif correlation <= -0.25:
+                correlation_label = "علاقة عكسية ملحوظة في البيانات المتاحة"
+            else:
+                correlation_label = "العلاقة ضعيفة أو غير واضحة في البيانات المتاحة"
+        else:
+            correlation_label = "لا يظهر اتجاه واضح؛ أحد المتغيرين لا يتغير بين الطالبات";
+    elif len(correlation_rows) > 0:
+        correlation_label = "البيانات الحالية قليلة؛ نحتاج نتائج ثلاث طالبات على الأقل";
+
+    submitted_attempts = [attempt for attempt in all_attempts if attempt.submitted_at is not None]
+    graded_submitted_attempts = [
+        attempt for attempt in submitted_attempts
+        if not any(answer.is_correct is None for answer in attempt.answers)
+    ]
+    class_percentages = [attempt.percentage or 0 for attempt in graded_submitted_attempts]
+    total_tutor_interactions = sum(row["tutor_interactions"] for row in rows)
+    total_character_attempts = sum(row["character_attempts"] for row in rows)
+    total_date_reviews = sum(row["date_reviews"] for row in rows)
+    total_plan_verifications = sum(row["plan_verifications"] for row in rows)
     overview = {
         "students": len(students),
-        "worksheets": len(worksheet_ids),
-        "submissions": len(attempts),
-        "average": round(sum(class_percentages) / len(class_percentages), 1) if class_percentages else 0.0,
+        "worksheets": sum(1 for item in owned_worksheets if item.creation_method != "test"),
+        "tests": sum(1 for item in owned_worksheets if item.creation_method == "test"),
+        "submissions": len(submitted_attempts),
+        "average": round(sum(class_percentages) / len(class_percentages), 1)
+        if class_percentages else 0.0,
+        "challenge_completions": sum(
+            ChallengeSession.query.filter_by(student_id=student.id, status="completed").count()
+            for student in students
+        ),
+        "tutor_interactions": total_tutor_interactions,
+        "character_attempts": total_character_attempts,
+        "date_reviews": total_date_reviews,
+        "plan_verifications": total_plan_verifications,
+        "resource_downloads": sum(row["resource_downloads"] for row in rows),
+        "concept_map_views": sum(row["concept_map_views"] for row in rows),
+        "points_awarded": sum(transaction.amount for transaction in all_transactions),
         "support_count": sum(1 for row in rows if row["needs_support"]),
     }
-    return render_template("platform/analytics.html", rows=rows, overview=overview)
+    activity_max = max((row["activity_score"] for row in rows), default=1) or 1
+    return render_template("platform/analytics.html", rows=rows, overview=overview, activity_max=activity_max, correlation=correlation, correlation_label=correlation_label)
 
 
 @platform_admin_bp.route("/honor-board", methods=["GET", "POST"])
@@ -515,3 +1129,74 @@ def remove_honor_entry(entry_id):
     row.is_active = False
     db.session.commit(); flash("تمت إزالة البطاقة من لوحة الشرف.", "success")
     return redirect(url_for("platform_admin.honor_board"))
+
+
+
+@platform_admin_bp.route("/historical-dates", methods=["GET", "POST"])
+def historical_dates():
+    """Let teachers curate the dates and events used in student recall practice."""
+    lessons = teacher_lessons()
+    lesson_by_id = {lesson.id: lesson for lesson in lessons}
+    lesson_ids = list(lesson_by_id)
+
+    if request.method == "POST":
+        lesson_id = request.form.get("lesson_id", type=int)
+        if lesson_id not in lesson_by_id:
+            abort(403)
+
+        date_label = (request.form.get("date_label") or "").strip()[:100]
+        event_title = (request.form.get("event_title") or "").strip()[:250]
+        if not date_label or not event_title:
+            flash("اكتبي التاريخ والحدث المرتبط به.", "error")
+            return redirect(url_for("platform_admin.historical_dates"))
+
+        sort_year = request.form.get("sort_year", type=int)
+        importance_level = request.form.get("importance_level", type=int) or 1
+        row = HistoricalDate(
+            lesson_id=lesson_id,
+            date_label=date_label,
+            sort_year=sort_year,
+            event_title=event_title,
+            event_description=(request.form.get("event_description") or "").strip()[:3000] or None,
+            memory_hint=(request.form.get("memory_hint") or "").strip()[:500] or None,
+            importance_level=min(max(importance_level, 1), 3),
+            is_published=request.form.get("is_published") == "on",
+        )
+        db.session.add(row)
+        db.session.commit()
+        flash("تم حفظ بطاقة التاريخ. إذا اخترتِ النشر فستظهر للطالبات في ذاكرة التواريخ.", "success")
+        return redirect(url_for("platform_admin.historical_dates"))
+
+    dates = []
+    if lesson_ids:
+        dates = (
+            HistoricalDate.query
+            .filter(HistoricalDate.lesson_id.in_(lesson_ids))
+            .order_by(HistoricalDate.sort_year.asc(), HistoricalDate.id.desc())
+            .all()
+        )
+    return render_template("platform/historical_dates.html", lessons=lessons, dates=dates)
+
+
+@platform_admin_bp.post("/historical-dates/<int:date_id>/toggle")
+def toggle_historical_date(date_id):
+    lesson_ids = [lesson.id for lesson in teacher_lessons()]
+    row = HistoricalDate.query.filter_by(id=date_id).first_or_404()
+    if row.lesson_id not in lesson_ids:
+        abort(403)
+    row.is_published = not row.is_published
+    db.session.commit()
+    flash("تم تحديث حالة نشر التاريخ.", "success")
+    return redirect(url_for("platform_admin.historical_dates"))
+
+
+@platform_admin_bp.post("/historical-dates/<int:date_id>/delete")
+def delete_historical_date(date_id):
+    lesson_ids = [lesson.id for lesson in teacher_lessons()]
+    row = HistoricalDate.query.filter_by(id=date_id).first_or_404()
+    if row.lesson_id not in lesson_ids:
+        abort(403)
+    db.session.delete(row)
+    db.session.commit()
+    flash("تم حذف بطاقة التاريخ وسجل مراجعتها.", "success")
+    return redirect(url_for("platform_admin.historical_dates"))

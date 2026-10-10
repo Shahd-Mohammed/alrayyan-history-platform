@@ -23,7 +23,9 @@ from alrayyan.forms import (
 )
 from alrayyan.models import (
     AboutPage,
+    Curriculum,
     Lesson,
+    Unit,
     Worksheet,
     WorksheetAttachment,
 )
@@ -290,14 +292,50 @@ def upload_worksheet():
 
     form = UploadWorksheetForm()
 
-    lessons = Lesson.query.order_by(
-        Lesson.id
-    ).all()
+    # ورقة العمل تعرض دروس أحدث فصل جرى تفعيله، وليس دروس الفصول القديمة.
+    active_curricula_query = Curriculum.query.filter_by(
+        is_active=True,
+        processing_status="ready",
+    )
+    if current_user.role != "admin":
+        active_curricula_query = active_curricula_query.filter(
+            (Curriculum.created_by_id == current_user.id)
+            | (Curriculum.created_by_id.is_(None))
+        )
+    latest_active_curriculum = active_curricula_query.order_by(
+        Curriculum.activated_at.desc(),
+        Curriculum.created_at.desc(),
+        Curriculum.id.desc(),
+    ).first()
+
+    lessons = []
+    active_semester = (
+        latest_active_curriculum.semester
+        if latest_active_curriculum is not None
+        else None
+    )
+    if active_semester:
+        lessons_query = Lesson.query.join(Unit).join(Curriculum).filter(
+            Curriculum.is_active.is_(True),
+            Curriculum.processing_status == "ready",
+            Curriculum.semester == active_semester,
+        )
+        if current_user.role != "admin":
+            lessons_query = lessons_query.filter(
+                (Curriculum.created_by_id == current_user.id)
+                | (Curriculum.created_by_id.is_(None))
+            )
+        lessons = lessons_query.order_by(
+            Curriculum.subject,
+            Curriculum.grade,
+            Unit.order_index,
+            Lesson.order_index,
+        ).all()
 
     form.lesson_id.choices = [
-        (0, "بدون ربط بدرس محدد")
+        (0, "اختاري درسًا من الفصل النشط")
     ] + [
-        (lesson.id, lesson.title)
+        (lesson.id, f"{lesson.unit.curriculum.subject} — {lesson.unit.title} — {lesson.title}")
         for lesson in lessons
     ]
 

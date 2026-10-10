@@ -15,8 +15,8 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.models import (
-    ChallengeSession, ConceptMastery, ContentChunk, LearningPlanItem,
-    Lesson, TutorConversation, TutorMessage, TutorMessageSource,
+    ChallengeSession, ConceptMastery, ContentChunk, Curriculum, LearningPlanItem,
+    Lesson, TutorConversation, TutorMessage, TutorMessageSource, Unit,
     XPTransaction,
 )
 from alrayyan.services.tutor_engine import tutor_reply
@@ -36,15 +36,6 @@ def restrict_ai_tutor_to_students():
 
     if current_user.role == "student":
         return None
-
-    flash(
-        (
-            "المعلّم الذكي التفاعلي والتحديات "
-            "مخصصة لحساب الطالب. "
-            "تم تحويلك إلى لوحة المعلمة."
-        ),
-        "info",
-    )
 
     return redirect(
         url_for(
@@ -171,9 +162,28 @@ def refresh_learning_plan(student_id):
 @teacher_bp.get("/")
 @login_required
 def teacher_page():
+    # The AI teacher must follow the same active-curriculum rule as
+    # teacher-facing lesson selectors. Legacy indexed lessons from an
+    # inactive semester must never appear here.
     lessons = (
-        Lesson.query.join(ContentChunk, ContentChunk.lesson_id == Lesson.id)
-        .filter(ContentChunk.embedding.isnot(None)).distinct().order_by(Lesson.id).all()
+        Lesson.query
+        .join(ContentChunk, ContentChunk.lesson_id == Lesson.id)
+        .join(Unit, Unit.id == Lesson.unit_id)
+        .join(Curriculum, Curriculum.id == Unit.curriculum_id)
+        .filter(
+            ContentChunk.embedding.isnot(None),
+            Curriculum.is_active.is_(True),
+            Curriculum.processing_status == "ready",
+            # Exclude legacy placeholder lessons left by the old PDF parser.
+            Lesson.title.notin_({
+                "محتوى المنهج",
+                "الدرس احتياطي",
+                "الوحدة — الدرس احتياطي",
+            }),
+        )
+        .distinct()
+        .order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index)
+        .all()
     )
     conversations = (
         TutorConversation.query.filter_by(student_id=current_user.id)
@@ -215,14 +225,16 @@ def create_conversation():
         action="ask_diagnostic",
         evaluation="not_evaluated",
         content=(
-            f"أهلًا {current_user.first_name}. سنراجع درس «{lesson.title}» معًا. "
-            + (
-                f"سنركز على مفهوم «{initial_concept}». ماذا تتذكرين عنه؟"
-                if initial_concept
-                else "اكتبي ما تريدين فهمه، وسأشرح وأسألك خطوة بخطوة."
+            (
+                f"يا هلا {current_user.first_name} 🤍 خلينا ناخذها على راحتنا. "
+                + (
+                    f"اليوم نركز على «{initial_concept}» من درس «{lesson.title}»؟ احكيلي من وين بدك نبدأ."
+                    if initial_concept
+                    else f"درس «{lesson.title}» جاهز إلنا، بس مش لازم نبلش رسمي 😄 احكيلي شو حابة نفهم أو نحكي عنه."
+                )
             )
             if lesson else
-            f"أهلًا {current_user.first_name}. اختاري موضوعًا أو اطرحي سؤالًا، وسنبنيه معًا خطوة بخطوة."
+            f"يا هلا {current_user.first_name} 🤍 خذي راحتك، أنا معك. بدك ندرس، نسولف شوي، ولا نعملها بطريقة ألطف؟"
         ),
     )
     db.session.add(greeting)
@@ -456,6 +468,9 @@ def complete_plan_item(item_id):
 @teacher_bp.get("/my-points")
 @login_required
 def my_points():
+    all_transactions = XPTransaction.query.filter_by(
+        student_id=current_user.id
+    ).all()
     transactions = (
         XPTransaction.query
         .filter_by(student_id=current_user.id)
@@ -467,9 +482,15 @@ def my_points():
         "tutor_evaluated_answer": "إجابة قيّمها المعلم الذكي",
         "challenge_answer": "إجابة في التحدي",
         "challenge_completed": "إكمال تحدٍ",
+        "character_identified": "التعرّف على شخصية تاريخية",
+        "concept_map_viewed": "استكشاف خريطة مفاهيمية",
+        "resource_downloaded": "تنزيل مادة تعليمية",
+        "test_completed": "إكمال اختبار",
+        "worksheet_completed": "إكمال ورقة عمل",
+        "historical_date_recalled": "تذكّر تاريخ تاريخي",
     }
     totals_by_reason = {}
-    for transaction in transactions:
+    for transaction in all_transactions:
         totals_by_reason[transaction.reason] = (
             totals_by_reason.get(transaction.reason, 0)
             + transaction.amount

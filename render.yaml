@@ -3,7 +3,7 @@ services:
     name: alrayyan-learning-platform
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-ara && pip install -r requirements.txt
     preDeployCommand: flask --app app db upgrade
     startCommand: gunicorn --workers 2 --threads 4 --timeout 120 app:app
     healthCheckPath: /health

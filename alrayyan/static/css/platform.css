@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap");
 :root {
     --platform-navy: #0d294d;
     --platform-navy-dark: #071a35;
@@ -128,7 +129,7 @@ body {
 .footer-signature { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 20px; width: 100%; margin-top: 18px; padding: 18px 0; border-top: 1px solid rgba(210, 161, 59, .25); color: rgba(255, 255, 255, .58); font-size: .88rem; }
 .footer-signature a { color: var(--platform-gold-light); font-weight: 800; }
 .footer-heart { display: inline-block; color: #efc75e; font-size: 1.15rem; line-height: 1; transform: translateY(2px); }
-.premium-platform-footer{grid-template-columns:1.35fr .72fr .78fr 1fr;align-items:start}.footer-contact-link,.footer-whatsapp{display:inline-flex;margin-top:9px;color:var(--platform-gold-light)!important;font-weight:800}.floating-whatsapp{position:fixed;right:20px;bottom:20px;z-index:900;padding:11px 16px;border:1px solid #ead291;border-radius:999px;background:linear-gradient(135deg,var(--platform-gold),var(--platform-gold-dark));color:#fff;text-decoration:none;font-weight:800;box-shadow:0 12px 28px rgba(90,61,13,.24)}
+.premium-platform-footer{grid-template-columns:1.35fr .72fr .78fr 1fr;align-items:start}.footer-contact-link,.footer-whatsapp{display:inline-flex;margin-top:9px;color:var(--platform-gold-light)!important;font-weight:800}.floating-whatsapp{position:fixed;right:20px;bottom:20px;z-index:900;width:52px;height:52px;display:grid;place-items:center;border:1px solid #ead291;border-radius:50%;background:linear-gradient(135deg,var(--platform-gold),var(--platform-gold-dark));color:#fff;text-decoration:none;box-shadow:0 12px 28px rgba(90,61,13,.24);transition:transform .2s ease,box-shadow .2s ease}.floating-whatsapp:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(90,61,13,.3)}.floating-whatsapp svg{width:27px;height:27px;fill:currentColor}
 
 /* A balanced navy/gold action system across the platform. */
 .download-button,
@@ -392,3 +393,370 @@ button[type="submit"]:hover {
     max-height: min(70vh, 520px);
     overflow-y: auto;
 }
+
+
+/* Site-wide Arabic button typography: consistent weight and no artificial letter spacing */
+button,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+.button,
+.btn,
+a.button,
+a.btn {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-weight:750!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
+
+
+/* Shared Arabic typography for form controls and page content */
+body,input,select,textarea,button{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+
+
+/* Keep form action buttons sized to their labels instead of stretching across the page */
+button[type="submit"],
+input[type="submit"],
+input[type="button"]{
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Unified button typography and compact sizing across the platform */
+button,input[type="submit"],input[type="button"],input[type="reset"],.button,.btn,a.button,a.btn{
+  width:auto!important;min-width:0!important;max-width:100%!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.9rem!important;font-weight:750!important;line-height:1.4!important;
+  letter-spacing:0!important;text-transform:none!important;
+}
+button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+}
+
+
+/* Platform-wide compact control typography */
+button,input[type="submit"],input[type="button"],.platform-gold-button,.primary-action,.gold-action,.hint-action{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem!important;font-weight:750!important;letter-spacing:0!important;line-height:1.35;
+}
+button,.platform-gold-button,input[type="submit"],input[type="button"],.primary-action,.gold-action,.hint-action{
+  min-height:38px;max-width:100%;padding:8px 14px;border-radius:11px;
+}
+.platform-gold-button,.primary-action,.gold-action{
+  width:auto!important;min-width:0!important;max-width:max-content;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  background:linear-gradient(135deg,#c99a3d,#a97820)!important;
+  color:#fff!important;border:1px solid #b9892d!important;
+  box-shadow:0 5px 12px rgba(153,105,24,.12);
+}
+.platform-gold-button:hover,.primary-action:hover,.gold-action:hover{background:linear-gradient(135deg,#b8872d,#946516)!important;transform:translateY(-1px)}
+
+
+/* Readable neutral form text and compact gold actions across student and teacher pages */
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+textarea,select{
+  color:#687487!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+}
+input::placeholder,textarea::placeholder{color:#9aa4b2!important;opacity:1}
+input:focus,textarea:focus,select:focus{color:#566477!important}
+button,input[type="submit"],input[type="button"],input[type="reset"],
+.platform-gold-button,.primary-action,.gold-action,.hint-action,
+.concept-action,.tree-add-button,.test-primary-button,.test-card-action{
+  box-sizing:border-box;
+  width:auto!important;min-width:0!important;max-width:100%!important;
+  min-height:36px;padding:7px 13px;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem!important;font-weight:800!important;line-height:1.35!important;
+  letter-spacing:0!important;text-transform:none!important;
+}
+.platform-gold-button,.primary-action,.gold-action,.tree-add-button,
+.concept-action.preview,.concept-action.publish,.concept-action.delete,
+.test-primary-button,.test-card-action.publish{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  border:1px solid #b8862d!important;
+  background:linear-gradient(135deg,#c99a3d,#ad7c25)!important;
+  color:#fff!important;
+}
+.platform-gold-button:hover,.primary-action:hover,.gold-action:hover,
+.tree-add-button:hover,.concept-action.preview:hover,.concept-action.publish:hover,
+.concept-action.delete:hover,.test-primary-button:hover,.test-card-action.publish:hover{
+  background:linear-gradient(135deg,#b8862d,#94671b)!important;
+  color:#fff!important;
+}
+
+
+/* Shared button typography: calm weight, readable Arabic and content-sized controls */
+button,input[type="submit"],input[type="button"],.platform-login-link,.platform-footer a.footer-cta{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+  letter-spacing:0;
+}
+.platform-navigation button:not(.platform-menu-toggle),
+.platform-user-menu button,
+.platform-login-link{
+  width:auto;max-width:100%;font-size:.91rem;font-weight:600;line-height:1.4;
+}
+.platform-user-menu button{min-height:32px;padding:6px 10px}
+.platform-login-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 16px}
+
+
+/* Global Arabic typography baseline for interactive controls */
+body{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}
+button,input[type="submit"],input[type="button"],select,textarea{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;letter-spacing:0}
+button,input[type="submit"],input[type="button"]{font-size:.92rem;font-weight:600;line-height:1.4}
+
+
+/* Site-wide button polish: compact controls, consistent Arabic typography */
+button:not(.platform-menu-toggle),
+input[type="submit"],
+input[type="button"],
+.platform-gold-button,
+.gold-action,
+.primary-action,
+.challenge-primary-button,
+.challenge-secondary-button,
+.date-memory-button,
+.test-card-action,
+.concept-action,
+.tree-add-button {
+  box-sizing: border-box;
+  width: auto !important;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 15px;
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+  font-size: .9rem !important;
+  font-weight: 650 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+button:not(.platform-menu-toggle),
+input[type="submit"],
+input[type="button"] {
+  white-space: normal;
+}
+.platform-gold-button,
+.tree-add-button,
+.test-card-action.publish,
+.concept-action.preview,
+.concept-action.publish,
+.concept-action.delete,
+.concept-action,
+.date-memory-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #b8862d !important;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #c99a3d, #ad7c25) !important;
+  color: #fff !important;
+  box-shadow: 0 5px 12px rgba(151, 105, 27, .12);
+}
+.platform-gold-button:hover,
+.tree-add-button:hover,
+.test-card-action.publish:hover,
+.concept-action:hover,
+.date-memory-button:hover {
+  background: linear-gradient(135deg, #b8862d, #94671b) !important;
+  color: #fff !important;
+}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body button[type="submit"],
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button {
+  width: fit-content !important;
+  max-width: 100%;
+}
+.platform-admin-body .tree-add-button { color: #fff !important; }
+
+/* Replace tall dropdown lists with compact multi-column navigation panels */
+.platform-management-menu > div,
+.student-learning-menu > div {
+  width: min(560px, calc(100vw - 36px));
+  max-width: calc(100vw - 36px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  padding: 12px;
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+}
+.platform-management-menu > div a,
+.student-learning-menu > div a {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 9px 10px;
+  font-size: .88rem;
+  line-height: 1.45;
+  white-space: normal;
+}
+@media (max-width: 720px) {
+  .platform-management-menu > div,
+  .student-learning-menu > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 62vh;
+  }
+}
+@media (max-width: 420px) {
+  .platform-management-menu > div,
+  .student-learning-menu > div {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Button-like links follow the same compact size and typography */
+a[class*="action"],
+a[class*="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: fit-content !important;
+  max-width: 100%;
+  min-height: 38px;
+  padding: 8px 14px;
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+  font-size: .9rem !important;
+  font-weight: 650 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+  text-decoration: none;
+}
+
+
+
+/* Final unified controls: compact buttons, consistent Arabic type, no full-width action bars */
+button,
+input[type="submit"],
+input[type="button"],
+.platform-gold-button,
+.primary-action,
+.gold-action,
+.hint-action,
+.concept-action,
+.tree-add-button,
+.test-primary-button,
+.test-card-action,
+.test-card-preview,
+.date-memory-button,
+.student-primary-action,
+.student-dashboard-card > a,
+.student-panel-heading > a,
+.challenge-primary-button,
+.challenge-secondary-button,
+.result-primary-action,
+.result-back-link,
+.learning-grid article > a,
+.character-card summary {
+  box-sizing: border-box;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 36px;
+  padding: 8px 14px !important;
+  border-radius: 10px;
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+  font-size: .88rem !important;
+  font-weight: 650 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+  text-align: center;
+  white-space: normal;
+}
+button[type="submit"],
+input[type="submit"],
+.platform-gold-button,
+.primary-action,
+.gold-action,
+.tree-add-button,
+.test-primary-button,
+.test-card-action.publish,
+.test-card-preview,
+.date-memory-button,
+.student-primary-action,
+.concept-action,
+.result-primary-action {
+  background: linear-gradient(135deg,#d5ad52,#b78427) !important;
+  color: #fff !important;
+  border: 1px solid #b78427 !important;
+  box-shadow: 0 5px 13px rgba(156,109,28,.13);
+}
+button:hover,
+input[type="submit"]:hover,
+.platform-gold-button:hover,
+.primary-action:hover,
+.gold-action:hover,
+.tree-add-button:hover,
+.test-primary-button:hover,
+.date-memory-button:hover {
+  filter: brightness(.97);
+  transform: translateY(-1px);
+}
+button:disabled,
+input[type="submit"]:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+form:has(> button[type="submit"]),
+form:has(> input[type="submit"]) { min-width:0; }
+
+
+
+/* Final site-wide button typography: compact, legible, consistent labels */
+button,input[type="submit"],input[type="button"],
+.platform-gold-button,.primary-action,.gold-action,.hint-action,
+.concept-action,.tree-add-button,.test-primary-button,.test-card-action,
+.test-card-preview,.date-memory-button,.student-primary-action,
+.student-dashboard-card>a,.student-panel-heading>a,.challenge-primary-button,
+.challenge-secondary-button,.result-primary-action,.result-back-link,
+.learning-grid article>a,.character-card summary {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.87rem!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+  white-space:nowrap!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+button:not(.platform-menu-toggle):not(.platform-menu-toggle span) {
+  flex:0 0 auto;
+}
+
+
+/* Consistent compact gold actions across the platform */
+.platform-gold-button,.platform-admin-body button[type="submit"]:not(.danger-action):not(.classroom-delete-button):not(.honor-remove-button),.platform-admin-body .concept-action,.platform-admin-body .tree-add-button,.platform-admin-body .review-actions a,.platform-admin-body .classroom-row-actions button:not(.classroom-delete-button),.platform-admin-body .honor-submit-button,.platform-admin-body .test-card-action:not(.delete),.platform-admin-body .test-primary-button,.platform-admin-body .test-secondary-button,.platform-admin-body .test-card-preview{
+display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;width:auto!important;max-width:100%!important;min-width:0!important;min-height:38px!important;padding:8px 14px!important;border:1px solid #b9872d!important;border-radius:10px!important;background:linear-gradient(135deg,#d7b45e 0%,#b9872d 100%)!important;color:#fff!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:14px!important;font-weight:700!important;line-height:1.35!important;text-align:center!important;text-decoration:none!important;white-space:nowrap!important;box-shadow:0 5px 13px rgba(139,101,30,.12)!important;cursor:pointer;transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
+.platform-gold-button:hover,.platform-admin-body button[type="submit"]:not(.danger-action):not(.classroom-delete-button):not(.honor-remove-button):hover,.platform-admin-body .concept-action:hover,.platform-admin-body .tree-add-button:hover,.platform-admin-body .review-actions a:hover,.platform-admin-body .classroom-row-actions button:not(.classroom-delete-button):hover,.platform-admin-body .honor-submit-button:hover,.platform-admin-body .test-primary-button:hover,.platform-admin-body .test-secondary-button:hover,.platform-admin-body .test-card-preview:hover{background:linear-gradient(135deg,#c99a3d 0%,#986b1d 100%)!important;color:#fff!important;transform:translateY(-1px);box-shadow:0 8px 17px rgba(139,101,30,.18)!important}
+.platform-admin-body .tree-add-button{color:#fff!important}
+.platform-admin-body .concept-map-card-actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
+.platform-admin-body .concept-map-card-actions form{width:auto!important;margin:0!important}
+.platform-admin-body .concept-map-card-actions .concept-action{min-height:36px!important;padding:7px 12px!important;font-size:13px!important}
+.platform-admin-body .concept-map-card-actions .concept-action.preview,.platform-admin-body .concept-map-card-actions .concept-action.publish{background:linear-gradient(135deg,#d7b45e,#b9872d)!important;border-color:#b9872d!important;color:#fff!important}
+.platform-admin-body .concept-map-card-actions .concept-action.delete,.platform-admin-body .danger-action,.platform-admin-body .classroom-delete-button,.platform-admin-body .honor-remove-button,.platform-admin-body .test-card-action.delete{background:linear-gradient(135deg,#b64c4c,#8f3030)!important;border-color:#a63e3e!important;color:#fff!important}
+.platform-admin-body .platform-form .platform-gold-button,.platform-admin-body .concept-form-footer button{justify-self:start!important;flex:0 0 auto!important}
+.platform-admin-body .platform-form button[type="submit"]{width:auto!important}
+
+
+/* Final shared button typography and width guard */
+body button,body input[type="submit"],body input[type="button"],body .btn,body .button{
+font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:700!important;letter-spacing:0!important;line-height:1.4!important;width:auto!important;max-width:100%!important;min-width:0!important}
+body button:not(.platform-menu-toggle){white-space:normal;overflow-wrap:anywhere}
+.platform-header .platform-menu-toggle{width:42px!important;min-width:42px!important}
+
+
+/* Keep the header dropdown inside laptop bounds and stack every destination vertically */
+.platform-header .student-learning-menu > div{
+right:auto!important;left:0!important;width:max-content!important;min-width:230px!important;max-width:min(340px,calc(100vw - 24px))!important;max-height:min(72vh,560px)!important;overflow-y:auto!important;grid-template-columns:1fr!important;text-align:right!important;white-space:normal!important}
+.platform-header .student-learning-menu > div a{display:block!important;min-width:0!important;white-space:normal!important;line-height:1.5!important;overflow-wrap:anywhere!important}
+.platform-header .platform-management-menu > div{width:min(330px,calc(100vw - 24px))!important}

@@ -4,23 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نتيجة المحاولة | الريان</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css', v='20261010-final-controls-5') }}">
 </head>
 <body>
     {% include '_platform_header.html' %}
     <main class="attempt-result-page">
-        <a class="result-back-link" href="{{ url_for('assessment.my_results') }}">→ العودة إلى جميع النتائج</a>
+        <a class="result-back-link" href="{{ url_for('assessment.my_results') }}">→ جميع نتائجي</a>
 
         <header class="attempt-result-hero">
             <div class="attempt-result-copy">
-                <span>نتيجة ورقة العمل</span>
+                <span>{{ 'نتيجة الاختبار' if attempt.worksheet.creation_method == 'test' else 'نتيجة ورقة العمل' }}</span>
                 <h1>{{ attempt.worksheet.title }}</h1>
                 {% if attempt.worksheet.lesson %}<p>{{ attempt.worksheet.lesson.title }}</p>{% endif %}
 
                 {% if pending_manual_grading %}
                     <div class="result-message result-message-pending"><strong>النتيجة مؤقتة</strong><span>يوجد سؤال بانتظار تصحيح المعلمة.</span></div>
                 {% elif attempt.is_passed %}
-                    <div class="result-message result-message-success"><strong>أحسنتِ!</strong><span>اجتزتِ ورقة العمل بنجاح.</span></div>
+                    <div class="result-message result-message-success"><strong>أحسنتِ!</strong><span>{{ 'اجتزتِ الاختبار بنجاح.' if attempt.worksheet.creation_method == 'test' else 'اجتزتِ ورقة العمل بنجاح.' }}</span></div>
                 {% else %}
                     <div class="result-message result-message-review"><strong>خطوة جيدة، تابعي المحاولة</strong><span>راجعي الإجابات ثم عودي للمحاولة المتاحة.</span></div>
                 {% endif %}
@@ -81,7 +81,7 @@
 
         <div class="attempt-result-actions">
             <a class="result-primary-action" href="{{ url_for('assessment.my_results') }}">جميع نتائجي</a>
-            <a class="result-secondary-action" href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
+            <a class="result-secondary-action" href="{{ url_for('challenges.test_bank') if attempt.worksheet.creation_method == 'test' else url_for('worksheets.worksheet_list') }}">{{ 'العودة إلى الاختبارات' if attempt.worksheet.creation_method == 'test' else 'العودة إلى أوراق العمل' }}</a>
         </div>
     </main>
     {% include '_platform_footer.html' %}

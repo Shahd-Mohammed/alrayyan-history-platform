@@ -227,3 +227,17 @@ body {
 }
 
 .invitation-page{min-height:100vh;margin:0;padding:clamp(18px,4vw,55px);background:radial-gradient(circle at 12% 12%,rgba(210,161,59,.24),transparent 28%),linear-gradient(135deg,#071a35,#123b68);font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}.invitation-shell{display:grid;grid-template-columns:.9fr 1.1fr;align-items:center;width:min(1050px,100%);min-height:700px;margin:auto;overflow:hidden;border:1px solid rgba(239,209,138,.45);border-radius:30px;background:#fff;box-shadow:0 35px 90px rgba(0,0,0,.25)}.invitation-story{align-self:stretch;padding:clamp(35px,6vw,75px);background:linear-gradient(145deg,#fff9eb,#f5e2b8);color:#0d294d}.invitation-story>span,.invitation-kicker{color:#9a6a14;font-weight:900}.invitation-story h1{margin:12px 0 18px;font-family:"Aref Ruqaa",serif;font-size:clamp(2.7rem,5vw,4.2rem);line-height:1.25}.invitation-story p{margin-bottom:32px;color:#607087;line-height:1.9}.invitation-story div{display:flex;gap:10px;margin:13px 0;font-weight:700}.invitation-story div b{color:#b47b18}.invitation-card{padding:clamp(30px,6vw,80px)}.invitation-logo{display:flex;justify-content:center;margin-bottom:24px}.invitation-logo img{width:170px;height:auto}.invitation-card h2{margin:8px 0;color:#0d294d;font-size:2rem}.invitation-card>p{color:#647184;line-height:1.8}.invitation-card form{display:grid;gap:16px;margin-top:24px}.invitation-card label{display:grid;gap:7px;color:#173b68;font-weight:800}.invitation-card input{width:100%;min-height:50px;padding:10px 13px;border:1px solid #d9ceb8;border-radius:12px;font:inherit}.invitation-card input:focus{border-color:#d2a13b;outline:3px solid rgba(210,161,59,.18)}.invitation-card label small{color:#a43c3c}.invitation-card .login-button{border-color:#d2a13b!important;background:linear-gradient(135deg,#d2a13b,#a66e12)!important;color:#fff!important}.invitation-security{display:block;margin-top:18px;color:#778293;text-align:center}@media(max-width:780px){.invitation-shell{grid-template-columns:1fr}.invitation-story{display:none}.invitation-card{padding:32px 22px}}
+
+
+/* Keep login credentials readable and consistent with the platform typography. */
+.auth-box form{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}
+.field-group label{font-size:.98rem;line-height:1.6}
+.field-group input{font:500 1rem/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;letter-spacing:0;color:#172d4f}
+.field-group input::placeholder{font:400 .98rem/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#8a94a3;opacity:1}
+.submit-button{font:600 1rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif;letter-spacing:0}
+
+
+/* Login controls stay comfortable without oversized full-width actions */
+.submit-button{display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:150px;max-width:100%;min-height:44px;padding:9px 20px;font-size:.95rem;font-weight:600}
+.auth-box form{display:flex;flex-direction:column;align-items:flex-start}
+.auth-box .field-group,.auth-box .remember-field{width:100%}

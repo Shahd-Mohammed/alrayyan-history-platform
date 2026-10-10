@@ -1,1 +1,66 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ concept_map.title }} | الريان</title><link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}"></head><body>{% include '_platform_header.html' %}<main class="learning-page"><header class="learning-hero compact"><p>{{ concept_map.lesson.title }}</p><h1>{{ concept_map.title }}</h1><span>{{ 'معاينة المعلمة قبل النشر' if request.args.get('preview') else 'شاهدي الفكرة الكبيرة وروابطها في مكان واحد' }}</span></header>{% if concept_map.creation_method=='upload' %}<section class="uploaded-map-preview">{% if concept_map.mime_type and concept_map.mime_type.startswith('image/') %}<img src="{{ url_for('learning.concept_map_file',map_id=concept_map.id) }}" alt="{{ concept_map.title }}">{% else %}<iframe src="{{ url_for('learning.concept_map_file',map_id=concept_map.id) }}" title="{{ concept_map.title }}"></iframe>{% endif %}</section>{% else %}<section class="map-stage visual-map-stage">{% for node in concept_map.nodes %}<details class="map-node" style="--node-x:{{ node.position_x }};--node-y:{{ node.position_y }}" {% if loop.first %}open{% endif %}><summary>{{ node.label }}</summary><p>{{ node.description or 'مفهوم مرتبط بموضوع الدرس.' }}</p></details>{% endfor %}</section><section class="relationship-panel"><h2>العلاقات بين الأفكار</h2>{% for edge in concept_map.edges %}<p><strong>{{ edge.source_node.label }}</strong><span>{{ edge.label or 'يرتبط بـ' }}</span><strong>{{ edge.target_node.label }}</strong></p>{% else %}<p>استكشفي المفاهيم الظاهرة في الخريطة.</p>{% endfor %}</section>{% endif %}</main>{% include '_platform_footer.html' %}</body></html>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ concept_map.title }} | الريان</title><link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css',v='20261010-design-pass-17') }}"></head><body>{% include '_platform_header.html' %}<main class="learning-page"><header class="learning-hero compact historical-learning-hero concept-map-preview-hero"><p>{{ concept_map.lesson.title }} · خريطة المعرفة</p><h1>{{ concept_map.title }}</h1><span>{{ 'معاينة المعلمة قبل النشر' if request.args.get('preview') else 'شاهدي الفكرة الكبيرة وروابطها في مكان واحد، وافهمي كيف ترتبط الأحداث والمفاهيم.' }}</span></header>{% if concept_map.creation_method=='upload' %}<section class="uploaded-map-preview">{% if concept_map.mime_type and concept_map.mime_type.startswith('image/') %}<img src="{{ url_for('learning.concept_map_file',map_id=concept_map.id) }}" alt="{{ concept_map.title }}">{% else %}<iframe src="{{ url_for('learning.concept_map_file',map_id=concept_map.id) }}" title="{{ concept_map.title }}"></iframe>{% endif %}</section>{% else %}<section class="map-stage visual-map-stage concept-tree-preview" aria-label="شجرة المفاهيم">
+<div class="concept-tree-preview-canvas" data-map-preview-tree><p class="learning-empty">جارٍ ترتيب فروع الخريطة…</p></div>
+<div data-map-source hidden>
+{% for node in concept_map.nodes %}<article data-map-node="{{ node.id }}"><strong>{{ node.label }}</strong><p>{{ node.description or 'مفهوم مرتبط بموضوع الدرس.' }}</p></article>{% endfor %}
+{% for edge in concept_map.edges %}<span data-map-edge data-source="{{ edge.source_node.id }}" data-target="{{ edge.target_node.id }}" data-label="{{ edge.label or 'يتفرع إلى' }}"></span>{% endfor %}
+</div>
+</section>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+ const canvas=document.querySelector("[data-map-preview-tree]");
+ const source=document.querySelector("[data-map-source]");
+ if(!canvas||!source)return;
+ const nodes=[...source.querySelectorAll("[data-map-node]")];
+ const edges=[...source.querySelectorAll("[data-map-edge]")];
+ const byId=new Map(nodes.map(node=>[node.dataset.mapNode,node]));
+ const children=new Map(nodes.map(node=>[node.dataset.mapNode,[]]));
+ const targeted=new Set();
+ edges.forEach(edge=>{
+   const from=edge.dataset.source,to=edge.dataset.target;
+   if(byId.has(from)&&byId.has(to)&&from!==to&&!targeted.has(to)){
+     children.get(from).push({id:to,label:edge.dataset.label||"يتفرع إلى"});
+     targeted.add(to);
+   }
+ });
+ const roots=nodes.filter(node=>!targeted.has(node.dataset.mapNode));
+ const visited=new Set();
+ function render(id,edgeLabel){
+   if(visited.has(id)||!byId.has(id))return null;
+   visited.add(id);
+   const original=byId.get(id);
+   const li=document.createElement("li");
+   li.className="concept-tree-preview-branch";
+   if(edgeLabel){const relation=document.createElement("span");relation.className="concept-tree-edge-label";relation.textContent=edgeLabel;li.appendChild(relation);}
+   const card=document.createElement("article");card.className="concept-tree-preview-node"+(edgeLabel?"":" is-root-node");
+   const title=document.createElement("strong");title.textContent=original.querySelector("strong")?.textContent||"";
+   const description=document.createElement("p");description.textContent=original.querySelector("p")?.textContent||"";
+   card.append(title,description);li.appendChild(card);
+   const branchItems=(children.get(id)||[]).map(child=>render(child.id,child.label)).filter(Boolean);
+   if(branchItems.length){const list=document.createElement("ul");list.className="concept-tree-preview-children";branchItems.forEach(item=>list.appendChild(item));li.appendChild(list);}
+   return li;
+ }
+ const tree=document.createElement("ul");tree.className="concept-tree-preview-root";
+ roots.forEach(root=>{const item=render(root.dataset.mapNode,"");if(item)tree.appendChild(item);});
+ nodes.forEach(node=>{if(!visited.has(node.dataset.mapNode)){const item=render(node.dataset.mapNode,"فرع مستقل");if(item)tree.appendChild(item);}});
+ canvas.replaceChildren(tree);
+});
+</script>
+<section class="map-relations-panel" aria-label="العلاقات بين مفاهيم الدرس">
+  <div class="map-relations-heading">
+    <span>روابط المعرفة</span>
+    <h2>العلاقات بين المفاهيم</h2>
+    <p>راجعي كيف يرتبط كل مفهوم بالآخر، إلى جانب الشجرة التي توضّح تفرّع الأفكار.</p>
+  </div>
+  <div class="map-relations-list">
+    {% for edge in concept_map.edges %}
+    <article class="map-relation-card">
+      <strong>{{ edge.source_node.label }}</strong>
+      <span class="map-relation-link">{{ edge.label or 'يرتبط بـ' }} <b>←</b></span>
+      <strong>{{ edge.target_node.label }}</strong>
+    </article>
+    {% else %}
+    <p class="learning-empty">لا توجد علاقات إضافية محفوظة لهذه الخريطة حتى الآن.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}</main>{% include '_platform_footer.html' %}</body></html>

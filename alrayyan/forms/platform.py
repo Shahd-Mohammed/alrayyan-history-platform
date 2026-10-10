@@ -9,10 +9,10 @@ class CurriculumUploadForm(FlaskForm):
     grade = StringField("الصف", validators=[DataRequired(), Length(max=50)])
     semester = SelectField("الفصل", choices=[("الأول", "الفصل الأول"), ("الثاني", "الفصل الثاني")])
     academic_year = StringField("العام الدراسي", validators=[DataRequired(), Length(max=30)])
-    curriculum_name = StringField("اسم المنهج", validators=[DataRequired(), Length(max=200)])
-    unit_title = StringField("الوحدة", validators=[DataRequired(), Length(max=200)])
-    lesson_title = StringField("الدرس", validators=[DataRequired(), Length(max=250)])
-    source_title = StringField("اسم المصدر", validators=[DataRequired(), Length(max=250)])
+    curriculum_name = StringField("اسم المنهج", validators=[Optional(), Length(max=200)])
+    unit_title = StringField("اسم الوحدة (اختياري)", validators=[Optional(), Length(max=200)], description="يُستخدم كعنوان بديل فقط إذا لم يتعرف النظام على الوحدات في الملف.")
+    lesson_title = StringField("اسم الدرس (اختياري)", validators=[Optional(), Length(max=250)], description="يُستخدم كعنوان بديل فقط إذا لم يتعرف النظام على الدروس في الملف.")
+    source_title = StringField("اسم المصدر", validators=[Optional(), Length(max=250)])
     source_type = SelectField("نوع المصدر", choices=[("official_book", "الكتاب الرسمي"), ("supporting_book", "المصادر المساندة"), ("review_notes", "الملازم والمراجعات")])
     document = FileField("ملف المنهج", validators=[FileRequired(), FileAllowed(["pdf", "docx"], "المتاح PDF أو DOCX فقط")])
     submit = SubmitField("رفع وتجهيز المصدر")
@@ -47,7 +47,7 @@ class InvitationRegistrationForm(FlaskForm):
 class PlatformSettingsForm(FlaskForm):
     platform_name = StringField("اسم المنصة", validators=[DataRequired(), Length(max=150)])
     tagline = StringField("العبارة التعريفية", validators=[DataRequired(), Length(max=250)])
-    whatsapp_url = StringField("رابط واتساب العام", validators=[Optional(), URL(), Length(max=500)])
+    whatsapp_url = StringField("رقم واتساب المنصة", validators=[Optional(), Length(max=500)], description="أدخلي رقم واتساب مع مفتاح الدولة أو رابط واتساب مباشر. سيتم استخدام القيمة نفسها في أيقونة واتساب في الفوتر.")
     support_email = EmailField("بريد التواصل", validators=[Optional(), Email(), Length(max=255)])
     submit = SubmitField("حفظ الإعدادات")
 
@@ -66,7 +66,6 @@ class LearningResourceForm(FlaskForm):
 class ConceptMapForm(FlaskForm):
     lesson_id = SelectField("الدرس", coerce=int, validators=[DataRequired()])
     title = StringField("عنوان الخريطة", validators=[DataRequired(), Length(max=250)])
-    map_type = SelectField("نوع الخريطة", choices=[("concept", "مفهوم وفروع"), ("cause_effect", "أسباب ونتائج"), ("comparison", "مقارنة"), ("timeline", "تسلسل زمني")])
     nodes_json = HiddenField("بيانات الخريطة", validators=[Optional(), Length(max=50000)])
     publication_status = SelectField("الحالة", choices=[("draft", "مسودة"), ("published", "منشورة")])
     submit = SubmitField("إنشاء الخريطة")

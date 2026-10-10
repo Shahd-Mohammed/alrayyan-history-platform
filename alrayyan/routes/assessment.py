@@ -34,6 +34,11 @@ from alrayyan.models import (
     StudentAnswer,
     Worksheet,
     WorksheetAttempt,
+    Lesson,
+    Unit,
+    Curriculum,
+    User,
+    XPTransaction,
 )
 from alrayyan.services.question_interactions import (
     INTERACTIVE_TYPES,
@@ -74,6 +79,206 @@ def teacher_required(view_function):
 
     return wrapped_view
 
+
+def create_question_from_form(worksheet, form):
+    """Create one question from the submitted question form."""
+    question_type = form.question_type.data
+    choices = [
+        line.strip()
+        for line in (form.choices_text.data or "").splitlines()
+        if line.strip()
+    ]
+    correct_answer = (form.correct_answer_text.data or "").strip()
+
+    interaction_config, interaction_errors = build_config(
+        question_type,
+        choices,
+        correct_answer,
+    )
+    if interaction_errors:
+        for error in interaction_errors:
+            flash(error, "error")
+        return False
+
+    if question_type == "multiple_choice":
+        if len(choices) < 2:
+            flash("سؤال الاختيار من متعدد يحتاج خيارين على الأقل.", "error")
+            return False
+
+        normalized_choices = {
+            normalize_answer(choice)
+            for choice in choices
+        }
+        if normalize_answer(correct_answer) not in normalized_choices:
+            flash("الإجابة الصحيحة يجب أن تطابق أحد الخيارات تمامًا.", "error")
+            return False
+
+    if question_type == "true_false":
+        if normalize_answer(correct_answer) not in {"صح", "خطأ"}:
+            flash("في سؤال الصح والخطأ اكتبي الإجابة: صح أو خطأ.", "error")
+            return False
+
+    if question_type in {"short_answer", "fill_blank"} and not correct_answer:
+        flash("يرجى كتابة الإجابة الصحيحة لسؤال الإجابة القصيرة.", "error")
+        return False
+
+    question = Question(
+        worksheet_id=worksheet.id,
+        question_text=form.question_text.data.strip(),
+        question_type=question_type,
+        correct_answer_text=correct_answer or None,
+        explanation=form.explanation.data.strip() if form.explanation.data else None,
+        points=form.points.data,
+        order_index=get_next_question_order(worksheet),
+        requires_manual_grading=question_type == "essay",
+        interaction_config=(
+            dump_config(interaction_config)
+            if question_type in INTERACTIVE_TYPES
+            else None
+        ),
+    )
+
+    db.session.add(question)
+    db.session.flush()
+
+    if question_type in {"multiple_choice", "multiple_select"}:
+        correct_values = {
+            normalize_answer(item)
+            for item in (
+                interaction_config.get("correct_values", [])
+                if question_type == "multiple_select"
+                else [correct_answer]
+            )
+        }
+        for index, choice_text in enumerate(choices, start=1):
+            db.session.add(
+                Choice(
+                    question_id=question.id,
+                    choice_text=choice_text,
+                    is_correct=normalize_answer(choice_text) in correct_values,
+                    order_index=index,
+                )
+            )
+
+    db.session.commit()
+    flash("تمت إضافة السؤال بنجاح.", "success")
+    return True
+
+
+@assessment_bp.route("/teacher/tests", methods=["GET", "POST"])
+@teacher_required
+def test_center():
+    lessons = (
+        Lesson.query.join(Unit).join(Curriculum)
+        .filter(
+            Curriculum.is_active.is_(True),
+            Curriculum.processing_status == "ready",
+            Lesson.is_published.is_(True),
+        )
+        .order_by(Unit.order_index, Lesson.order_index)
+        .all()
+    )
+
+    selected_test = None
+    form = QuestionForm()
+
+    if request.method == "POST":
+        action = request.form.get("action", "create_test")
+
+        if action in {"publish_test", "draft_test", "archive_test", "delete_test"}:
+            worksheet_id = request.form.get("worksheet_id", type=int)
+            worksheet = get_teacher_worksheet_or_404(worksheet_id)
+
+            if worksheet.creation_method != "test":
+                abort(400)
+
+            if action == "publish_test":
+                worksheet.publication_status = "published"
+                worksheet.is_published = True
+                flash("تم نشر الاختبار بنجاح.", "success")
+            elif action == "draft_test":
+                worksheet.publication_status = "draft"
+                worksheet.is_published = False
+                flash("تمت إعادة الاختبار إلى المسودات.", "success")
+            elif action == "archive_test":
+                # Keep student attempts and scores available in the archive.
+                worksheet.is_archived = True
+                worksheet.archived_at = utc_now()
+                flash("تم نقل الاختبار إلى الأرشيف مع الحفاظ على سجلات الطالبات.", "success")
+            else:
+                # Never delete a test that already has student attempts.
+                if worksheet.attempts:
+                    worksheet.is_archived = True
+                    worksheet.archived_at = utc_now()
+                    flash("لأن هذا الاختبار يحتوي على محاولات طالبات، نُقل إلى الأرشيف بدل حذفه للحفاظ على النتائج.", "warning")
+                else:
+                    db.session.delete(worksheet)
+                    flash("تم حذف الاختبار لأنه لا يحتوي على محاولات طالبات.", "success")
+
+            db.session.commit()
+            return redirect(url_for("assessment.test_center"))
+
+        if action == "create_test":
+            title = (request.form.get("title") or "").strip()
+            lesson_id = request.form.get("lesson_id", type=int)
+            lesson = next((item for item in lessons if item.id == lesson_id), None)
+
+            if not title or lesson is None:
+                flash("اختاري درسًا نشطًا واكتبي اسم الاختبار.", "error")
+                return redirect(url_for("assessment.test_center"))
+
+            test = Worksheet(
+                lesson_id=lesson.id,
+                created_by_id=current_user.id,
+                title=title,
+                description=(request.form.get("description") or "").strip() or None,
+                time_limit_minutes=(
+                    request.form.get("time_limit_minutes", type=int)
+                    if 1 <= (request.form.get("time_limit_minutes", type=int) or 0) <= 300
+                    else None
+                ),
+                creation_method="test",
+                difficulty_level="medium",
+                publication_status="draft",
+                is_published=False,
+            )
+            db.session.add(test)
+            db.session.commit()
+            flash("تم إنشاء الاختبار هنا. الآن يمكنكِ إضافة الأسئلة من نفس الصفحة.", "success")
+            return redirect(url_for("assessment.test_center", worksheet_id=test.id) + "#inline-test-workspace")
+
+        if action == "add_question":
+            worksheet_id = request.form.get("worksheet_id", type=int)
+            selected_test = get_teacher_worksheet_or_404(worksheet_id)
+
+            if form.validate_on_submit():
+                if create_question_from_form(selected_test, form):
+                    return redirect(
+                        url_for(
+                            "assessment.test_center",
+                            worksheet_id=selected_test.id,
+                        ) + "#inline-test-workspace"
+                    )
+
+    worksheet_id = request.args.get("worksheet_id", type=int)
+    if worksheet_id:
+        selected_test = get_teacher_worksheet_or_404(worksheet_id)
+
+    tests = Worksheet.query.filter_by(
+        creation_method="test",
+        is_archived=False,
+    )
+    if current_user.role != "admin":
+        tests = tests.filter_by(created_by_id=current_user.id)
+    tests = tests.order_by(Worksheet.created_at.desc()).all()
+
+    return render_template(
+        "assessment/test_center.html",
+        tests=tests,
+        lessons=lessons,
+        selected_test=selected_test,
+        form=form,
+    )
 
 def get_teacher_worksheet_or_404(
     worksheet_id,
@@ -470,6 +675,16 @@ def build_saved_answers(attempt):
             )
 
     return saved_answers
+@assessment_bp.get("/teacher/tests/<int:worksheet_id>/preview")
+@teacher_required
+def preview_test(worksheet_id):
+    """Show a read-only preview of a teacher-owned test."""
+    worksheet = get_teacher_worksheet_or_404(worksheet_id)
+    if worksheet.creation_method != "test":
+        abort(404)
+    return render_template("assessment/test_preview.html", test=worksheet)
+
+
 @assessment_bp.route(
     "/teacher/worksheets/"
     "<int:worksheet_id>/questions",
@@ -477,212 +692,20 @@ def build_saved_answers(attempt):
 )
 @teacher_required
 def manage_questions(worksheet_id):
-    """
-    Display the worksheet questions and allow
-    the teacher to add a new question.
-    """
-
-    worksheet = (
-        get_teacher_worksheet_or_404(
-            worksheet_id
-        )
-    )
-
+    """Display the worksheet questions and allow the teacher to add a new question."""
+    worksheet = get_teacher_worksheet_or_404(worksheet_id)
     form = QuestionForm()
-
-    settings_form = WorksheetSettingsForm(
-        obj=worksheet
-    )
+    settings_form = WorksheetSettingsForm(obj=worksheet)
 
     if form.validate_on_submit():
-        question_type = (
-            form.question_type.data
-        )
-
-        choices = [
-            line.strip()
-            for line
-            in (
-                form.choices_text.data
-                or ""
-            ).splitlines()
-            if line.strip()
-        ]
-
-        correct_answer = (
-            form.correct_answer_text.data
-            or ""
-        ).strip()
-
-        interaction_config, interaction_errors = build_config(
-            question_type,
-            choices,
-            correct_answer,
-        )
-        if interaction_errors:
-            for error in interaction_errors:
-                flash(error, "error")
-            return render_template(
-                "manage_questions.html",
-                worksheet=worksheet,
-                form=form,
-                settings_form=settings_form,
+        create_question_from_form(worksheet, form)
+        if not form.errors:
+            return redirect(
+                url_for(
+                    "assessment.manage_questions",
+                    worksheet_id=worksheet.id,
+                )
             )
-
-        if question_type == "multiple_choice":
-            if len(choices) < 2:
-                flash(
-                    (
-                        "سؤال الاختيار من متعدد "
-                        "يحتاج خيارين على الأقل."
-                    ),
-                    "error",
-                )
-
-                return render_template(
-                    "manage_questions.html",
-                    worksheet=worksheet,
-                    form=form,
-                    settings_form=settings_form,
-                )
-
-            normalized_choices = {
-                normalize_answer(choice)
-                for choice in choices
-            }
-
-            if (
-                normalize_answer(
-                    correct_answer
-                )
-                not in normalized_choices
-            ):
-                flash(
-                    (
-                        "الإجابة الصحيحة يجب أن "
-                        "تطابق أحد الخيارات تمامًا."
-                    ),
-                    "error",
-                )
-
-                return render_template(
-                    "manage_questions.html",
-                    worksheet=worksheet,
-                    form=form,
-                    settings_form=settings_form,
-                )
-
-        if question_type == "true_false":
-            if normalize_answer(
-                correct_answer
-            ) not in {
-                "صح",
-                "خطأ",
-            }:
-                flash(
-                    (
-                        "في سؤال الصح والخطأ "
-                        "اكتبي الإجابة: صح أو خطأ."
-                    ),
-                    "error",
-                )
-
-                return render_template(
-                    "manage_questions.html",
-                    worksheet=worksheet,
-                    form=form,
-                    settings_form=settings_form,
-                )
-
-        if (
-            question_type in {"short_answer", "fill_blank"}
-            and not correct_answer
-        ):
-            flash(
-                (
-                    "يرجى كتابة الإجابة الصحيحة "
-                    "لسؤال الإجابة القصيرة."
-                ),
-                "error",
-            )
-
-            return render_template(
-                "manage_questions.html",
-                worksheet=worksheet,
-                form=form,
-                settings_form=settings_form,
-            )
-
-        question = Question(
-            worksheet_id=worksheet.id,
-            question_text=(
-                form.question_text.data.strip()
-            ),
-            question_type=question_type,
-            correct_answer_text=(
-                correct_answer or None
-            ),
-            explanation=(
-                form.explanation.data.strip()
-                if form.explanation.data
-                else None
-            ),
-            points=form.points.data,
-            order_index=(
-                get_next_question_order(
-                    worksheet
-                )
-            ),
-            requires_manual_grading=(
-                question_type == "essay"
-            ),
-            interaction_config=(
-                dump_config(interaction_config)
-                if question_type in INTERACTIVE_TYPES
-                else None
-            ),
-        )
-
-        db.session.add(question)
-        db.session.flush()
-
-        if question_type in {"multiple_choice", "multiple_select"}:
-            for index, choice_text in enumerate(
-                choices,
-                start=1,
-            ):
-                choice = Choice(
-                    question_id=question.id,
-                    choice_text=choice_text,
-                    is_correct=(
-                        normalize_answer(choice_text)
-                        in {
-                            normalize_answer(item)
-                            for item in (
-                                interaction_config.get("correct_values", [])
-                                if question_type == "multiple_select"
-                                else [correct_answer]
-                            )
-                        }
-                    ),
-                    order_index=index,
-                )
-
-                db.session.add(choice)
-
-        db.session.commit()
-
-        flash(
-            "تمت إضافة السؤال بنجاح.",
-            "success",
-        )
-
-        return redirect(
-            url_for(
-                "assessment.manage_questions",
-                worksheet_id=worksheet.id,
-            )
-        )
 
     return render_template(
         "manage_questions.html",
@@ -912,6 +935,34 @@ def calculate_attempt_result(attempt):
         and attempt.percentage
         >= attempt.worksheet.passing_score
     )
+
+    # تُكافأ الطالبة عند إكمال اختبار أو ورقة عمل، مرة واحدة لكل محاولة.
+    if not has_pending_manual_grading and attempt.submitted_at:
+        is_test = attempt.worksheet.creation_method == "test"
+        award_reason = "test_completed" if is_test else "worksheet_completed"
+        score_points = int(round(attempt.score or 0))
+        completion_bonus = 5
+        earned_points = completion_bonus + max(0, score_points)
+        existing_award = XPTransaction.query.filter_by(
+            student_id=attempt.student_id,
+            reason=award_reason,
+            source_type="worksheet_attempt",
+            source_id=attempt.id,
+        ).first()
+        if existing_award is None:
+            db.session.add(
+                XPTransaction(
+                    student_id=attempt.student_id,
+                    amount=earned_points,
+                    reason=award_reason,
+                    source_type="worksheet_attempt",
+                    source_id=attempt.id,
+                )
+            )
+            student = db.session.get(User, attempt.student_id)
+            if student is not None:
+                student.points = (student.points or 0) + earned_points
+                student.level = max(1, student.points // 500 + 1)
 
 
 @assessment_bp.post(

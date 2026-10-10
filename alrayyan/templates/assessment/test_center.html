@@ -1,0 +1,409 @@
+{% extends "platform/_admin_base.html" %}
+{% block title %}استوديو الاختبارات | منصة الريان{% endblock %}
+{% block eyebrow %}استوديو الاختبارات{% endblock %}
+{% block heading %}اصنعي اختبارًا تاريخيًا من نفس المكان{% endblock %}
+{% block intro %}أنشئي الاختبار، أضيفي الأسئلة، وراجعي ما بنيتِه دون أن تغادري مركز الاختبارات.{% endblock %}
+
+{% block content %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const typeField = document.getElementById("question_type");
+  const choicesField = document.getElementById("choices_text");
+  const correctField = document.getElementById("correct_answer_text");
+  if (!typeField || !choicesField || !correctField) return;
+
+  const legacyOption = [...typeField.options].find(option => option.value === "short_answer");
+  if (legacyOption) legacyOption.hidden = true;
+
+  const choicesGroup = choicesField.closest(".test-field");
+  const correctGroup = correctField.closest(".test-field");
+  const typeGroup = typeField.closest(".test-field");
+  if (!choicesGroup || !correctGroup || !typeGroup) return;
+
+  let builder = document.getElementById("question-type-builder");
+  if (!builder) {
+    builder = document.createElement("div");
+    builder.id = "question-type-builder";
+    builder.className = "question-type-builder test-question-type-builder";
+    typeGroup.insertAdjacentElement("afterend", builder);
+  }
+
+  const originalCorrectLabel = correctGroup.querySelector("label");
+  function setCorrectLabel(text, placeholder) {
+    if (originalCorrectLabel) originalCorrectLabel.textContent = text;
+    correctField.placeholder = placeholder || "";
+  }
+  function showBaseFields(showChoices, showCorrect) {
+    choicesGroup.style.display = showChoices ? "" : "none";
+    correctGroup.style.display = showCorrect ? "" : "none";
+  }
+  function showSimplePanel(title, note) {
+    builder.hidden = false;
+    builder.innerHTML = '<div class="question-type-builder__heading"><strong>' + title + '</strong><span>' + note + '</span></div>';
+  }
+
+  function renderOrdering() {
+    const items = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean);
+    showBaseFields(false, false);
+    builder.hidden = false;
+    builder.innerHTML = '<div class="question-type-builder__heading"><strong>بناء سؤال السحب والإفلات والترتيب</strong><span>أضيفي العناصر بالترتيب الصحيح. ستظهر للطالبة بشكل غير مرتب، وطريقة التصحيح الحالية لن تتغير.</span></div><div class="builder-items" id="ordering-items"></div><button type="button" class="builder-add">＋ إضافة عنصر</button>';
+    const list = builder.querySelector("#ordering-items");
+    function addItem(value = "") {
+      const row = document.createElement("div");
+      row.className = "builder-row";
+      row.innerHTML = '<input type="text" placeholder="مثال: الخطوة الأولى"><button type="button" aria-label="حذف العنصر">×</button>';
+      row.querySelector("input").value = value;
+      row.querySelector("button").onclick = () => { row.remove(); sync(); };
+      list.appendChild(row);
+    }
+    (items.length ? items : ["", ""]).forEach(addItem);
+    function sync() {
+      choicesField.value = [...list.querySelectorAll("input")].map(input => input.value.trim()).filter(Boolean).join("\n");
+      correctField.value = choicesField.value;
+    }
+    list.addEventListener("input", sync);
+    builder.querySelector(".builder-add").onclick = () => { addItem(); sync(); };
+    sync();
+  }
+
+  function renderMatching() {
+    const pairs = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean).map(v => v.split("|"));
+    showBaseFields(false, false);
+    builder.hidden = false;
+    builder.innerHTML = '<div class="question-type-builder__heading"><strong>بناء سؤال المطابقة بين عمودين</strong><span>أضيفي كل عنصر مع إجابته المطابقة. ستبقى صيغة التخزين والتصحيح الحالية كما هي.</span></div><div class="builder-items" id="matching-items"></div><button type="button" class="builder-add">＋ إضافة زوج</button>';
+    const list = builder.querySelector("#matching-items");
+    function addPair(left = "", right = "") {
+      const row = document.createElement("div");
+      row.className = "builder-row";
+      row.innerHTML = '<input type="text" placeholder="العمود الأول"><input type="text" placeholder="العمود الثاني"><button type="button" aria-label="حذف الزوج">×</button>';
+      row.querySelectorAll("input")[0].value = left;
+      row.querySelectorAll("input")[1].value = right;
+      row.querySelector("button").onclick = () => { row.remove(); sync(); };
+      list.appendChild(row);
+    }
+    (pairs.length ? pairs : [["", ""], ["", ""]]).forEach(pair => addPair(pair[0] || "", pair[1] || ""));
+    function sync() {
+      choicesField.value = [...list.querySelectorAll(".builder-row")].map(row => {
+        const inputs = row.querySelectorAll("input");
+        return inputs[0].value.trim() && inputs[1].value.trim() ? inputs[0].value.trim() + " | " + inputs[1].value.trim() : "";
+      }).filter(Boolean).join("\n");
+      correctField.value = "";
+    }
+    list.addEventListener("input", sync);
+    builder.querySelector(".builder-add").onclick = () => { addPair(); sync(); };
+    sync();
+  }
+
+  function render() {
+    const type = typeField.value;
+    builder.hidden = true;
+    builder.innerHTML = "";
+    showBaseFields(true, true);
+    setCorrectLabel("الإجابة الصحيحة", "الإجابة الصحيحة المعتمدة للتصحيح");
+    if (type === "multiple_choice") {
+      setCorrectLabel("الإجابة الصحيحة", "اكتبي نص الخيار الصحيح تمامًا");
+      showSimplePanel("إعداد سؤال الاختيار من متعدد", "أضيفي الخيارات في حقل الخيارات، ثم اكتبي الخيار الصحيح في حقل الإجابة الصحيحة.");
+    } else if (type === "true_false") {
+      showBaseFields(false, true);
+      setCorrectLabel("الإجابة الصحيحة", "اكتبي: صح أو خطأ");
+      showSimplePanel("إعداد سؤال صح أو خطأ", "الطالبة ستختار صح أو خطأ، وأنت تحددين الإجابة الصحيحة المعتمدة للتصحيح.");
+    } else if (type === "fill_blank") {
+      showBaseFields(false, true);
+      setCorrectLabel("الإجابة الصحيحة المعتمدة للتصحيح", "اكتبي الكلمة أو العبارة الصحيحة");
+      showSimplePanel("إعداد سؤال إكمال الفراغ", "الطالبة ستكتب الإجابة في حقل الإجابة. هنا نحدد الإجابة الصحيحة التي سيقارن بها التصحيح.");
+    } else if (type === "short_answer") {
+      showBaseFields(false, true);
+      setCorrectLabel("الإجابة الصحيحة المعتمدة للتصحيح", "اكتبي الإجابة المقبولة");
+      showSimplePanel("إجابة قصيرة", "اكتبي الإجابة المقبولة التي سيعتمدها التصحيح.");
+    } else if (type === "multiple_select") {
+      showBaseFields(true, true);
+      setCorrectLabel("الإجابات الصحيحة", "اكتبي الإجابات الصحيحة وافصلي بينها بعلامة |");
+      showSimplePanel("إعداد سؤال تحديد عدة إجابات صحيحة", "أضيفي جميع الخيارات، ثم حددي أكثر من إجابة صحيحة باستخدام الفاصل المعتمد.");
+    } else if (type === "essay") {
+      showBaseFields(false, false);
+      showSimplePanel("إعداد السؤال المقالي", "الطالبة ستكتب إجابة مطولة، ويُحفظ السؤال للتصحيح اليدوي. لا توجد إجابة صحيحة آلية لهذا النوع.");
+    } else if (type === "ordering") {
+      renderOrdering();
+    } else if (type === "matching") {
+      renderMatching();
+    }
+  }
+  typeField.addEventListener("change", render);
+  render();
+});
+</script>
+
+<div class="test-center-page">
+  <section class="test-center-hero">
+    <div class="test-center-hero-copy">
+      <span class="test-hero-kicker">✦ مساحة صناعة الاختبارات</span>
+      <h2>من فكرة السؤال إلى اختبار جاهز.</h2>
+      <p>مساحة واحدة تجمع إنشاء الاختبار وبناء أسئلته، بتجربة هادئة وواضحة ومصممة للمعلمة.</p>
+      <div class="test-hero-points">
+        <span><b>01</b> أنشئي</span>
+        <span><b>02</b> أضيفي الأسئلة</span>
+        <span><b>03</b> راجعي الاختبار</span>
+      </div>
+    </div>
+    <div class="test-center-hero-art" aria-hidden="true">
+      <div class="test-art-ring test-art-ring-one"></div>
+      <div class="test-art-ring test-art-ring-two"></div>
+      <div class="test-art-core">الريان</div>
+      <span class="test-art-label label-top">تاريخ</span>
+      <span class="test-art-label label-left">سؤال</span>
+      <span class="test-art-label label-right">إجابة</span>
+    </div>
+  </section>
+
+  {% if not selected_test %}
+<section class="test-builder-shell">
+    <div class="test-builder-heading">
+      <div class="test-builder-icon">＋</div>
+      <div>
+        <span>البداية</span>
+        <h2>أنشئي اختبارًا جديدًا</h2>
+        <p>اكتبي البيانات الأساسية. بعد الحفظ سيبقى الاختبار هنا وتظهر لكِ مساحة إضافة الأسئلة مباشرة.</p>
+      </div>
+    </div>
+
+    <form method="post" class="test-create-form test-create-form-premium">
+      <input type="hidden" name="action" value="create_test">
+      {{ form.csrf_token }}
+
+      <div class="test-field">
+        <label for="title">اسم الاختبار</label>
+        <input id="title" name="title" required placeholder="مثال: اختبار الوحدة الأولى">
+      </div>
+
+      <div class="test-field">
+        <label for="lesson_id">الدرس المرتبط</label>
+        <select id="lesson_id" name="lesson_id" required>
+          <option value="">اختاري الدرس</option>
+          {% for lesson in lessons %}
+            <option value="{{ lesson.id }}">{{ lesson.unit.curriculum.subject }} — {{ lesson.unit.title }} — {{ lesson.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="test-field test-field-full">
+        <label for="description">وصف الاختبار <small>اختياري</small></label>
+        <textarea id="description" name="description" rows="3" placeholder="اكتبي باختصار ماذا يقيس هذا الاختبار..."></textarea>
+      </div>
+      <div class="test-field">
+        <label for="time_limit_minutes">مدة الاختبار بالدقائق <small>اختياري</small></label>
+        <input id="time_limit_minutes" name="time_limit_minutes" type="number" min="1" max="300" step="1" placeholder="مثال: 5">
+        <small>اتركيه فارغًا إذا كان الاختبار بلا مدة زمنية.</small>
+      </div>
+
+      <div class="test-create-footer">
+        <div>
+          <strong>لن تخرجي من هذه الصفحة.</strong>
+          <span>بعد الإنشاء سيظهر الاختبار هنا لتكملي بناءه مباشرة.</span>
+        </div>
+        <button class="test-primary-button" type="submit">إنشاء الاختبار <span>←</span></button>
+      </div>
+    </form>
+  </section>
+{% endif %}
+
+  {% if selected_test %}
+  <section class="inline-test-workspace" id="inline-test-workspace">
+    <div class="inline-workspace-head">
+      <div>
+        <span>الاختبار المفتوح الآن</span>
+        <h2>{{ selected_test.title }}</h2>
+        <p>{{ selected_test.description or 'اختبار تاريخي جديد جاهز لبناء الأسئلة.' }}</p>
+      </div>
+      <div class="inline-workspace-actions">
+        <a class="test-secondary-button" href="{{ url_for('assessment.test_center') }}">＋ اختبار جديد</a>
+        <div class="inline-test-counter">
+        <b>{{ selected_test.questions|length }}</b>
+        <small>سؤالًا</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="inline-question-layout">
+      <div class="inline-question-card">
+        <div class="inline-card-heading">
+          <div class="inline-number">01</div>
+          <div>
+            <span>بناء السؤال</span>
+            <h3>أضيفي سؤالًا جديدًا</h3>
+          </div>
+        </div>
+
+        <form method="post" class="inline-question-form">
+          <input type="hidden" name="action" value="add_question">
+          <input type="hidden" name="worksheet_id" value="{{ selected_test.id }}">
+          {{ form.hidden_tag() }}
+
+          {% if form.errors %}
+            <div class="test-form-errors">
+              {% for errors in form.errors.values() %}
+                {% for error in errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="inline-form-grid">
+            <div class="test-field test-field-full">
+              {{ form.question_text.label }}
+              {{ form.question_text(rows="3", placeholder="اكتبي السؤال التاريخي هنا...") }}
+            </div>
+
+            <div class="test-field">
+              {{ form.question_type.label }}
+              {{ form.question_type() }}
+              <small class="question-type-note" data-question-type-note aria-live="polite"></small>
+            </div>
+
+            <div class="test-field">
+              {{ form.points.label }}
+              {{ form.points() }}
+            </div>
+
+            <div class="test-field test-field-full question-choices-field" data-question-field="choices">
+              {{ form.choices_text.label }}
+              {{ form.choices_text(rows="4", placeholder="الخيار الأول\nالخيار الثاني\nالخيار الثالث") }}
+            </div>
+
+            <div class="test-field test-field-full question-answer-field" data-question-field="answer">
+              {{ form.correct_answer_text.label }}
+              {{ form.correct_answer_text(placeholder="اكتبي الإجابة الصحيحة...") }}
+            </div>
+
+            <div class="test-field test-field-full">
+              {{ form.explanation.label }}
+              {{ form.explanation(rows="3", placeholder="شرح مختصر يظهر للطالب عند الحاجة...") }}
+            </div>
+          </div>
+
+          <button class="test-primary-button inline-submit" type="submit">
+            إضافة السؤال <span>←</span>
+          </button>
+        </form>
+      </div>
+
+      <aside class="inline-test-summary">
+        <div class="summary-icon">✓</div>
+        <span>حالة الاختبار</span>
+        <h3>تبنينه خطوة خطوة</h3>
+        <p>كل سؤال تضيفينه يظهر مباشرة في القائمة هنا. يمكنكِ الاستمرار في الإضافة دون فتح صفحة أخرى.</p>
+        <div class="summary-line"><span>الدرس</span><b>{{ selected_test.lesson.title if selected_test.lesson else 'بدون درس' }}</b></div>
+        <div class="summary-line"><span>الحالة</span><b>{{ "منشور" if selected_test.publication_status == "published" else "مسودة" }}</b></div>
+      </aside>
+    </div>
+
+    <div class="inline-questions-list">
+      <div class="inline-list-heading">
+        <div>
+          <span>المحتوى الذي بنيتِه</span>
+          <h3>الأسئلة الحالية</h3>
+        </div>
+        <strong>{{ selected_test.questions|length }}</strong>
+      </div>
+
+      {% for question in selected_test.questions %}
+        <article class="inline-question-item">
+          <div class="inline-question-index">{{ "%02d"|format(loop.index) }}</div>
+          <div class="inline-question-content">
+            <h4>{{ question.question_text }}</h4>
+            <div class="inline-question-meta">
+              <span>
+                {% if question.question_type == "multiple_choice" %}اختيار من متعدد
+                {% elif question.question_type == "true_false" %}صح أو خطأ
+                {% elif question.question_type == "short_answer" %}إجابة قصيرة
+                {% elif question.question_type == "essay" %}سؤال مقالي
+                {% elif question.question_type == "fill_blank" %}إكمال فراغ
+                {% elif question.question_type == "multiple_select" %}اختيارات متعددة
+                {% elif question.question_type == "ordering" %}ترتيب
+                {% elif question.question_type == "matching" %}مطابقة
+                {% else %}سؤال تفاعلي{% endif %}
+              </span>
+              <span>{{ question.points }} نقطة</span>
+            </div>
+          </div>
+          <a href="{{ url_for('assessment.manage_questions', worksheet_id=selected_test.id) }}" class="inline-manage-link">فتح التفاصيل ←</a>
+        </article>
+      {% else %}
+        <div class="inline-empty">
+          <div>✦</div>
+          <h3>لسه ما أضفتِ أسئلة</h3>
+          <p>ابدئي من النموذج بالأعلى، وسيظهر كل سؤال هنا فور حفظه.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="test-library-section test-library-premium">
+    <div class="test-library-heading">
+      <div>
+        <span>مكتبة الاختبارات</span>
+        <h2>اختباراتكِ المحفوظة</h2>
+        <p>تابعي بناء الاختبار أو عاينيه، وغيّري حالته بين المسودة والنشر، أو انقليه إلى الأرشيف.</p>
+      </div>
+      <div class="test-count">{{ tests|length }} <small>اختبار</small></div>
+    </div>
+
+    <div class="test-library-grid">
+      {% for test in tests %}
+        <article class="test-library-card">
+          <div class="test-card-top">
+            <span class="test-card-number">{{ "%02d"|format(loop.index) }}</span>
+            <span class="test-status {{ test.publication_status }}">{{ 'منشور' if test.publication_status == 'published' else 'مسودة' }}</span>
+          </div>
+          <div class="test-card-body">
+            <small>{{ test.lesson.title if test.lesson else 'بدون درس' }}</small>
+            <h3>{{ test.title }}</h3>
+            <p>{{ test.description or 'اختبار تاريخي جاهز لإضافة الأسئلة ومراجعته.' }}</p>
+          </div>
+          <div class="test-card-footer">
+            <span><b>{{ test.questions|length }}</b> سؤال</span>
+            <a href="{{ url_for('assessment.preview_test', worksheet_id=test.id) }}" target="_blank" rel="noopener noreferrer" class="test-card-preview">معاينة</a>
+            <a href="{{ url_for('assessment.test_center', worksheet_id=test.id) }}">متابعة البناء <span>←</span></a>
+          </div>
+          <div class="test-card-actions">
+            {% if test.publication_status == 'published' %}
+              <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="draft_test">
+                <input type="hidden" name="worksheet_id" value="{{ test.id }}">
+                <button type="submit" class="test-card-action draft">إعادة إلى المسودة</button>
+              </form>
+            {% else %}
+              <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="publish_test">
+                <input type="hidden" name="worksheet_id" value="{{ test.id }}">
+                <button type="submit" class="test-card-action publish">نشر الاختبار</button>
+              </form>
+            {% endif %}
+            <form method="post" onsubmit="return confirm('سيُنقل الاختبار إلى الأرشيف مع الحفاظ على سجلات الطالبات. هل تريدين المتابعة؟');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="action" value="archive_test">
+              <input type="hidden" name="worksheet_id" value="{{ test.id }}">
+              <button type="submit" class="test-card-action archive">أرشفة الاختبار</button>
+            </form>
+            <form method="post" onsubmit="return confirm('إذا كان للاختبار محاولات طالبات فسيُنقل إلى الأرشيف حفاظًا على النتائج، وإذا لم تكن له محاولات فسيُحذف نهائيًا. متابعة؟');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="action" value="delete_test">
+              <input type="hidden" name="worksheet_id" value="{{ test.id }}">
+              <button type="submit" class="test-card-action delete">حذف الاختبار</button>
+            </form>
+          </div>
+        </article>
+      {% else %}
+        <div class="test-empty-state">
+          <div>✦</div>
+          <h3>لم تنشئي أي اختبار بعد</h3>
+          <p>ابدئي من النموذج بالأعلى، وسيظهر اختبارك هنا مع تفاصيله.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

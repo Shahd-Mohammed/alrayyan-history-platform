@@ -24,14 +24,16 @@ def teacher_required(view_function):
     return wrapped
 
 
-@worksheet_center_bp.get("/")
+@worksheet_center_bp.get("")
 @teacher_required
-def index():
+def center():
     query = Worksheet.query
+
     if current_user.role != "admin":
         query = query.filter_by(created_by_id=current_user.id)
 
     active_query = query.filter_by(is_archived=False)
+
     total_count = active_query.count()
     published_count = active_query.filter(
         Worksheet.publication_status == "published"
@@ -48,10 +50,12 @@ def index():
         active_query = active_query.filter(
             Worksheet.title.ilike(f"%{search_term}%")
         )
+
     if status_filter in {"draft", "published"}:
         active_query = active_query.filter(
             Worksheet.publication_status == status_filter
         )
+
     if difficulty_filter in {"easy", "medium", "hard"}:
         active_query = active_query.filter(
             Worksheet.difficulty_level == difficulty_filter
@@ -67,7 +71,9 @@ def index():
 
     archived_worksheets = query.filter_by(
         is_archived=True,
-    ).order_by(Worksheet.archived_at.desc()).all()
+    ).order_by(
+        Worksheet.archived_at.desc()
+    ).all()
 
     return render_template(
         "worksheet_center.html",

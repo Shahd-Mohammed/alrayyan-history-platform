@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ذاكرة التواريخ | الريان</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/learning.css', v='20261010-final-design-8') }}">
+</head>
+<body>
+{% include '_platform_header.html' %}
+<main class="learning-page date-memory-page">
+<header class="learning-hero historical-learning-hero date-memory-hero">
+<p>ذاكرة الريان</p><h1><span class="date-memory-title">ثبّتي التاريخ،</span> <span class="hero-accent">وتذكّري الحكاية.</span></h1>
+<span>استرجعي الحدث من تاريخه، وعودي إلى البطاقات في أوقات متباعدة لتثبيت المعلومة.</span>
+<div class="date-memory-summary"><b>{{ due_count }}</b><small>بطاقات جاهزة للمراجعة اليوم</small></div>
+</header>
+<section class="date-memory-generate-panel">
+  <div class="date-memory-generate-copy">
+    <span>مراجعة بتوجيه ذكي</span>
+    <h2>أنشئي بطاقاتكِ من الدرس الذي تختارينه</h2>
+    <p>اختاري درسًا من المنهج النشط، وسنحوّل أبرز التواريخ والأحداث الواردة فيه إلى بطاقات مراجعة تساعدكِ على التذكّر بثقة.</p>
+  </div>
+  <form method="post" action="{{ url_for('learning.generate_student_date_memory') }}" class="date-memory-generate-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="date-memory-lesson">الدرس</label>
+    <select id="date-memory-lesson" name="lesson_id" required>
+      <option value="">اختاري الدرس</option>
+      {% for lesson in lessons %}
+      <option value="{{ lesson.id }}">{{ lesson.unit.curriculum.subject }} · {{ lesson.unit.title }} · {{ lesson.title }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="date-memory-button" {% if not lessons %}disabled{% endif %}>أنشئي بطاقات بالذكاء الاصطناعي</button>
+  </form>
+</section>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}<div class="date-memory-flashes">{% for category,message in messages %}<p class="alert {{ category }}">{{ message }}</p>{% endfor %}</div>{% endif %}
+{% endwith %}
+<section class="date-memory-intro"><div><span>تذكّر نشط</span><h2>ما الحدث الذي يرتبط بهذا التاريخ؟</h2></div><p>اكتبي إجابتكِ من الذاكرة قبل إظهار الإجابة الصحيحة. كل تاريخ يُكسب نقاطًا مرة واحدة فقط حتى تبقى النقاط عادلة.</p></section>
+<div class="date-memory-grid">
+{% for row in dates %}
+{% set review = reviews.get(row.id) %}
+<article class="date-memory-card{% if review and review.next_review_at > now %} date-memory-reviewed{% endif %}">
+<div class="date-memory-card-top"><span>{{ row.lesson.title }}</span><small>{% if review and review.last_reviewed_at %}تمت مراجعته{% else %}جديد{% endif %}</small></div>
+<strong class="date-memory-date">{{ row.date_label }}</strong>
+<h3>ما الحدث المرتبط بهذا التاريخ؟</h3>
+{% if row.memory_hint %}<p class="date-memory-hint">تلميح: {{ row.memory_hint }}</p>{% endif %}
+<form method="post" action="{{ url_for('learning.review_historical_date', date_id=row.id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label for="date-answer-{{ row.id }}">إجابتكِ</label>
+<input id="date-answer-{{ row.id }}" name="answer" type="text" maxlength="300" placeholder="اكتبي الحدث من ذاكرتك" required autocomplete="off">
+<button type="submit" class="date-memory-button">تحقّقي من التذكّر</button>
+</form>
+<details class="date-memory-answer"><summary>أحتاج إلى مراجعة الحدث</summary><p><b>{{ row.event_title }}</b></p>{% if row.event_description %}<p>{{ row.event_description }}</p>{% endif %}</details>
+{% if review and review.next_review_at %}<small class="date-next-review">موعد المراجعة التالية: {{ review.next_review_at.strftime('%Y-%m-%d') }}</small>{% endif %}
+</article>
+{% else %}
+<div class="date-memory-empty"><span>✦</span><h2>ذاكرة التواريخ جاهزة لاستقبال أولى البطاقات</h2><p>لا توجد بطاقات لهذا الدرس بعد. اختاري درسًا من الأعلى، ودعي الذكاء الاصطناعي ينشئ لكِ بطاقات مراجعة من محتواه.</p><a href="{{ url_for('learning.library') }}">العودة إلى مكتبة التعلّم</a></div>
+{% endfor %}
+</div>
+</main>
+{% include '_platform_footer.html' %}
+</body>
+</html>

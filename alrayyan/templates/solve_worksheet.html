@@ -10,7 +10,7 @@
     >
 
     <title>
-        حل {{ worksheet.title }} | الريان
+        {{ 'حل الاختبار' if worksheet.creation_method == 'test' else 'حل ورقة العمل' }}: {{ worksheet.title }} | الريان
     </title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
         rel="stylesheet"
         href="{{ url_for(
             'static',
-            filename='css/worksheets.css'
+            filename='css/worksheets.css', v='20261010-final-controls-4'
         ) }}"
     >
 </head>
@@ -45,7 +45,7 @@
                 worksheet_id=worksheet.id
             ) }}"
         >
-            → العودة إلى تفاصيل الورقة
+            → العودة إلى {{ 'تفاصيل الاختبار' if worksheet.creation_method == 'test' else 'تفاصيل الورقة' }}
         </a>
 
         {% set messages = get_flashed_messages(
@@ -347,7 +347,7 @@
 
                         <p>
                             راجع جميع إجاباتك قبل التسليم؛
-                            لأن تسليم الورقة ينهي هذه المحاولة.
+                            {{ 'لأن تسليم الاختبار ينهي هذه المحاولة.' if worksheet.creation_method == 'test' else 'لأن تسليم الورقة ينهي هذه المحاولة.' }}
                         </p>
                     </div>
 
@@ -366,7 +366,7 @@
                 <span aria-hidden="true">✦</span>
 
                 <h2>
-                    لم تُضف أسئلة لهذه الورقة بعد
+                    {{ 'لم تُضف أسئلة لهذا الاختبار بعد.' if worksheet.creation_method == 'test' else 'لم تُضف أسئلة لهذه الورقة بعد.' }}
                 </h2>
 
                 <p>
@@ -379,7 +379,7 @@
                         worksheet_id=worksheet.id
                     ) }}"
                 >
-                    العودة إلى تفاصيل الورقة
+                    العودة إلى {{ 'تفاصيل الاختبار' if worksheet.creation_method == 'test' else 'تفاصيل الورقة' }}
                 </a>
             </section>
         {% endif %}

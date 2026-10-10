@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css',v='20261009-global-button-1') }}">
 </head>
 <body class="premium-home">
     {% include '_platform_header.html' %}
@@ -18,34 +18,34 @@
             <div class="hero-glow hero-glow-two"></div>
 
             <div class="premium-hero-copy">
-                <span class="premium-kicker"><i></i> منصة تعليمية مدعومة بالذكاء الاصطناعي</span>
-                <h1>تعلّم يفهم مستواك، ويحوّل المعرفة إلى <em>تجربة تبقى</em></h1>
+                <span class="premium-kicker"><i></i> الريان في الدراسات التاريخية</span>
+                <h1>التاريخ ليس ماضيًا بعيدًا…<br><em>إنه حكاية تستحق أن تعيشيها.</em></h1>
                 <p>
-                    محتوى موثّق، معلّم ذكي تفاعلي، تحديات، خرائط مفاهيمية،
-                    ونتائج تساعد الطالب والمعلمة على اتخاذ الخطوة التالية بثقة.
+                    خذي مكانكِ بين صفحات التاريخ؛ افهمي الأحداث، تعرّفي إلى الشخصيات،
+                    اربطي الأسباب بالنتائج، واختبري معرفتكِ بتجارب تفاعلية صُممت لتجعل التاريخ أقرب، أعمق، وأمتع.
                 </p>
 
                 <div class="premium-hero-actions">
                     {% if current_user.is_authenticated and current_user.role == 'student' %}
-                        <a class="button-gold" href="{{ url_for('main.student_dashboard') }}">ابدئي رحلة التعلّم <span>←</span></a>
+                        <a class="button-gold" href="{{ url_for('main.student_dashboard') }}">ابدئي رحلتكِ في التاريخ <span>←</span></a>
                     {% elif current_user.is_authenticated and current_user.role in ['teacher', 'admin'] %}
-                        <a class="button-gold" href="{{ url_for('teacher_dashboard.dashboard') }}">الذهاب إلى لوحة المعلمة <span>←</span></a>
+                        <a class="button-gold" href="{{ url_for('teacher_dashboard.dashboard') }}">إلى عالم المعلمة <span>←</span></a>
                     {% else %}
-                        <a class="button-gold" href="{{ url_for('auth.login') }}">ابدئي رحلة التعلّم <span>←</span></a>
+                        <a class="button-gold" href="{{ url_for('auth.login') }}">ابدئي رحلتكِ في التاريخ <span>←</span></a>
                     {% endif %}
                     <a class="button-glass" href="{{ url_for('teacher.teacher_page') }}">اسألي المعلّم الذكي</a>
                 </div>
 
                 <div class="hero-trust-row">
-                    <span><b>{{ public_stats.lessons }}</b> دروس مترابطة</span>
-                    <span><b>{{ public_stats.knowledge_chunks }}</b> مقطعًا معرفيًا</span>
-                    <span><b>AI</b> إجابات موثّقة</span>
+                    <span><b>{{ public_stats.lessons }}</b> درسًا تاريخيًا</span>
+                    <span><b>{{ public_stats.characters }}</b> شخصية</span>
+                    <span><b>{{ public_stats.maps }}</b> خريطة مفاهيمية</span>
                 </div>
             </div>
 
             <div class="hero-experience-card">
                 <div class="experience-topline">
-                    <span>رحلتك في التعلّم</span>
+                    <span>رحلتك في التاريخ</span>
                     <i>✦</i>
                 </div>
                 <div class="experience-orbit">
@@ -56,11 +56,9 @@
                     <span class="orbit-label label-two">تدرّبي</span>
                     <span class="orbit-label label-three">تقدّمي</span>
                 </div>
-                <p>محتوى أصيل، تجربة ذكية، وتقدّم يمكنكِ رؤيته.</p>
+                <p>أحداث، شخصيات، حضارات، وتجارب تفاعلية تجعل التاريخ أقرب إليكِ.</p>
             </div>
-        </section>
-
-        <section class="premium-feature-strip" aria-label="مزايا المنصة">
+        </section>        <section class="premium-feature-strip" aria-label="مزايا المنصة">
             <article><span>01</span><div><h2>مناهج موثوقة</h2><p>المعلّمة تدير المادة ومصادرها من لوحة التحكم.</p></div></article>
             <article><span>02</span><div><h2>تعلّم متنوع</h2><p>أسئلة، خرائط، ملخصات، شخصيات، وتحديات.</p></div></article>
             <article><span>03</span><div><h2>ذكاء مسؤول</h2><p>إجابات واقتراحات مرتبطة بمحتوى الدرس ومراجعة المعلمة.</p></div></article>
@@ -77,6 +75,46 @@
                 <a href="{{ url_for('learning.library') }}"><i>🧠</i><small>{{ public_stats.maps }} خرائط</small><h3>مكتبة التعلّم</h3><p>ملخصات ومراجعات وخرائط مفاهيمية ومحتوى مساند لكل درس.</p><b>افتحي المكتبة ←</b></a>
                 <a href="{{ url_for('learning.characters') }}"><i>🏛</i><small>{{ public_stats.characters }} شخصيات</small><h3>من أنا؟</h3><p>تعرفي إلى شخصيات المنهج من تلميحات حقيقية واكسبي نقاطًا من إجابتك.</p><b>ابدئي اللعب ←</b></a>
                 <a href="{{ url_for('learning.honor_board') }}"><i>🏆</i><small>تقدير عادل</small><h3>لوحة الشرف</h3><p>تحتفي بالنشاط والتحسن والإتقان، لا بالعلامة النهائية وحدها.</p><b>شاهدي المتميزين ←</b></a>
+            </div>
+        </section>
+
+        <section class="history-exploration-section">
+            <div class="premium-section-heading">
+                <div>
+                    <span>مغامرة المؤرخة الصغيرة</span>
+                    <h2>لا تكتفي بحفظ التاريخ… عيشيه واكتشفيه</h2>
+                    <p>مساحات تفاعلية تأخذكِ من السؤال إلى الاكتشاف، ومن الشخصية إلى الحدث، ومن المعلومة إلى الفهم.</p>
+                </div>
+            </div>
+            <div class="history-exploration-grid">
+                <a href="{{ url_for('learning.characters') }}" class="history-game-card history-game-card-featured">
+                    <div class="history-card-icon">♜</div>
+                    <small>لعبة الشخصيات</small>
+                    <h3>من أنا؟</h3>
+                    <p>تلقّي تلميحات تاريخية، فكّري، ثم اكتشفي الشخصية قبل أن تكشفي الإجابة.</p>
+                    <b>ابدئي التخمين ←</b>
+                </a>
+                <a href="{{ url_for('challenges.setup') }}" class="history-game-card">
+                    <div class="history-card-icon">✦</div>
+                    <small>تحدي سريع</small>
+                    <h3>اختبري ذاكرتكِ التاريخية</h3>
+                    <p>جولات قصيرة وتحديات تفاعلية تساعدكِ على تثبيت ما تعلّمتِه بطريقة ممتعة.</p>
+                    <b>دخلي التحدي ←</b>
+                </a>
+                <a href="{{ url_for('learning.library') }}" class="history-game-card">
+                    <div class="history-card-icon">⌁</div>
+                    <small>مخطط المعرفة</small>
+                    <h3>اربطي الأحداث والأفكار</h3>
+                    <p>شاهدي المفاهيم والملخصات والخرائط في صورة تساعدكِ على رؤية الصورة كاملة.</p>
+                    <b>افتحي المكتبة ←</b>
+                </a>
+                <a href="{{ url_for('learning.honor_board') }}" class="history-game-card">
+                    <div class="history-card-icon">♛</div>
+                    <small>إنجازكِ في الرحلة</small>
+                    <h3>اصنعي أثرًا في لوحة الشرف</h3>
+                    <p>تقدّمكِ التاريخي يُبنى خطوة خطوة؛ تعلّم، تدريب، إتقان، ثم إنجاز جديد.</p>
+                    <b>شاهدي لوحة الشرف ←</b>
+                </a>
             </div>
         </section>
 

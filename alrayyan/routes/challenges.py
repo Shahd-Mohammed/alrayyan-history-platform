@@ -21,8 +21,10 @@ from alrayyan.models import (
     ChallengeSession,
     ConceptMastery,
     ContentChunk,
+    Curriculum,
     LearningPlanItem,
     Lesson,
+    Unit,
     Worksheet,
     XPTransaction,
 )
@@ -233,9 +235,20 @@ def setup():
     lessons = (
         Lesson.query
         .join(ContentChunk, ContentChunk.lesson_id == Lesson.id)
-        .filter(ContentChunk.embedding.isnot(None))
+        .join(Unit, Unit.id == Lesson.unit_id)
+        .join(Curriculum, Curriculum.id == Unit.curriculum_id)
+        .filter(
+            ContentChunk.embedding.isnot(None),
+            Curriculum.is_active.is_(True),
+            Curriculum.processing_status == "ready",
+            Lesson.title.notin_({
+                "محتوى المنهج",
+                "الدرس احتياطي",
+                "الوحدة — الدرس احتياطي",
+            }),
+        )
         .distinct()
-        .order_by(Lesson.id)
+        .order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index)
         .all()
     )
     return render_template("challenge_setup.html", lessons=lessons)
@@ -248,17 +261,36 @@ def test_bank():
     lessons = (
         Lesson.query
         .join(ContentChunk, ContentChunk.lesson_id == Lesson.id)
-        .filter(ContentChunk.embedding.isnot(None))
+        .join(Unit, Unit.id == Lesson.unit_id)
+        .join(Curriculum, Curriculum.id == Unit.curriculum_id)
+        .filter(
+            ContentChunk.embedding.isnot(None),
+            Curriculum.is_active.is_(True),
+            Curriculum.processing_status == "ready",
+            Lesson.title.notin_({
+                "محتوى المنهج",
+                "الدرس احتياطي",
+                "الوحدة — الدرس احتياطي",
+            }),
+        )
         .distinct()
-        .order_by(Lesson.id)
+        .order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index)
         .all()
     )
+    published_content = Worksheet.query.filter_by(
+        publication_status="published",
+        is_published=True,
+        is_archived=False,
+    )
     worksheets = (
-        Worksheet.query
-        .filter_by(
-            publication_status="published",
-            is_published=True,
-        )
+        published_content
+        .filter(Worksheet.creation_method != "test")
+        .order_by(Worksheet.created_at.desc())
+        .all()
+    )
+    tests = (
+        published_content
+        .filter_by(creation_method="test")
         .order_by(Worksheet.created_at.desc())
         .all()
     )
@@ -272,6 +304,7 @@ def test_bank():
     return render_template(
         "test_bank.html",
         lessons=lessons,
+        tests=tests,
         worksheets=worksheets,
         recent_sessions=recent_sessions,
     )
@@ -309,7 +342,18 @@ def start():
         lesson = (
             Lesson.query
             .join(ContentChunk, ContentChunk.lesson_id == Lesson.id)
-            .filter(ContentChunk.embedding.isnot(None))
+            .join(Unit, Unit.id == Lesson.unit_id)
+            .join(Curriculum, Curriculum.id == Unit.curriculum_id)
+            .filter(
+                ContentChunk.embedding.isnot(None),
+                Curriculum.is_active.is_(True),
+                Curriculum.processing_status == "ready",
+                Lesson.title.notin_({
+                    "محتوى المنهج",
+                    "الدرس احتياطي",
+                    "الوحدة — الدرس احتياطي",
+                }),
+            )
             .order_by(db.func.random())
             .first()
         )

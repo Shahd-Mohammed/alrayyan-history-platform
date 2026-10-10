@@ -1,18 +1,84 @@
 {% extends 'platform/_admin_base.html' %}
 {% block title %}تحليلات التعلّم{% endblock %}
-{% block heading %}تحليلات مستوى الطلاب{% endblock %}
-{% block intro %}قراءة تعليمية تجمع أوراق العمل والتحديات وتفاعل المعلّم الذكي، لتحديد التقدم والحاجة إلى دعم.{% endblock %}
+{% block eyebrow %}صورة أوسع للتقدّم{% endblock %}
+{% block heading %}تحليلات التعلّم والإنجاز{% endblock %}
+{% block intro %}تابعي تقدّم الطالبات عبر الاختبارات وأوراق العمل والتحديات والمعلم الذكي والخرائط والشخصيات ومراجعات التواريخ وخطة التعلّم، مع عرض النقاط التي سجّلها النظام فعليًا.{% endblock %}
 {% block content %}
 <section class="analytics-stats">
-    <article><span>الطلاب</span><strong>{{ overview.students }}</strong></article>
-    <article><span>الأوراق</span><strong>{{ overview.worksheets }}</strong></article>
-    <article><span>التسليمات</span><strong>{{ overview.submissions }}</strong></article>
-    <article><span>متوسط الأداء</span><strong>{{ overview.average }}%</strong></article>
-    <article><span>يحتاجون متابعة</span><strong>{{ overview.support_count }}</strong></article>
+    <article><span>الطالبات</span><strong>{{ overview.students }}</strong></article>
+    <article><span>الاختبارات</span><strong>{{ overview.tests }}</strong></article>
+    <article><span>أوراق العمل</span><strong>{{ overview.worksheets }}</strong></article>
+    <article><span>التسليمات المكتملة</span><strong>{{ overview.submissions }}</strong></article>
+    <article><span>متوسط النتائج</span><strong>{{ overview.average }}%</strong></article>
+    <article><span>التحديات المكتملة</span><strong>{{ overview.challenge_completions }}</strong></article>
+    <article><span>تفاعلات المعلم الذكي</span><strong>{{ overview.tutor_interactions }}</strong></article>
+    <article><span>محاولات الشخصيات</span><strong>{{ overview.character_attempts }}</strong></article>
+    <article><span>مراجعات التواريخ</span><strong>{{ overview.date_reviews }}</strong></article>
+    <article><span>تحققات خطة المراجعة</span><strong>{{ overview.plan_verifications }}</strong></article>
+    <article><span>تنزيلات المواد التعليمية</span><strong>{{ overview.resource_downloads }}</strong></article>
+    <article><span>استكشاف الخرائط</span><strong>{{ overview.concept_map_views }}</strong></article>
+    <article><span>النقاط المسجّلة</span><strong>{{ overview.points_awarded }}</strong></article>
+    <article><span>يحتجن متابعة</span><strong>{{ overview.support_count }}</strong></article>
+</section>
+<section class="platform-panel analytics-relationship-panel" aria-label="العلاقة بين المشاركة والتحصيل">
+  <div class="analytics-heading">
+    <div>
+      <span class="analytics-kicker">قراءة البيانات</span>
+      <h2>العلاقة بين المشاركة والتحصيل</h2>
+      <p>كل نقطة تمثل طالبة. يجمع مؤشر النشاط محاولات الاختبارات وأوراق العمل، والتحديات، ورسائل المعلم الذكي، ومحاولات الشخصيات والتواريخ، وتنزيل المواد، واستكشاف الخرائط، والتحقق من خطة المراجعة. المحور العمودي يعرض متوسط النتائج المكتملة فقط.</p>
+    </div>
+    <div class="analytics-correlation-summary">
+      <span>اتجاه العلاقة</span>
+      <strong>{{ correlation_label }}</strong>
+      {% if correlation is not none %}<small>معامل الارتباط: {{ correlation }}</small>{% endif %}
+    </div>
+  </div>
+  {% if rows %}
+  <div class="analytics-scatter-wrap">
+    <svg class="analytics-scatter" viewBox="0 0 840 390" role="img" aria-label="رسم مبعثر يربط عدد الأنشطة بمتوسط النتائج">
+      <g class="scatter-grid">
+        {% for tick in [0,25,50,75,100] %}
+        <line x1="78" y1="{{ 320 - (tick * 2.5) }}" x2="790" y2="{{ 320 - (tick * 2.5) }}"></line>
+        <text x="60" y="{{ 325 - (tick * 2.5) }}" text-anchor="end">{{ tick }}%</text>
+        {% endfor %}
+        {% for tick in [0,25,50,75,100] %}
+        <line x1="{{ 78 + (tick * 7.12) }}" y1="70" x2="{{ 78 + (tick * 7.12) }}" y2="320"></line>
+        {% endfor %}
+      </g>
+      <line class="scatter-axis" x1="78" y1="70" x2="78" y2="320"></line>
+      <line class="scatter-axis" x1="78" y1="320" x2="790" y2="320"></line>
+      <text class="scatter-axis-title" x="28" y="195" transform="rotate(-90 28 195)" text-anchor="middle">متوسط النتائج</text>
+      <text class="scatter-axis-title" x="434" y="370" text-anchor="middle">عدد الأنشطة المسجّلة</text>
+      {% for row in rows %}
+      <circle class="scatter-point" cx="{{ 78 + ((row.activity_score / activity_max) * 712) }}" cy="{{ 320 - ([row.average,100]|min * 2.5) }}" r="7">
+        <title>{{ row.student.full_name }} — {{ row.activity_score }} نشاط — {{ row.average }}%</title>
+      </circle>
+      {% endfor %}
+    </svg>
+  </div>
+  <div class="analytics-chart-legend"><span><i></i> طالبة واحدة</span><small>الارتباط يصف النمط الظاهر في البيانات ولا يثبت أن المشاركة وحدها سببت ارتفاع العلامة.</small></div>
+  {% else %}
+  <div class="platform-empty">ستظهر نقاط الرسم بعد تسجيل نشاط لطالبات المنصة.</div>
+  {% endif %}
 </section>
 <section class="platform-panel analytics-panel">
-    <div class="analytics-heading"><div><h2>الأداء الفردي</h2><p>مؤشر النشاط للمقارنة التربوية، وليس حكمًا نهائيًا على الطالب.</p></div></div>
-    <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالب</th><th>أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات</th><th>تفاعل المعلم</th><th>الحالة</th></tr></thead><tbody>{% for row in rows %}<tr><td><strong>{{ row.student.full_name }}</strong><small>{{ row.student.email }}</small></td><td>{{ row.worksheet_count }}</td><td><div class="metric-bar"><i style="width:{{ [row.average,100]|min }}%"></i></div>{{ row.average }}%</td><td><div class="metric-bar mastery"><i style="width:{{ [row.mastery_average,100]|min }}%"></i></div>{{ row.mastery_average }}%</td><td>{{ row.challenge_count }}</td><td>{{ row.tutor_interactions }}</td><td>{% if row.needs_support %}<span class="analytics-status support">يحتاج متابعة</span>{% elif row.activity_score %}<span class="analytics-status active">نشط</span>{% else %}<span class="analytics-status quiet">لم يبدأ</span>{% endif %}</td></tr>{% else %}<tr><td colspan="7" class="platform-empty">ستظهر التحليلات بعد انضمام الطلاب وبدء النشاط.</td></tr>{% endfor %}</tbody></table></div>
+    <div class="analytics-heading"><div><h2>الأداء الفردي</h2><p>تعرض هذه النظرة الأنشطة المسجّلة في المنصة مجتمعة، حتى لا يُختزل تقدّم الطالبة في علامة واحدة.</p></div></div>
+    <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات</th><th>المعلم الذكي</th><th>محاولات الشخصيات</th><th>مراجعات التواريخ</th><th>خطة المراجعة</th><th>تنزيلات المواد</th><th>استكشاف الخرائط</th><th>النقاط المكتسبة</th><th>الحالة</th></tr></thead><tbody>
+    {% for row in rows %}
+    <tr>
+      <td><strong>{{ row.student.full_name }}</strong><small>{{ row.student.email }}</small></td>
+      <td>{{ row.test_count }}</td><td>{{ row.worksheet_count }}</td>
+      <td><div class="metric-bar"><i style="width:{{ [row.average,100]|min }}%"></i></div>{{ row.average }}%</td>
+      <td><div class="metric-bar mastery"><i style="width:{{ [row.mastery_average,100]|min }}%"></i></div>{{ row.mastery_average }}%</td>
+      <td>{{ row.challenge_count }}</td><td>{{ row.tutor_interactions }}</td><td>{{ row.character_attempts }}</td><td>{{ row.date_reviews }}</td><td>{{ row.plan_verifications }}</td><td>{{ row.resource_downloads }}</td><td>{{ row.concept_map_views }}</td><td>{{ row.points_earned }}</td>
+      <td>{% if row.needs_support %}<span class="analytics-status support">تحتاج متابعة</span>{% elif row.activity_score %}<span class="analytics-status active">متفاعلة</span>{% else %}<span class="analytics-status quiet">لم تبدأ</span>{% endif %}</td>
+    </tr>
+    {% else %}<tr><td colspan="14" class="platform-empty">ستظهر التحليلات بعد انضمام الطالبات وبدء الأنشطة.</td></tr>{% endfor %}
+    </tbody></table></div>
 </section>
-<section class="platform-panel analytics-note"><h2>كيف نقرأ هذه اللوحة؟</h2><p>النتيجة وحدها لا تكفي. تجمع المنصة العلامات، إتقان المفاهيم، عدد التحديات، والتفاعل المقيم مع المعلم الذكي. هذا يساعد المعلمة على ملاحظة الطالب المجتهد حتى لو كانت درجته ما زالت تتحسن.</p></section>
+<section class="platform-panel analytics-note">
+  <h2>كيف نكوّن صورة متكاملة عن التعلّم؟</h2>
+  <p>تجمع اللوحة نتائج الاختبارات وأوراق العمل المسلّمة، ومتوسط العلامات المصحّحة، وإتقان المفاهيم، والتحديات المكتملة، ورسائل الطالبات إلى المعلم الذكي، ومحاولات الشخصيات، وخطة المراجعة، وتنزيل المواد، واستكشاف الخرائط، ومراجعة التواريخ، ومعاملات النقاط. تُقرأ هذه المؤشرات معًا لتكوين صورة أوسع عن تقدّم كل طالبة.</p>
+  <p class="analytics-note-secondary">النقاط المعروضة هي مجموع معاملات المكافآت المسجّلة فعلًا، وليست عدّادًا لكل نقرة. يشمل التحليل الاختبارات وأوراق العمل والتحديات والمعلم الذكي والشخصيات والتواريخ والمواد والخرائط وخطة المراجعة بحسب ما تسجّله وظائف المنصة حاليًا. بعض الأنشطة تُحتسب في التحليل دون أن تمنح نقاطًا مستقلة؛ لذلك لا تعني كل مشاركة بالضرورة زيادة الرصيد.</p>
+</section>
 {% endblock %}

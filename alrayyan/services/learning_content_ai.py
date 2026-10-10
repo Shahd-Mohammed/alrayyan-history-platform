@@ -1,4 +1,4 @@
-"""Grounded AI drafts for teacher-reviewed learning content."""
+"""Grounded AI drafts and student self-study content from curriculum sources."""
 
 import json
 import re
@@ -23,7 +23,7 @@ def _json_payload(text):
 
 def _grounded_request(lesson, task_prompt):
     results = semantic_search(
-        f"{lesson.title} مفاهيم شخصيات أحداث أسباب نتائج",
+        f"{lesson.title} تواريخ سنوات أحداث تاريخية متى عام أسباب نتائج شخصيات مفاهيم",
         top_k=6,
         min_similarity=0.12,
         lesson_id=lesson.id,
@@ -44,7 +44,7 @@ def _grounded_request(lesson, task_prompt):
                     "content": (
                         "أنت مساعد إعداد محتوى تعليمي متعدد المواد. اعتمد فقط على السياق. "
                         "أعد JSON صالحًا فقط. لا تخترع أسماء أو صفحات أو حقائق. "
-                        "المحتوى مسودة ستراجعها المعلمة قبل النشر."
+                        "قد تكون المخرجات مسودة للمعلمة أو بطاقات مراجعة ذاتية للطالب؛ التزم بنوع المهمة ولا تضف حقائق من خارج السياق."
                     ),
                 },
                 {
@@ -74,14 +74,14 @@ def _grounded_request(lesson, task_prompt):
     raise RuntimeError("تعذر إكمال المسودة الآن. حُفظت بيانات النموذج؛ حاولي مرة أخرى بعد قليل.") from last_error
 
 
-def generate_concept_map_draft(lesson, map_type):
+def generate_concept_map_draft(lesson):
     payload, results = _grounded_request(
         lesson,
         (
-            f"أنشئ خريطة من النوع {map_type}. JSON: "
+            "أنشئ خريطة مفاهيمية شجرية متفرعة. اجعل لها جذرًا واحدًا واضحًا، ثم فروعًا رئيسية وفرعية متوازنة، ولا تجعلها قائمة مسطحة. JSON: "
             '{"title":"...","nodes":[{"key":"n1","label":"...","description":"..."}],'
             '"edges":[{"source":"n1","target":"n2","label":"..."}]}. '
-            "من 5 إلى 9 عقد وروابط صحيحة فقط."
+            "من 5 إلى 9 عقد وروابط صحيحة فقط. اجعل الروابط تبدأ من الجذر إلى الفروع ثم الفروع الفرعية، وتجنب الدورات وتعدد الآباء للعقدة الواحدة."
         ),
     )
     nodes = payload.get("nodes")
@@ -107,3 +107,51 @@ def generate_character_drafts(lesson):
         raise RuntimeError("صيغة الشخصيات المقترحة غير صالحة.")
     citations = list(dict.fromkeys(result["citation"] for result in results))[:5]
     return characters, citations
+
+
+def generate_historical_date_drafts(lesson):
+    """Create student-facing date-recall cards grounded only in the selected lesson."""
+    payload, results = _grounded_request(
+        lesson,
+        (
+            "أنشئ بطاقات مراجعة للتلميذ من التواريخ والأحداث المذكورة صراحة في سياق الدرس فقط. "
+            "لا تخترع تاريخًا أو حدثًا، ولا تستنتج سنة غير مذكورة. "
+            "أعد JSON فقط بالشكل: "
+            '{"dates":[{"date_label":"التاريخ كما ورد","sort_year":1948,'
+            '"event_title":"اسم الحدث","event_description":"شرح قصير من السياق",'
+            '"memory_hint":"تلميح قصير لا يكشف الإجابة"}]}. '
+            "أنشئ من 3 إلى 6 بطاقات إن كان السياق يدعمها، وإلا أعد البطاقات المتاحة فقط. "
+            "إذا لم يرد أي تاريخ أو سنة صريحة فأعد قائمة فارغة. "
+            "استخدم أرقامًا صحيحة في sort_year أو null عند عدم توفر سنة رقمية."
+        ),
+    )
+    items = payload.get("dates", [])
+    if not isinstance(items, list):
+        raise RuntimeError("صيغة بطاقات التواريخ غير صالحة.")
+    cleaned = []
+    seen = set()
+    for item in items[:8]:
+        if not isinstance(item, dict):
+            continue
+        date_label = str(item.get("date_label") or "").strip()[:100]
+        event_title = str(item.get("event_title") or "").strip()[:250]
+        if not date_label or not event_title:
+            continue
+        key = (date_label.casefold(), event_title.casefold())
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            sort_year = int(item.get("sort_year")) if item.get("sort_year") is not None else None
+        except (TypeError, ValueError):
+            sort_year = None
+        cleaned.append({
+            "date_label": date_label,
+            "sort_year": sort_year,
+            "event_title": event_title,
+            "event_description": str(item.get("event_description") or "").strip()[:2000] or None,
+            "memory_hint": str(item.get("memory_hint") or "").strip()[:500] or None,
+        })
+    if not cleaned:
+        raise RuntimeError("لم يعثر الدرس على تواريخ وأحداث صريحة كافية لصنع بطاقات مراجعة.")
+    return cleaned

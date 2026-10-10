@@ -1,47 +1,32 @@
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/platform.css') }}"
->
-{% if request.endpoint == 'teacher_dashboard.dashboard' %}
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/dashboard_cleanup.css') }}"
->
-{% endif %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261010-global-button-14') }}">
 
 <header class="platform-header">
     <a class="platform-brand" href="{{ url_for('main.home') }}">
-        <img
-            src="{{ url_for('static', filename='images/alrayyan-logo.png') }}"
-            alt="الريان في الدراسات التاريخية"
-        >
+        <img src="{{ url_for('static', filename='images/alrayyan-logo.png') }}" alt="الريان في الدراسات التاريخية">
     </a>
 
-    <button
-        class="platform-menu-toggle"
-        type="button"
-        aria-label="فتح القائمة"
-        aria-expanded="false"
-        data-platform-menu-toggle
-    >
+    <button class="platform-menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" data-platform-menu-toggle>
         <span></span><span></span><span></span>
     </button>
 
     <nav class="platform-navigation" data-platform-menu>
         <a href="{{ url_for('main.home') }}">الرئيسية</a>
-        <a href="{{ url_for('main.about') }}">من نحن</a>
 
         {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
             <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
         {% endif %}
+
+        <a href="{{ url_for('main.about') }}">من نحن</a>
 
         {% if current_user.is_authenticated %}
             {% if current_user.role in ['teacher', 'admin'] %}
                 <a href="{{ url_for('teacher_dashboard.dashboard') }}">لوحة المعلمة</a>
                 <details class="student-learning-menu platform-management-menu">
-                    <summary>إدارة المحتوى</summary>
+                    <summary>مركز المحتوى</summary>
                     <div>
-                        <a href="{{ url_for('worksheet_center.index') }}">مركز أوراق العمل</a>
+                        <a href="{{ url_for('worksheet_center.center') }}">مركز أوراق العمل</a>
+                        <a href="{{ url_for('assessment.test_center') }}">الاختبارات</a>
                         <a href="{{ url_for('platform_admin.curricula') }}">المناهج والمصادر</a>
                         <a href="{{ url_for('platform_admin.analytics') }}">تحليلات التعلّم</a>
                         <a href="{{ url_for('platform_admin.classrooms') }}">الصفوف</a>
@@ -50,23 +35,30 @@
                         <a href="{{ url_for('platform_admin.concept_maps') }}">الخرائط المفاهيمية</a>
                         <a href="{{ url_for('platform_admin.characters') }}">الشخصيات التعليمية</a>
                         <a href="{{ url_for('platform_admin.honor_board') }}">لوحة الشرف</a>
-                        <a href="{{ url_for('teacher_dashboard.edit_about_page') }}">هوية المنصة</a>
                         <a href="{{ url_for('platform_admin.settings') }}">إعدادات المنصة</a>
                     </div>
                 </details>
             {% elif current_user.role == 'student' %}
                 <a href="{{ url_for('main.student_dashboard') }}">لوحتي</a>
+                <details class="student-learning-menu student-results-menu">
+                    <summary>نتائجي</summary>
+                    <div>
+                        <a href="{{ url_for('assessment.my_results') }}">جميع النتائج</a>
+                        <a href="{{ url_for('main.student_progress') }}">سجلّ التقدّم والإنجاز</a>
+                        <a href="{{ url_for('teacher.my_points') }}">محفظة النقاط</a>
+                    </div>
+                </details>
                 <details class="student-learning-menu">
-                    <summary>مساحتي التعليمية</summary>
+                    <summary>تعلّمي</summary>
                     <div>
                         <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
-                        <a href="{{ url_for('assessment.my_results') }}">نتائجي</a>
+                        <a href="{{ url_for('challenges.test_bank') }}">الاختبارات</a>
                         <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
                         <a href="{{ url_for('learning.library') }}">مكتبة التعلّم</a>
+                        <a href="{{ url_for('learning.characters') }}">اعرفي الشخصية</a>
                         <a href="{{ url_for('challenges.setup') }}">التحدي الذكي</a>
-                        <a href="{{ url_for('challenges.test_bank') }}">بنك الاختبارات</a>
                         <a href="{{ url_for('teacher.learning_hub') }}">خطتي التعليمية</a>
-                        <a href="{{ url_for('teacher.my_points') }}">محفظة نقاطي</a>
+                        <a href="{{ url_for('learning.date_memory') }}">ذاكرة التواريخ</a>
                         <a href="{{ url_for('learning.honor_board') }}">لوحة الشرف</a>
                     </div>
                 </details>
