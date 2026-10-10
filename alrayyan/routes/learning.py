@@ -223,7 +223,7 @@ def generate_student_date_memory():
 
     try:
         generated = generate_historical_date_drafts(lesson)
-        existing = HistoricalDate.query.filter_by(lesson_id=lesson.id).all()
+        existing = HistoricalDate.query.filter_by(lesson_id=lesson.id, is_published=True).all()
         existing_keys = {
             (normalize_answer(item.date_label), normalize_answer(item.event_title))
             for item in existing
