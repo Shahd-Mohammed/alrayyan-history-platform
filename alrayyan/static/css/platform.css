@@ -708,3 +708,27 @@ input[type="submit"]:disabled { opacity:.55; cursor:not-allowed; transform:none;
 form:has(> button[type="submit"]),
 form:has(> input[type="submit"]) { min-width:0; }
 
+
+
+/* Final site-wide button typography: compact, legible, consistent labels */
+button,input[type="submit"],input[type="button"],
+.platform-gold-button,.primary-action,.gold-action,.hint-action,
+.concept-action,.tree-add-button,.test-primary-button,.test-card-action,
+.test-card-preview,.date-memory-button,.student-primary-action,
+.student-dashboard-card>a,.student-panel-heading>a,.challenge-primary-button,
+.challenge-secondary-button,.result-primary-action,.result-back-link,
+.learning-grid article>a,.character-card summary {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.87rem!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+  white-space:nowrap!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+button:not(.platform-menu-toggle):not(.platform-menu-toggle span) {
+  flex:0 0 auto;
+}
