@@ -9,6 +9,7 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.models import CharacterAttempt, ConceptMap, Curriculum, DateReview, HistoricalCharacter, HistoricalDate, HonorBoardEntry, LearningResource, Lesson, Unit, User, XPTransaction
+from alrayyan.services.learning_content_ai import generate_historical_date_drafts
 
 
 learning_bp = Blueprint("learning", __name__, url_prefix="/learn")
@@ -156,17 +157,24 @@ def date_memory():
     if current_user.role != "student":
         abort(403)
 
-    active_lessons = (
-        db.session.query(Lesson.id)
+    lessons = (
+        Lesson.query
         .join(Unit)
         .join(Curriculum)
-        .filter(Curriculum.is_active.is_(True))
+        .filter(
+            Curriculum.is_active.is_(True),
+            Curriculum.processing_status == "ready",
+            Lesson.is_published.is_(True),
+        )
+        .order_by(Curriculum.subject, Unit.order_index, Lesson.order_index)
+        .all()
     )
+    active_lesson_ids = [lesson.id for lesson in lessons]
     dates = (
         HistoricalDate.query
         .filter(
             HistoricalDate.is_published.is_(True),
-            HistoricalDate.lesson_id.in_(active_lessons),
+            HistoricalDate.lesson_id.in_(active_lesson_ids or [-1]),
         )
         .order_by(HistoricalDate.sort_year.asc(), HistoricalDate.id.asc())
         .all()
@@ -183,7 +191,61 @@ def date_memory():
         }
     now = datetime.now(timezone.utc).replace(tzinfo=None)
     due_count = sum(1 for item in dates if item.id not in reviews or reviews[item.id].next_review_at <= now)
-    return render_template("learning/date_memory.html", dates=dates, reviews=reviews, due_count=due_count, now=now)
+    return render_template("learning/date_memory.html", dates=dates, reviews=reviews, due_count=due_count, now=now, lessons=lessons)
+
+
+@learning_bp.post("/dates/generate")
+@login_required
+def generate_student_date_memory():
+    """Let students generate their own lesson-grounded date-memory cards with AI."""
+    if current_user.role != "student":
+        abort(403)
+    lesson_id = request.form.get("lesson_id", type=int)
+    lesson = (
+        Lesson.query
+        .join(Unit)
+        .join(Curriculum)
+        .filter(
+            Lesson.id == lesson_id,
+            Curriculum.is_active.is_(True),
+            Curriculum.processing_status == "ready",
+            Lesson.is_published.is_(True),
+        )
+        .first_or_404()
+    )
+    try:
+        generated = generate_historical_date_drafts(lesson)
+        existing = HistoricalDate.query.filter_by(lesson_id=lesson.id).all()
+        existing_keys = {
+            (normalize_answer(item.date_label), normalize_answer(item.event_title))
+            for item in existing
+        }
+        created_count = 0
+        for item in generated:
+            key = (normalize_answer(item["date_label"]), normalize_answer(item["event_title"]))
+            if key in existing_keys:
+                continue
+            db.session.add(HistoricalDate(
+                lesson_id=lesson.id,
+                date_label=item["date_label"],
+                sort_year=item["sort_year"],
+                event_title=item["event_title"],
+                event_description=item["event_description"],
+                memory_hint=item["memory_hint"],
+                importance_level=1,
+                is_published=True,
+            ))
+            existing_keys.add(key)
+            created_count += 1
+        if not created_count:
+            raise RuntimeError("توجد بطاقات مشابهة لهذا الدرس بالفعل. اختاري درسًا آخر أو ابدئي المراجعة.")
+        db.session.commit()
+        flash(f"أنشأ الذكاء الاصطناعي {created_count} بطاقات مراجعة من درس «{lesson.title}». أصبحت جاهزة لكِ.", "success")
+    except Exception as error:
+        db.session.rollback()
+        current_app.logger.exception("Student date-memory generation failed")
+        flash(str(error) if isinstance(error, RuntimeError) else "تعذر إنشاء البطاقات الآن. حاولي مرة أخرى بعد قليل.", "error")
+    return redirect(url_for("learning.date_memory"))
 
 
 @learning_bp.post("/dates/<int:date_id>/review")
