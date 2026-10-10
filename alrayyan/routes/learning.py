@@ -153,7 +153,7 @@ def download_resource(resource_id):
 @learning_bp.get("/dates")
 @login_required
 def date_memory():
-    """Student-only spaced practice for teacher-published historical dates."""
+    """Student-only spaced practice with self-generated AI cards from active lessons."""
     if current_user.role != "student":
         abort(403)
 
@@ -213,6 +213,14 @@ def generate_student_date_memory():
         )
         .first_or_404()
     )
+    existing_published = HistoricalDate.query.filter_by(
+        lesson_id=lesson.id,
+        is_published=True,
+    ).count()
+    if existing_published:
+        flash("هذا الدرس لديه بطاقات مراجعة جاهزة بالفعل. ابدئي المراجعة أو اختاري درسًا آخر لإنشاء بطاقات جديدة.", "info")
+        return redirect(url_for("learning.date_memory"))
+
     try:
         generated = generate_historical_date_drafts(lesson)
         existing = HistoricalDate.query.filter_by(lesson_id=lesson.id).all()
