@@ -30,11 +30,27 @@
                     <article class="bank-card">
                         <span>5 أسئلة · مستوى متوسط</span>
                         <h3>{{ lesson.title }}</h3>
-                        <p>اختبار قصير موثق من محتوى الدرس ويحدّث خطتك التعليمية.</p>
+                        <p>اختبار قصير موثّق من محتوى الدرس ويساعدكِ على معرفة ما أتقنتِه.</p>
                         <button class="challenge-primary-button quick-bank-quiz" type="button" data-lesson-id="{{ lesson.id }}">ابدأ الاختبار</button>
                     </article>
                 {% else %}
                     <p class="bank-empty">لا توجد دروس مجهزة للاختبار حاليًا.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="bank-section">
+            <div class="bank-heading"><span>اختبارات أعدّتها المعلمة</span><h2>الاختبارات المنشورة</h2></div>
+            <div class="bank-grid">
+                {% for test in tests %}
+                    <article class="bank-card">
+                        <span>{{ test.questions | length }} سؤالًا</span>
+                        <h3>{{ test.title }}</h3>
+                        <p>{{ test.description or 'اختبار منشور من المعلمة مع حفظ النتيجة في سجلّك.' }}</p>
+                        <a class="challenge-primary-button" href="{{ url_for('worksheets.worksheet_details', worksheet_id=test.id) }}">ابدئي الاختبار</a>
+                    </article>
+                {% else %}
+                    <p class="bank-empty">لا توجد اختبارات منشورة من المعلمة حاليًا.</p>
                 {% endfor %}
             </div>
         </section>
