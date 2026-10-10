@@ -1874,3 +1874,55 @@ button.concept-action,
   .platform-admin-page .concept-action,
   .platform-admin-page .test-card-action { white-space: normal; }
 }
+
+/* Light, welcoming test studio header and a clearly separated saved-test library */
+.platform-admin-page .test-center-hero {
+  direction: rtl !important;
+  grid-template-columns: minmax(0,1fr) minmax(250px,.7fr) !important;
+  min-height: 0 !important;
+  padding: clamp(28px,4vw,46px) clamp(24px,5vw,54px) !important;
+  margin-bottom: 30px !important;
+  border-color: #ead9b6 !important;
+  border-radius: 28px !important;
+  background:
+    radial-gradient(circle at 82% 18%,rgba(210,168,79,.16),transparent 25%),
+    radial-gradient(circle at 12% 100%,rgba(25,65,105,.06),transparent 35%),
+    linear-gradient(135deg,#fffdf8 0%,#fff8e9 100%) !important;
+  box-shadow: 0 18px 46px rgba(23,47,82,.07) !important;
+}
+.platform-admin-page .test-center-hero-copy { direction: rtl !important; text-align: right !important; }
+.platform-admin-page .test-center-hero-copy h2 { color: #132f52 !important; font-family: "IBM Plex Sans Arabic",Tahoma,sans-serif !important; font-size: clamp(2rem,3.7vw,3.15rem) !important; font-weight: 850 !important; line-height: 1.35 !important; }
+.platform-admin-page .test-center-hero-copy p { color: #667488 !important; }
+.platform-admin-page .test-hero-kicker { color: #9c711f !important; }
+.platform-admin-page .test-hero-points { gap: 9px !important; margin-top: 20px !important; }
+.platform-admin-page .test-hero-points span { background: #fff !important; border-color: #ead9b6 !important; color: #173657 !important; }
+.platform-admin-page .test-hero-points b { color: #9c711f !important; }
+.platform-admin-page .test-center-hero-art { min-height: 220px !important; }
+.platform-admin-page .test-art-core { background: linear-gradient(135deg,#173657,#244e75) !important; color: #f1d694 !important; }
+.platform-admin-page .test-builder-shell {
+  margin-top: 30px !important;
+  padding: clamp(22px,3vw,34px) !important;
+  border: 1px solid #e8dcc6 !important;
+  border-radius: 25px !important;
+  background: linear-gradient(145deg,#fff 0%,#fffdf8 100%) !important;
+  box-shadow: 0 16px 42px rgba(23,47,82,.065) !important;
+}
+.platform-admin-page .test-library-section,
+.platform-admin-page .test-library-premium {
+  margin: 34px 8px 0 !important;
+  padding: clamp(22px,3vw,34px) !important;
+  border: 1px solid #e8dcc6 !important;
+  border-radius: 25px !important;
+  background: linear-gradient(145deg,#fff 0%,#fcf8ef 100%) !important;
+  box-shadow: 0 16px 42px rgba(23,47,82,.06) !important;
+}
+.platform-admin-page .test-library-heading { padding-bottom: 18px; border-bottom: 1px solid #eee5d5; }
+.platform-admin-page .test-library-heading h2 { font-family: "IBM Plex Sans Arabic",Tahoma,sans-serif !important; font-weight: 850 !important; }
+@media(max-width:900px) {
+  .platform-admin-page .test-center-hero { grid-template-columns: 1fr !important; }
+}
+@media(max-width:650px) {
+  .platform-admin-page .test-center-hero { margin-bottom: 24px !important; }
+  .platform-admin-page .test-library-section,
+  .platform-admin-page .test-library-premium { margin-inline: 0 !important; padding: 20px 16px !important; }
+}
