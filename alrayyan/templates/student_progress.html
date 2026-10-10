@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>مستواي | الريان</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css', v='20261010-student-progress-1') }}">
+</head>
+<body>
+{% include '_platform_header.html' %}
+<main class="student-progress-page">
+    <header class="student-progress-hero">
+        <div>
+            <span class="progress-eyebrow">رحلتك التعليمية</span>
+            <h1>مستواي</h1>
+            <p>صورة واضحة عن تقدّمكِ في الاختبارات وأوراق العمل والتحديات والمعلّم الذكي والأنشطة التعليمية.</p>
+        </div>
+        <div class="progress-total"><small>رصيدك الحالي</small><strong>{{ current_user.points or 0 }}</strong><span>XP · المستوى {{ current_user.level or 1 }}</span></div>
+    </header>
+
+    <section class="progress-metrics" aria-label="ملخص التقدم">
+        <article><span>اختبارات مكتملة</span><strong>{{ tests_completed }}</strong><small>محاولات تم تسليمها</small></article>
+        <article><span>أوراق عمل مكتملة</span><strong>{{ worksheets_completed }}</strong><small>محاولات تم تسليمها</small></article>
+        <article><span>تحديات مكتملة</span><strong>{{ completed_challenges }}</strong><small>من أصل {{ total_challenges }} تحديًا</small></article>
+        <article><span>إجابات قيّمها المعلّم</span><strong>{{ tutor_evaluations }}</strong><small>{{ tutor_conversations }} محادثة تعليمية</small></article>
+        <article><span>محاولات الشخصيات</span><strong>{{ character_attempts }}</strong><small>تعلّم تفاعلي</small></article>
+        <article><span>مراجعات التواريخ</span><strong>{{ date_reviews }}</strong><small>مراجعة متباعدة</small></article>
+    </section>
+
+    <section class="progress-panel">
+        <div class="progress-section-heading"><div><span>فهمكِ للمفاهيم</span><h2>إتقان الدروس</h2></div><p>تتحدّث هذه النسب مع التقييمات المسجلة في جلسات المعلّم الذكي.</p></div>
+        {% if masteries %}
+            <div class="progress-mastery-list">
+            {% for item in masteries %}
+                <article class="progress-mastery">
+                    <div><div><small>{{ item.lesson.title }}</small><h3>{{ item.concept }}</h3></div><strong>{{ item.mastery_score }}%</strong></div>
+                    <div class="progress-track"><span style="width: {{ [0, [100, item.mastery_score]|min]|max }}%"></span></div>
+                    <small>{% if item.mastery_score < 45 %}أولوية للمراجعة{% elif item.mastery_score < 70 %}يتقدم مع التدريب{% elif item.mastery_score < 85 %}مستوى جيد{% else %}إتقان متقدم{% endif %}</small>
+                </article>
+            {% endfor %}
+            </div>
+        {% else %}
+            <div class="progress-empty">ابدئي محادثة تعليمية مع المعلّم الذكي، وستظهر هنا المفاهيم التي تم تقييمها.</div>
+        {% endif %}
+    </section>
+
+    <section class="progress-panel">
+        <div class="progress-section-heading"><div><span>نقاطكِ من الأنشطة</span><h2>كيف جمعتِ نقاطك؟</h2></div><a class="progress-small-link" href="{{ url_for('teacher.my_points') }}">سجل النقاط</a></div>
+        {% if points_by_reason %}
+            <div class="progress-rewards-list">
+            {% for reason, amount in points_by_reason.items() %}
+                <article><span>{{ reason_labels.get(reason, 'نشاط تعليمي') }}</span><strong>+{{ amount }} XP</strong></article>
+            {% endfor %}
+            </div>
+        {% else %}
+            <div class="progress-empty">ستظهر مصادر نقاطك هنا بعد تنفيذ أنشطة تعليمية تكسب نقاطًا.</div>
+        {% endif %}
+    </section>
+
+    <section class="progress-panel">
+        <div class="progress-section-heading"><div><span>آخر النتائج</span><h2>محاولاتك الأخيرة</h2></div><a class="progress-small-link" href="{{ url_for('assessment.my_results') }}">كل النتائج</a></div>
+        {% if attempts %}
+            <div class="progress-recent-list">
+            {% for attempt in attempts %}
+                <article><div><small>{{ 'اختبار' if attempt.worksheet.creation_method == 'test' else 'ورقة عمل' }}</small><h3>{{ attempt.worksheet.title }}</h3></div><strong>{{ '%.1f'|format(attempt.percentage or 0) }}%</strong><a href="{{ url_for('assessment.attempt_result', attempt_id=attempt.id) }}">التفاصيل</a></article>
+            {% endfor %}
+            </div>
+        {% else %}
+            <div class="progress-empty">لم تسلّمي محاولة بعد. اختاري اختبارًا أو ورقة عمل وابدئي رحلتكِ.</div>
+        {% endif %}
+    </section>
+
+    <div class="progress-quick-links">
+        <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
+        <a href="{{ url_for('challenges.test_bank') }}">الاختبارات والتدريبات</a>
+        <a href="{{ url_for('learning.date_memory') }}">ذاكرة التواريخ</a>
+    </div>
+</main>
+{% include '_platform_footer.html' %}
+</body>
+</html>
