@@ -1603,3 +1603,102 @@ button.concept-action,
   .platform-admin-page .concept-map-tabs{grid-template-columns:1fr!important}
   .platform-admin-page .concept-map-tabs button{white-space:normal!important}
 }
+
+
+/* Unified button typography and compact gold action controls */
+.platform-admin-page button,
+.platform-admin-page input[type="submit"],
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .concept-action,
+.platform-admin-page .test-card-action,
+.platform-admin-page .test-card-preview,
+.platform-admin-page .test-card-footer>a,
+.platform-admin-page .classroom-row-actions button,
+.platform-admin-page .review-actions button,
+.platform-admin-page .review-actions a {
+  box-sizing:border-box;
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:36px!important;
+  padding:8px 14px!important;
+  border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem!important;
+  font-weight:750!important;
+  line-height:1.35!important;
+  letter-spacing:0!important;
+  white-space:nowrap;
+  text-decoration:none;
+}
+.platform-admin-page .platform-gold-button,
+.platform-admin-page input.platform-gold-button,
+.platform-admin-page button.platform-gold-button,
+.platform-admin-page .concept-action.preview,
+.platform-admin-page .concept-action.publish,
+.platform-admin-page .test-card-action.publish,
+.platform-admin-page .classroom-row-actions .classroom-delete-button {
+  background:linear-gradient(135deg,#d2a84f,#b48127)!important;
+  border:1px solid #b48127!important;
+  color:#fff!important;
+  box-shadow:0 5px 12px rgba(180,129,39,.13);
+}
+.platform-admin-page .platform-gold-button *,
+.platform-admin-page .concept-action.preview *,
+.platform-admin-page .concept-action.publish * {color:#fff!important}
+.platform-admin-page .platform-gold-button:hover,
+.platform-admin-page .concept-action.preview:hover,
+.platform-admin-page .concept-action.publish:hover {
+  background:linear-gradient(135deg,#bf9135,#9e6d1d)!important;
+  border-color:#9e6d1d!important;
+  color:#fff!important;
+}
+.platform-admin-page .concept-map-tabs {
+  margin:24px 0 28px!important;
+  padding:8px!important;
+  border-radius:16px!important;
+}
+.platform-admin-page .concept-map-tabs button {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  background:#fff!important;
+  border:1px solid #e6dcc9!important;
+  color:#173657!important;
+  box-shadow:none!important;
+}
+.platform-admin-page .concept-map-tabs button.is-active {
+  background:#f7edcf!important;
+  border-color:#d2a84f!important;
+  color:#173657!important;
+}
+.platform-admin-page .concept-map-tabs button span {
+  color:#a77924!important;
+  font-size:.78rem!important;
+  font-weight:800!important;
+}
+.platform-admin-page .concept-map-workspace {margin-top:0!important}
+.platform-admin-page .concept-map-library {margin-top:28px!important}
+.platform-admin-page .concept-map-card-actions {gap:8px!important;flex-wrap:wrap}
+.platform-admin-page .concept-map-card-actions form {margin:0!important}
+.platform-admin-page .concept-action.delete,
+.platform-admin-page .test-card-action.delete {background:#fff5f4!important;border:1px solid #e7c5c2!important;color:#a33d3d!important}
+.platform-admin-page .test-card-actions {display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap}
+.platform-admin-page .test-card-actions form {width:auto!important;margin:0!important}
+.platform-admin-page .test-library-section {margin-top:30px!important}
+.platform-admin-page .test-library-grid {padding-inline:4px!important}
+.platform-admin-page .test-library-card {min-width:0}
+.platform-admin-page .classroom-admin-page {padding-inline:14px!important;gap:24px!important}
+.platform-admin-page .classroom-list-panel {margin-inline:0!important}
+.platform-admin-page .classroom-admin-row {padding-inline:8px!important}
+.platform-admin-page .platform-two-columns {gap:24px!important}
+.platform-admin-page .platform-panel {min-width:0}
+.platform-admin-page .analytics-note p {line-height:1.9}
+@media(max-width:650px){
+ .platform-admin-page button,.platform-admin-page input[type="submit"],.platform-admin-page .platform-gold-button,
+ .platform-admin-page .concept-action,.platform-admin-page .test-card-action,.platform-admin-page .test-card-preview,
+ .platform-admin-page .test-card-footer>a {white-space:normal;max-width:100%!important}
+ .platform-admin-page .concept-map-tabs{grid-template-columns:1fr!important;margin-top:22px!important}
+ .platform-admin-page .classroom-admin-page{padding-inline:0!important}
+}
