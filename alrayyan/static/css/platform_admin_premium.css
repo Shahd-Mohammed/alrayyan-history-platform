@@ -1218,3 +1218,25 @@ button.concept-action,
   .platform-admin-page .test-library-section{padding-inline:2px}
   .platform-admin-page .test-card-actions{align-items:flex-start}
 }
+
+
+/* Extra page breathing room and consistent teacher dashboard card typography */
+.platform-admin-page .classroom-admin-page{gap:26px!important;padding-inline:12px!important}
+.platform-admin-page .classroom-admin-page>.platform-panel{min-width:0;border-radius:24px}
+.platform-admin-page .classroom-list-panel{padding:clamp(20px,3vw,30px)!important}
+.platform-admin-page .classroom-admin-row{padding:21px 0!important;gap:18px!important}
+.platform-admin-page .classroom-details>strong{font-size:1.12rem!important;font-weight:800!important;line-height:1.6}
+.platform-admin-page .classroom-details>p{line-height:1.75}
+.platform-admin-page .classroom-row-actions{gap:9px}
+.platform-admin-page .classroom-delete-button{font-family:inherit!important;font-size:.86rem!important;font-weight:800!important;letter-spacing:0;min-height:38px;padding:8px 13px}
+.platform-admin-page .concept-map-tabs button{white-space:nowrap}
+.platform-admin-page .concept-map-card-actions .concept-action{font-weight:800!important}
+.platform-admin-page .test-builder-shell,.platform-admin-page .inline-test-workspace{margin-inline:8px}
+.platform-admin-page .test-library-section{margin-inline:0;padding-inline:18px}
+@media(max-width:700px){
+ .platform-admin-page .classroom-admin-page{padding-inline:0!important}
+ .platform-admin-page .classroom-admin-page>.platform-panel{padding:20px!important}
+ .platform-admin-page .classroom-admin-row{align-items:flex-start;flex-direction:column}
+ .platform-admin-page .test-builder-shell,.platform-admin-page .inline-test-workspace{margin-inline:0}
+ .platform-admin-page .test-library-section{padding-inline:0}
+}
