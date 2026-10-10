@@ -1,13 +1,14 @@
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
 import re
 from difflib import SequenceMatcher
 
-from flask import Blueprint, abort, current_app, jsonify, render_template, request, send_file
+from flask import Blueprint, abort, current_app, flash, jsonify, redirect, render_template, request, send_file, url_for
 from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
-from alrayyan.models import CharacterAttempt, ConceptMap, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, Unit, User, XPTransaction
+from alrayyan.models import CharacterAttempt, ConceptMap, Curriculum, DateReview, HistoricalCharacter, HistoricalDate, HonorBoardEntry, LearningResource, Lesson, Unit, User, XPTransaction
 
 
 learning_bp = Blueprint("learning", __name__, url_prefix="/learn")
@@ -145,3 +146,104 @@ def download_resource(resource_id):
     award_content_interaction(current_user, "resource_downloaded", "learning_resource", row.id)
     db.session.commit()
     return send_file(target, as_attachment=True, download_name=row.original_filename)
+
+
+
+@learning_bp.get("/dates")
+@login_required
+def date_memory():
+    """Student-only spaced practice for teacher-published historical dates."""
+    if current_user.role != "student":
+        abort(403)
+
+    active_lessons = (
+        db.session.query(Lesson.id)
+        .join(Unit)
+        .join(Curriculum)
+        .filter(Curriculum.is_active.is_(True))
+    )
+    dates = (
+        HistoricalDate.query
+        .filter(
+            HistoricalDate.is_published.is_(True),
+            HistoricalDate.lesson_id.in_(active_lessons),
+        )
+        .order_by(HistoricalDate.sort_year.asc(), HistoricalDate.id.asc())
+        .all()
+    )
+    date_ids = [item.id for item in dates]
+    reviews = {}
+    if date_ids:
+        reviews = {
+            item.historical_date_id: item
+            for item in DateReview.query.filter(
+                DateReview.student_id == current_user.id,
+                DateReview.historical_date_id.in_(date_ids),
+            ).all()
+        }
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    due_count = sum(1 for item in dates if item.id not in reviews or reviews[item.id].next_review_at <= now)
+    return render_template("learning/date_memory.html", dates=dates, reviews=reviews, due_count=due_count, now=now)
+
+
+@learning_bp.post("/dates/<int:date_id>/review")
+@login_required
+def review_historical_date(date_id):
+    """Check recall, schedule the next review, and award a single small mastery reward."""
+    if current_user.role != "student":
+        abort(403)
+
+    row = HistoricalDate.query.filter_by(id=date_id, is_published=True).first_or_404()
+    answer = (request.form.get("answer") or "").strip()[:300]
+    if not answer:
+        flash("اكتبي الحدث المرتبط بالتاريخ أولًا.", "error")
+        return redirect(url_for("learning.date_memory"))
+
+    expected = normalize_answer(row.event_title)
+    actual = normalize_answer(answer)
+    is_correct = expected == actual or SequenceMatcher(None, expected, actual).ratio() >= 0.82
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    review = DateReview.query.filter_by(historical_date_id=row.id, student_id=current_user.id).first()
+    if review is None:
+        review = DateReview(historical_date_id=row.id, student_id=current_user.id, repetitions=0, interval_days=0, easiness_factor=2.5, next_review_at=now)
+        db.session.add(review)
+
+    if is_correct:
+        review.repetitions = (review.repetitions or 0) + 1
+        if review.repetitions == 1:
+            interval = 1
+        elif review.repetitions == 2:
+            interval = 3
+        elif review.repetitions == 3:
+            interval = 7
+        else:
+            interval = max(1, round((review.interval_days or 7) * (review.easiness_factor or 2.5)))
+        review.easiness_factor = min(3.0, (review.easiness_factor or 2.5) + 0.05)
+    else:
+        review.repetitions = 0
+        interval = 1
+        review.easiness_factor = max(1.3, (review.easiness_factor or 2.5) - 0.2)
+
+    review.interval_days = interval
+    review.last_result = 5 if is_correct else 2
+    review.last_reviewed_at = now
+    review.next_review_at = now + timedelta(days=interval)
+
+    xp_awarded = 0
+    if is_correct:
+        existing = XPTransaction.query.filter_by(student_id=current_user.id, reason="historical_date_recalled", source_type="historical_date", source_id=row.id).first()
+        if existing is None:
+            xp_awarded = 3
+            db.session.add(XPTransaction(student_id=current_user.id, amount=xp_awarded, reason="historical_date_recalled", source_type="historical_date", source_id=row.id))
+            current_user.points = (current_user.points or 0) + xp_awarded
+            current_user.level = max(1, current_user.points // 500 + 1)
+
+    db.session.commit()
+    if is_correct:
+        message = f"إجابة صحيحة! الحدث هو: {row.event_title}. موعد المراجعة التالية بعد {interval} يومًا."
+        if xp_awarded:
+            message += " حصلتِ على 3 نقاط لأول تذكّر صحيح لهذا التاريخ."
+        flash(message, "success")
+    else:
+        flash(f"راجعي الربط مرة أخرى: {row.date_label} يرتبط بحدث «{row.event_title}». سنعيد عرضه غدًا.", "warning")
+    return redirect(url_for("learning.date_memory"))
