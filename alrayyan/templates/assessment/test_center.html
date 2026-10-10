@@ -6,7 +6,7 @@
 
 {% block content %}
 <script>
-(() => {
+document.addEventListener("DOMContentLoaded", () => {
   const typeField = document.getElementById("question_type");
   const choicesField = document.getElementById("choices_text");
   const correctField = document.getElementById("correct_answer_text");
@@ -127,7 +127,7 @@
   }
   typeField.addEventListener("change", render);
   render();
-})();
+});
 </script>
 
 <div class="test-center-page">
