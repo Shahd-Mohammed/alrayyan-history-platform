@@ -1364,3 +1364,60 @@ button.concept-action,
 .platform-admin-page .classroom-admin-row .classroom-details strong{font-size:1.2rem!important;font-weight:800!important;line-height:1.5!important}
 .platform-admin-page .classroom-delete-button{font-weight:750!important}
 @media(max-width:650px){.platform-admin-page button,.platform-admin-page input[type="submit"],.platform-admin-page .platform-gold-button,.platform-admin-page .tree-add-button,.platform-admin-page .concept-action{width:auto!important;max-width:100%!important}.platform-admin-page .classroom-admin-page{padding-inline:8px!important;gap:18px!important}.platform-admin-page .concept-map-tabs{margin-top:26px!important}.platform-admin-page .concept-map-card-actions{grid-column:1/-1}}
+
+
+/* Final visual pass: gold only where emphasis is needed, with breathing room */
+.concept-map-tabs {
+  margin: 28px 0 26px !important;
+  gap: 9px !important;
+}
+.concept-map-tabs button,
+.concept-map-tabs button.is-active {
+  flex: 1 1 180px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 9px 16px;
+  border-radius: 12px;
+  font-size: .88rem !important;
+}
+.concept-map-tabs button:not(.is-active) {
+  border: 1px solid #e8dcc6 !important;
+  background: #f8f4eb !important;
+  color: #30445e !important;
+  box-shadow: none !important;
+}
+.concept-map-tabs button:not(.is-active) > span {
+  background: #fff !important;
+  color: #9a6b16 !important;
+}
+.concept-map-tabs button.is-active {
+  border-color: #c99a3d !important;
+  background: linear-gradient(135deg,#d9ad50,#b9872c) !important;
+  color: #fff !important;
+  box-shadow: 0 7px 16px rgba(169,119,35,.16) !important;
+}
+.concept-map-tabs button.is-active > span,
+.concept-map-tabs button.is-active > * {
+  color: #fff !important;
+}
+.test-library-section.test-library-premium {
+  margin-top: 28px !important;
+  margin-inline: 4px;
+  padding-inline: clamp(18px,2.5vw,30px) !important;
+}
+.inline-test-workspace {
+  margin-top: 26px !important;
+}
+.classroom-admin-page {
+  gap: 28px !important;
+}
+.classroom-list-panel {
+  min-width: 0;
+  padding-inline: clamp(20px,3vw,32px) !important;
+}
+.classroom-list-panel .platform-list {
+  gap: 14px !important;
+}
+.classroom-admin-row {
+  margin-inline: 4px;
+}
