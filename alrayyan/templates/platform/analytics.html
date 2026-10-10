@@ -19,6 +19,30 @@
     <article><span>النقاط المسجّلة</span><strong>{{ overview.points_awarded }}</strong></article>
     <article><span>يحتجن متابعة</span><strong>{{ overview.support_count }}</strong></article>
 </section>
+{% set chart_max = [overview.tests, overview.worksheets, overview.submissions, overview.challenge_completions, overview.tutor_interactions, overview.character_attempts, overview.plan_verifications, overview.resource_downloads, overview.concept_map_views]|max %}
+<section class="platform-panel analytics-activity-chart" aria-label="مقارنة الأنشطة التعليمية">
+  <div class="analytics-heading">
+    <div><h2>نبض التعلّم في المنصة</h2><p>مقارنة بين عدد الأنشطة المسجّلة؛ أما النقاط والنتائج فمعروضة في المؤشرات والجدول أدناه.</p></div>
+  </div>
+  <div class="activity-bars">
+    {% for label, value in [
+      ('محاولات الاختبارات', overview.submissions),
+      ('الاختبارات المنشأة', overview.tests),
+      ('أوراق العمل', overview.worksheets),
+      ('التحديات المكتملة', overview.challenge_completions),
+      ('تفاعلات المعلم الذكي', overview.tutor_interactions),
+      ('محاولات الشخصيات', overview.character_attempts),
+      ('خطة المراجعة', overview.plan_verifications),
+      ('تنزيلات المواد', overview.resource_downloads),
+      ('استكشاف الخرائط', overview.concept_map_views)
+    ] %}
+      <div class="activity-bar-row">
+        <div class="activity-bar-label"><span>{{ label }}</span><strong>{{ value }}</strong></div>
+        <div class="activity-bar-track"><span style="width:{{ ((value / chart_max * 100) if chart_max else 0)|round(1) }}%"></span></div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
 <section class="platform-panel analytics-panel">
     <div class="analytics-heading"><div><h2>الأداء الفردي</h2><p>تعرض هذه النظرة الأنشطة المسجّلة في المنصة مجتمعة، حتى لا يُختزل تقدّم الطالبة في علامة واحدة.</p></div></div>
     <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات</th><th>المعلم الذكي</th><th>محاولات الشخصيات</th><th>خطة المراجعة</th><th>تنزيلات المواد</th><th>استكشاف الخرائط</th><th>النقاط المكتسبة</th><th>الحالة</th></tr></thead><tbody>
