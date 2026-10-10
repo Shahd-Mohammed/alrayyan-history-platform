@@ -1981,3 +1981,15 @@ button.concept-action,
 .classroom-admin-page .classroom-details p,.classroom-admin-page .classroom-details small{line-height:1.8!important}
 .classroom-admin-page .platform-gold-button{font-size:.94rem!important;font-weight:600!important}
 @media(max-width:700px){.classroom-admin-page{padding-inline:0!important}.classroom-admin-page .classroom-list-panel{margin-inline:0!important}.classroom-admin-page .classroom-admin-row{align-items:flex-start!important;flex-direction:column!important}}
+
+
+/* Reduce decorative gold on the map studio while keeping primary actions gold */
+.platform-admin-page .concept-map-workspace,.platform-admin-page .concept-map-library{border-color:#e5e0d7!important}
+.platform-admin-page .concept-section-icon,.platform-admin-page .concept-section-icon.ai,.platform-admin-page .concept-section-icon.upload,.platform-admin-page .concept-section-icon.library{background:#f1eee7!important;border-color:#e5dfd4!important;color:#17375c!important;box-shadow:none!important}
+.platform-admin-page .concept-kicker{color:#8b6a2e!important}
+.platform-admin-page .tree-builder{border-color:#e5dfd4!important;background:#fffdf8!important}
+.platform-admin-page .tree-builder-topline{border-bottom-color:#e9e3d8!important}
+.platform-admin-page .tree-count{border-color:#e6dfd3!important;background:#f8f5ee!important;color:#53657a!important}
+.platform-admin-page .tree-builder-hint{background:#f8f6f1!important;border-color:#e5dfd4!important;color:#65748a!important}
+.platform-admin-page .concept-map-card{border-color:#e5dfd4!important;box-shadow:0 9px 24px rgba(16,43,79,.045)!important}
+.platform-admin-page .concept-map-card-mark{background:#f1eee7!important;color:#17375c!important}
