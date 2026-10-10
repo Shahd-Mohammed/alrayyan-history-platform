@@ -1780,3 +1780,11 @@ button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
   .student-dashboard-grid { grid-template-columns:1fr !important; }
   .student-dashboard-page button,.student-dashboard-page .student-dashboard-card>a { white-space:normal !important; }
 }
+
+.student-dashboard-group{margin-top:24px;padding-top:20px;border-top:1px solid #eee5d6}
+.student-dashboard-group:first-of-type{margin-top:0;padding-top:0;border-top:0}
+.student-dashboard-group-heading{display:flex;align-items:center;gap:12px;margin:0 0 14px}
+.student-dashboard-group-heading>span{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border:1px solid #e3d1a7;border-radius:11px;background:#fbf5e7;color:#a97820;font-size:.83rem;font-weight:750}
+.student-dashboard-group-heading h3{margin:0;color:#173455;font-size:1.08rem;font-weight:700;line-height:1.5}
+.student-dashboard-group-heading p{margin:3px 0 0;color:#748094;font-size:.88rem;line-height:1.6}
+.student-learning-hub>.student-panel-heading p{margin:6px 0 0;color:#738095;font-size:.92rem;line-height:1.7}
