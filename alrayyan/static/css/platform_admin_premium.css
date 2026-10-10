@@ -2131,3 +2131,49 @@ button.concept-action,
   .platform-admin-body .test-hero-points { flex-wrap:wrap !important; }
   .platform-admin-body .classroom-admin-row { margin-inline:0 !important; padding:16px !important; }
 }
+
+
+/* Final control alignment: test library, concept map actions and balanced side gutters */
+.platform-admin-body .concept-map-card-actions .concept-action,
+.platform-admin-body .concept-map-card-actions button,
+.platform-admin-body .test-card-action,
+.platform-admin-body .test-card-preview,
+.platform-admin-body .test-card-footer > a,
+.platform-admin-body .inline-workspace-actions > a {
+  display:inline-flex !important;align-items:center;justify-content:center;
+  width:auto !important;max-width:max-content !important;min-width:0 !important;
+  min-height:36px !important;padding:8px 13px !important;border-radius:10px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;font-size:.86rem !important;
+  font-weight:700 !important;line-height:1.35 !important;white-space:nowrap !important;
+}
+.platform-admin-body .concept-map-card-actions .concept-action,
+.platform-admin-body .concept-map-card-actions button,
+.platform-admin-body .test-card-action.publish,
+.platform-admin-body .test-card-action.draft,
+.platform-admin-body .test-card-preview,
+.platform-admin-body .test-card-footer > a,
+.platform-admin-body .inline-workspace-actions > a {
+  background:linear-gradient(135deg,#c99a3d,#ad7b24) !important;
+  color:#fff !important;border:1px solid #b7862e !important;
+  box-shadow:0 4px 10px rgba(153,105,24,.10) !important;text-decoration:none !important;
+}
+.platform-admin-body .test-card-action.archive,
+.platform-admin-body .test-card-action.delete {
+  background:#fff !important;color:#8b3535 !important;border:1px solid #e6caca !important;box-shadow:none !important;
+}
+.platform-admin-body .test-library-section,
+.platform-admin-body .test-library-premium,
+.platform-admin-body .test-library-heading,
+.platform-admin-body .test-library-grid { min-width:0 !important; }
+.platform-admin-body .test-library-section { margin:28px 10px 0 !important; }
+.platform-admin-body .test-library-grid { gap:16px !important; }
+.platform-admin-body .test-library-card { padding:20px !important; }
+.platform-admin-body .test-card-actions { display:flex !important;flex-wrap:wrap !important;align-items:center;gap:8px !important; }
+.platform-admin-body .test-card-actions form { margin:0 !important; }
+.platform-admin-body .concept-map-card-actions { display:flex !important;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:8px !important; }
+.platform-admin-body .concept-map-card-actions form { margin:0 !important; }
+.platform-admin-body .concept-map-tabs { margin-top:30px !important;margin-bottom:32px !important; }
+@media(max-width:760px) {
+ .platform-admin-body .test-library-section { margin-inline:0 !important; }
+ .platform-admin-body .test-card-actions { gap:7px !important; }
+}
