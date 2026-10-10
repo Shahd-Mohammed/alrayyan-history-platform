@@ -14,7 +14,7 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.forms import ClassroomForm, ConceptMapForm, ConceptMapUploadForm, CurriculumUploadForm, HistoricalCharacterForm, InvitationForm, LearningResourceForm, PlatformSettingsForm
-from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
+from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, HistoricalDate, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
 from alrayyan.services.document_reader import calculate_checksum, extract_docx, extract_pdf
 from alrayyan.services.text_processing import chunk_text, create_text_hash
 from alrayyan.services.curriculum_processing import process_source_document
@@ -1125,3 +1125,74 @@ def remove_honor_entry(entry_id):
     row.is_active = False
     db.session.commit(); flash("تمت إزالة البطاقة من لوحة الشرف.", "success")
     return redirect(url_for("platform_admin.honor_board"))
+
+
+
+@platform_admin_bp.route("/historical-dates", methods=["GET", "POST"])
+def historical_dates():
+    """Let teachers curate the dates and events used in student recall practice."""
+    lessons = teacher_lessons()
+    lesson_by_id = {lesson.id: lesson for lesson in lessons}
+    lesson_ids = list(lesson_by_id)
+
+    if request.method == "POST":
+        lesson_id = request.form.get("lesson_id", type=int)
+        if lesson_id not in lesson_by_id:
+            abort(403)
+
+        date_label = (request.form.get("date_label") or "").strip()[:100]
+        event_title = (request.form.get("event_title") or "").strip()[:250]
+        if not date_label or not event_title:
+            flash("اكتبي التاريخ والحدث المرتبط به.", "error")
+            return redirect(url_for("platform_admin.historical_dates"))
+
+        sort_year = request.form.get("sort_year", type=int)
+        importance_level = request.form.get("importance_level", type=int) or 1
+        row = HistoricalDate(
+            lesson_id=lesson_id,
+            date_label=date_label,
+            sort_year=sort_year,
+            event_title=event_title,
+            event_description=(request.form.get("event_description") or "").strip()[:3000] or None,
+            memory_hint=(request.form.get("memory_hint") or "").strip()[:500] or None,
+            importance_level=min(max(importance_level, 1), 3),
+            is_published=request.form.get("is_published") == "on",
+        )
+        db.session.add(row)
+        db.session.commit()
+        flash("تم حفظ بطاقة التاريخ. إذا اخترتِ النشر فستظهر للطالبات في ذاكرة التواريخ.", "success")
+        return redirect(url_for("platform_admin.historical_dates"))
+
+    dates = []
+    if lesson_ids:
+        dates = (
+            HistoricalDate.query
+            .filter(HistoricalDate.lesson_id.in_(lesson_ids))
+            .order_by(HistoricalDate.sort_year.asc(), HistoricalDate.id.desc())
+            .all()
+        )
+    return render_template("platform/historical_dates.html", lessons=lessons, dates=dates)
+
+
+@platform_admin_bp.post("/historical-dates/<int:date_id>/toggle")
+def toggle_historical_date(date_id):
+    lesson_ids = [lesson.id for lesson in teacher_lessons()]
+    row = HistoricalDate.query.filter_by(id=date_id).first_or_404()
+    if row.lesson_id not in lesson_ids:
+        abort(403)
+    row.is_published = not row.is_published
+    db.session.commit()
+    flash("تم تحديث حالة نشر التاريخ.", "success")
+    return redirect(url_for("platform_admin.historical_dates"))
+
+
+@platform_admin_bp.post("/historical-dates/<int:date_id>/delete")
+def delete_historical_date(date_id):
+    lesson_ids = [lesson.id for lesson in teacher_lessons()]
+    row = HistoricalDate.query.filter_by(id=date_id).first_or_404()
+    if row.lesson_id not in lesson_ids:
+        abort(403)
+    db.session.delete(row)
+    db.session.commit()
+    flash("تم حذف بطاقة التاريخ وسجل مراجعتها.", "success")
+    return redirect(url_for("platform_admin.historical_dates"))
