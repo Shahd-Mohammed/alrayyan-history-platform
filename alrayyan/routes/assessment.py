@@ -232,6 +232,11 @@ def test_center():
                 created_by_id=current_user.id,
                 title=title,
                 description=(request.form.get("description") or "").strip() or None,
+                time_limit_minutes=(
+                    request.form.get("time_limit_minutes", type=int)
+                    if 1 <= (request.form.get("time_limit_minutes", type=int) or 0) <= 300
+                    else None
+                ),
                 creation_method="test",
                 difficulty_level="medium",
                 publication_status="draft",
