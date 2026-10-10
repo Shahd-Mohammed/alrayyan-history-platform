@@ -1308,3 +1308,16 @@ button.concept-action,
 .platform-admin-page .activity-bar-track{height:10px;overflow:hidden;border-radius:999px;background:#f0ede6}
 .platform-admin-page .activity-bar-track span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#b9872d,#e0c16f)}
 @media(max-width:650px){.platform-admin-page .activity-bars{grid-template-columns:1fr}}
+
+
+/* Ensure dynamically hidden question fields stay hidden despite grid form styling */
+.platform-admin-page .question-choices-field[hidden],
+.platform-admin-page .question-answer-field[hidden],
+.platform-admin-page [data-help][hidden]{display:none!important}
+.platform-admin-page .inline-question-form .test-field small{color:#8a95a5;line-height:1.65}
+.platform-admin-page .test-create-form .test-field small{color:#8a95a5}
+.platform-admin-page .test-library-section{margin-top:58px!important}
+.platform-admin-page .test-center-hero+.test-builder-shell,
+.platform-admin-page .test-center-hero+.inline-test-workspace{margin-top:34px!important}
+.platform-admin-page .concept-map-tabs button{font-weight:800!important;letter-spacing:0!important}
+.platform-admin-page .concept-map-card-actions .concept-action{font-weight:800!important;letter-spacing:0!important}
