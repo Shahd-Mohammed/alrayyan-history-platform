@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const answerField = document.querySelector('[data-question-field="answer"]');
   const choicesInput = document.getElementById("choices_text");
   const answerInput = document.getElementById("correct_answer_text");
+  const typeNote = document.querySelector("[data-question-type-note]");
   const syncQuestionFields = function () {
     const type = typeSelect.value;
     const needsChoices = ["multiple_choice", "multiple_select", "ordering", "matching"].includes(type);
@@ -28,6 +29,12 @@ document.addEventListener("DOMContentLoaded", function () {
       "الخيار الأول\nالخيار الثاني\nالخيار الثالث";
     if (answerInput) answerInput.placeholder = type === "true_false" ? "صح أو خطأ" :
       type === "multiple_select" ? "الإجابة الأولى | الإجابة الثانية" : "اكتبي الإجابة الصحيحة...";
+    if (typeNote) typeNote.textContent = type === "essay" ?
+      "هذا السؤال يحتاج مراجعة وتصحيحًا يدويًا من المعلمة." :
+      type === "ordering" ? "تُعرض العناصر للطالبة بترتيب مختلف، ويصحح النظام ترتيبها تلقائيًا." :
+      type === "matching" ? "اكتبي كل زوج بالشكل: المفهوم | الإجابة، ويُصحح النظام المطابقة تلقائيًا." :
+      type === "multiple_select" ? "اكتبي الإجابات الصحيحة مفصولة بعلامة |، ويصحح النظام الاختيارات تلقائيًا." :
+      "تُصحح الإجابة تلقائيًا عند التسليم إذا كانت من الأنواع الموضوعية.";
   };
   typeSelect.addEventListener("change", syncQuestionFields);
   syncQuestionFields();
@@ -163,6 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="test-field">
               {{ form.question_type.label }}
               {{ form.question_type() }}
+              <small class="question-type-note" data-question-type-note aria-live="polite"></small>
             </div>
 
             <div class="test-field">
