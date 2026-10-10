@@ -438,3 +438,21 @@ button,input[type="submit"],input[type="button"],input[type="reset"],.button,.bt
 button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
   display:inline-flex;align-items:center;justify-content:center;
 }
+
+
+/* Platform-wide compact control typography */
+button,input[type="submit"],input[type="button"],.platform-gold-button,.primary-action,.gold-action,.hint-action{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem!important;font-weight:750!important;letter-spacing:0!important;line-height:1.35;
+}
+button,.platform-gold-button,input[type="submit"],input[type="button"],.primary-action,.gold-action,.hint-action{
+  min-height:38px;max-width:100%;padding:8px 14px;border-radius:11px;
+}
+.platform-gold-button,.primary-action,.gold-action{
+  width:auto!important;min-width:0!important;max-width:max-content;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  background:linear-gradient(135deg,#c99a3d,#a97820)!important;
+  color:#fff!important;border:1px solid #b9892d!important;
+  box-shadow:0 5px 12px rgba(153,105,24,.12);
+}
+.platform-gold-button:hover,.primary-action:hover,.gold-action:hover{background:linear-gradient(135deg,#b8872d,#946516)!important;transform:translateY(-1px)}
