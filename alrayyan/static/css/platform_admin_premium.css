@@ -1072,3 +1072,149 @@ button.concept-action,
   background:linear-gradient(135deg,#d9b35d,#b9872d)!important;color:#fff!important;
   border:1px solid #c99a3d!important;border-radius:10px!important;
 }
+
+
+/* Oct 2026 design pass: compact gold actions, calmer concept-map tabs, consistent typography */
+.platform-admin-page button:not(.danger-action):not(.curriculum-delete):not(.classroom-delete-button):not(.honor-remove-button):not(.test-card-action.delete),
+.platform-admin-page input[type="submit"],
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .test-primary-button,
+.platform-admin-page .test-secondary-button,
+.platform-admin-page .concept-action,
+.platform-admin-page .tree-add-button,
+.platform-admin-page .test-card-action{
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:auto!important;
+  max-width:100%;
+  min-height:38px;
+  padding:8px 15px;
+  border-radius:11px;
+  font-family:inherit;
+  font-size:.88rem;
+  font-weight:800;
+  line-height:1.35;
+  letter-spacing:0;
+  text-align:center;
+  white-space:normal;
+  box-shadow:none;
+  cursor:pointer;
+  transition:background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+.platform-admin-page .platform-gold-button,
+.platform-admin-page input.platform-gold-button[type="submit"],
+.platform-admin-page .test-primary-button,
+.platform-admin-page .tree-add-button,
+.platform-admin-page .concept-action.publish,
+.platform-admin-page .concept-action.preview,
+.platform-admin-page .test-card-action.publish{
+  border:1px solid #b8862d!important;
+  background:linear-gradient(135deg,#c99a3d,#ad7c25)!important;
+  color:#fff!important;
+}
+.platform-admin-page .platform-gold-button:hover,
+.platform-admin-page .test-primary-button:hover,
+.platform-admin-page .tree-add-button:hover,
+.platform-admin-page .concept-action.publish:hover,
+.platform-admin-page .concept-action.preview:hover,
+.platform-admin-page .test-card-action.publish:hover{
+  background:linear-gradient(135deg,#b8862d,#94671b)!important;
+  color:#fff!important;
+  box-shadow:0 7px 16px rgba(151,105,28,.18);
+  transform:translateY(-1px);
+}
+.platform-admin-page .platform-secondary-link,
+.platform-admin-page .test-secondary-button,
+.platform-admin-page .concept-action{
+  text-decoration:none;
+}
+.platform-admin-page .test-secondary-button,
+.platform-admin-page .concept-action:not(.publish):not(.preview):not(.delete),
+.platform-admin-page .test-card-action.draft,
+.platform-admin-page .test-card-action.archive{
+  border:1px solid #d9c79f!important;
+  background:#fffaf0!important;
+  color:#7c5a1d!important;
+}
+.platform-admin-page .concept-action.delete,
+.platform-admin-page .test-card-action.delete,
+.platform-admin-page .danger-action,
+.platform-admin-page .classroom-delete-button{
+  border:1px solid #e5baba!important;
+  background:#fff3f3!important;
+  color:#9a3434!important;
+}
+.platform-admin-page .concept-map-tabs{
+  margin:30px 0 25px!important;
+  padding:8px!important;
+  gap:10px!important;
+  border:1px solid #e7dcc7!important;
+  border-radius:18px!important;
+  background:#f7f3eb!important;
+  box-shadow:0 8px 22px rgba(20,39,62,.045)!important;
+}
+.platform-admin-page .concept-map-tabs button{
+  min-height:46px;
+  padding:10px 16px;
+  border:1px solid transparent!important;
+  border-radius:12px!important;
+  background:transparent!important;
+  color:#344a64!important;
+  font-family:inherit;
+  font-size:.91rem;
+  font-weight:800;
+}
+.platform-admin-page .concept-map-tabs button.is-active{
+  border-color:#c99a3d!important;
+  background:linear-gradient(135deg,#c99a3d,#ad7c25)!important;
+  color:#fff!important;
+  box-shadow:0 7px 16px rgba(151,105,28,.15)!important;
+}
+.platform-admin-page .concept-map-tabs button span{
+  color:inherit!important;
+  opacity:.8;
+}
+.platform-admin-page .concept-map-workspace{margin-bottom:26px}
+.platform-admin-page .concept-map-card-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.platform-admin-page .concept-map-card-actions form{margin:0}
+.platform-admin-page .concept-map-card-actions .concept-action{min-height:36px;padding:7px 13px}
+.platform-admin-page .tree-add-button{color:#fff!important}
+.platform-admin-page .test-library-premium{margin-top:54px!important;padding-inline:12px}
+.platform-admin-page .test-library-grid{gap:20px}
+.platform-admin-page .test-library-card{padding:23px!important}
+.platform-admin-page .test-card-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px solid #eee5d4;
+}
+.platform-admin-page .test-card-actions form{margin:0}
+.platform-admin-page .test-card-action{min-height:36px;padding:7px 12px}
+.platform-admin-page .test-center-hero + .test-builder-shell,
+.platform-admin-page .test-center-hero + .inline-test-workspace{
+  margin-top:30px!important;
+}
+.platform-admin-page .test-library-heading{margin-inline:10px}
+.platform-admin-page .test-library-section{padding-inline:12px}
+.platform-admin-page .test-center-page{padding-inline:12px}
+.platform-admin-page .test-center-page .test-primary-button{width:auto!important}
+.platform-admin-page .inline-submit{margin-top:18px}
+.platform-admin-page .test-create-footer{gap:18px}
+@media(max-width:650px){
+  .platform-admin-page .concept-map-tabs{grid-template-columns:1fr!important;margin-top:22px!important}
+  .platform-admin-page .concept-map-tabs button{width:100%!important}
+  .platform-admin-page .test-library-section{padding-inline:2px}
+  .platform-admin-page .test-card-actions{align-items:flex-start}
+}
