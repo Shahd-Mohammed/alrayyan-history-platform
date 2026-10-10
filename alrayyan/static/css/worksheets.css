@@ -1716,3 +1716,67 @@ button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
 .progress-quick-links a{display:inline-flex;align-items:center;justify-content:center;padding:10px 15px;border:1px solid #d8c28d;border-radius:11px;color:#17375c;background:#fff;font-weight:600;text-decoration:none}
 @media(max-width:850px){.student-progress-hero{align-items:flex-start;flex-direction:column}.progress-total{flex-basis:auto;min-height:auto;align-items:flex-start;width:100%}.progress-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.progress-mastery-list{grid-template-columns:1fr}}
 @media(max-width:560px){.student-progress-page{width:calc(100% - 24px);margin-top:20px}.progress-metrics{grid-template-columns:1fr 1fr;gap:10px}.progress-metrics article{padding:15px}.progress-metrics strong{font-size:1.6rem}.progress-section-heading{align-items:flex-start;flex-direction:column}.progress-recent-list article{align-items:flex-start;flex-wrap:wrap}.progress-recent-list article>div{flex-basis:70%}}
+
+ 
+/* Final student dashboard layout: clear groups, balanced cards and compact controls */
+.student-dashboard-page,
+.student-dashboard-page button,
+.student-dashboard-page input,
+.student-dashboard-page select,
+.student-dashboard-page textarea {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+}
+.student-dashboard-page { width:min(1200px,calc(100% - 44px)) !important; margin:28px auto 64px !important; }
+.student-welcome { min-height:0 !important; padding:clamp(24px,3.5vw,40px) !important; border-radius:24px !important; }
+.student-welcome h1 { font-size:clamp(1.9rem,3vw,2.6rem) !important; font-weight:700 !important; line-height:1.4 !important; }
+.student-welcome p { max-width:720px !important; line-height:1.85 !important; }
+.student-stats { gap:14px !important; margin:20px 0 26px !important; }
+.student-stats article { min-width:0 !important; padding:18px !important; border-radius:16px !important; }
+.student-stats span { line-height:1.65 !important; font-size:.9rem !important; }
+.student-stats strong { font-size:1.9rem !important; }
+.student-dashboard-panel { margin-top:24px !important; padding:clamp(18px,2.6vw,28px) !important; border-radius:21px !important; }
+.student-panel-heading { margin-bottom:16px !important; padding-bottom:15px !important; }
+.student-panel-heading h2 { font-size:1.35rem !important; font-weight:700 !important; line-height:1.5 !important; }
+.student-dashboard-grid { gap:14px !important; align-items:stretch !important; }
+.student-dashboard-card { min-width:0 !important; padding:19px !important; border-radius:16px !important; }
+.student-dashboard-card h3 { font-size:1.06rem !important; font-weight:700 !important; line-height:1.6 !important; }
+.student-dashboard-card p { font-size:.92rem !important; line-height:1.8 !important; }
+.student-dashboard-page button,
+.student-dashboard-page input[type="submit"],
+.student-dashboard-page .student-primary-action,
+.student-dashboard-page .student-dashboard-card>a,
+.student-dashboard-page .student-panel-heading>a {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  align-self:flex-start !important;
+  flex:0 0 auto !important;
+  width:auto !important;
+  max-width:max-content !important;
+  min-width:0 !important;
+  min-height:36px !important;
+  padding:8px 13px !important;
+  border-radius:10px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.88rem !important;
+  font-weight:650 !important;
+  line-height:1.4 !important;
+  letter-spacing:0 !important;
+  white-space:nowrap !important;
+}
+.student-dashboard-page .student-primary-action,
+.student-dashboard-page .student-dashboard-card>a {
+  background:linear-gradient(135deg,#d0a449,#b9872d) !important;
+  color:#fff !important;
+  border:1px solid #b9872d !important;
+}
+@media(max-width:900px) {
+  .student-dashboard-page { width:calc(100% - 28px) !important; }
+  .student-stats { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  .student-dashboard-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+}
+@media(max-width:600px) {
+  .student-dashboard-page { width:calc(100% - 22px) !important; margin-top:18px !important; }
+  .student-dashboard-grid { grid-template-columns:1fr !important; }
+  .student-dashboard-page button,.student-dashboard-page .student-dashboard-card>a { white-space:normal !important; }
+}
