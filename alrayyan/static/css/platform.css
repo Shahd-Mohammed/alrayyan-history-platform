@@ -461,11 +461,11 @@ button,.platform-gold-button,input[type="submit"],input[type="button"],.primary-
 /* Readable neutral form text and compact gold actions across student and teacher pages */
 input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
 textarea,select{
-  color:#687487;
-  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color:#687487!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
 }
-input::placeholder,textarea::placeholder{color:#9aa4b2;opacity:1}
-input:focus,textarea:focus,select:focus{color:#566477}
+input::placeholder,textarea::placeholder{color:#9aa4b2!important;opacity:1}
+input:focus,textarea:focus,select:focus{color:#566477!important}
 button,input[type="submit"],input[type="button"],input[type="reset"],
 .platform-gold-button,.primary-action,.gold-action,.hint-action,
 .concept-action,.tree-add-button,.test-primary-button,.test-card-action{
