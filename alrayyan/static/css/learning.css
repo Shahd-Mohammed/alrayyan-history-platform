@@ -877,3 +877,15 @@ body,button,input,select,textarea,a{font-family:"IBM Plex Sans Arabic",Tahoma,sa
 .date-memory-flashes .alert.success{background:#eaf7ef;color:#216a45}
 .date-memory-flashes .alert.warning{background:#fff4db;color:#845d16}
 @media(max-width:760px){.date-memory-intro{align-items:flex-start;flex-direction:column}.date-memory-grid{grid-template-columns:1fr}.date-memory-hero{border-radius:22px!important}}
+
+
+/* Improve breathing room and Arabic heading rhythm on student learning heroes */
+.library-page-hero,.honor-page-hero,.character-hero{gap:14px!important}
+.library-page-hero h1,.honor-page-hero h1,.character-hero h1{line-height:1.35!important;letter-spacing:0!important;margin-block:12px 14px!important}
+.library-page-hero>span,.honor-page-hero>span,.character-hero>span{line-height:2!important;font-size:1rem!important;max-width:760px}
+.library-page-hero .hero-accent,.honor-page-hero .hero-accent{display:inline-block;margin-top:.16em}
+.library-page-hero{min-height:270px!important;padding-block:clamp(30px,4vw,46px)!important}
+.honor-page-hero{min-height:270px!important;padding-block:clamp(30px,4vw,46px)!important}
+.character-hero{min-height:300px!important;padding-block:clamp(30px,4vw,48px)!important}
+.date-memory-hero{gap:10px!important}
+@media(max-width:620px){.library-page-hero h1,.honor-page-hero h1,.character-hero h1{line-height:1.4!important}.library-page-hero>span,.honor-page-hero>span,.character-hero>span{line-height:1.9!important}}
