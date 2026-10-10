@@ -1421,3 +1421,135 @@ button.concept-action,
 .classroom-admin-row {
   margin-inline: 4px;
 }
+
+
+/* October refinement: shared Arabic typography, balanced spacing, and compact gold actions */
+.platform-admin-page,
+.platform-admin-page *{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .tree-add-button,
+.platform-admin-page .concept-action,
+.platform-admin-page .review-actions button,
+.platform-admin-page .curriculum-actions button,
+.platform-admin-page .classroom-delete-button,
+.platform-admin-page .honor-remove-button,
+.platform-admin-page .test-primary-button,
+.platform-admin-page .test-card-action,
+.platform-admin-page .inline-manage-link,
+.platform-admin-page .test-secondary-button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:36px!important;
+  padding:7px 13px!important;
+  border-radius:10px!important;
+  font-size:.86rem!important;
+  font-weight:750!important;
+  line-height:1.35!important;
+  letter-spacing:0!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+  flex:0 0 auto!important;
+}
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .tree-add-button,
+.platform-admin-page .concept-action,
+.platform-admin-page .test-primary-button,
+.platform-admin-page .test-card-action.publish,
+.platform-admin-page .inline-submit{
+  background:linear-gradient(135deg,#d2a84f,#b48127)!important;
+  border:1px solid #b48127!important;
+  color:#fff!important;
+  box-shadow:0 5px 13px rgba(169,122,34,.12)!important;
+}
+.platform-admin-page .platform-gold-button *,
+.platform-admin-page .tree-add-button *,
+.platform-admin-page .concept-action *,
+.platform-admin-page .test-primary-button *{color:#fff!important}
+.platform-admin-page .platform-gold-button:hover,
+.platform-admin-page .tree-add-button:hover,
+.platform-admin-page .concept-action:hover,
+.platform-admin-page .test-primary-button:hover{
+  background:linear-gradient(135deg,#bf9135,#9e6d1d)!important;
+  color:#fff!important;
+  transform:translateY(-1px);
+}
+.platform-admin-page .concept-map-tabs{
+  margin:30px 0 26px!important;
+  padding:7px!important;
+  gap:9px!important;
+  background:#fff!important;
+}
+.platform-admin-page .concept-map-tabs button,
+.platform-admin-page .concept-map-tabs button.is-active{
+  min-height:43px!important;
+  padding:8px 14px!important;
+  font-size:.87rem!important;
+  font-weight:750!important;
+}
+.platform-admin-page .concept-map-tabs button.is-active{
+  background:linear-gradient(135deg,#d2a84f,#b48127)!important;
+  border-color:#b48127!important;
+  color:#fff!important;
+  box-shadow:0 5px 13px rgba(169,122,34,.12)!important;
+}
+.platform-admin-page .concept-map-tabs button.is-active>span{background:rgba(255,255,255,.18)!important;color:#fff!important}
+.platform-admin-page .concept-map-card-actions{gap:8px!important}
+.platform-admin-page .concept-map-card-actions form{margin:0!important}
+.platform-admin-page .concept-map-card-actions .concept-action{min-height:36px!important}
+.platform-admin-page .tree-add-button{color:#fff!important}
+.platform-admin-page .tree-builder-toolbar{margin-inline:0!important}
+.platform-admin-page .classroom-admin-page{
+  gap:30px!important;
+  padding-inline:clamp(12px,2.5vw,30px)!important;
+}
+.platform-admin-page .classroom-list-panel{
+  margin-inline:6px!important;
+  padding-inline:clamp(20px,3vw,32px)!important;
+}
+.platform-admin-page .classroom-admin-row{margin-inline:4px!important;padding:20px!important}
+.platform-admin-page .classroom-admin-row .classroom-details strong{font-size:1.18rem!important;font-weight:800!important;line-height:1.55!important}
+.platform-admin-page .test-library-section.test-library-premium{margin-top:30px!important}
+.platform-admin-page .inline-test-workspace{margin-top:28px!important}
+.platform-admin-page .inline-workspace-head{gap:22px!important}
+.platform-admin-page .inline-question-layout{gap:24px!important}
+.platform-admin-page .test-center-page .test-center-hero{
+  background:radial-gradient(circle at 88% 15%,rgba(210,168,79,.2),transparent 29%),linear-gradient(135deg,#102b4f,#1d456e)!important;
+}
+.platform-admin-page .test-center-page .test-center-hero h2,
+.platform-admin-page .test-center-page .test-center-hero p{color:#fff!important}
+.platform-admin-page .test-center-page .test-hero-kicker{color:#f0d28c!important}
+.platform-admin-page .inline-question-card,
+.platform-admin-page .inline-test-summary,
+.platform-admin-page .test-library-card{min-width:0!important}
+.analytics-stats{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px!important;margin-bottom:22px}
+.analytics-stats article{padding:18px!important;border:1px solid #e6d9c3!important;border-radius:17px!important;background:linear-gradient(155deg,#fff,#fffdf7)!important;box-shadow:0 10px 26px rgba(13,41,77,.05)!important}
+.analytics-stats article span{display:block;color:#6d7b8e!important;font-size:.84rem!important;font-weight:750!important}
+.analytics-stats article strong{display:block;margin-top:7px;color:#102b4f!important;font-size:1.7rem!important;font-weight:850!important}
+.analytics-relationship-panel,.analytics-panel,.analytics-note{margin-top:22px!important;padding:clamp(18px,3vw,30px)!important;border:1px solid #e6d9c3!important;border-radius:24px!important;background:linear-gradient(155deg,#fff,#fffdf7)!important;box-shadow:0 16px 38px rgba(13,41,77,.06)!important}
+.analytics-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}
+.analytics-heading h2,.analytics-note h2{margin:3px 0 7px;color:#102b4f;font-size:1.45rem;font-weight:850}
+.analytics-heading p,.analytics-note p{margin:0;color:#6d7b8e;line-height:1.85}
+.analytics-kicker{color:#a67828;font-size:.8rem;font-weight:850}
+.analytics-correlation-summary{display:grid;gap:5px;min-width:190px;padding:13px 15px;border:1px solid #ead8ae;border-radius:14px;background:#fff8e8}
+.analytics-correlation-summary span,.analytics-correlation-summary small{color:#7b6b4c;font-size:.78rem}
+.analytics-correlation-summary strong{color:#173b64;font-size:.9rem;line-height:1.6}
+.analytics-scatter-wrap{width:100%;overflow-x:auto;border:1px solid #eee4d3;border-radius:17px;background:linear-gradient(180deg,#fff,#fdfaf3)}
+.analytics-scatter{display:block;width:100%;min-width:560px;height:auto}
+.scatter-grid line{stroke:#e8e1d4;stroke-width:1}
+.scatter-grid text{fill:#7b8798;font-size:12px}
+.scatter-axis{stroke:#aab5c3;stroke-width:1.5}
+.scatter-axis-title{fill:#425872;font-size:13px;font-weight:750}
+.scatter-point{fill:#c99a3d;fill-opacity:.85;stroke:#fff;stroke-width:2;transition:r .18s,fill-opacity .18s}
+.scatter-point:hover{r:10;fill-opacity:1}
+.analytics-chart-legend{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:13px;color:#6d7b8e;font-size:.8rem}
+.analytics-chart-legend span{display:inline-flex;align-items:center;gap:7px;color:#173b64;font-weight:750}
+.analytics-chart-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;background:#c99a3d}
+.analytics-note-secondary{margin-top:12px!important;padding-top:12px;border-top:1px solid #eee4d3;font-size:.86rem}
+@media(max-width:900px){.analytics-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.analytics-heading{flex-direction:column}.analytics-correlation-summary{min-width:0;width:100%}}
+@media(max-width:650px){.analytics-stats{grid-template-columns:1fr 1fr;gap:9px}.analytics-stats article{padding:13px!important}.analytics-stats article strong{font-size:1.4rem!important}.platform-admin-page .classroom-admin-page{padding-inline:7px!important;gap:18px!important}.platform-admin-page .concept-map-tabs{margin:24px 0 20px!important}.platform-admin-page .concept-map-tabs button{width:auto!important;flex:1 1 auto!important}}
