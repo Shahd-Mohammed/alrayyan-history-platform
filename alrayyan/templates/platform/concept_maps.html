@@ -3,7 +3,7 @@
 {% block title %}الخرائط المفاهيمية{% endblock %}
 {% block eyebrow %}استوديو بناء المعرفة{% endblock %}
 {% block heading %}حوّلي الدرس إلى شجرة أفكار واضحة{% endblock %}
-{% block intro %}حوّلي أفكار الدرس إلى شجرة مترابطة، وراجعيها قبل اعتمادها للطالبات.{% endblock %}
+{% block intro %}رتّبي أفكار الدرس في شجرة واضحة، ثم راجعيها واعتمدي النسخة المناسبة لطالباتك.{% endblock %}
 {% block content %}
 <section class="creation-tabs concept-map-tabs" data-creation-tabs aria-label="طرق إنشاء الخريطة">
   <button type="button" class="is-active" data-tab="manual"><span>01</span> إنشاء بصري</button>
@@ -20,13 +20,13 @@
     {{ form.hidden_tag() }}
     {{ fields(form,[form.lesson_id,form.title,form.publication_status]) }}
     <div class="tree-builder">
-      <div class="tree-builder-topline"><div><strong>مساحة بناء الخريطة</strong><small>اسحبي الفروع لترتيبها</small></div><span class="tree-count" data-tree-count>0 مفهوم</span></div>
+      <div class="tree-builder-topline"><div><strong>مساحة بناء الخريطة</strong><small>رتّبي الفروع بسهولة</small></div><span class="tree-count" data-tree-count>0 مفهوم</span></div>
       <div class="tree-builder-toolbar">
         <label class="tree-node-entry"><span>عنوان الفكرة أو الفرع</span><input type="text" data-node-label maxlength="250" placeholder="مثال: أسباب الحدث التاريخي"></label>
         <label class="tree-parent-entry"><span>يتفرع من</span><select data-parent-node><option value="">الموضوع الرئيسي / بدون أصل</option></select></label>
         <button type="button" class="tree-add-button" data-add-node><span>＋</span> إضافة إلى الشجرة</button>
       </div>
-      <p class="tree-builder-hint"><span>↳</span> عند إضافة أول مفهوم سيكون هو الجذر الرئيسي، وبعدها يمكنك اختيار أي مفهوم ليكون أبًا لفرع جديد.</p>
+      <p class="tree-builder-hint"><span>↳</span> ابدئي بالفكرة الرئيسية، ثم اختاري المفهوم الذي يتفرع عنه كل عنصر جديد.</p>
       <div class="builder-canvas tree-canvas" data-builder-canvas aria-label="شجرة الخريطة المفاهيمية">
         <div class="tree-empty-state" data-builder-empty><span>✧</span><strong>ابدئي من الفكرة الرئيسية</strong><p>اكتبي الفكرة الرئيسية ثم أضيفي الفروع المتصلة بها.</p></div>
       </div>
@@ -38,7 +38,7 @@
 <section class="platform-panel map-creator-panel concept-map-workspace concept-ai-workspace" data-panel="ai">
   <div class="concept-section-heading">
     <div class="concept-section-icon ai">✧</div>
-    <div><span class="concept-kicker">مساعدة ذكية موثّقة</span><h2>أنشئي شجرة مفاهيم تلقائيًا</h2><p>يحلّل النظام محتوى الدرس النشط ليقترح شجرة متفرعة من مفهوم رئيسي إلى أفكار فرعية مترابطة. تُحفظ تلقائيًا كمسودة لتراجعيها قبل النشر.</p></div>
+    <div><span class="concept-kicker">مساعدة ذكية موثّقة</span><h2>أنشئي شجرة مفاهيم تلقائيًا</h2><p>يحوّل محتوى الدرس النشط إلى شجرة تبدأ بفكرة رئيسية وتتفرع منها المفاهيم المرتبطة. راجعي المقترح واحفظيه كمسودة قبل نشره.</p></div>
   </div>
   <div class="ai-review-steps"><div><span>1</span><strong>اختاري الدرس</strong><small>من المنهج النشط</small></div><div><span>2</span><strong>أنشئي المقترح</strong><small>بناءً على المقاطع المتاحة</small></div><div><span>3</span><strong>راجعي وانشري</strong><small>أنتِ صاحبة القرار</small></div></div>
   <form method="post" action="{{ url_for('platform_admin.generate_concept_map') }}" class="platform-form concept-ai-form" data-ai-generate-form>
