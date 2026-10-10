@@ -1953,3 +1953,31 @@ button.concept-action,
 .historical-date-row small{color:#8b95a4}
 .historical-date-row .review-actions{display:flex;flex-wrap:wrap;gap:8px}
 .historical-date-row .review-actions form{margin:0}
+
+
+/* Final concept-map spacing and restrained gold action treatment */
+.platform-admin-page .concept-map-tabs{margin:34px 0 26px!important;gap:10px!important;padding:8px!important;background:#fffdf8!important;border-color:#e8dfcf!important}
+.platform-admin-page .concept-map-tabs button{flex:1 1 0!important;min-width:max-content!important;white-space:nowrap!important;padding:12px 17px!important;border:1px solid #e8dfcf!important;border-radius:12px!important;background:#f8f5ed!important;color:#334963!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.94rem!important;font-weight:600!important;line-height:1.45!important;box-shadow:none!important}
+.platform-admin-page .concept-map-tabs button.is-active,.platform-admin-page .concept-map-tabs button.is-active:hover{border-color:#bd8b2e!important;background:linear-gradient(135deg,#d5ad52,#b98527)!important;color:#fff!important;box-shadow:0 7px 16px rgba(157,109,28,.14)!important}
+.platform-admin-page .concept-map-tabs button>span,.platform-admin-page .concept-map-tabs button.is-active>span{background:rgba(255,255,255,.2)!important;color:#fff!important}
+.platform-admin-page .concept-map-tabs button:hover{transform:translateY(-1px);background:#fff7e5!important;color:#805a17!important}
+.platform-admin-page .concept-map-workspace{margin-top:0!important}
+.platform-admin-page .tree-builder-toolbar{gap:14px!important}
+.platform-admin-page .tree-add-button{width:auto!important;min-width:0!important;max-width:100%!important;min-height:42px!important;padding:10px 16px!important;border:1px solid #b9872c!important;border-radius:11px!important;background:linear-gradient(135deg,#d5ad52,#b98527)!important;color:#fff!important;font:600 .94rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif!important;white-space:nowrap!important}
+.platform-admin-page .tree-add-button span{color:#fff!important}
+.platform-admin-page .concept-map-card-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:8px!important}
+.platform-admin-page .concept-map-card-actions form{margin:0!important}
+.platform-admin-page .concept-map-card-actions .concept-action{display:inline-flex!important;align-items:center;justify-content:center;width:auto!important;min-width:0!important;max-width:100%!important;min-height:38px!important;padding:8px 13px!important;border:1px solid #bd8b2e!important;border-radius:10px!important;background:linear-gradient(135deg,#d5ad52,#b98527)!important;color:#fff!important;font:600 .88rem/1.35 "IBM Plex Sans Arabic",Tahoma,sans-serif!important;text-decoration:none!important;white-space:nowrap!important}
+.platform-admin-page .concept-map-card-actions .concept-action.delete{border-color:#b9872c!important;background:linear-gradient(135deg,#d5ad52,#b98527)!important;color:#fff!important}
+.platform-admin-page .concept-map-card-actions .concept-action:hover,.platform-admin-page .tree-add-button:hover{filter:brightness(.96);transform:translateY(-1px)}
+@media(max-width:760px){.platform-admin-page .concept-map-tabs{margin:28px 0 20px!important;flex-wrap:wrap!important}.platform-admin-page .concept-map-tabs button{flex:1 1 100%!important;min-width:0!important;white-space:normal!important}}
+/* Classroom cards: breathing room and legible save action */
+.classroom-admin-page{gap:24px!important;padding-inline:8px!important}
+.classroom-admin-page>.platform-panel{min-width:0;padding:clamp(22px,3vw,30px)!important}
+.classroom-admin-page .classroom-list-panel{margin-inline:4px!important}
+.classroom-admin-page .classroom-admin-row{gap:18px!important;padding:20px!important;border:1px solid #e8e1d5!important;border-radius:16px!important;background:#fff!important}
+.classroom-admin-page .classroom-details{min-width:0;padding-inline:4px}
+.classroom-admin-page .classroom-details strong{font-size:1.08rem!important;font-weight:700!important;line-height:1.7!important}
+.classroom-admin-page .classroom-details p,.classroom-admin-page .classroom-details small{line-height:1.8!important}
+.classroom-admin-page .platform-gold-button{font-size:.94rem!important;font-weight:600!important}
+@media(max-width:700px){.classroom-admin-page{padding-inline:0!important}.classroom-admin-page .classroom-list-panel{margin-inline:0!important}.classroom-admin-page .classroom-admin-row{align-items:flex-start!important;flex-direction:column!important}}
