@@ -1252,3 +1252,20 @@ body,button,input,select,textarea {
   .historical-learning-hero h1 { font-size:1.85rem !important; }
   .date-memory-hero .date-memory-title { font-size:2.5rem !important; }
 }
+
+
+/* Student learning page refinements: concise hero copy and readable controls */
+.learning-page{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.learning-hero h1{font-family:"Aref Ruqaa","IBM Plex Sans Arabic",serif!important}
+.learning-hero .hero-accent{display:inline!important;margin:0!important;white-space:nowrap!important;font-size:inherit!important}
+.learning-hero h1 br{display:none!important}
+.learning-hero.historical-learning-hero{min-height:0!important;padding:clamp(28px,4vw,46px)!important;gap:12px!important}
+.learning-hero.historical-learning-hero h1{max-width:100%!important;font-size:clamp(1.7rem,3.2vw,3.15rem)!important;line-height:1.4!important;white-space:nowrap!important;letter-spacing:0!important}
+.learning-hero.historical-learning-hero>span{font-size:.98rem!important;line-height:1.8!important}
+.character-hero{padding-left:200px!important}
+.character-hero .hero-score{min-width:104px!important;min-height:104px!important;padding:14px!important;border-radius:20px!important}
+.character-hero .hero-score b{font-size:1.8rem!important}
+.learning-hero .library-hero-pills,.learning-hero .honor-hero-stats{margin-top:15px!important}
+.student-learning-menu > div{right:auto!important;left:0!important;width:max-content!important;min-width:220px!important;max-width:min(360px,calc(100vw - 24px))!important;max-height:min(70vh,520px)!important;overflow-y:auto!important;grid-template-columns:1fr!important;text-align:right!important}
+.student-learning-menu > div a{white-space:normal!important;line-height:1.45!important}
+@media(max-width:760px){.learning-hero.historical-learning-hero h1{font-size:clamp(1.25rem,4.1vw,1.8rem)!important;white-space:normal!important}.character-hero{padding-left:24px!important}}
