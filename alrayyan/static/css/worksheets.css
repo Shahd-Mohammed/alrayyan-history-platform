@@ -1788,3 +1788,46 @@ button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
 .student-dashboard-group-heading h3{margin:0;color:#173455;font-size:1.08rem;font-weight:700;line-height:1.5}
 .student-dashboard-group-heading p{margin:3px 0 0;color:#748094;font-size:.88rem;line-height:1.6}
 .student-learning-hub>.student-panel-heading p{margin:6px 0 0;color:#738095;font-size:.92rem;line-height:1.7}
+
+
+/* Student progress dashboard and animated activity chart */
+.student-progress-page .progress-dashboard-panel {
+  display:grid;
+  gap:22px;
+  padding:clamp(22px,3.5vw,34px);
+  border:1px solid #e5d7bb;
+  border-radius:24px;
+  background:linear-gradient(145deg,#fffdf8,#fff);
+  box-shadow:0 16px 42px rgba(16,43,79,.07);
+}
+.progress-dashboard-panel .progress-section-heading { margin:0; }
+.progress-level-card {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(180px,.7fr);
+  align-items:center;
+  gap:22px;
+  padding:22px 24px;
+  border:1px solid rgba(201,154,61,.35);
+  border-radius:18px;
+  background:linear-gradient(125deg,#102b4f,#234b75);
+  color:#fff;
+}
+.progress-level-copy>span { display:block;color:#f1d694;font-weight:700;font-size:.9rem; }
+.progress-level-copy>strong { display:block;margin-top:6px;color:#fff;font-size:2rem;line-height:1.3; }
+.progress-level-copy>strong small { font-size:.9rem;color:rgba(255,255,255,.75); }
+.progress-level-copy p { margin:7px 0 0;color:rgba(255,255,255,.78);font-size:.86rem;line-height:1.6; }
+.progress-level-track { height:12px;overflow:hidden;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.12); }
+.progress-level-track span { display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#f0d58b,#c99a3d);transition:width .8s ease; }
+.progress-activity-chart { display:grid;gap:15px;padding:3px 0; }
+.progress-chart-row { display:grid;grid-template-columns:minmax(115px,180px) minmax(60px,1fr) 36px;align-items:center;gap:13px; }
+.progress-chart-row>span { color:#53647b;font-size:.9rem;font-weight:600; }
+.progress-chart-row>b { color:#102b4f;text-align:left;font-size:.95rem;font-variant-numeric:tabular-nums; }
+.progress-chart-track { height:12px;overflow:hidden;border-radius:999px;background:#f0ece3; }
+.progress-chart-track i { display:block;height:100%;min-width:0;border-radius:999px;background:linear-gradient(90deg,#c99a3d,#e2c16f);transition:width .85s cubic-bezier(.2,.8,.2,1); }
+.progress-chart-row:nth-child(even) .progress-chart-track i { background:linear-gradient(90deg,#173d64,#527ba2); }
+.progress-chart-note { margin:0;padding-top:13px;border-top:1px solid #eee5d5;color:#748096;font-size:.82rem;line-height:1.75; }
+@media(max-width:640px) {
+ .progress-level-card { grid-template-columns:1fr;gap:16px;padding:19px; }
+ .progress-chart-row { grid-template-columns:minmax(100px,125px) minmax(50px,1fr) 28px;gap:8px; }
+ .progress-chart-row>span { font-size:.8rem; }
+}
