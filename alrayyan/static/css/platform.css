@@ -539,7 +539,7 @@ input[type="button"],
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
-button:not(.platform-menu-toggle):not(.platform-user-menu button),
+button:not(.platform-menu-toggle),
 input[type="submit"],
 input[type="button"] {
   white-space: normal;
