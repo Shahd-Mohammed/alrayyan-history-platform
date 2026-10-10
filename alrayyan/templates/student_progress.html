@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>مستواي | الريان</title>
+    <title>رحلتي التعليمية | الريان</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css', v='20261010-student-progress-2') }}">
 </head>
 <body>
@@ -12,7 +12,7 @@
     <header class="student-progress-hero">
         <div>
             <span class="progress-eyebrow">رحلتك التعليمية</span>
-            <h1>مستواي</h1>
+            <h1>رحلتي التعليمية</h1>
             <p>صورة واضحة عن تقدّمكِ في الاختبارات وأوراق العمل والتحديات والمعلّم الذكي والأنشطة التعليمية.</p>
         </div>
         <div class="progress-total"><small>رصيدك الحالي</small><strong>{{ current_user.points or 0 }}</strong><span>XP · المستوى {{ current_user.level or 1 }}</span></div>
@@ -82,7 +82,7 @@
 
     <div class="progress-quick-links">
         <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
-        <a href="{{ url_for('challenges.test_bank') }}">الاختبارات والتدريبات</a>
+        <a href="{{ url_for('challenges.test_bank') }}">الاختبارات</a>
         <a href="{{ url_for('learning.date_memory') }}">ذاكرة التواريخ</a>
     </div>
 </main>
