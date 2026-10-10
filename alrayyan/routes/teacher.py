@@ -468,6 +468,9 @@ def complete_plan_item(item_id):
 @teacher_bp.get("/my-points")
 @login_required
 def my_points():
+    all_transactions = XPTransaction.query.filter_by(
+        student_id=current_user.id
+    ).all()
     transactions = (
         XPTransaction.query
         .filter_by(student_id=current_user.id)
@@ -484,9 +487,10 @@ def my_points():
         "resource_downloaded": "تنزيل مادة تعليمية",
         "test_completed": "إكمال اختبار",
         "worksheet_completed": "إكمال ورقة عمل",
+        "historical_date_recalled": "تذكّر تاريخ تاريخي",
     }
     totals_by_reason = {}
-    for transaction in transactions:
+    for transaction in all_transactions:
         totals_by_reason[transaction.reason] = (
             totals_by_reason.get(transaction.reason, 0)
             + transaction.amount
