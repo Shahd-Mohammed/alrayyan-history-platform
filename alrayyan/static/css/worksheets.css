@@ -1831,3 +1831,25 @@ button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
  .progress-chart-row { grid-template-columns:minmax(100px,125px) minmax(50px,1fr) 28px;gap:8px; }
  .progress-chart-row>span { font-size:.8rem; }
 }
+
+
+
+/* Student dashboard final refinement: clear hierarchy, balanced spacing and recent challenges */
+.student-dashboard-page{width:min(1200px,calc(100% - 48px))!important;margin:32px auto 72px!important}
+.student-welcome{position:relative;overflow:hidden;gap:28px;padding:clamp(30px,4vw,46px)!important;border:1px solid rgba(201,154,61,.45)!important;border-radius:26px!important;background:radial-gradient(circle at 88% 15%,rgba(213,173,82,.22),transparent 27%),linear-gradient(130deg,#0b203d,#173b64 62%,#234b73)!important;color:#fff!important;box-shadow:0 22px 55px rgba(11,32,61,.15)!important}
+.student-welcome h1{font-family:"Aref Ruqaa",serif!important;font-size:clamp(2.25rem,4vw,3.5rem)!important;line-height:1.3!important;color:#fff!important}
+.student-welcome p{color:rgba(255,255,255,.82)!important;line-height:1.9}
+.student-stats{gap:13px!important;margin-top:20px!important}
+.student-stats article{border:1px solid #ead9b9!important;border-radius:17px!important;background:linear-gradient(155deg,#fff,#fffaf0)!important;box-shadow:0 10px 28px rgba(13,41,77,.05)!important}
+.student-dashboard-panel{margin-top:25px!important;padding:clamp(20px,3vw,30px)!important;border:1px solid #e7dcc8!important;border-radius:23px!important;background:linear-gradient(155deg,#fff,#fffdf8)!important;box-shadow:0 14px 38px rgba(13,41,77,.055)!important}
+.student-panel-heading h2{font-family:"Aref Ruqaa",serif!important;font-size:1.8rem!important;color:#102b4f!important}
+.student-dashboard-card{border:1px solid #e9dfce!important;border-radius:18px!important;background:#fff!important}
+.student-dashboard-card>span{color:#9a6b16!important;font-weight:700}
+.student-dashboard-card h3{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:700!important;line-height:1.55}
+.student-dashboard-card>p{line-height:1.8!important;color:#687587!important}
+.student-dashboard-card>a,.student-primary-action,.student-panel-heading>a{width:auto!important;max-width:max-content!important;min-width:0!important;align-self:flex-start!important;min-height:36px!important;padding:8px 14px!important;border:1px solid #b78427!important;border-radius:10px!important;background:linear-gradient(135deg,#d5ad52,#b78427)!important;color:#fff!important;font:650 .88rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif!important;text-decoration:none!important;white-space:normal!important}
+.student-recent-challenges{border-top:3px solid #c99a3d!important}
+.student-recent-challenges .student-dashboard-card small{display:block;margin-top:8px;color:#7c8797}
+.result-primary-action,.result-back-link{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;max-width:max-content!important;min-height:37px!important;padding:8px 14px!important;border:1px solid #b78427!important;border-radius:10px!important;background:linear-gradient(135deg,#d5ad52,#b78427)!important;color:#fff!important;font:650 .88rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif!important;text-decoration:none!important;white-space:nowrap!important}
+@media(max-width:680px){.student-dashboard-page{width:calc(100% - 22px)!important;margin:18px auto 48px!important}.student-welcome{padding:26px 20px!important}.student-dashboard-panel{padding:18px!important}.student-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
