@@ -211,7 +211,7 @@
       <div>
         <span>مكتبة الاختبارات</span>
         <h2>اختباراتكِ المحفوظة</h2>
-        <p>افتحي الاختبار لمتابعة الأسئلة، عاينيه، وانقليه بين المسودة والنشر أو الأرشيف.</p>
+        <p>تابعي بناء الاختبار أو عاينيه، وغيّري حالته بين المسودة والنشر، أو انقليه إلى الأرشيف.</p>
       </div>
       <div class="test-count">{{ tests|length }} <small>اختبار</small></div>
     </div>
@@ -230,7 +230,7 @@
           </div>
           <div class="test-card-footer">
             <span><b>{{ test.questions|length }}</b> سؤال</span>
-            <a href="{{ url_for('assessment.preview_test', worksheet_id=test.id) }}" target="_blank" rel="noopener noreferrer" class="test-card-preview">معاينة الاختبار</a>
+            <a href="{{ url_for('assessment.preview_test', worksheet_id=test.id) }}" target="_blank" rel="noopener noreferrer" class="test-card-preview">معاينة</a>
             <a href="{{ url_for('assessment.test_center', worksheet_id=test.id) }}">متابعة البناء <span>←</span></a>
           </div>
           <div class="test-card-actions">
