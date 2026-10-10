@@ -456,3 +456,37 @@ button,.platform-gold-button,input[type="submit"],input[type="button"],.primary-
   box-shadow:0 5px 12px rgba(153,105,24,.12);
 }
 .platform-gold-button:hover,.primary-action:hover,.gold-action:hover{background:linear-gradient(135deg,#b8872d,#946516)!important;transform:translateY(-1px)}
+
+
+/* Readable neutral form text and compact gold actions across student and teacher pages */
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+textarea,select{
+  color:#687487;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+input::placeholder,textarea::placeholder{color:#9aa4b2;opacity:1}
+input:focus,textarea:focus,select:focus{color:#566477}
+button,input[type="submit"],input[type="button"],input[type="reset"],
+.platform-gold-button,.primary-action,.gold-action,.hint-action,
+.concept-action,.tree-add-button,.test-primary-button,.test-card-action{
+  box-sizing:border-box;
+  width:auto!important;min-width:0!important;max-width:100%!important;
+  min-height:36px;padding:7px 13px;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem!important;font-weight:800!important;line-height:1.35!important;
+  letter-spacing:0!important;text-transform:none!important;
+}
+.platform-gold-button,.primary-action,.gold-action,.tree-add-button,
+.concept-action.preview,.concept-action.publish,.concept-action.delete,
+.test-primary-button,.test-card-action.publish{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  border:1px solid #b8862d!important;
+  background:linear-gradient(135deg,#c99a3d,#ad7c25)!important;
+  color:#fff!important;
+}
+.platform-gold-button:hover,.primary-action:hover,.gold-action:hover,
+.tree-add-button:hover,.concept-action.preview:hover,.concept-action.publish:hover,
+.concept-action.delete:hover,.test-primary-button:hover,.test-card-action.publish:hover{
+  background:linear-gradient(135deg,#b8862d,#94671b)!important;
+  color:#fff!important;
+}
