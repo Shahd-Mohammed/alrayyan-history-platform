@@ -40,7 +40,12 @@
                 </details>
             {% elif current_user.role == 'student' %}
                 <a href="{{ url_for('main.student_dashboard') }}">لوحتي</a>
-                <a href="{{ url_for('assessment.my_results') }}">نتائجي</a>
+                <details class="student-learning-menu student-results-menu">
+                    <summary>نتائجي</summary>
+                    <div>
+                        <a href="{{ url_for('assessment.my_results') }}">جميع النتائج</a>
+                    </div>
+                </details>
                 <details class="student-learning-menu">
                     <summary>تعلّمي</summary>
                     <div>
