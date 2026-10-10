@@ -6,44 +6,128 @@
 
 {% block content %}
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const typeSelect = document.getElementById("question_type");
-  if (!typeSelect) return;
-  const choicesField = document.querySelector('[data-question-field="choices"]');
-  const answerField = document.querySelector('[data-question-field="answer"]');
-  const choicesInput = document.getElementById("choices_text");
-  const answerInput = document.getElementById("correct_answer_text");
-  const typeNote = document.querySelector("[data-question-type-note]");
-  const syncQuestionFields = function () {
-    const type = typeSelect.value;
-    const needsChoices = ["multiple_choice", "multiple_select", "ordering", "matching"].includes(type);
-    const needsAnswer = ["multiple_choice", "multiple_select", "true_false", "short_answer", "fill_blank"].includes(type);
-    if (choicesField) choicesField.hidden = !needsChoices;
-    if (answerField) answerField.hidden = !needsAnswer;
-    if (choicesInput) choicesInput.required = needsChoices;
-    if (answerInput) answerInput.required = needsAnswer;
-    if (choicesField) choicesField.querySelectorAll("[data-help]").forEach(function (help) {
-      help.hidden = help.dataset.help !== "choices" && help.dataset.help !== type;
-    });
-    if (answerField) answerField.querySelectorAll("[data-help]").forEach(function (help) {
-      help.hidden = help.dataset.help !== type;
-    });
-    if (choicesInput) choicesInput.placeholder = type === "matching" ?
-      "المفهوم الأول | الإجابة الأولى\nالمفهوم الثاني | الإجابة الثانية" :
-      type === "ordering" ? "العنصر الأول بالترتيب الصحيح\nالعنصر الثاني\nالعنصر الثالث" :
-      "الخيار الأول\nالخيار الثاني\nالخيار الثالث";
-    if (answerInput) answerInput.placeholder = type === "true_false" ? "صح أو خطأ" :
-      type === "multiple_select" ? "الإجابة الأولى | الإجابة الثانية" : "اكتبي الإجابة الصحيحة...";
-    if (typeNote) typeNote.textContent = type === "essay" ?
-      "هذا السؤال يحتاج مراجعة وتصحيحًا يدويًا من المعلمة." :
-      type === "ordering" ? "تُعرض العناصر للطالبة بترتيب مختلف، ويصحح النظام ترتيبها تلقائيًا." :
-      type === "matching" ? "اكتبي كل زوج بالشكل: المفهوم | الإجابة، ويُصحح النظام المطابقة تلقائيًا." :
-      type === "multiple_select" ? "اكتبي الإجابات الصحيحة مفصولة بعلامة |، ويصحح النظام الاختيارات تلقائيًا." :
-      "تُصحح الإجابة تلقائيًا عند التسليم إذا كانت من الأنواع الموضوعية.";
-  };
-  typeSelect.addEventListener("change", syncQuestionFields);
-  syncQuestionFields();
-});
+(() => {
+  const typeField = document.getElementById("question_type");
+  const choicesField = document.getElementById("choices_text");
+  const correctField = document.getElementById("correct_answer_text");
+  if (!typeField || !choicesField || !correctField) return;
+
+  const choicesGroup = choicesField.closest(".test-field");
+  const correctGroup = correctField.closest(".test-field");
+  const typeGroup = typeField.closest(".test-field");
+  if (!choicesGroup || !correctGroup || !typeGroup) return;
+
+  let builder = document.getElementById("question-type-builder");
+  if (!builder) {
+    builder = document.createElement("div");
+    builder.id = "question-type-builder";
+    builder.className = "question-type-builder test-question-type-builder";
+    typeGroup.insertAdjacentElement("afterend", builder);
+  }
+
+  const originalCorrectLabel = correctGroup.querySelector("label");
+  function setCorrectLabel(text, placeholder) {
+    if (originalCorrectLabel) originalCorrectLabel.textContent = text;
+    correctField.placeholder = placeholder || "";
+  }
+  function showBaseFields(showChoices, showCorrect) {
+    choicesGroup.style.display = showChoices ? "" : "none";
+    correctGroup.style.display = showCorrect ? "" : "none";
+  }
+  function showSimplePanel(title, note) {
+    builder.hidden = false;
+    builder.innerHTML = '<div class="question-type-builder__heading"><strong>' + title + '</strong><span>' + note + '</span></div>';
+  }
+
+  function renderOrdering() {
+    const items = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean);
+    showBaseFields(false, false);
+    builder.hidden = false;
+    builder.innerHTML = '<div class="question-type-builder__heading"><strong>بناء سؤال السحب والإفلات والترتيب</strong><span>أضيفي العناصر بالترتيب الصحيح. ستظهر للطالبة بشكل غير مرتب، وطريقة التصحيح الحالية لن تتغير.</span></div><div class="builder-items" id="ordering-items"></div><button type="button" class="builder-add">＋ إضافة عنصر</button>';
+    const list = builder.querySelector("#ordering-items");
+    function addItem(value = "") {
+      const row = document.createElement("div");
+      row.className = "builder-row";
+      row.innerHTML = '<input type="text" placeholder="مثال: الخطوة الأولى"><button type="button" aria-label="حذف العنصر">×</button>';
+      row.querySelector("input").value = value;
+      row.querySelector("button").onclick = () => { row.remove(); sync(); };
+      list.appendChild(row);
+    }
+    (items.length ? items : ["", ""]).forEach(addItem);
+    function sync() {
+      choicesField.value = [...list.querySelectorAll("input")].map(input => input.value.trim()).filter(Boolean).join("\n");
+      correctField.value = choicesField.value;
+    }
+    list.addEventListener("input", sync);
+    builder.querySelector(".builder-add").onclick = () => { addItem(); sync(); };
+    sync();
+  }
+
+  function renderMatching() {
+    const pairs = (choicesField.value || "").split("\n").map(v => v.trim()).filter(Boolean).map(v => v.split("|"));
+    showBaseFields(false, false);
+    builder.hidden = false;
+    builder.innerHTML = '<div class="question-type-builder__heading"><strong>بناء سؤال المطابقة بين عمودين</strong><span>أضيفي كل عنصر مع إجابته المطابقة. ستبقى صيغة التخزين والتصحيح الحالية كما هي.</span></div><div class="builder-items" id="matching-items"></div><button type="button" class="builder-add">＋ إضافة زوج</button>';
+    const list = builder.querySelector("#matching-items");
+    function addPair(left = "", right = "") {
+      const row = document.createElement("div");
+      row.className = "builder-row";
+      row.innerHTML = '<input type="text" placeholder="العمود الأول"><input type="text" placeholder="العمود الثاني"><button type="button" aria-label="حذف الزوج">×</button>';
+      row.querySelectorAll("input")[0].value = left;
+      row.querySelectorAll("input")[1].value = right;
+      row.querySelector("button").onclick = () => { row.remove(); sync(); };
+      list.appendChild(row);
+    }
+    (pairs.length ? pairs : [["", ""], ["", ""]]).forEach(pair => addPair(pair[0] || "", pair[1] || ""));
+    function sync() {
+      choicesField.value = [...list.querySelectorAll(".builder-row")].map(row => {
+        const inputs = row.querySelectorAll("input");
+        return inputs[0].value.trim() && inputs[1].value.trim() ? inputs[0].value.trim() + " | " + inputs[1].value.trim() : "";
+      }).filter(Boolean).join("\n");
+      correctField.value = "";
+    }
+    list.addEventListener("input", sync);
+    builder.querySelector(".builder-add").onclick = () => { addPair(); sync(); };
+    sync();
+  }
+
+  function render() {
+    const type = typeField.value;
+    builder.hidden = true;
+    builder.innerHTML = "";
+    showBaseFields(true, true);
+    setCorrectLabel("الإجابة الصحيحة", "الإجابة الصحيحة المعتمدة للتصحيح");
+    if (type === "multiple_choice") {
+      setCorrectLabel("الإجابة الصحيحة", "اكتبي نص الخيار الصحيح تمامًا");
+      showSimplePanel("إعداد سؤال الاختيار من متعدد", "أضيفي الخيارات في حقل الخيارات، ثم اكتبي الخيار الصحيح في حقل الإجابة الصحيحة.");
+    } else if (type === "true_false") {
+      showBaseFields(false, true);
+      setCorrectLabel("الإجابة الصحيحة", "اكتبي: صح أو خطأ");
+      showSimplePanel("إعداد سؤال صح أو خطأ", "الطالبة ستختار صح أو خطأ، وأنت تحددين الإجابة الصحيحة المعتمدة للتصحيح.");
+    } else if (type === "fill_blank") {
+      showBaseFields(false, true);
+      setCorrectLabel("الإجابة الصحيحة المعتمدة للتصحيح", "اكتبي الكلمة أو العبارة الصحيحة");
+      showSimplePanel("إعداد سؤال إكمال الفراغ", "الطالبة ستكتب الإجابة في حقل الإجابة. هنا نحدد الإجابة الصحيحة التي سيقارن بها التصحيح.");
+    } else if (type === "short_answer") {
+      showBaseFields(false, true);
+      setCorrectLabel("الإجابة الصحيحة المعتمدة للتصحيح", "اكتبي الإجابة المقبولة");
+      showSimplePanel("إجابة قصيرة", "اكتبي الإجابة المقبولة التي سيعتمدها التصحيح.");
+    } else if (type === "multiple_select") {
+      showBaseFields(true, true);
+      setCorrectLabel("الإجابات الصحيحة", "اكتبي الإجابات الصحيحة وافصلي بينها بعلامة |");
+      showSimplePanel("إعداد سؤال تحديد عدة إجابات صحيحة", "أضيفي جميع الخيارات، ثم حددي أكثر من إجابة صحيحة باستخدام الفاصل المعتمد.");
+    } else if (type === "essay") {
+      showBaseFields(false, false);
+      showSimplePanel("إعداد السؤال المقالي", "الطالبة ستكتب إجابة مطولة، ويُحفظ السؤال للتصحيح اليدوي. لا توجد إجابة صحيحة آلية لهذا النوع.");
+    } else if (type === "ordering") {
+      renderOrdering();
+    } else if (type === "matching") {
+      renderMatching();
+    }
+  }
+  typeField.addEventListener("change", render);
+  render();
+})();
 </script>
 
 <div class="test-center-page">
