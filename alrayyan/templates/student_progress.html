@@ -34,7 +34,7 @@
             {% for item in masteries %}
                 <article class="progress-mastery">
                     <div><div><small>{{ item.lesson.title }}</small><h3>{{ item.concept }}</h3></div><strong>{{ item.mastery_score }}%</strong></div>
-                    <div class="progress-track"><span style="width: {{ [0, [100, item.mastery_score]|min]|max }}%"></span></div>
+                    <div class="progress-track"><span style="width: {{ item.mastery_score }}%"></span></div>
                     <small>{% if item.mastery_score < 45 %}أولوية للمراجعة{% elif item.mastery_score < 70 %}يتقدم مع التدريب{% elif item.mastery_score < 85 %}مستوى جيد{% else %}إتقان متقدم{% endif %}</small>
                 </article>
             {% endfor %}
