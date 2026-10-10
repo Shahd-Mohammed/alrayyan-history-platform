@@ -997,3 +997,46 @@ button.concept-action,
  .platform-admin-body .test-center-page .test-library-section{margin-top:22px!important;padding:20px!important}
  .platform-admin-body .test-card-actions{justify-content:flex-start}
 }
+
+
+
+/* Concept-map workspace: separated tabs, restrained gold, compact readable controls */
+.platform-admin-body .concept-map-tabs{
+  width:max-content!important;max-width:100%!important;align-self:flex-start!important;
+  margin:32px 0 26px!important;padding:7px!important;gap:8px!important;
+  display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;
+  border:1px solid #e5ddcf!important;border-radius:15px!important;background:#fffdf8!important;
+}
+.platform-admin-body .concept-map-tabs button{
+  flex:0 0 auto!important;width:auto!important;min-width:max-content!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:7px!important;padding:10px 15px!important;border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;font-weight:700!important;
+  line-height:1.35!important;white-space:nowrap!important;color:#465b73!important;background:#f5f4f0!important;
+}
+.platform-admin-body .concept-map-tabs button.is-active{
+  color:#fff!important;background:linear-gradient(135deg,#d9b35d,#b9872d)!important;
+  border-color:#c99a3d!important;box-shadow:0 5px 13px rgba(169,122,34,.14)!important;
+}
+.platform-admin-body .concept-map-tabs button>span{background:rgba(255,255,255,.18)!important;color:#fff!important}
+.platform-admin-body .tree-add-button,
+.platform-admin-body .concept-map-card-actions .concept-action{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:max-content!important;min-width:0!important;min-height:38px!important;
+  padding:8px 13px!important;border:1px solid #c99a3d!important;border-radius:10px!important;
+  background:linear-gradient(135deg,#d9b35d,#b9872d)!important;color:#fff!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.84rem!important;
+  font-weight:700!important;line-height:1.35!important;white-space:nowrap!important;
+}
+.platform-admin-body .concept-map-card-actions{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important}
+.platform-admin-body .concept-map-card-actions form{width:auto!important;margin:0!important}
+.platform-admin-body .concept-map-card-actions .concept-action.delete{background:linear-gradient(135deg,#d9b35d,#b9872d)!important;color:#fff!important}
+.platform-admin-body .concept-map-card-actions .concept-action:hover,
+.platform-admin-body .tree-add-button:hover{filter:brightness(.96);transform:translateY(-1px)}
+.platform-admin-body .concept-map-workspace{margin-top:0!important}
+.platform-admin-body .concept-map-library{margin-top:28px!important}
+@media(max-width:760px){
+ .platform-admin-body .concept-map-tabs{width:100%!important;margin-top:26px!important}
+ .platform-admin-body .concept-map-tabs button{flex:0 0 auto!important;padding:9px 11px!important;font-size:.8rem!important}
+}
+
