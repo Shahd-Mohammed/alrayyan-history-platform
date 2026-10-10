@@ -1056,3 +1056,14 @@ body,.learning-page,button,input,select,textarea {
   .learning-hero.historical-learning-hero h1 { font-size:1.85rem !important; }
   .learning-page button,.learning-page input[type="submit"] { white-space:normal !important; }
 }
+
+.date-memory-generate-panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.8fr);gap:22px;align-items:center;margin:0 0 24px;padding:22px 24px;border:1px solid #e6d8bb;border-radius:20px;background:linear-gradient(145deg,#fffdf8,#f7f0e2);box-shadow:0 10px 26px rgba(16,40,68,.05)}
+.date-memory-generate-copy>span{color:#a97820;font-size:.85rem;font-weight:700}
+.date-memory-generate-copy h2{margin:5px 0 7px;color:#173455;font-size:1.2rem;line-height:1.55}
+.date-memory-generate-copy p{margin:0;color:#6d7b8e;font-size:.92rem;line-height:1.8}
+.date-memory-generate-form{display:grid;gap:8px;min-width:0}
+.date-memory-generate-form label{color:#173455;font-size:.9rem;font-weight:650}
+.date-memory-generate-form select{width:100%;min-width:0;min-height:42px;padding:8px 12px;border:1px solid #ddd1b9;border-radius:10px;background:#fff;color:#173455;font:500 .9rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.date-memory-generate-form .date-memory-button{margin-top:3px}
+.date-memory-generate-form .date-memory-button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:760px){.date-memory-generate-panel{grid-template-columns:1fr;padding:18px}.date-memory-generate-form .date-memory-button{white-space:normal!important}}
