@@ -2650,3 +2650,15 @@ button.concept-action,
   .platform-admin-body .classroom-list-panel { margin-inline:0 !important; }
   .platform-admin-body .classroom-list-panel .platform-list { padding-inline:0 !important; }
 }
+
+
+/* Spacing correction for the test studio's stacked sections */
+.platform-admin-body .test-center-page .test-center-hero { margin-bottom:28px!important; }
+.platform-admin-body .test-center-page .test-builder-shell { margin-top:0!important; }
+.platform-admin-body .test-center-page #inline-test-workspace { margin-top:0!important; }
+.platform-admin-body .test-center-page .test-library-section { margin-top:30px!important; }
+.platform-admin-body .test-center-page .test-library-heading p { max-width:760px; line-height:1.8!important; }
+.platform-admin-body .concept-map-tabs { margin-top:32px!important; margin-bottom:30px!important; }
+.platform-admin-body .concept-map-workspace { margin-top:0!important; }
+.platform-admin-body .tree-add-button { color:#fff!important; }
+.platform-admin-body .tree-add-button span { color:#fff!important; }
