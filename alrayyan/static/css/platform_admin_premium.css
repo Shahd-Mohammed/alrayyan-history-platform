@@ -2448,3 +2448,22 @@ button.concept-action,
   .platform-admin-body .test-library-heading { flex-wrap:wrap; }
   .platform-admin-body .classroom-list-panel { margin-inline:0; }
 }
+
+.platform-admin-body .classroom-list-panel .platform-list { padding-inline:10px; }
+.platform-admin-body .classroom-list-panel .classroom-admin-row {
+  margin-inline:0 !important;
+  padding:18px 22px !important;
+  border-radius:15px;
+}
+.platform-admin-body .classroom-admin-row .classroom-delete-button {
+  width:fit-content !important;
+  min-height:37px;
+  padding:8px 13px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.88rem !important;
+  font-weight:650 !important;
+}
+@media(max-width:760px) {
+  .platform-admin-body .classroom-list-panel .platform-list { padding-inline:0; }
+  .platform-admin-body .classroom-admin-row { padding:15px !important; }
+}
