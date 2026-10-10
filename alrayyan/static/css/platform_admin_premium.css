@@ -2331,3 +2331,120 @@ button.concept-action,
   .platform-admin-body .classroom-admin-row { margin-inline:0 !important; padding:16px !important; }
   .platform-admin-body .test-center-page { padding-inline:0 !important; }
 }
+
+
+/* Final refinement: airy section rhythm and gold, content-sized actions */
+.platform-admin-body .concept-map-tabs {
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  gap:10px;
+  margin:32px 0 28px !important;
+  padding:8px;
+  border:1px solid #e8decb;
+  border-radius:17px;
+  background:#fffdf8;
+  box-shadow:0 9px 24px rgba(16,43,79,.045);
+}
+.platform-admin-body .concept-map-tabs button {
+  flex:0 1 auto;
+  width:auto !important;
+  min-width:150px;
+  min-height:42px;
+  padding:10px 17px !important;
+  border:1px solid #e0d2b5 !important;
+  border-radius:11px !important;
+  background:#fff !important;
+  color:#173455 !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.9rem !important;
+  font-weight:650 !important;
+  line-height:1.4 !important;
+  white-space:nowrap;
+}
+.platform-admin-body .concept-map-tabs button.is-active {
+  border-color:#b8862d !important;
+  background:linear-gradient(135deg,#c99a3d,#ad7c25) !important;
+  color:#fff !important;
+  box-shadow:0 5px 12px rgba(151,105,27,.12);
+}
+.platform-admin-body .concept-map-tabs button span,
+.platform-admin-body .concept-map-tabs button.is-active span {
+  color:inherit !important;
+}
+.platform-admin-body .concept-map-tabs button span {
+  background:rgba(23,52,85,.07) !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active span {
+  background:rgba(255,255,255,.2) !important;
+}
+.platform-admin-body .concept-map-workspace,
+.platform-admin-body .concept-map-library {
+  margin-top:28px !important;
+}
+.platform-admin-body .tree-add-button {
+  flex:0 0 auto;
+  width:fit-content !important;
+  min-width:0 !important;
+  min-height:40px;
+  padding:9px 15px !important;
+  background:linear-gradient(135deg,#c99a3d,#ad7c25) !important;
+  color:#fff !important;
+  white-space:nowrap;
+}
+.platform-admin-body .tree-add-button span { color:#fff !important; }
+.platform-admin-body .concept-map-card .concept-action,
+.platform-admin-body .concept-map-card .concept-action.preview,
+.platform-admin-body .concept-map-card .concept-action.publish,
+.platform-admin-body .concept-map-card .concept-action.delete {
+  width:fit-content !important;
+  min-width:0 !important;
+  min-height:37px;
+  padding:8px 13px !important;
+  border:1px solid #b8862d !important;
+  border-radius:10px !important;
+  background:linear-gradient(135deg,#c99a3d,#ad7c25) !important;
+  color:#fff !important;
+  font-size:.86rem !important;
+  font-weight:650 !important;
+}
+.platform-admin-body .test-center-page {
+  gap:30px !important;
+  padding-inline:10px !important;
+}
+.platform-admin-body .test-center-page .test-builder-shell,
+.platform-admin-body .test-center-page #inline-test-workspace,
+.platform-admin-body .test-center-page .test-library-section {
+  margin:0 !important;
+}
+.platform-admin-body .test-center-page .test-builder-shell,
+.platform-admin-body .test-center-page #inline-test-workspace,
+.platform-admin-body .test-center-page .test-library-section {
+  padding:clamp(22px,3vw,32px);
+  border-radius:22px;
+}
+.platform-admin-body .test-library-heading { align-items:flex-start; gap:20px; }
+.platform-admin-body .test-library-heading p { line-height:1.8; }
+.platform-admin-body .classroom-list-panel { margin-inline:8px; }
+.platform-admin-body .classroom-admin-row {
+  margin-inline:0 !important;
+  padding:18px 22px !important;
+}
+.platform-admin-body .platform-two-columns { gap:24px; }
+.platform-admin-body .platform-panel { min-width:0; }
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-ai-form .platform-gold-button,
+.platform-admin-body .concept-upload-form .platform-gold-button {
+  width:fit-content !important;
+  min-height:38px;
+  padding:8px 16px !important;
+  font-size:.9rem !important;
+  font-weight:650 !important;
+}
+@media(max-width:760px) {
+  .platform-admin-body .concept-map-tabs { flex-wrap:wrap; }
+  .platform-admin-body .concept-map-tabs button { flex:1 1 140px; min-width:0; }
+  .platform-admin-body .test-center-page { padding-inline:0 !important; }
+  .platform-admin-body .test-library-heading { flex-wrap:wrap; }
+  .platform-admin-body .classroom-list-panel { margin-inline:0; }
+}
