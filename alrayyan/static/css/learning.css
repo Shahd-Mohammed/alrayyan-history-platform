@@ -503,3 +503,122 @@ button,.learning-grid a,.character-card summary,.character-actions button{
  .learning-hero.historical-learning-hero.character-hero .hero-score{align-self:flex-start!important}
 }
 
+
+
+/* Student learning pages: compact editorial heroes, balanced backgrounds and consistent gold actions */
+.historical-learning-hero.library-page-hero,
+.historical-learning-hero.honor-page-hero,
+.historical-learning-hero.character-hero{
+  position:relative;
+  min-height:0;
+  padding:clamp(28px,4vw,44px) clamp(24px,5vw,54px);
+  border:1px solid rgba(201,154,61,.38);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 86% 18%,rgba(201,154,61,.17),transparent 25%),
+    linear-gradient(125deg,#102a49 0%,#173c61 60%,#244e70 100%);
+  box-shadow:0 20px 48px rgba(15,42,73,.14);
+}
+.historical-learning-hero.library-page-hero h1,
+.historical-learning-hero.honor-page-hero h1,
+.historical-learning-hero.character-hero h1{
+  margin:.35rem 0 .65rem;
+  max-width:900px;
+  font-size:clamp(1.9rem,4vw,3.25rem);
+  line-height:1.35;
+  font-weight:800;
+  letter-spacing:0;
+}
+.historical-learning-hero.library-page-hero>span,
+.historical-learning-hero.honor-page-hero>span,
+.historical-learning-hero.character-hero>span{
+  display:block;
+  max-width:800px;
+  color:rgba(255,255,255,.82);
+  font-size:1rem;
+  line-height:1.9;
+}
+.historical-learning-hero .library-hero-pills,
+.historical-learning-hero .honor-hero-stats{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.historical-learning-hero .library-hero-pills>span,
+.historical-learning-hero .honor-hero-stats>span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:36px;
+  padding:7px 13px;
+  border:1px solid rgba(239,209,138,.25);
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  color:#fff;
+  font-size:.84rem;
+  font-weight:700;
+}
+.historical-learning-hero .honor-hero-stats b{color:#f1d694;font-size:1.2rem}
+.learning-page a,
+.learning-page button{
+  font-family:inherit;
+  font-size:.9rem;
+  font-weight:800;
+  letter-spacing:0;
+}
+.learning-page .learning-grid article>a,
+.learning-page .character-actions button,
+.learning-page .learning-heading>a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  width:auto!important;
+  max-width:100%;
+  min-height:38px;
+  margin-top:12px;
+  padding:8px 14px;
+  border:1px solid #b8862d;
+  border-radius:11px;
+  background:linear-gradient(135deg,#c99a3d,#ad7c25);
+  color:#fff!important;
+  font-size:.86rem;
+  font-weight:800;
+  line-height:1.4;
+  text-decoration:none;
+  box-shadow:none;
+  cursor:pointer;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.learning-page .learning-grid article>a:hover,
+.learning-page .character-actions button:hover,
+.learning-page .learning-heading>a:hover{
+  transform:translateY(-1px);
+  background:linear-gradient(135deg,#b8862d,#94671b);
+  box-shadow:0 7px 16px rgba(151,105,28,.16);
+}
+.learning-page .character-actions{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.learning-page .character-actions .hint-action{
+  border-color:#d9c79f;
+  background:#fffaf0;
+  color:#7c5a1d!important;
+}
+.learning-page .learning-grid article{min-height:210px}
+@media(max-width:650px){
+  .historical-learning-hero.library-page-hero,
+  .historical-learning-hero.honor-page-hero,
+  .historical-learning-hero.character-hero{padding:27px 22px;border-radius:23px}
+  .historical-learning-hero.library-page-hero h1,
+  .historical-learning-hero.honor-page-hero h1,
+  .historical-learning-hero.character-hero h1{font-size:2rem}
+  .learning-page .character-actions{align-items:stretch}
+  .learning-page .character-actions button{width:auto!important}
+}
