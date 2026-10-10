@@ -85,8 +85,7 @@
                     {% if worksheet.description %}
                         {{ worksheet.description }}
                     {% else %}
-                        {{ 'اختبار لمراجعة الدرس وقياس الفهم.' if worksheet.creation_method == 'test' else 'ورقة عمل لمراجعة الدرس وتثبيت' }}
-                        المفاهيم والمعلومات التاريخية.
+                        {{ 'اختبار لمراجعة الدرس وقياس الفهم.' if worksheet.creation_method == 'test' else 'ورقة عمل لمراجعة الدرس وتثبيت المفاهيم والمعلومات التاريخية.' }}
                     {% endif %}
                 </p>
 
