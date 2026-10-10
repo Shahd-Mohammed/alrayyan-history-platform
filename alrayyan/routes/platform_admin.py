@@ -14,7 +14,7 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.forms import ClassroomForm, ConceptMapForm, ConceptMapUploadForm, CurriculumUploadForm, HistoricalCharacterForm, InvitationForm, LearningResourceForm, PlatformSettingsForm
-from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, HistoricalDate, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
+from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, DateReview, HistoricalDate, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
 from alrayyan.services.document_reader import calculate_checksum, extract_docx, extract_pdf
 from alrayyan.services.text_processing import chunk_text, create_text_hash
 from alrayyan.services.curriculum_processing import process_source_document
@@ -995,6 +995,7 @@ def analytics():
         character_attempts = CharacterAttempt.query.filter_by(
             student_id=student.id
         ).count()
+        date_reviews = DateReview.query.filter_by(student_id=student.id).count()
         plan_items = LearningPlanItem.query.filter_by(student_id=student.id).all()
         plan_verifications = sum(1 for item in plan_items if item.verified_at is not None)
         student_transactions = [
@@ -1011,7 +1012,7 @@ def analytics():
         )
         activity_score = (
             len(student_all_attempts) + len(challenge_sessions) + tutor_interactions
-            + character_attempts + plan_verifications + resource_downloads
+            + character_attempts + date_reviews + plan_verifications + resource_downloads
             + concept_map_views
         )
         rows.append({
@@ -1023,6 +1024,7 @@ def analytics():
             "challenge_count": len(challenges),
             "tutor_interactions": tutor_interactions,
             "character_attempts": character_attempts,
+            "date_reviews": date_reviews,
             "plan_items": len(plan_items),
             "plan_verifications": plan_verifications,
             "resource_downloads": resource_downloads,
@@ -1079,6 +1081,7 @@ def analytics():
     class_percentages = [attempt.percentage or 0 for attempt in graded_submitted_attempts]
     total_tutor_interactions = sum(row["tutor_interactions"] for row in rows)
     total_character_attempts = sum(row["character_attempts"] for row in rows)
+    total_date_reviews = sum(row["date_reviews"] for row in rows)
     total_plan_verifications = sum(row["plan_verifications"] for row in rows)
     overview = {
         "students": len(students),
@@ -1093,6 +1096,7 @@ def analytics():
         ),
         "tutor_interactions": total_tutor_interactions,
         "character_attempts": total_character_attempts,
+        "date_reviews": total_date_reviews,
         "plan_verifications": total_plan_verifications,
         "resource_downloads": sum(row["resource_downloads"] for row in rows),
         "concept_map_views": sum(row["concept_map_views"] for row in rows),
