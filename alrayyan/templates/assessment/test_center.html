@@ -12,6 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const correctField = document.getElementById("correct_answer_text");
   if (!typeField || !choicesField || !correctField) return;
 
+  const legacyOption = [...typeField.options].find(option => option.value === "short_answer");
+  if (legacyOption) legacyOption.hidden = true;
+
   const choicesGroup = choicesField.closest(".test-field");
   const correctGroup = correctField.closest(".test-field");
   const typeGroup = typeField.closest(".test-field");
