@@ -1993,3 +1993,141 @@ button.concept-action,
 .platform-admin-page .tree-builder-hint{background:#f8f6f1!important;border-color:#e5dfd4!important;color:#65748a!important}
 .platform-admin-page .concept-map-card{border-color:#e5dfd4!important;box-shadow:0 9px 24px rgba(16,43,79,.045)!important}
 .platform-admin-page .concept-map-card-mark{background:#f1eee7!important;color:#17375c!important}
+
+
+/* 2026-10 visual consistency pass: compact controls, calmer gold, cleaner spacing */
+.platform-admin-body,
+.platform-admin-body input,
+.platform-admin-body select,
+.platform-admin-body textarea,
+.platform-admin-body button,
+.platform-admin-body a,
+.learning-page,
+.learning-page button,
+.learning-page input,
+.learning-page select,
+.learning-page textarea {
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+}
+.platform-admin-body button,
+.platform-admin-body input[type="submit"],
+.platform-admin-body input[type="button"],
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .builder-add,
+.platform-admin-body .classroom-delete-button,
+.platform-admin-body .review-actions button,
+.platform-admin-body .curriculum-actions button,
+.platform-admin-body .platform-list button,
+.learning-page button,
+.learning-page a.button,
+.learning-page .learning-grid a,
+.learning-page .character-actions button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 36px !important;
+  padding: 8px 13px !important;
+  border-radius: 10px !important;
+  font-size: .88rem !important;
+  line-height: 1.35 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap;
+}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-action.publish,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .builder-add,
+.platform-admin-body .review-actions button,
+.platform-admin-body .platform-list button:not(.curriculum-delete),
+.learning-page .character-actions button,
+.learning-page .learning-grid a {
+  background: linear-gradient(135deg,#c99a3d,#ad7b24) !important;
+  color: #fff !important;
+  border: 1px solid #b7862e !important;
+  box-shadow: 0 4px 10px rgba(153,105,24,.12) !important;
+}
+.platform-admin-body .tree-add-button { color:#fff !important; }
+.platform-admin-body .tree-add-button span { color:#fff !important; }
+.platform-admin-body .concept-action.preview,
+.platform-admin-body .concept-action.delete,
+.platform-admin-body .classroom-delete-button,
+.platform-admin-body .curriculum-delete,
+.platform-admin-body .danger-action {
+  background: #fff !important;
+  color: #8b3535 !important;
+  border: 1px solid #e6caca !important;
+  box-shadow: none !important;
+}
+.platform-admin-body .concept-map-tabs {
+  margin: 26px 0 30px !important;
+  padding: 7px !important;
+  gap: 12px !important;
+  border-radius: 17px !important;
+  background: #f7f4ed !important;
+  border: 1px solid #e5ddce !important;
+}
+.platform-admin-body .concept-map-tabs button {
+  flex: 1 1 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  min-height: 44px !important;
+  padding: 10px 18px !important;
+  background: transparent !important;
+  color: #203b5c !important;
+  border: 1px solid transparent !important;
+  border-radius: 11px !important;
+  font-weight: 700 !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active {
+  background: #fff !important;
+  color: #173455 !important;
+  border-color: #d6b66b !important;
+  box-shadow: 0 4px 12px rgba(20,45,75,.07) !important;
+}
+.platform-admin-body .concept-map-tabs button span {
+  color: #a97820 !important;
+}
+.platform-admin-body .classroom-admin-page { gap: 24px !important; }
+.platform-admin-body .classroom-list-panel,
+.platform-admin-body .classroom-admin-page > .platform-panel { min-width:0; }
+.platform-admin-body .classroom-admin-row {
+  margin-inline: 8px !important;
+  padding: 20px 22px !important;
+  border-radius: 16px !important;
+}
+.platform-admin-body .classroom-details strong { font-size:1.12rem !important; font-weight:800 !important; }
+.platform-admin-body .classroom-delete-button { font-weight:700 !important; }
+.platform-admin-body .concept-map-card-actions,
+.platform-admin-body .classroom-row-actions,
+.platform-admin-body .review-actions,
+.platform-admin-body .curriculum-actions { gap:8px !important; }
+.platform-admin-body .test-builder-shell,
+.platform-admin-body .test-inline-workspace,
+.platform-admin-body #inline-test-workspace { margin-top:28px !important; }
+.platform-admin-body .test-center-page { padding-inline: 8px !important; }
+.platform-admin-body .test-center-hero { margin-bottom:28px !important; }
+.platform-admin-body .test-hero-points { display:flex !important; flex-wrap:nowrap !important; gap:12px !important; }
+.platform-admin-body .test-hero-points > * { white-space:nowrap !important; }
+.platform-admin-body .test-center-hero,
+.platform-admin-body .test-builder-shell,
+.platform-admin-body .test-inline-workspace,
+.platform-admin-body .test-workspace,
+.platform-admin-body .test-library-shell { border-radius:24px !important; }
+.platform-admin-body .test-library-shell,
+.platform-admin-body .test-library,
+.platform-admin-body .saved-tests-panel { margin-top:26px !important; margin-right:8px !important; }
+.platform-admin-body .question-type-builder { background:#fffdf8 !important; }
+.platform-admin-body .question-type-builder__heading strong { font-weight:800 !important; }
+@media (max-width:760px) {
+  .platform-admin-body .concept-map-tabs { flex-wrap:wrap !important; }
+  .platform-admin-body .concept-map-tabs button { flex:1 1 42% !important; }
+  .platform-admin-body .test-hero-points { flex-wrap:wrap !important; }
+  .platform-admin-body .classroom-admin-row { margin-inline:0 !important; padding:16px !important; }
+}
