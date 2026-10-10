@@ -2489,3 +2489,15 @@ button.concept-action,
 .test-library-card{min-width:0}
 @media(max-width:760px){.concept-map-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px}.concept-map-tabs button{flex:0 0 auto !important}.test-library-section{padding:20px 16px !important}}
 
+
+
+
+/* Class list spacing and readable action labels */
+.classroom-list-panel .platform-list{padding-inline:10px}
+.classroom-admin-row{margin-inline:4px!important;gap:18px!important;padding:20px!important;border-radius:17px!important}
+.classroom-details strong{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:1.06rem!important;font-weight:750!important;line-height:1.6}
+.classroom-details p,.classroom-details small{line-height:1.75}
+.classroom-row-actions{gap:10px!important}
+.classroom-delete-button{width:auto!important;max-width:max-content!important;min-width:0!important;padding:8px 14px!important;font:650 .88rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.platform-panel .platform-form>button[type=submit],.platform-panel .platform-form>input[type=submit]{width:auto!important;max-width:max-content!important;min-width:0!important}
+
