@@ -1737,3 +1737,13 @@ button.concept-action,
 .platform-admin-page .concept-map-card-mark {color:#a77924!important}
 .platform-admin-page .concept-map-tabs button,
 .platform-admin-page .concept-map-tabs button span {text-shadow:none!important}
+
+.platform-admin-page .concept-map-card-actions .concept-action.delete {
+  background:linear-gradient(135deg,#d2a84f,#b48127)!important;
+  border:1px solid #b48127!important;
+  color:#fff!important;
+}
+.platform-admin-page .concept-map-card-actions .concept-action.delete:hover {
+  background:linear-gradient(135deg,#bf9135,#9e6d1d)!important;
+  color:#fff!important;
+}
