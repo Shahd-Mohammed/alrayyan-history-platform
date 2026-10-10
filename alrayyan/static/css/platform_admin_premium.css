@@ -1321,3 +1321,5 @@ button.concept-action,
 .platform-admin-page .test-center-hero+.inline-test-workspace{margin-top:34px!important}
 .platform-admin-page .concept-map-tabs button{font-weight:800!important;letter-spacing:0!important}
 .platform-admin-page .concept-map-card-actions .concept-action{font-weight:800!important;letter-spacing:0!important}
+
+.platform-admin-page .question-type-note{display:block;margin-top:6px;color:#8994a4;font-size:.82rem;line-height:1.65}
