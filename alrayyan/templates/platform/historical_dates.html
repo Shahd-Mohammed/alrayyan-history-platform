@@ -1,0 +1,49 @@
+{% extends 'platform/_admin_base.html' %}
+{% block title %}ذاكرة التواريخ{% endblock %}
+{% block eyebrow %}مراجعة تاريخية تفاعلية{% endblock %}
+{% block heading %}ذاكرة التواريخ{% endblock %}
+{% block intro %}أنشئي بطاقات قصيرة تربط كل تاريخ بحدثه، واكتبي تلميحًا يساعد الطالبة على التذكر. لا تظهر البطاقة للطالبات إلا بعد نشرها.{% endblock %}
+{% block content %}
+<div class="platform-two-columns historical-date-admin">
+  <section class="platform-panel">
+    <div class="panel-title"><span>01</span><div><h2>إضافة بطاقة تاريخ</h2><p>اكتبي التاريخ والحدث بدقة كما وردا في المنهج، ويمكنكِ إضافة تلميح للحفظ.</p></div></div>
+    {% if lessons %}
+    <form method="post" class="platform-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>الدرس
+        <select name="lesson_id" required>
+          <option value="">اختاري الدرس</option>
+          {% for lesson in lessons %}<option value="{{ lesson.id }}">{{ lesson.unit.title }} — {{ lesson.title }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>التاريخ كما سيظهر للطالبة<input name="date_label" maxlength="100" placeholder="مثال: 1917م أو 2 تشرين الثاني 1917" required></label>
+      <label>الحدث المرتبط بالتاريخ<input name="event_title" maxlength="250" placeholder="اكتبي اسم الحدث التاريخي" required></label>
+      <label>سنة للترتيب الزمني (اختياري)<input name="sort_year" type="number" placeholder="مثال: 1917"></label>
+      <label>تلميح للحفظ (اختياري)<input name="memory_hint" maxlength="500" placeholder="اربطي التاريخ بكلمة أو صورة ذهنية"></label>
+      <label>شرح مختصر (اختياري)<textarea name="event_description" rows="3" maxlength="3000" placeholder="لماذا يعد هذا الحدث مهمًا؟"></textarea></label>
+      <label>الأهمية
+        <select name="importance_level"><option value="1">مراجعة عادية</option><option value="2">مهم</option><option value="3">أساسي للاختبار</option></select>
+      </label>
+      <label class="historical-date-publish"><input type="checkbox" name="is_published"> نشر البطاقة للطالبات فورًا</label>
+      <button class="platform-gold-button" type="submit">حفظ بطاقة التاريخ</button>
+    </form>
+    {% else %}
+    <div class="platform-empty">لا توجد دروس نشطة وجاهزة. فعّلي المنهج أولًا من صفحة المناهج والمصادر.</div>
+    {% endif %}
+  </section>
+  <section class="platform-panel">
+    <div class="panel-title"><span>02</span><div><h2>بطاقات التواريخ</h2><p>راجعي البطاقات المنشورة والمسودات. الحذف يزيل سجل مراجعة هذا التاريخ أيضًا.</p></div></div>
+    <div class="platform-list">
+      {% for row in dates %}
+      <article class="historical-date-row">
+        <div><strong>{{ row.date_label }} — {{ row.event_title }}</strong><p>{{ row.lesson.title }}</p><small>{{ 'منشور للطالبات' if row.is_published else 'مسودة' }}{% if row.memory_hint %} · تلميح متاح{% endif %}</small></div>
+        <div class="review-actions">
+          <form method="post" action="{{ url_for('platform_admin.toggle_historical_date',date_id=row.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">{{ 'إخفاء' if row.is_published else 'نشر' }}</button></form>
+          <form method="post" action="{{ url_for('platform_admin.delete_historical_date',date_id=row.id) }}" onsubmit="return confirm('حذف بطاقة التاريخ وسجل مراجعتها نهائيًا؟')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger-action" type="submit">حذف</button></form>
+        </div>
+      </article>
+      {% else %}<div class="platform-empty">لم تُضف بطاقات تواريخ بعد. ابدئي بالتواريخ الأساسية في الدرس الحالي.</div>{% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
