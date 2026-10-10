@@ -1323,3 +1323,44 @@ button.concept-action,
 .platform-admin-page .concept-map-card-actions .concept-action{font-weight:800!important;letter-spacing:0!important}
 
 .platform-admin-page .question-type-note{display:block;margin-top:6px;color:#8994a4;font-size:.82rem;line-height:1.65}
+
+
+/* Unified compact controls and refined gold/navy visual system */
+.platform-admin-page,
+.platform-admin-page button,
+.platform-admin-page input,
+.platform-admin-page select,
+.platform-admin-page textarea,
+.platform-admin-page a{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.platform-admin-page button,
+.platform-admin-page input[type="submit"],
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .tree-add-button,
+.platform-admin-page .concept-action,
+.platform-admin-page .classroom-delete-button,
+.platform-admin-page .honor-remove-button,
+.platform-admin-page .review-actions button,
+.platform-admin-page .curriculum-actions button{width:auto!important;max-width:100%!important;min-width:0!important;min-height:38px!important;padding:8px 15px!important;border-radius:11px!important;font-size:.88rem!important;font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important;flex:0 0 auto!important}
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .tree-add-button,
+.platform-admin-page .concept-action.preview,
+.platform-admin-page .concept-action.publish,
+.platform-admin-page .concept-action.delete{background:linear-gradient(135deg,#d8b45e,#b9872d)!important;border:1px solid #b9872d!important;color:#fff!important;box-shadow:0 5px 13px rgba(169,122,34,.13)!important}
+.platform-admin-page .platform-gold-button *,
+.platform-admin-page .tree-add-button *{color:#fff!important}
+.platform-admin-page .platform-gold-button:hover,
+.platform-admin-page .tree-add-button:hover,
+.platform-admin-page .concept-action:hover{background:linear-gradient(135deg,#c89b3d,#a97820)!important;transform:translateY(-1px)}
+.platform-admin-page .concept-map-tabs{margin:34px 0 28px!important;gap:10px!important}
+.platform-admin-page .concept-map-tabs button.is-active{background:linear-gradient(135deg,#d8b45e,#b9872d)!important;border-color:#b9872d!important;color:#fff!important;box-shadow:0 6px 15px rgba(169,122,34,.14)!important}
+.platform-admin-page .concept-map-tabs button.is-active>span{background:#fff!important;color:#946919!important}
+.platform-admin-page .concept-map-card-actions{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:8px}
+.platform-admin-page .concept-map-card-actions form{margin:0}
+.platform-admin-page .tree-builder-toolbar{gap:14px!important;margin-inline:0!important}
+.platform-admin-page .tree-add-button{color:#fff!important}
+.platform-admin-page .classroom-admin-page{gap:28px!important;padding-inline:clamp(12px,2.2vw,28px)!important}
+.platform-admin-page .classroom-list-panel{margin-inline:8px!important}
+.platform-admin-page .classroom-admin-row{padding:20px!important;border-radius:16px!important}
+.platform-admin-page .classroom-admin-row .classroom-details strong{font-size:1.2rem!important;font-weight:800!important;line-height:1.5!important}
+.platform-admin-page .classroom-delete-button{font-weight:750!important}
+@media(max-width:650px){.platform-admin-page button,.platform-admin-page input[type="submit"],.platform-admin-page .platform-gold-button,.platform-admin-page .tree-add-button,.platform-admin-page .concept-action{width:auto!important;max-width:100%!important}.platform-admin-page .classroom-admin-page{padding-inline:8px!important;gap:18px!important}.platform-admin-page .concept-map-tabs{margin-top:26px!important}.platform-admin-page .concept-map-card-actions{grid-column:1/-1}}
