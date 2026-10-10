@@ -212,11 +212,11 @@
                                     {% endif %}
                                 >
                                     {% if open_attempt %}
-                                        متابعة الحل
+                                        {{ 'متابعة الاختبار' if worksheet.creation_method == 'test' else 'متابعة الحل' }}
                                     {% elif attempts_used > 0 %}
-                                        إعادة المحاولة
+                                        {{ 'إعادة الاختبار' if worksheet.creation_method == 'test' else 'إعادة المحاولة' }}
                                     {% else %}
-                                        ابدأ الحل التفاعلي
+                                        {{ 'ابدئي الاختبار' if worksheet.creation_method == 'test' else 'ابدئي الحل التفاعلي' }}
                                     {% endif %}
 
                                     ({{ worksheet.questions | length }} أسئلة)
