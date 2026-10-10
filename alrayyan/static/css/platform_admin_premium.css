@@ -1240,3 +1240,14 @@ button.concept-action,
  .platform-admin-page .test-builder-shell,.platform-admin-page .inline-test-workspace{margin-inline:0}
  .platform-admin-page .test-library-section{padding-inline:0}
 }
+
+/* The concept-map library uses one gold action palette as requested, including delete */
+.platform-admin-page .concept-map-card-actions .concept-action.delete{
+  border:1px solid #b8862d!important;
+  background:linear-gradient(135deg,#c99a3d,#ad7c25)!important;
+  color:#fff!important;
+}
+.platform-admin-page .concept-map-card-actions .concept-action.delete:hover{
+  background:linear-gradient(135deg,#b8862d,#94671b)!important;
+  color:#fff!important;
+}
