@@ -898,3 +898,102 @@ button.concept-action,
 .test-center-page .test-secondary-button{background:#fff!important;color:#173455!important;border:1px solid #d8c49a!important}
 .concept-map-library .concept-map-card-actions{gap:8px!important}
 .concept-map-library .concept-map-card-actions .concept-action{font-weight:750!important}
+
+
+/* Final shared polish: compact gold actions, readable labels and consistent spacing */
+.platform-admin-body,
+.platform-admin-body button,
+.platform-admin-body input,
+.platform-admin-body select,
+.platform-admin-body textarea,
+.platform-admin-body a{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body button.platform-gold-button,
+.platform-admin-body input.platform-gold-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .test-primary-button,
+.platform-admin-body .test-secondary-button,
+.platform-admin-body .test-card-action,
+.platform-admin-body .status-pill,
+.platform-admin-body .review-actions button,
+.platform-admin-body .review-actions a,
+.platform-admin-body .curriculum-actions button,
+.platform-admin-body .classroom-delete-button{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  width:auto!important;max-width:100%;min-width:0;min-height:38px;
+  padding:8px 14px;border-radius:11px;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem;font-weight:750;line-height:1.35;letter-spacing:0;
+  white-space:nowrap;text-decoration:none;flex:0 0 auto;
+}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body button.platform-gold-button,
+.platform-admin-body input.platform-gold-button,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .concept-action.publish,
+.platform-admin-body .test-primary-button,
+.platform-admin-body .test-card-action.publish{
+  color:#fff!important;background:linear-gradient(135deg,#c99a3d,#a97820)!important;
+  border:1px solid #b9892d!important;
+  box-shadow:0 5px 12px rgba(153,105,24,.13);
+}
+.platform-admin-body .platform-gold-button:hover,
+.platform-admin-body .tree-add-button:hover,
+.platform-admin-body .concept-action.publish:hover,
+.platform-admin-body .test-primary-button:hover,
+.platform-admin-body .test-card-action.publish:hover{
+  background:linear-gradient(135deg,#b8872d,#946516)!important;transform:translateY(-1px);
+}
+.platform-admin-body .platform-form{row-gap:16px}
+.platform-admin-body .platform-form label{font-weight:700}
+.platform-admin-body .platform-panel{min-width:0}
+.platform-admin-body .platform-two-columns{column-gap:26px;row-gap:26px}
+.platform-admin-body .platform-admin-page{padding-inline:clamp(18px,3vw,42px)}
+.platform-admin-body .platform-admin-hero{margin-bottom:26px}
+.platform-admin-body .concept-map-tabs{margin:30px 0 26px!important}
+.platform-admin-body .concept-map-tabs button{flex:1 1 0;min-width:max-content;font-weight:700}
+.platform-admin-body .concept-map-tabs button.is-active{
+  border-color:#bd8c30!important;
+  background:linear-gradient(135deg,#d0a246,#b17c24)!important;
+  color:#fff!important;box-shadow:0 6px 15px rgba(164,117,34,.16)!important;
+}
+.platform-admin-body .concept-map-tabs button.is-active>span{background:rgba(255,255,255,.18)!important;color:#fff!important}
+.platform-admin-body .concept-map-tabs button:hover{background:#fff7e7;color:#815c1b}
+.platform-admin-body .concept-map-workspace{margin-top:0}
+.platform-admin-body .tree-add-button{color:#fff!important}
+.platform-admin-body .concept-map-card-actions{gap:8px}
+.platform-admin-body .concept-action.preview,
+.platform-admin-body .concept-action:not(.publish){color:#815d1b!important;background:#fff9eb;border:1px solid #e6d3a8}
+.platform-admin-body .concept-map-card-actions form{margin:0}
+.platform-admin-body .concept-map-card-actions form,
+.platform-admin-body .concept-map-card-actions a{width:auto!important;max-width:max-content}
+.platform-admin-body .concept-map-card-actions .concept-action{font-size:.82rem;padding:7px 12px}
+.platform-admin-body .concept-form-footer{gap:16px}
+.platform-admin-body .concept-form-footer .platform-gold-button{min-width:0!important}
+.platform-admin-body .classroom-admin-page{padding-inline:clamp(10px,1.8vw,24px);gap:26px!important}
+.platform-admin-body .classroom-admin-page>.platform-panel{padding:clamp(22px,2.5vw,34px)!important}
+.platform-admin-body .classroom-admin-page .classroom-list-panel{margin-inline:0}
+.platform-admin-body .classroom-admin-page .platform-list{padding-inline:3px}
+.platform-admin-body .classroom-admin-page .classroom-admin-row{gap:16px}
+.platform-admin-body .classroom-admin-page .platform-form input,
+.platform-admin-body .classroom-admin-page .platform-form select{font-size:.96rem}
+.platform-admin-body .classroom-admin-page .platform-form input[type=submit],
+.platform-admin-body .classroom-admin-page .platform-gold-button{font-size:.9rem;font-weight:750;min-height:40px}
+.platform-admin-body .honor-submit-button{width:auto!important;min-height:40px;padding:9px 15px}
+.platform-admin-body .platform-ai-box .platform-gold-button{width:auto!important;min-height:40px}
+.platform-admin-body .test-center-page .test-library-section{margin-top:30px!important;padding:clamp(22px,3vw,36px)!important}
+.platform-admin-body .test-library-heading{margin-bottom:25px!important}
+.platform-admin-body .test-library-grid{gap:18px}
+.platform-admin-body .test-card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.platform-admin-body .test-card-actions form{margin:0;width:auto!important;max-width:100%}
+.platform-admin-body .test-card-actions button{width:auto!important;min-height:36px;padding:7px 11px;font-size:.8rem;font-weight:700}
+.platform-admin-body .test-card-footer{gap:10px;flex-wrap:wrap}
+.platform-admin-body .test-card-footer a{width:auto!important;max-width:max-content;font-size:.82rem}
+@media(max-width:760px){
+ .platform-admin-body .platform-two-columns{gap:18px}
+ .platform-admin-body .concept-map-tabs{gap:7px;padding:6px;margin:24px 0 20px!important}
+ .platform-admin-body .concept-map-tabs button{padding:9px 10px;font-size:.8rem;gap:6px}
+ .platform-admin-body .test-center-page .test-library-section{margin-top:22px!important;padding:20px!important}
+ .platform-admin-body .test-card-actions{justify-content:flex-start}
+}
