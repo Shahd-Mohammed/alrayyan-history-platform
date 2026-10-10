@@ -10,14 +10,14 @@
 <main class="learning-page date-memory-page">
 <header class="learning-hero historical-learning-hero date-memory-hero">
 <p>ذاكرة الريان</p><h1>ثبّتي التاريخ،<br><span class="hero-accent">وتذكّري الحكاية.</span></h1>
-<span>تدرّبي على استرجاع الحدث من تاريخه، ثم أعيدي مراجعة ما يصعب عليكِ على فترات متباعدة.</span>
+<span>استرجعي الحدث من تاريخه، وعودي إلى البطاقات في أوقات متباعدة لتثبيت المعلومة.</span>
 <div class="date-memory-summary"><b>{{ due_count }}</b><small>بطاقات جاهزة للمراجعة اليوم</small></div>
 </header>
 <section class="date-memory-generate-panel">
   <div class="date-memory-generate-copy">
     <span>مراجعة بتوجيه ذكي</span>
     <h2>أنشئي بطاقاتكِ من الدرس الذي تختارينه</h2>
-    <p>اختاري درسًا من المنهج النشط، وسيستخرج الذكاء الاصطناعي التواريخ والأحداث الواردة فيه لتراجعيها بنفسكِ. لا تحتاجين إلى أن تنشئ المعلمة البطاقات يدويًا.</p>
+    <p>اختاري درسًا من المنهج النشط، وسنحوّل أبرز التواريخ والأحداث الواردة فيه إلى بطاقات مراجعة تساعدكِ على التذكّر بثقة.</p>
   </div>
   <form method="post" action="{{ url_for('learning.generate_student_date_memory') }}" class="date-memory-generate-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
