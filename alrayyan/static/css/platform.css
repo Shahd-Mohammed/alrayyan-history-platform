@@ -746,3 +746,10 @@ display:inline-flex!important;align-items:center!important;justify-content:cente
 .platform-admin-body .concept-map-card-actions .concept-action.delete,.platform-admin-body .danger-action,.platform-admin-body .classroom-delete-button,.platform-admin-body .honor-remove-button,.platform-admin-body .test-card-action.delete{background:linear-gradient(135deg,#b64c4c,#8f3030)!important;border-color:#a63e3e!important;color:#fff!important}
 .platform-admin-body .platform-form .platform-gold-button,.platform-admin-body .concept-form-footer button{justify-self:start!important;flex:0 0 auto!important}
 .platform-admin-body .platform-form button[type="submit"]{width:auto!important}
+
+
+/* Final shared button typography and width guard */
+body button,body input[type="submit"],body input[type="button"],body .btn,body .button{
+font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:700!important;letter-spacing:0!important;line-height:1.4!important;width:auto!important;max-width:100%!important;min-width:0!important}
+body button:not(.platform-menu-toggle){white-space:normal;overflow-wrap:anywhere}
+.platform-header .platform-menu-toggle{width:42px!important;min-width:42px!important}
