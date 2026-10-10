@@ -1,0 +1,5 @@
+/* The worksheet center is now the dedicated workspace. Keep the teacher dashboard focused on its overview and launchpad. */
+body:has(.dashboard-page) .worksheets-section,
+body:has(.dashboard-page) .statistics {
+    display: none !important;
+}
