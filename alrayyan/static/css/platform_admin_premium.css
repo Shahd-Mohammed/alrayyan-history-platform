@@ -2177,3 +2177,20 @@ button.concept-action,
  .platform-admin-body .test-library-section { margin-inline:0 !important; }
  .platform-admin-body .test-card-actions { gap:7px !important; }
 }
+
+
+/* Test workspace primary actions use the same medium-sized gold button */
+.platform-admin-body .test-primary-button,
+.platform-admin-body .test-secondary-button,
+.platform-admin-body .test-card-preview,
+.platform-admin-body .test-card-footer > a,
+.platform-admin-body .inline-manage-link {
+  display:inline-flex !important;align-items:center;justify-content:center;
+  width:auto !important;min-width:0 !important;max-width:max-content !important;
+  min-height:36px !important;padding:8px 14px !important;
+  background:linear-gradient(135deg,#c99a3d,#ad7b24) !important;color:#fff !important;
+  border:1px solid #b7862e !important;border-radius:10px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.88rem !important;font-weight:700 !important;line-height:1.35 !important;
+  white-space:nowrap !important;text-decoration:none !important;
+}
