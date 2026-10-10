@@ -2501,3 +2501,152 @@ button.concept-action,
 .classroom-delete-button{width:auto!important;max-width:max-content!important;min-width:0!important;padding:8px 14px!important;font:650 .88rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif!important}
 .platform-panel .platform-form>button[type=submit],.platform-panel .platform-form>input[type=submit]{width:auto!important;max-width:max-content!important;min-width:0!important}
 
+
+
+/* 2026-10 finishing pass: consistent compact controls and calm navy/ivory surfaces */
+.platform-admin-body,
+.platform-admin-body button,
+.platform-admin-body input,
+.platform-admin-body select,
+.platform-admin-body textarea,
+.platform-admin-body .platform-panel,
+.platform-admin-body .platform-admin-hero {
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+}
+.platform-admin-body button,
+.platform-admin-body input[type="submit"],
+.platform-admin-body input[type="button"],
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .review-actions button,
+.platform-admin-body .classroom-delete-button,
+.platform-admin-body .test-primary-button,
+.platform-admin-body .test-secondary-button,
+.platform-admin-body .test-card-action,
+.platform-admin-body .test-card-preview,
+.platform-admin-body .inline-manage-link,
+.platform-admin-body .concept-map-card-actions button,
+.platform-admin-body .concept-map-card-actions a {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  min-height:36px !important;
+  padding:8px 14px !important;
+  border-radius:10px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.88rem !important;
+  font-weight:650 !important;
+  line-height:1.4 !important;
+  letter-spacing:0 !important;
+  text-transform:none !important;
+  white-space:nowrap !important;
+}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .review-actions button:not(.danger-action),
+.platform-admin-body .test-primary-button,
+.platform-admin-body .test-secondary-button,
+.platform-admin-body .test-card-action.publish,
+.platform-admin-body .test-card-action.draft,
+.platform-admin-body .test-card-preview,
+.platform-admin-body .inline-manage-link,
+.platform-admin-body .concept-map-card-actions button,
+.platform-admin-body .concept-map-card-actions a {
+  background:linear-gradient(135deg,#d1a64b,#b58227) !important;
+  color:#fff !important;
+  border:1px solid #b58227 !important;
+  box-shadow:0 4px 11px rgba(143,96,20,.12) !important;
+  text-decoration:none !important;
+}
+.platform-admin-body .test-card-action.archive,
+.platform-admin-body .test-card-action.delete,
+.platform-admin-body .danger-action {
+  background:#fff !important;
+  color:#8b3434 !important;
+  border:1px solid #e5c9c9 !important;
+  box-shadow:none !important;
+}
+.platform-admin-body .tree-add-button,
+.platform-admin-body .tree-add-button span { color:#fff !important; }
+.platform-admin-body .test-center-page { gap:30px !important; }
+.platform-admin-body .test-center-page .test-center-hero {
+  margin-bottom:30px !important;
+  background:radial-gradient(circle at 88% 12%,rgba(209,166,75,.15),transparent 27%),linear-gradient(135deg,#fffdf8,#f3eddf) !important;
+  color:#173455 !important;
+  border:1px solid #e7d9bb !important;
+}
+.platform-admin-body .test-center-page .test-center-hero h1,
+.platform-admin-body .test-center-page .test-center-hero h2,
+.platform-admin-body .test-center-page .test-center-hero p,
+.platform-admin-body .test-center-page .test-center-hero .test-hero-points,
+.platform-admin-body .test-center-page .test-center-hero .test-hero-points * { color:#173455 !important; }
+.platform-admin-body .test-center-page .test-hero-points { display:flex !important; flex-wrap:nowrap !important; gap:14px !important; }
+.platform-admin-body .test-center-page .test-hero-points > * { white-space:nowrap !important; }
+.platform-admin-body .test-center-page .test-builder-shell,
+.platform-admin-body .test-center-page #inline-test-workspace,
+.platform-admin-body .test-center-page .test-library-section {
+  margin-top:0 !important;
+  min-width:0 !important;
+}
+.platform-admin-body .test-center-page .test-builder-shell,
+.platform-admin-body .test-center-page #inline-test-workspace,
+.platform-admin-body .test-center-page .test-library-section { border-radius:22px !important; }
+.platform-admin-body .test-center-page .test-library-section { margin-top:30px !important; }
+.platform-admin-body .test-library-heading { gap:18px !important; align-items:flex-start !important; }
+.platform-admin-body .test-library-grid { gap:16px !important; }
+.platform-admin-body .test-library-card { min-width:0 !important; padding:20px !important; }
+.platform-admin-body .test-card-actions { display:flex !important; flex-wrap:wrap !important; gap:8px !important; align-items:center !important; }
+.platform-admin-body .test-card-actions form,
+.platform-admin-body .concept-map-card-actions form { margin:0 !important; }
+.platform-admin-body .concept-map-tabs {
+  margin:30px 0 28px !important;
+  padding:8px !important;
+  gap:10px !important;
+  border:1px solid #e8decb !important;
+  border-radius:16px !important;
+  background:#fffdf8 !important;
+  display:flex !important;
+  flex-wrap:nowrap !important;
+}
+.platform-admin-body .concept-map-tabs button {
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  padding:10px 16px !important;
+  background:#f5f0e5 !important;
+  color:#173455 !important;
+  border:1px solid #e3d7c0 !important;
+  font:650 .88rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  white-space:nowrap !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active {
+  background:linear-gradient(135deg,#d1a64b,#b58227) !important;
+  color:#fff !important;
+  border-color:#b58227 !important;
+}
+.platform-admin-body .concept-map-tabs button span,
+.platform-admin-body .concept-map-tabs button.is-active span { color:inherit !important; }
+.platform-admin-body .concept-map-tabs button span { background:rgba(23,52,85,.07) !important; }
+.platform-admin-body .concept-map-tabs button.is-active span { background:rgba(255,255,255,.2) !important; }
+.platform-admin-body .concept-map-card-actions { display:flex !important; flex-wrap:wrap !important; gap:8px !important; }
+.platform-admin-body .classroom-list-panel { margin-inline:8px !important; }
+.platform-admin-body .classroom-list-panel .platform-list { padding-inline:10px !important; }
+.platform-admin-body .classroom-admin-row { margin-inline:0 !important; padding:18px 22px !important; gap:16px !important; }
+.platform-admin-body .classroom-details strong { font-size:1.1rem !important; font-weight:750 !important; line-height:1.6 !important; }
+.platform-admin-body .classroom-delete-button { width:auto !important; }
+.platform-admin-body .inline-question-form .inline-submit,
+.platform-admin-body .test-create-footer .test-primary-button { width:auto !important; max-width:max-content !important; }
+@media(max-width:760px) {
+  .platform-admin-body .test-center-page .test-hero-points { flex-wrap:wrap !important; }
+  .platform-admin-body .concept-map-tabs { flex-wrap:wrap !important; margin-inline:0 !important; }
+  .platform-admin-body .concept-map-tabs button { flex:0 1 auto !important; }
+  .platform-admin-body .classroom-list-panel { margin-inline:0 !important; }
+  .platform-admin-body .classroom-list-panel .platform-list { padding-inline:0 !important; }
+}
