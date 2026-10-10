@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نتيجة المحاولة | الريان</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css', v='20261010-final-controls-4') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css', v='20261010-final-controls-5') }}">
 </head>
 <body>
     {% include '_platform_header.html' %}
@@ -81,7 +81,7 @@
 
         <div class="attempt-result-actions">
             <a class="result-primary-action" href="{{ url_for('assessment.my_results') }}">جميع نتائجي</a>
-            <a class="result-secondary-action" href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
+            <a class="result-secondary-action" href="{{ url_for('challenges.test_bank') if attempt.worksheet.creation_method == 'test' else url_for('worksheets.worksheet_list') }}">{{ 'العودة إلى الاختبارات' if attempt.worksheet.creation_method == 'test' else 'العودة إلى أوراق العمل' }}</a>
         </div>
     </main>
     {% include '_platform_footer.html' %}
