@@ -1,5 +1,39 @@
 {% extends "platform/_admin_base.html" %}
-{% block title %}استوديو الاختبارات | منصة الريان{% endblock %}
+{% block title %}استوديو الاختبارات | منصة الريان
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const typeSelect = document.getElementById("question_type");
+  if (!typeSelect) return;
+  const choicesField = document.querySelector('[data-question-field="choices"]');
+  const answerField = document.querySelector('[data-question-field="answer"]');
+  const choicesInput = document.getElementById("choices_text");
+  const answerInput = document.getElementById("correct_answer_text");
+  const syncQuestionFields = function () {
+    const type = typeSelect.value;
+    const needsChoices = ["multiple_choice", "multiple_select", "ordering", "matching"].includes(type);
+    const needsAnswer = ["multiple_choice", "multiple_select", "true_false", "short_answer", "fill_blank"].includes(type);
+    if (choicesField) choicesField.hidden = !needsChoices;
+    if (answerField) answerField.hidden = !needsAnswer;
+    if (choicesInput) choicesInput.required = needsChoices;
+    if (answerInput) answerInput.required = needsAnswer;
+    if (choicesField) choicesField.querySelectorAll("[data-help]").forEach(function (help) {
+      help.hidden = help.dataset.help !== "choices" && help.dataset.help !== type;
+    });
+    if (answerField) answerField.querySelectorAll("[data-help]").forEach(function (help) {
+      help.hidden = help.dataset.help !== type;
+    });
+    if (choicesInput) choicesInput.placeholder = type === "matching" ?
+      "المفهوم الأول | الإجابة الأولى\nالمفهوم الثاني | الإجابة الثانية" :
+      type === "ordering" ? "العنصر الأول بالترتيب الصحيح\nالعنصر الثاني\nالعنصر الثالث" :
+      "الخيار الأول\nالخيار الثاني\nالخيار الثالث";
+    if (answerInput) answerInput.placeholder = type === "true_false" ? "صح أو خطأ" :
+      type === "multiple_select" ? "الإجابة الأولى | الإجابة الثانية" : "اكتبي الإجابة الصحيحة...";
+  };
+  typeSelect.addEventListener("change", syncQuestionFields);
+  syncQuestionFields();
+});
+</script>
+{% endblock %}
 {% block eyebrow %}استوديو الاختبارات{% endblock %}
 {% block heading %}اصنعي اختبارًا تاريخيًا من نفس المكان{% endblock %}
 {% block intro %}أنشئي الاختبار، أضيفي الأسئلة، وراجعي ما بنيتِه دون أن تغادري مركز الاختبارات.{% endblock %}
@@ -60,6 +94,11 @@
       <div class="test-field test-field-full">
         <label for="description">وصف الاختبار <small>اختياري</small></label>
         <textarea id="description" name="description" rows="3" placeholder="اكتبي باختصار ماذا يقيس هذا الاختبار..."></textarea>
+      </div>
+      <div class="test-field">
+        <label for="time_limit_minutes">مدة الاختبار بالدقائق <small>اختياري</small></label>
+        <input id="time_limit_minutes" name="time_limit_minutes" type="number" min="1" max="300" step="1" placeholder="مثال: 5">
+        <small>اتركيه فارغًا إذا كان الاختبار بلا مدة زمنية.</small>
       </div>
 
       <div class="test-create-footer">
@@ -131,15 +170,19 @@
               {{ form.points() }}
             </div>
 
-            <div class="test-field test-field-full">
+            <div class="test-field test-field-full question-choices-field" data-question-field="choices">
               {{ form.choices_text.label }}
               {{ form.choices_text(rows="4", placeholder="الخيار الأول\nالخيار الثاني\nالخيار الثالث") }}
-              <small>اكتبي كل خيار في سطر مستقل عندما يحتاج نوع السؤال إلى خيارات.</small>
+              <small data-help="choices">اكتبي كل خيار في سطر مستقل عندما يحتاج نوع السؤال إلى خيارات.</small>
+              <small data-help="ordering" hidden>اكتبي العناصر بالترتيب الصحيح، كل عنصر في سطر مستقل.</small>
+              <small data-help="matching" hidden>اكتبي كل زوج في سطر: المفهوم | الإجابة.</small>
             </div>
 
-            <div class="test-field test-field-full">
+            <div class="test-field test-field-full question-answer-field" data-question-field="answer">
               {{ form.correct_answer_text.label }}
-              {{ form.correct_answer_text(placeholder="اكتبي الإجابة الصحيحة أو القيم المطلوبة حسب نوع السؤال...") }}
+              {{ form.correct_answer_text(placeholder="اكتبي الإجابة الصحيحة...") }}
+              <small data-help="multiple_select" hidden>افصلي كل إجابة صحيحة عن الأخرى بعلامة |.</small>
+              <small data-help="true_false" hidden>اكتبي فقط: صح أو خطأ.</small>
             </div>
 
             <div class="test-field test-field-full">
