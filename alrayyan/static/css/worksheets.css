@@ -1853,3 +1853,30 @@ button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
 .result-primary-action,.result-back-link{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;max-width:max-content!important;min-height:37px!important;padding:8px 14px!important;border:1px solid #b78427!important;border-radius:10px!important;background:linear-gradient(135deg,#d5ad52,#b78427)!important;color:#fff!important;font:650 .88rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif!important;text-decoration:none!important;white-space:nowrap!important}
 @media(max-width:680px){.student-dashboard-page{width:calc(100% - 22px)!important;margin:18px auto 48px!important}.student-welcome{padding:26px 20px!important}.student-dashboard-panel{padding:18px!important}.student-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 
+
+
+/* Student test flow: clear test terminology and consistent compact gold controls */
+.details-page .interactive-button,
+.details-page .download-button,
+.attempt-result-actions .result-primary-action,
+.attempt-result-actions .result-secondary-action,
+.attempt-result-page .result-back-link {
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:max-content!important;min-width:0!important;min-height:38px!important;
+  padding:8px 15px!important;border:1px solid #b58227!important;border-radius:10px!important;
+  background:linear-gradient(135deg,#d1a64b,#b58227)!important;color:#fff!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;
+  font-weight:700!important;line-height:1.4!important;letter-spacing:0!important;
+  white-space:nowrap!important;text-decoration:none!important;box-shadow:0 4px 11px rgba(143,96,20,.12)!important;
+}
+.details-page .details-actions form { width:auto!important; }
+.details-page .details-actions .interactive-button { width:auto!important; }
+.attempt-result-actions { display:flex!important;flex-wrap:wrap!important;gap:10px!important; }
+.attempt-result-actions .result-secondary-action { background:linear-gradient(135deg,#d1a64b,#b58227)!important;color:#fff!important; }
+.attempt-result-hero,.details-card { font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important; }
+.attempt-result-copy>span { font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important; }
+@media(max-width:680px) {
+  .details-page .details-actions form { width:auto!important; }
+  .details-page .interactive-button { max-width:100%!important; }
+  .attempt-result-actions { align-items:flex-start!important; }
+}
