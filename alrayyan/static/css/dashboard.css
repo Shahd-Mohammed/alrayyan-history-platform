@@ -1306,3 +1306,48 @@ body,.form-page,.results-dashboard,.form-page button,.results-dashboard button,
  .form-page .assessment-tabs{margin-top:26px!important;margin-bottom:24px!important}
  .results-dashboard .score-policy-banner a{width:auto!important}
 }
+
+
+/* Shared button typography for question management and worksheet results */
+button,input[type="submit"],input[type="button"],a.button,.button,.btn{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+  font-weight:750;
+  letter-spacing:0;
+}
+.form-page button,.form-page input[type="submit"],.results-dashboard button,
+.results-dashboard input[type="submit"],.results-dashboard a.button,
+.results-dashboard .button,.question-page button,.question-page input[type="submit"]{
+  width:auto!important;max-width:100%;min-width:0;
+  min-height:38px;padding:8px 14px;
+  font-size:.86rem;line-height:1.35;
+}
+.form-page .assessment-tabs{
+  margin-block:24px 28px!important;
+  gap:10px!important;flex-wrap:nowrap!important;overflow-x:auto;
+}
+.form-page .assessment-tabs a,.form-page .assessment-tabs button{
+  flex:0 0 auto!important;white-space:nowrap!important;
+  min-width:max-content;padding:11px 17px!important;
+}
+.form-page .form-intro{margin-bottom:28px!important}
+.form-page .question-type-builder{margin-top:20px}
+.form-page button[type="submit"],.form-page input[type="submit"]{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:auto!important;max-width:max-content;min-height:39px;
+  padding:9px 16px;border-radius:11px;
+  background:linear-gradient(135deg,#c99a3d,#a97820);color:#fff;
+  font-weight:750;
+}
+.results-dashboard{margin-top:28px!important}
+.results-dashboard .results-dashboard-header,
+.results-dashboard .results-hero{margin-bottom:26px!important}
+.results-dashboard .assessment-tabs{margin:24px 0 28px!important;gap:9px!important}
+.results-dashboard button,.results-dashboard input[type="submit"],
+.results-dashboard .results-primary-link,.results-dashboard .score-policy-banner a{
+  font-size:.85rem!important;font-weight:750!important;
+  padding:8px 13px!important;border-radius:10px!important;
+}
+@media(max-width:650px){
+ .form-page .assessment-tabs{gap:7px!important}
+ .form-page .assessment-tabs a,.form-page .assessment-tabs button{padding:9px 12px!important}
+}
