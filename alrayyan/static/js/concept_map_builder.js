@@ -12,7 +12,14 @@
         const manualLesson = document.querySelector("[data-map-form] [name='lesson_id']");
         if (aiForm && aiLesson) {
           if (manualLesson && manualLesson.value) aiLesson.value = manualLesson.value;
-          if (aiLesson.value) aiForm.requestSubmit();
+          if (!aiLesson.value) {
+            const firstAvailableLesson = [...aiLesson.options].find((option) => option.value && !option.disabled);
+            if (firstAvailableLesson) aiLesson.value = firstAvailableLesson.value;
+          }
+          if (aiLesson.value && !aiForm.dataset.generating) {
+            aiForm.dataset.generating = "true";
+            aiForm.requestSubmit();
+          }
         }
       }
     });
