@@ -2194,3 +2194,140 @@ button.concept-action,
   font-size:.88rem !important;font-weight:700 !important;line-height:1.35 !important;
   white-space:nowrap !important;text-decoration:none !important;
 }
+
+ 
+/* Final polish: restrained gold actions, balanced margins, and light test studio */
+.platform-admin-body,
+.platform-admin-body button,
+.platform-admin-body input,
+.platform-admin-body select,
+.platform-admin-body textarea {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+}
+.platform-admin-body button,
+.platform-admin-body input[type="submit"],
+.platform-admin-body input[type="button"],
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .review-actions button,
+.platform-admin-body .classroom-delete-button,
+.platform-admin-body .honor-remove-button,
+.platform-admin-body .test-primary-button,
+.platform-admin-body .test-secondary-button,
+.platform-admin-body .test-card-action,
+.platform-admin-body .test-card-preview,
+.platform-admin-body .inline-manage-link {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:max-content !important;
+  min-height:36px !important;
+  padding:8px 13px !important;
+  border-radius:10px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.88rem !important;
+  font-weight:650 !important;
+  line-height:1.4 !important;
+  letter-spacing:0 !important;
+  text-transform:none !important;
+  white-space:nowrap !important;
+}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-map-card-actions .concept-action,
+.platform-admin-body .concept-map-card-actions button,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .builder-add,
+.platform-admin-body .review-actions button,
+.platform-admin-body .test-primary-button,
+.platform-admin-body .test-card-action.publish,
+.platform-admin-body .test-card-action.draft,
+.platform-admin-body .test-card-preview,
+.platform-admin-body .test-card-footer>a,
+.platform-admin-body .inline-manage-link {
+  background:linear-gradient(135deg,#d0a449,#b9872d) !important;
+  border:1px solid #b9872d !important;
+  color:#fff !important;
+  box-shadow:0 4px 11px rgba(143,96,20,.11) !important;
+}
+.platform-admin-body .tree-add-button,
+.platform-admin-body .tree-add-button span { color:#fff !important; }
+.platform-admin-body .concept-map-card-actions .concept-action.delete,
+.platform-admin-body .concept-map-card-actions .concept-action.preview {
+  background:linear-gradient(135deg,#d0a449,#b9872d) !important;
+  border-color:#b9872d !important;
+  color:#fff !important;
+}
+.platform-admin-body .concept-map-tabs {
+  margin:36px 10px 34px !important;
+  padding:8px !important;
+  gap:10px !important;
+  border:1px solid #e8dfcf !important;
+  border-radius:16px !important;
+  background:#fffdf8 !important;
+}
+.platform-admin-body .concept-map-tabs button {
+  flex:0 0 auto !important;
+  width:auto !important;
+  max-width:none !important;
+  padding:10px 18px !important;
+  background:#f5f1e8 !important;
+  border:1px solid transparent !important;
+  color:#526277 !important;
+  font-weight:650 !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active {
+  background:linear-gradient(135deg,#d0a449,#b9872d) !important;
+  border-color:#b9872d !important;
+  color:#fff !important;
+  box-shadow:0 4px 11px rgba(143,96,20,.11) !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active span { color:#fff !important; }
+.platform-admin-body .concept-map-tabs button span {
+  background:rgba(255,255,255,.22) !important;
+  color:inherit !important;
+}
+.platform-admin-body .test-center-page { padding-inline:16px !important; }
+.platform-admin-body .test-center-page .test-center-hero {
+  min-height:0 !important;
+  margin:0 0 28px !important;
+  padding:clamp(24px,3.4vw,42px) !important;
+  background:
+    radial-gradient(circle at 88% 15%,rgba(208,164,73,.14),transparent 28%),
+    linear-gradient(135deg,#fffdf8 0%,#f5f0e5 100%) !important;
+  border:1px solid #e5d7bb !important;
+  box-shadow:0 14px 34px rgba(16,43,79,.07) !important;
+}
+.platform-admin-body .test-center-page .test-center-hero h1,
+.platform-admin-body .test-center-page .test-center-hero h2,
+.platform-admin-body .test-center-page .test-center-hero p,
+.platform-admin-body .test-center-page .test-center-hero .test-hero-points,
+.platform-admin-body .test-center-page .test-center-hero .test-hero-points>* {
+  color:#173455 !important;
+}
+.platform-admin-body .test-center-page .test-center-hero .test-hero-kicker { color:#a97820 !important; }
+.platform-admin-body .test-center-page .test-art-core {
+  background:linear-gradient(135deg,#fff,#f4ead4) !important;
+  border-color:#d8bd7a !important;
+  color:#173455 !important;
+  box-shadow:0 12px 28px rgba(16,43,79,.08) !important;
+}
+.platform-admin-body .test-center-page .test-art-ring { border-color:rgba(169,120,32,.22) !important; }
+.platform-admin-body .test-builder-shell,
+.platform-admin-body #inline-test-workspace,
+.platform-admin-body .test-library-section {
+  margin-top:30px !important;
+}
+.platform-admin-body .classroom-admin-row {
+  margin-inline:16px !important;
+  padding:20px 24px !important;
+}
+@media(max-width:760px) {
+  .platform-admin-body .concept-map-tabs { margin:26px 0 24px !important; flex-wrap:wrap !important; }
+  .platform-admin-body .concept-map-tabs button { flex:1 1 auto !important; }
+  .platform-admin-body .classroom-admin-row { margin-inline:0 !important; padding:16px !important; }
+  .platform-admin-body .test-center-page { padding-inline:0 !important; }
+}
