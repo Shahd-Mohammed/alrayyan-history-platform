@@ -3,7 +3,7 @@
 {% block title %}المناهج والمصادر{% endblock %}
 {% block eyebrow %}المصدر الذي يقود المنصة{% endblock %}
 {% block heading %}المناهج والمصادر{% endblock %}
-{% block intro %}ارفعي ملف الكتاب أو الملزمة، وسنجهّزه لتستخدمه أدوات المنصة في البحث عن الدروس وبناء الأنشطة.{% endblock %}
+{% block intro %}ارفعي الكتاب أو الملزمة لتستند إليها أدوات المنصة عند إعداد الأنشطة والإجابة عن أسئلة الدروس.{% endblock %}
 {% block content %}
 <div class="source-priority">
   <article><b>01</b><h3>الكتاب الرسمي</h3><p>المصدر الأساسي والأعلى أولوية.</p></article>
@@ -12,7 +12,7 @@
 </div>
 <div class="platform-two-columns">
   <section class="platform-panel">
-    <div class="panel-title"><span>01</span><div><h2>رفع وفهرسة مصدر</h2><p>حددي المادة والصف والفصل ونوع المصدر، ثم ارفعي الكتاب أو الملزمة. تستخرج المنصة عناوين الدروس من الملف قدر الإمكان.</p></div></div>
+    <div class="panel-title"><span>01</span><div><h2>رفع وفهرسة مصدر</h2><p>حددي بيانات المنهج ونوع المصدر، ثم ارفعي الملف. تستخرج المنصة عناوين الوحدات والدروس تلقائيًا قدر الإمكان.</p></div></div>
     <form method="post" enctype="multipart/form-data" class="platform-form">
       {{ form.hidden_tag() }}
       {{ fields(form,[form.subject,form.grade,form.semester,form.academic_year,form.source_type,form.document]) }}
