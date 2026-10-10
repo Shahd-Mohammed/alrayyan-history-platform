@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded",function(){
    const li=document.createElement("li");
    li.className="concept-tree-preview-branch";
    if(edgeLabel){const relation=document.createElement("span");relation.className="concept-tree-edge-label";relation.textContent=edgeLabel;li.appendChild(relation);}
-   const card=document.createElement("article");card.className="concept-tree-preview-node";
+   const card=document.createElement("article");card.className="concept-tree-preview-node"+(edgeLabel?"":" is-root-node");
    const title=document.createElement("strong");title.textContent=original.querySelector("strong")?.textContent||"";
    const description=document.createElement("p");description.textContent=original.querySelector("p")?.textContent||"";
    card.append(title,description);li.appendChild(card);
