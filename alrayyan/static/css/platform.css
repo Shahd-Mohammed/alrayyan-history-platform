@@ -633,3 +633,78 @@ a[class*="button"] {
   letter-spacing: 0 !important;
   text-decoration: none;
 }
+
+
+
+/* Final unified controls: compact buttons, consistent Arabic type, no full-width action bars */
+button,
+input[type="submit"],
+input[type="button"],
+.platform-gold-button,
+.primary-action,
+.gold-action,
+.hint-action,
+.concept-action,
+.tree-add-button,
+.test-primary-button,
+.test-card-action,
+.test-card-preview,
+.date-memory-button,
+.student-primary-action,
+.student-dashboard-card > a,
+.student-panel-heading > a,
+.challenge-primary-button,
+.challenge-secondary-button,
+.result-primary-action,
+.result-back-link,
+.learning-grid article > a,
+.character-card summary {
+  box-sizing: border-box;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 36px;
+  padding: 8px 14px !important;
+  border-radius: 10px;
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+  font-size: .88rem !important;
+  font-weight: 650 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+  text-align: center;
+  white-space: normal;
+}
+button[type="submit"],
+input[type="submit"],
+.platform-gold-button,
+.primary-action,
+.gold-action,
+.tree-add-button,
+.test-primary-button,
+.test-card-action.publish,
+.test-card-preview,
+.date-memory-button,
+.student-primary-action,
+.concept-action,
+.result-primary-action {
+  background: linear-gradient(135deg,#d5ad52,#b78427) !important;
+  color: #fff !important;
+  border: 1px solid #b78427 !important;
+  box-shadow: 0 5px 13px rgba(156,109,28,.13);
+}
+button:hover,
+input[type="submit"]:hover,
+.platform-gold-button:hover,
+.primary-action:hover,
+.gold-action:hover,
+.tree-add-button:hover,
+.test-primary-button:hover,
+.date-memory-button:hover {
+  filter: brightness(.97);
+  transform: translateY(-1px);
+}
+button:disabled,
+input[type="submit"]:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+form:has(> button[type="submit"]),
+form:has(> input[type="submit"]) { min-width:0; }
+
