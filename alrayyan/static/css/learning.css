@@ -400,3 +400,36 @@ button,.learning-grid a,.character-card summary,.character-actions button{
    padding:24px 20px!important;border-radius:22px!important;
  }
 }
+
+
+/* Final student-page polish: compact first section, balanced character score and buttons */
+.learning-page{width:min(1180px,calc(100% - 36px));margin:28px auto 72px}
+.historical-learning-hero.library-page-hero,.historical-learning-hero.honor-page-hero{
+  min-height:0!important;display:flex!important;flex-direction:column;justify-content:center;gap:0;
+  padding:30px clamp(24px,4vw,48px)!important;border-radius:26px!important;box-shadow:0 17px 40px rgba(13,39,68,.13)!important;
+}
+.historical-learning-hero.library-page-hero,.historical-learning-hero.honor-page-hero{
+  background:radial-gradient(circle at 88% 12%,rgba(222,187,103,.18),transparent 25%),linear-gradient(125deg,#102b4f,#1c4268)!important;
+  border:1px solid rgba(222,187,103,.32)!important;
+}
+.historical-learning-hero.library-page-hero>p,.historical-learning-hero.honor-page-hero>p{margin:0 0 7px!important;font-size:.9rem!important;color:#f0d795!important}
+.historical-learning-hero.library-page-hero h1,.historical-learning-hero.honor-page-hero h1{margin:3px 0 9px!important;font-size:clamp(2rem,4vw,3rem)!important;line-height:1.28!important}
+.historical-learning-hero.library-page-hero h1 br,.historical-learning-hero.honor-page-hero h1 br{display:none}
+.historical-learning-hero.library-page-hero .hero-accent,.historical-learning-hero.honor-page-hero .hero-accent{display:inline!important;margin:0!important;color:#f0d795!important}
+.historical-learning-hero.library-page-hero>span,.historical-learning-hero.honor-page-hero>span{max-width:800px!important;line-height:1.8!important;font-size:.97rem!important;color:rgba(255,255,255,.86)!important}
+.historical-learning-hero .library-hero-pills,.historical-learning-hero .honor-hero-stats{margin-top:14px!important;gap:8px!important}
+.historical-learning-hero .library-hero-pills span,.historical-learning-hero .honor-hero-stats span{padding:6px 11px!important;font-size:.77rem!important}
+.character-hero{padding:30px clamp(24px,4vw,48px)!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto;column-gap:28px;align-items:center}
+.character-hero>p,.character-hero>h1,.character-hero>span{grid-column:1}
+.character-hero .hero-score{position:static!important;grid-column:2;grid-row:1/4;align-self:center;min-width:105px!important;min-height:105px!important;padding:14px!important;border-radius:20px!important}
+.character-hero .hero-score b{font-size:1.7rem!important}
+.learning-grid a,.character-card summary,.character-card button,.character-card .gold-action,.character-card .hint-action{display:inline-flex;align-items:center;justify-content:center;width:auto!important;max-width:100%;min-height:38px;padding:8px 13px!important;border-radius:10px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.85rem!important;font-weight:750!important;line-height:1.35;text-decoration:none}
+.learning-grid a,.character-card .gold-action{background:linear-gradient(135deg,#c99a3d,#a97820)!important;color:#fff!important}
+.character-card .hint-action{background:#fff8e9!important;border:1px solid #e4d0a3!important;color:#79591d!important}
+@media(max-width:620px){
+ .learning-page{width:calc(100% - 24px);margin:20px auto 54px}
+ .historical-learning-hero.library-page-hero,.historical-learning-hero.honor-page-hero{padding:25px 20px!important;border-radius:21px!important}
+ .character-hero{grid-template-columns:1fr!important;gap:0!important}
+ .character-hero .hero-score{grid-column:1;grid-row:auto;min-width:0!important;min-height:0!important;align-self:start;margin-top:15px}
+ .historical-learning-hero.library-page-hero h1,.historical-learning-hero.honor-page-hero h1{font-size:2rem!important}
+}
