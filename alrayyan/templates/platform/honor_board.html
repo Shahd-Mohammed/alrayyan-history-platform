@@ -2,11 +2,11 @@
 {% block title %}لوحة الشرف{% endblock %}
 {% block eyebrow %}تقدير عادل ومحفّز{% endblock %}
 {% block heading %}إنجازاتكِ تستحق الاحتفاء{% endblock %}
-{% block intro %}سلّطي الضوء على الاجتهاد والتقدّم، وامنحي كل إنجاز مساحة يستحقها من التقدير.{% endblock %}
+{% block intro %}احتفي بالاجتهاد والتطور، وسجّلي كلمات تشجيع تترك أثرًا طيبًا لدى الطالبات.{% endblock %}
 {% block content %}
 <div class="platform-two-columns honor-board-page">
   <section class="platform-panel honor-create-panel">
-    <div class="honor-create-heading"><span class="honor-medal">✦</span><div><span class="honor-eyebrow">تكريم يصنع فرقًا</span><h2>إضافة بطاقة تكريم</h2><p>اختيار المعلمة يكمل الترشيحات الآلية ولا يستبدلها.</p></div></div>
+    <div class="honor-create-heading"><span class="honor-medal">✦</span><div><span class="honor-eyebrow">تكريم يصنع فرقًا</span><h2>إضافة بطاقة تكريم</h2><p>أضيفي تقديرًا شخصيًا إلى الإنجازات التي ترصدها المنصة تلقائيًا.</p></div></div>
     <form method="post" class="platform-form honor-create-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label>الطالبة<select name="student_id" required>{% for student in students %}<option value="{{ student.id }}">{{ student.full_name }}</option>{% endfor %}</select></label>
