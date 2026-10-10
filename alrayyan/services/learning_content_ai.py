@@ -107,3 +107,51 @@ def generate_character_drafts(lesson):
         raise RuntimeError("صيغة الشخصيات المقترحة غير صالحة.")
     citations = list(dict.fromkeys(result["citation"] for result in results))[:5]
     return characters, citations
+
+
+def generate_historical_date_drafts(lesson):
+    """Create student-facing date-recall cards grounded only in the selected lesson."""
+    payload, results = _grounded_request(
+        lesson,
+        (
+            "أنشئ بطاقات مراجعة للتلميذ من التواريخ والأحداث المذكورة صراحة في سياق الدرس فقط. "
+            "لا تخترع تاريخًا أو حدثًا، ولا تستنتج سنة غير مذكورة. "
+            "أعد JSON فقط بالشكل: "
+            '{"dates":[{"date_label":"التاريخ كما ورد","sort_year":1948,'
+            '"event_title":"اسم الحدث","event_description":"شرح قصير من السياق",'
+            '"memory_hint":"تلميح قصير لا يكشف الإجابة"}]}. '
+            "أنشئ من 3 إلى 6 بطاقات إن كان السياق يدعمها، وإلا أعد البطاقات المتاحة فقط. "
+            "إذا لم يرد أي تاريخ أو سنة صريحة فأعد قائمة فارغة. "
+            "استخدم أرقامًا صحيحة في sort_year أو null عند عدم توفر سنة رقمية."
+        ),
+    )
+    items = payload.get("dates", [])
+    if not isinstance(items, list):
+        raise RuntimeError("صيغة بطاقات التواريخ غير صالحة.")
+    cleaned = []
+    seen = set()
+    for item in items[:8]:
+        if not isinstance(item, dict):
+            continue
+        date_label = str(item.get("date_label") or "").strip()[:100]
+        event_title = str(item.get("event_title") or "").strip()[:250]
+        if not date_label or not event_title:
+            continue
+        key = (date_label.casefold(), event_title.casefold())
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            sort_year = int(item.get("sort_year")) if item.get("sort_year") is not None else None
+        except (TypeError, ValueError):
+            sort_year = None
+        cleaned.append({
+            "date_label": date_label,
+            "sort_year": sort_year,
+            "event_title": event_title,
+            "event_description": str(item.get("event_description") or "").strip()[:2000] or None,
+            "memory_hint": str(item.get("memory_hint") or "").strip()[:500] or None,
+        })
+    if not cleaned:
+        raise RuntimeError("لم يعثر الدرس على تواريخ وأحداث صريحة كافية لصنع بطاقات مراجعة.")
+    return cleaned
