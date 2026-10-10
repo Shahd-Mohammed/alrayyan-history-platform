@@ -1926,3 +1926,30 @@ button.concept-action,
   .platform-admin-page .test-library-section,
   .platform-admin-page .test-library-premium { margin-inline: 0 !important; padding: 20px 16px !important; }
 }
+
+
+/* Consistent, compact action buttons across teacher management pages */
+.platform-admin-page button:not(.platform-menu-toggle),
+.platform-admin-page input[type="submit"],
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .platform-secondary-link,
+.platform-admin-page .review-actions button,
+.platform-admin-page .curriculum-actions button{
+  width:auto!important;max-width:100%;min-height:39px;padding:9px 15px;border-radius:10px;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;font-size:.92rem;font-weight:600;line-height:1.4;letter-spacing:0;
+}
+.platform-admin-page .platform-gold-button,
+.platform-admin-page button[type="submit"]{background:linear-gradient(135deg,#d4a849,#b9872c);color:#fff;border-color:#c99a3d}
+.platform-admin-page .platform-gold-button:hover,
+.platform-admin-page button[type="submit"]:hover{filter:brightness(.96)}
+.historical-date-admin .platform-form label{display:grid;gap:7px;margin-bottom:13px;color:#1c385b;font-size:.92rem;font-weight:600;line-height:1.7}
+.historical-date-admin .platform-form input:not([type="checkbox"]),
+.historical-date-admin .platform-form select,
+.historical-date-admin .platform-form textarea{width:100%;min-height:44px;padding:10px 12px;border:1px solid #e1d8c6;border-radius:11px;background:#fff;color:#17375c;font:500 .95rem/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.historical-date-admin .historical-date-publish{display:flex!important;grid-template-columns:auto 1fr;align-items:center;justify-content:flex-start;gap:10px}
+.historical-date-admin .historical-date-publish input{width:18px;height:18px;min-height:0}
+.historical-date-row{align-items:center}
+.historical-date-row p{margin:5px 0;color:#66758a}
+.historical-date-row small{color:#8b95a4}
+.historical-date-row .review-actions{display:flex;flex-wrap:wrap;gap:8px}
+.historical-date-row .review-actions form{margin:0}
