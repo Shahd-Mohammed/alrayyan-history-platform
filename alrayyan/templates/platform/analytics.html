@@ -19,7 +19,7 @@
     <article><span>النقاط المسجّلة</span><strong>{{ overview.points_awarded }}</strong></article>
     <article><span>يحتجن متابعة</span><strong>{{ overview.support_count }}</strong></article>
 </section>
-{% set chart_max = [overview.tests, overview.worksheets, overview.submissions, overview.challenge_completions, overview.tutor_interactions, overview.character_attempts, overview.plan_verifications, overview.resource_downloads, overview.concept_map_views]|max %}
+{% set chart_max = [overview.submissions, overview.challenge_completions, overview.tutor_interactions, overview.character_attempts, overview.plan_verifications, overview.resource_downloads, overview.concept_map_views]|max %}
 <section class="platform-panel analytics-activity-chart" aria-label="مقارنة الأنشطة التعليمية">
   <div class="analytics-heading">
     <div><h2>نبض التعلّم في المنصة</h2><p>مقارنة بين عدد الأنشطة المسجّلة؛ أما النقاط والنتائج فمعروضة في المؤشرات والجدول أدناه.</p></div>
@@ -27,8 +27,6 @@
   <div class="activity-bars">
     {% for label, value in [
       ('تسليمات الاختبارات وأوراق العمل', overview.submissions),
-      ('الاختبارات المنشأة', overview.tests),
-      ('أوراق العمل', overview.worksheets),
       ('التحديات المكتملة', overview.challenge_completions),
       ('تفاعلات المعلم الذكي', overview.tutor_interactions),
       ('محاولات الشخصيات', overview.character_attempts),
@@ -61,6 +59,6 @@
 <section class="platform-panel analytics-note">
   <h2>كيف نقرأ مؤشرات التعلّم؟</h2>
   <p>تجمع اللوحة البيانات المسجّلة عن الاختبارات وأوراق العمل، ومتوسط النتائج، وإتقان المفاهيم، والتحديات، وإجابات المعلم الذكي التي جرى تقييمها، ومحاولات الشخصيات، وخطة المراجعة، وتنزيل المواد واستكشاف الخرائط، إلى جانب معاملات النقاط الفعلية. استخدمي هذه المؤشرات معًا لفهم التقدّم وتحديد من تحتاج إلى دعم.</p>
-  <p class="analytics-note-secondary">تُمنح النقاط للأنشطة التعليمية المحددة في النظام، مثل إكمال الاختبارات وأوراق العمل، وإجابات التحديات، والإجابات التي يقيّمها المعلم الذكي، والإجابة الصحيحة في نشاط الشخصيات، وتنزيل المواد واستكشاف الخرائط وفق قواعد المكافأة المسجّلة. بعض مكافآت الاستكشاف تُحتسب مرة واحدة لكل مادة أو خريطة؛ لذلك لا يعني كل نقرة أو زيارة عابرة نقاطًا تلقائية. قد لا تظهر في اللوحة إلا الأنشطة التي يسجلها النظام بالفعل.</p>
+  <p class="analytics-note-secondary">تُمنح الطالبة نقاطًا عند إكمال اختبار أو ورقة عمل (مكافأة إكمال مع نقاط العلامة)، والإجابة في التحديات، وتقديم إجابة يقيّمها المعلم الذكي، والإجابة الصحيحة في نشاط «من أنا؟». تنزيل مادة من مكتبة التعلّم أو استكشاف خريطة يمنح مكافأة مرة واحدة لكل مادة أو خريطة لمنع تكرار النقاط بمجرد إعادة التحميل. فتح صفحة أو الضغط على زر وحده لا يمنح نقاطًا تلقائيًا. تجمع هذه اللوحة الأنشطة والنقاط التي يسجلها النظام فعلًا.</p>
 </section>
 {% endblock %}
