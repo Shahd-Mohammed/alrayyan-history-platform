@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ذاكرة التواريخ | الريان</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/learning.css', v='20261010-date-memory-1') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/learning.css', v='20261010-final-design-3') }}">
 </head>
 <body>
 {% include '_platform_header.html' %}
@@ -13,6 +13,24 @@
 <span>تدرّبي على استرجاع الحدث من تاريخه، ثم أعيدي مراجعة ما يصعب عليكِ على فترات متباعدة.</span>
 <div class="date-memory-summary"><b>{{ due_count }}</b><small>بطاقات جاهزة للمراجعة اليوم</small></div>
 </header>
+<section class="date-memory-generate-panel">
+  <div class="date-memory-generate-copy">
+    <span>مراجعة بتوجيه ذكي</span>
+    <h2>أنشئي بطاقاتكِ من الدرس الذي تختارينه</h2>
+    <p>اختاري درسًا من المنهج النشط، وسيستخرج الذكاء الاصطناعي التواريخ والأحداث الواردة فيه لتراجعيها بنفسكِ. لا تحتاجين إلى أن تنشئ المعلمة البطاقات يدويًا.</p>
+  </div>
+  <form method="post" action="{{ url_for('learning.generate_student_date_memory') }}" class="date-memory-generate-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="date-memory-lesson">الدرس</label>
+    <select id="date-memory-lesson" name="lesson_id" required>
+      <option value="">اختاري الدرس</option>
+      {% for lesson in lessons %}
+      <option value="{{ lesson.id }}">{{ lesson.unit.curriculum.subject }} · {{ lesson.unit.title }} · {{ lesson.title }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="date-memory-button" {% if not lessons %}disabled{% endif %}>أنشئي بطاقات بالذكاء الاصطناعي</button>
+  </form>
+</section>
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}<div class="date-memory-flashes">{% for category,message in messages %}<p class="alert {{ category }}">{{ message }}</p>{% endfor %}</div>{% endif %}
 {% endwith %}
@@ -35,7 +53,7 @@
 {% if review and review.next_review_at %}<small class="date-next-review">موعد المراجعة التالية: {{ review.next_review_at.strftime('%Y-%m-%d') }}</small>{% endif %}
 </article>
 {% else %}
-<div class="date-memory-empty"><span>✦</span><h2>ذاكرة التواريخ جاهزة لاستقبال أولى البطاقات</h2><p>لم تُنشر تواريخ للمراجعة بعد. أضيفي التواريخ والأحداث من إدارة التواريخ في لوحة المعلمة، ثم انشريها لتظهر هنا.</p><a href="{{ url_for('platform_admin.historical_dates') if current_user.role in ['teacher','admin'] else url_for('learning.library') }}">الانتقال إلى المحتوى</a></div>
+<div class="date-memory-empty"><span>✦</span><h2>ذاكرة التواريخ جاهزة لاستقبال أولى البطاقات</h2><p>لا توجد بطاقات لهذا الدرس بعد. اختاري درسًا من الأعلى، ودعي الذكاء الاصطناعي ينشئ لكِ بطاقات مراجعة من محتواه.</p><a href="{{ url_for('learning.library') }}">العودة إلى مكتبة التعلّم</a></div>
 {% endfor %}
 </div>
 </main>
