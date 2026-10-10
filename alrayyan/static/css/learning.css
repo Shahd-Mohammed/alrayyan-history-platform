@@ -622,3 +622,20 @@ button,.learning-grid a,.character-card summary,.character-actions button{
   .learning-page .character-actions{align-items:stretch}
   .learning-page .character-actions button{width:auto!important}
 }
+
+
+/* Tree-first concept map preview, consistent with the visual builder */
+.concept-tree-preview{display:block!important;padding:clamp(18px,4vw,40px)!important;overflow-x:auto}
+.concept-tree-preview-canvas{min-width:min-content}
+.concept-tree-preview-root,.concept-tree-preview-children{list-style:none;margin:0;padding:0}
+.concept-tree-preview-root{display:flex;flex-direction:column;align-items:center;gap:26px;min-width:max-content}
+.concept-tree-preview-branch{position:relative;display:flex;flex-direction:column;align-items:center;gap:12px;min-width:190px}
+.concept-tree-preview-node{width:min(280px,80vw);padding:18px 20px;border:1px solid #d7b967;border-radius:17px;background:linear-gradient(145deg,#fffdf7,#fff7e4);box-shadow:0 10px 25px rgba(19,47,82,.08);text-align:center}
+.concept-tree-preview-branch:first-child>.concept-tree-preview-node{border-color:#183b60;background:linear-gradient(135deg,#102b4a,#1d4b73);color:#fff}
+.concept-tree-preview-node strong{display:block;color:inherit;font-size:1.05rem;font-weight:800;line-height:1.65}
+.concept-tree-preview-node p{margin:7px 0 0;color:inherit;opacity:.78;font-size:.88rem;line-height:1.75}
+.concept-tree-preview-children{position:relative;display:flex;align-items:flex-start;justify-content:center;gap:20px;padding-top:24px}
+.concept-tree-preview-children:before{position:absolute;top:0;right:50%;height:18px;border-right:2px solid #d2b05f;content:""}
+.concept-tree-preview-children>.concept-tree-preview-branch:before{position:absolute;top:-24px;height:24px;border-right:2px solid #d2b05f;content:""}
+.concept-tree-edge-label{display:inline-flex;padding:4px 9px;border:1px solid #e6d7b3;border-radius:999px;background:#fff;color:#8a6829;font-size:.75rem;font-weight:800}
+@media(max-width:700px){.concept-tree-preview-children{gap:12px}.concept-tree-preview-node{width:205px;padding:14px}.concept-tree-preview-root{align-items:flex-start}}
