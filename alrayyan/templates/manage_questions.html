@@ -220,6 +220,15 @@ button,.assessment-tabs a,input[type="submit"],input[type="button"],.primary-act
 }
 @media(max-width:760px){.form-page .assessment-tabs{overflow-x:auto!important}.form-page .assessment-tabs a{flex:0 0 auto!important;min-width:max-content!important}}
 .time-limit-hint{display:block;margin-top:7px;color:#6d7889;font-size:.78rem;line-height:1.7}
+
+/* Final compact button controls: never stretch action buttons across the page */
+.form-page button,.form-page input[type="submit"],.form-page .primary-action,.form-page .question-actions button,.form-page .question-actions a{width:auto!important;max-width:100%!important;min-width:0!important;min-height:38px!important;padding:8px 15px!important;border-radius:11px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important}
+.form-page .assessment-tabs{margin:32px 0 30px!important;align-self:flex-start!important}
+.form-page .assessment-tabs a{font-size:.9rem!important;font-weight:750!important;padding:12px 18px!important}
+.form-page .assessment-tabs a.active{background:linear-gradient(135deg,#d8b45e,#b9872d)!important;color:#fff!important}
+.form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action,.form-page button.primary-action,.form-page input.primary-action{background:linear-gradient(135deg,#d8b45e,#b9872d)!important;color:#fff!important;border:1px solid #b9872d!important;box-shadow:0 5px 13px rgba(169,122,34,.14)!important}
+@media(max-width:760px){.form-page button,.form-page input[type="submit"],.form-page .primary-action{width:auto!important;max-width:100%!important}}
+
 </style>
 <style>
 /* Verified in-head styling: tabs stay on one line and save actions stay compact gold */
