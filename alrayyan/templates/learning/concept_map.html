@@ -44,4 +44,23 @@ document.addEventListener("DOMContentLoaded",function(){
  nodes.forEach(node=>{if(!visited.has(node.dataset.mapNode)){const item=render(node.dataset.mapNode,"فرع مستقل");if(item)tree.appendChild(item);}});
  canvas.replaceChildren(tree);
 });
-</script>{% endif %}</main>{% include '_platform_footer.html' %}</body></html>
+</script>
+<section class="map-relations-panel" aria-label="العلاقات بين مفاهيم الدرس">
+  <div class="map-relations-heading">
+    <span>روابط المعرفة</span>
+    <h2>العلاقات بين المفاهيم</h2>
+    <p>راجعي كيف يرتبط كل مفهوم بالآخر، إلى جانب الشجرة التي توضّح تفرّع الأفكار.</p>
+  </div>
+  <div class="map-relations-list">
+    {% for edge in concept_map.edges %}
+    <article class="map-relation-card">
+      <strong>{{ edge.source_node.label }}</strong>
+      <span class="map-relation-link">{{ edge.label or 'يرتبط بـ' }} <b>←</b></span>
+      <strong>{{ edge.target_node.label }}</strong>
+    </article>
+    {% else %}
+    <p class="learning-empty">لا توجد علاقات إضافية محفوظة لهذه الخريطة حتى الآن.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}</main>{% include '_platform_footer.html' %}</body></html>
