@@ -889,3 +889,13 @@ body,button,input,select,textarea,a{font-family:"IBM Plex Sans Arabic",Tahoma,sa
 .character-hero{min-height:300px!important;padding-block:clamp(30px,4vw,48px)!important}
 .date-memory-hero{gap:10px!important}
 @media(max-width:620px){.library-page-hero h1,.honor-page-hero h1,.character-hero h1{line-height:1.4!important}.library-page-hero>span,.honor-page-hero>span,.character-hero>span{line-height:1.9!important}}
+
+
+/* Compact, readable student-side buttons */
+.learning-page button,.learning-page .gold-action,.learning-page .hint-action,.learning-page .character-card summary,.learning-page .learning-grid article>a{
+  width:auto!important;max-width:100%;min-height:40px;padding:8px 14px;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;font-size:.92rem;font-weight:600;line-height:1.45;letter-spacing:0;
+}
+.learning-page .character-actions{align-items:center;gap:9px}
+.learning-page .character-actions button{flex:0 0 auto!important;width:auto!important;min-width:0;padding:8px 14px!important;font-size:.91rem!important;font-weight:600!important}
+.learning-page .character-answer input{font:500 1rem/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif!important}
