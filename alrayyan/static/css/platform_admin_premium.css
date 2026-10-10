@@ -2467,3 +2467,25 @@ button.concept-action,
   .platform-admin-body .classroom-list-panel .platform-list { padding-inline:0; }
   .platform-admin-body .classroom-admin-row { padding:15px !important; }
 }
+
+
+
+/* Concept-map studio: less visual noise, breathing room, white tree-action text */
+.concept-map-tabs{margin:26px 0 30px !important;gap:12px !important}
+.concept-map-tabs button{flex:0 0 auto !important;width:auto !important;min-width:145px;max-width:100%;white-space:nowrap;padding:11px 19px !important;border:1px solid #e3d1a9 !important;border-radius:13px !important;background:#fffaf0 !important;color:#173455 !important;font:650 .9rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif !important;box-shadow:0 5px 16px rgba(18,45,77,.045)}
+.concept-map-tabs button.is-active{background:linear-gradient(135deg,#d6ae52,#b78427) !important;color:#fff !important;border-color:#b78427 !important}
+.concept-map-tabs button span{color:inherit !important;opacity:.8}
+.tree-add-button{background:linear-gradient(135deg,#d5ad52,#b78427) !important;color:#fff !important}
+.tree-add-button span{color:#fff !important}
+.concept-map-card-actions{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap}
+.concept-map-card-actions form{margin:0}
+.concept-map-card-actions .concept-action{display:inline-flex;align-items:center;justify-content:center;width:auto !important;max-width:max-content !important;min-height:36px;padding:8px 13px !important;background:linear-gradient(135deg,#d5ad52,#b78427) !important;color:#fff !important;border:1px solid #b78427 !important;border-radius:10px;font:650 .86rem/1.35 "IBM Plex Sans Arabic",Tahoma,sans-serif !important;white-space:nowrap}
+.concept-map-card-actions .concept-action.delete{background:linear-gradient(135deg,#d5ad52,#b78427) !important;color:#fff !important;border-color:#b78427 !important}
+.concept-map-workspace{margin-top:0 !important}
+.concept-ai-workspace .platform-gold-button{width:auto !important;max-width:max-content !important}
+.test-library-section{margin-top:34px !important;padding:28px 30px !important;border:1px solid #ead9b9;border-radius:25px;background:#fff;box-shadow:0 15px 42px rgba(7,26,53,.055)}
+.test-library-heading{margin-bottom:22px !important}
+.test-library-grid{padding-inline:2px}
+.test-library-card{min-width:0}
+@media(max-width:760px){.concept-map-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px}.concept-map-tabs button{flex:0 0 auto !important}.test-library-section{padding:20px 16px !important}}
+
