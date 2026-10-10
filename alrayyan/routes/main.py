@@ -214,11 +214,7 @@ def student_progress():
     character_attempts = CharacterAttempt.query.filter_by(student_id=current_user.id).count()
     date_reviews = DateReview.query.filter_by(student_id=current_user.id).count()
     points_by_reason = {}
-    for transaction in (
-        XPTransaction.query.filter_by(student_id=current_user.id)
-        .order_by(XPTransaction.created_at.desc())
-        .limit(100).all()
-    ):
+    for transaction in XPTransaction.query.filter_by(student_id=current_user.id).all():
         points_by_reason[transaction.reason] = points_by_reason.get(transaction.reason, 0) + transaction.amount
 
     reason_labels = {
