@@ -200,6 +200,25 @@ button,.assessment-tabs a,input[type="submit"],input[type="button"],.primary-act
 .question-actions form{width:auto!important;flex:0 1 auto!important}
 .question-actions button,.question-actions a{width:auto!important;max-width:100%!important}
 
+
+/* Final overrides: wide single-line tabs, compact gold submit buttons */
+.form-page,.form-page button,.form-page input,.form-page select,.form-page textarea{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.form-page .assessment-tabs{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:10px!important;margin:28px 0 30px!important;padding:8px!important;overflow-x:auto!important}
+.form-page .assessment-tabs a{flex:1 0 auto!important;min-width:max-content!important;white-space:nowrap!important;padding:12px 17px!important;font-size:.88rem!important;font-weight:750!important;line-height:1.35!important}
+.form-page .assessment-tabs a.active{background:linear-gradient(135deg,#c99a3d,#a97820)!important;color:#fff!important;border-color:#b9892d!important}
+.form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action,
+.form-page .assessment-section button.primary-action,
+.form-page .assessment-section input.primary-action,
+.form-page .question-form button[type="submit"],
+.form-page .question-form input[type="submit"]{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;min-width:0!important;max-width:max-content!important;min-height:38px!important;
+ margin-top:14px!important;padding:8px 14px!important;border-radius:11px!important;
+ background:linear-gradient(135deg,#c99a3d,#a97820)!important;color:#fff!important;
+ border:1px solid #b9892d!important;font-size:.86rem!important;font-weight:750!important;
+ box-shadow:0 5px 12px rgba(153,105,24,.12)!important
+}
+@media(max-width:760px){.form-page .assessment-tabs{overflow-x:auto!important}.form-page .assessment-tabs a{flex:0 0 auto!important;min-width:max-content!important}}
 </style>
 </head>
 
