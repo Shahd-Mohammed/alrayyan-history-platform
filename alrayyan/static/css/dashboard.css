@@ -1459,3 +1459,31 @@ body, button, input, select, textarea, a {
   .form-page .assessment-tabs a, .form-page .assessment-tabs button { padding: 9px 13px !important; }
   .form-page .question-actions button, .form-page .form-actions input[type="submit"] { white-space: normal; }
 }
+
+
+/* Platform-wide compact, readable button system */
+button,input[type="submit"],input[type="button"],a.button,a.btn,.button,.btn,
+.primary-action,.gold-action,.platform-gold-button,.test-primary-button,
+.test-secondary-button,.question-edit-action,.question-delete-action,
+.grade-attempt-action,.results-primary-link {
+  display:inline-flex !important;align-items:center !important;justify-content:center !important;
+  flex:0 0 auto !important;width:auto !important;min-width:0 !important;max-width:max-content !important;
+  min-height:36px !important;padding:8px 14px !important;border-radius:10px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;font-size:.88rem !important;
+  font-weight:700 !important;line-height:1.35 !important;letter-spacing:0 !important;
+  white-space:nowrap !important;text-transform:none !important;
+}
+button[type="submit"],input[type="submit"],.platform-gold-button,.test-primary-button,
+.primary-action,.gold-action,.results-primary-link,.grade-attempt-action {
+  background:linear-gradient(135deg,#c99a3d,#ad7b24) !important;
+  color:#fff !important;border:1px solid #b7862e !important;
+  box-shadow:0 4px 10px rgba(153,105,24,.11) !important;
+}
+.question-delete-action,.danger-action,.test-card-action.delete {
+  background:#fff !important;color:#8b3535 !important;border:1px solid #e6caca !important;box-shadow:none !important;
+}
+@media(max-width:620px) {
+  button,input[type="submit"],input[type="button"],a.button,a.btn,.button,.btn {
+    max-width:100% !important;
+  }
+}
