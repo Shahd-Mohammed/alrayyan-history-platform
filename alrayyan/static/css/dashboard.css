@@ -1391,3 +1391,71 @@ button,input[type="submit"],input[type="button"],a.button,.button,.btn{
 .form-page .test-library-section {margin-top:32px!important}
 .form-page .results-table-wrap,.form-page .results-panel {margin-inline:0!important}
 @media(max-width:650px){.form-page button,.form-page input[type="submit"],.form-page .primary-action,.form-page .grade-attempt-action{white-space:normal}}
+
+
+/* Last-pass typography and compact action sizing for assessment management */
+body, button, input, select, textarea, a {
+  font-family: "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.form-page .assessment-tabs {
+  margin: 30px 0 30px !important;
+  padding: 8px !important;
+  border-radius: 15px !important;
+  gap: 10px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+}
+.form-page .assessment-tabs a,
+.form-page .assessment-tabs button {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  min-height: 40px !important;
+  padding: 10px 18px !important;
+  white-space: nowrap !important;
+  font-size: .9rem !important;
+  font-weight: 750 !important;
+}
+.form-page .assessment-tabs a.active,
+.form-page .assessment-tabs button.active {
+  background: linear-gradient(135deg,#d2a84f,#b48127) !important;
+  border-color: #b48127 !important;
+  color: #fff !important;
+}
+.form-page .question-actions,
+.form-page .question-actions button,
+.form-page .question-actions a,
+.form-page .form-actions button,
+.form-page .form-actions input[type="submit"],
+.form-page .grade-attempt-action {
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 36px !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  font-size: .86rem !important;
+  font-weight: 750 !important;
+  line-height: 1.35 !important;
+  white-space: nowrap;
+}
+.form-page .question-actions button,
+.form-page .form-actions input[type="submit"],
+.form-page .grade-attempt-action,
+.form-page button.save-settings,
+.form-page button.save-question {
+  background: linear-gradient(135deg,#d2a84f,#b48127) !important;
+  border: 1px solid #b48127 !important;
+  color: #fff !important;
+}
+.form-page .question-actions button *,
+.form-page .form-actions input[type="submit"] * { color: #fff !important; }
+.results-dashboard { margin-top: 30px !important; }
+.results-dashboard .results-hero,
+.results-dashboard .results-dashboard-header { margin-bottom: 28px !important; }
+.results-dashboard .results-panel { margin-top: 22px !important; }
+@media(max-width:650px) {
+  .form-page .assessment-tabs { gap: 7px !important; }
+  .form-page .assessment-tabs a, .form-page .assessment-tabs button { padding: 9px 13px !important; }
+  .form-page .question-actions button, .form-page .form-actions input[type="submit"] { white-space: normal; }
+}
