@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>مستواي | الريان</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css', v='20261010-student-progress-1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css', v='20261010-student-progress-2') }}">
 </head>
 <body>
 {% include '_platform_header.html' %}
@@ -27,21 +27,31 @@
         <article><span>مراجعات التواريخ</span><strong>{{ date_reviews }}</strong><small>مراجعة متباعدة</small></article>
     </section>
 
-    <section class="progress-panel">
-        <div class="progress-section-heading"><div><span>فهمكِ للمفاهيم</span><h2>إتقان الدروس</h2></div><p>تتحدّث هذه النسب مع التقييمات المسجلة في جلسات المعلّم الذكي.</p></div>
-        {% if masteries %}
-            <div class="progress-mastery-list">
-            {% for item in masteries %}
-                <article class="progress-mastery">
-                    <div><div><small>{{ item.lesson.title }}</small><h3>{{ item.concept }}</h3></div><strong>{{ item.mastery_score }}%</strong></div>
-                    <div class="progress-track"><span style="width: {{ item.mastery_score }}%"></span></div>
-                    <small>{% if item.mastery_score < 45 %}أولوية للمراجعة{% elif item.mastery_score < 70 %}يتقدم مع التدريب{% elif item.mastery_score < 85 %}مستوى جيد{% else %}إتقان متقدم{% endif %}</small>
-                </article>
-            {% endfor %}
+    {% set activity_max = [tests_completed, worksheets_completed, completed_challenges, tutor_evaluations, character_attempts, date_reviews]|max or 1 %}
+    <section class="progress-panel progress-dashboard-panel">
+        <div class="progress-section-heading">
+            <div><span>لوحة تقدّمكِ</span><h2>رحلتكِ بالأرقام</h2></div>
+            <p>تابعي نقاطكِ والأنشطة التي أنجزتِها عبر المنصة.</p>
+        </div>
+        <div class="progress-level-card">
+            <div class="progress-level-copy">
+                <span>المستوى {{ current_user.level or 1 }}</span>
+                <strong>{{ current_user.points or 0 }} <small>نقطة</small></strong>
+                <p>باقي {{ 500 - ((current_user.points or 0) % 500) }} نقطة للوصول إلى المستوى التالي.</p>
             </div>
-        {% else %}
-            <div class="progress-empty">ابدئي محادثة تعليمية مع المعلّم الذكي، وستظهر هنا المفاهيم التي تم تقييمها.</div>
-        {% endif %}
+            <div class="progress-level-track" role="progressbar" aria-label="التقدم نحو المستوى التالي" aria-valuemin="0" aria-valuemax="500" aria-valuenow="{{ (current_user.points or 0) % 500 }}">
+                <span style="width:{{ (((current_user.points or 0) % 500) / 5)|round|int }}%"></span>
+            </div>
+        </div>
+        <div class="progress-activity-chart" role="img" aria-label="رسم بياني لعدد الأنشطة التعليمية">
+            <div class="progress-chart-row"><span>الاختبارات المكتملة</span><div class="progress-chart-track"><i style="width:{{ ((tests_completed / activity_max) * 100)|round|int }}%"></i></div><b>{{ tests_completed }}</b></div>
+            <div class="progress-chart-row"><span>أوراق العمل</span><div class="progress-chart-track"><i style="width:{{ ((worksheets_completed / activity_max) * 100)|round|int }}%"></i></div><b>{{ worksheets_completed }}</b></div>
+            <div class="progress-chart-row"><span>التحديات المكتملة</span><div class="progress-chart-track"><i style="width:{{ ((completed_challenges / activity_max) * 100)|round|int }}%"></i></div><b>{{ completed_challenges }}</b></div>
+            <div class="progress-chart-row"><span>تقييمات المعلّم الذكي</span><div class="progress-chart-track"><i style="width:{{ ((tutor_evaluations / activity_max) * 100)|round|int }}%"></i></div><b>{{ tutor_evaluations }}</b></div>
+            <div class="progress-chart-row"><span>تحدّي الشخصيات</span><div class="progress-chart-track"><i style="width:{{ ((character_attempts / activity_max) * 100)|round|int }}%"></i></div><b>{{ character_attempts }}</b></div>
+            <div class="progress-chart-row"><span>مراجعات التواريخ</span><div class="progress-chart-track"><i style="width:{{ ((date_reviews / activity_max) * 100)|round|int }}%"></i></div><b>{{ date_reviews }}</b></div>
+        </div>
+        <p class="progress-chart-note">الأشرطة تقارن عدد الأنشطة المسجّلة، بينما يعكس رصيد النقاط مجموع المكافآت التي حصلتِ عليها من أنشطة المنصة.</p>
     </section>
 
     <section class="progress-panel">
