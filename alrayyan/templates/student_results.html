@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نتائجي | الريان</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksheets.css', v='20261010-student-results-1') }}">
 </head>
 <body>
     {% include '_platform_header.html' %}
@@ -13,11 +13,12 @@
             <div>
                 <span class="results-eyebrow">متابعة التقدم</span>
                 <h1>أهلًا {{ current_user.first_name }}، هذه رحلتك التعليمية</h1>
-                <p>تابعي محاولاتك، قارني نتائجك، وعودي إلى أوراق العمل التي تحتاج مراجعة.</p>
+                <p>راجعي نتائج اختباراتكِ وأوراق عملكِ، وتابعي تقدّمكِ وما يحتاج إلى مراجعة.</p>
             </div>
-            <a class="results-primary-link" href="{{ url_for('worksheets.worksheet_list') }}">
-                تصفح أوراق العمل
-            </a>
+            <div class="student-results-hero-actions">
+                <a class="results-primary-link" href="{{ url_for('challenges.test_bank') }}">الاختبارات</a>
+                <a class="results-primary-link" href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
+            </div>
         </header>
 
         <section class="student-results-summary" aria-label="ملخص النتائج">
