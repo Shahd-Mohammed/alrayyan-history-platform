@@ -732,3 +732,17 @@ button,input[type="submit"],input[type="button"],
 button:not(.platform-menu-toggle):not(.platform-menu-toggle span) {
   flex:0 0 auto;
 }
+
+
+/* Consistent compact gold actions across the platform */
+.platform-gold-button,.platform-admin-body button[type="submit"]:not(.danger-action):not(.classroom-delete-button):not(.honor-remove-button),.platform-admin-body .concept-action,.platform-admin-body .tree-add-button,.platform-admin-body .review-actions a,.platform-admin-body .classroom-row-actions button:not(.classroom-delete-button),.platform-admin-body .honor-submit-button,.platform-admin-body .test-card-action:not(.delete),.platform-admin-body .test-primary-button,.platform-admin-body .test-secondary-button,.platform-admin-body .test-card-preview{
+display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;width:auto!important;max-width:100%!important;min-width:0!important;min-height:38px!important;padding:8px 14px!important;border:1px solid #b9872d!important;border-radius:10px!important;background:linear-gradient(135deg,#d7b45e 0%,#b9872d 100%)!important;color:#fff!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:14px!important;font-weight:700!important;line-height:1.35!important;text-align:center!important;text-decoration:none!important;white-space:nowrap!important;box-shadow:0 5px 13px rgba(139,101,30,.12)!important;cursor:pointer;transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
+.platform-gold-button:hover,.platform-admin-body button[type="submit"]:not(.danger-action):not(.classroom-delete-button):not(.honor-remove-button):hover,.platform-admin-body .concept-action:hover,.platform-admin-body .tree-add-button:hover,.platform-admin-body .review-actions a:hover,.platform-admin-body .classroom-row-actions button:not(.classroom-delete-button):hover,.platform-admin-body .honor-submit-button:hover,.platform-admin-body .test-primary-button:hover,.platform-admin-body .test-secondary-button:hover,.platform-admin-body .test-card-preview:hover{background:linear-gradient(135deg,#c99a3d 0%,#986b1d 100%)!important;color:#fff!important;transform:translateY(-1px);box-shadow:0 8px 17px rgba(139,101,30,.18)!important}
+.platform-admin-body .tree-add-button{color:#fff!important}
+.platform-admin-body .concept-map-card-actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
+.platform-admin-body .concept-map-card-actions form{width:auto!important;margin:0!important}
+.platform-admin-body .concept-map-card-actions .concept-action{min-height:36px!important;padding:7px 12px!important;font-size:13px!important}
+.platform-admin-body .concept-map-card-actions .concept-action.preview,.platform-admin-body .concept-map-card-actions .concept-action.publish{background:linear-gradient(135deg,#d7b45e,#b9872d)!important;border-color:#b9872d!important;color:#fff!important}
+.platform-admin-body .concept-map-card-actions .concept-action.delete,.platform-admin-body .danger-action,.platform-admin-body .classroom-delete-button,.platform-admin-body .honor-remove-button,.platform-admin-body .test-card-action.delete{background:linear-gradient(135deg,#b64c4c,#8f3030)!important;border-color:#a63e3e!important;color:#fff!important}
+.platform-admin-body .platform-form .platform-gold-button,.platform-admin-body .concept-form-footer button{justify-self:start!important;flex:0 0 auto!important}
+.platform-admin-body .platform-form button[type="submit"]{width:auto!important}
