@@ -1,4 +1,4 @@
-@import url("platform.css?v=20261010-global-button-4");
+@import url("platform.css?v=20261010-global-button-6");
 @import url("learning_premium.css");
 :root{--navy:#132f52;--gold:#c89936;--cream:#faf7f0;--muted:#677489}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--navy);font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}.learning-page{width:min(1180px,calc(100% - 28px));margin:32px auto 80px}.learning-hero{padding:clamp(28px,6vw,68px);border-radius:34px;color:#fff;background:radial-gradient(circle at 8% 10%,rgba(217,174,81,.38),transparent 28%),linear-gradient(135deg,#102a49,#1f4a78);box-shadow:0 28px 70px rgba(15,42,73,.18)}.learning-hero.compact{padding:34px}.learning-hero p{margin:0;color:#efd18d;font-weight:900}.learning-hero h1{margin:.4rem 0;font-size:clamp(2rem,5vw,4.2rem)}.learning-hero span{font-size:1.08rem}section{margin-top:2rem}.learning-heading{display:flex;justify-content:space-between;align-items:center;gap:1rem}.learning-heading a{color:#986b16;font-weight:800}.learning-grid,.character-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.learning-grid article,.character-card,.relationship-panel{padding:1.35rem;border:1px solid rgba(200,153,54,.25);border-radius:22px;background:#fff;box-shadow:0 15px 35px rgba(19,47,82,.07)}.learning-grid article{display:flex;flex-direction:column;align-items:flex-start;min-height:235px}.learning-grid h3{margin:.35rem 0}.learning-grid p{color:var(--muted);line-height:1.8}.learning-grid a,.character-card summary{margin-top:auto;padding:.7rem 1rem;border-radius:12px;color:#fff;background:var(--gold);text-decoration:none;font-weight:900;cursor:pointer}.learning-icon{font-size:1.8rem}.learning-empty{grid-column:1/-1;padding:2rem;text-align:center;color:var(--muted)}.map-stage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;padding:2rem;border-radius:28px;background:linear-gradient(145deg,#fff,#fff8e9)}.map-node{padding:1rem;border:2px solid rgba(200,153,54,.35);border-radius:18px;background:#fff}.map-node summary{font-weight:900;cursor:pointer}.map-node p{color:var(--muted);line-height:1.7}.relationship-panel p{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap}.relationship-panel span{padding:.4rem .75rem;border-radius:999px;background:#fff3d7;color:#956918}.character-card{display:flex;flex-direction:column;gap:.7rem}.character-card h2{font-size:1.5rem}.character-card .clues{color:var(--muted);line-height:1.7}.character-card details{display:grid;gap:.6rem}.character-card details[open] summary{margin-bottom:1rem}.character-card h3{font-size:1.6rem;color:#9c6d13}@media(max-width:900px){.learning-grid,.character-grid,.map-stage{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){.learning-grid,.character-grid,.map-stage{grid-template-columns:1fr}.learning-page{width:min(100% - 18px,1180px)}.learning-hero{border-radius:24px}}
 
@@ -1067,3 +1067,101 @@ body,.learning-page,button,input,select,textarea {
 .date-memory-generate-form .date-memory-button{margin-top:3px}
 .date-memory-generate-form .date-memory-button:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:760px){.date-memory-generate-panel{grid-template-columns:1fr;padding:18px}.date-memory-generate-form .date-memory-button{white-space:normal!important}}
+
+
+/* Student learning heroes: shorter, clearer and consistent */
+.learning-page .historical-learning-hero {
+  min-height:0 !important;
+  padding:clamp(25px,4vw,44px) !important;
+  border-radius:28px !important;
+  gap:16px;
+}
+.learning-page .library-page-hero,
+.learning-page .honor-page-hero,
+.learning-page .character-hero,
+.learning-page .date-memory-hero {
+  min-height:0 !important;
+}
+.learning-page .library-page-hero h1,
+.learning-page .honor-page-hero h1,
+.learning-page .character-hero h1,
+.learning-page .date-memory-hero h1 {
+  margin:10px 0 12px !important;
+  font-size:clamp(2rem,4vw,3.15rem) !important;
+  line-height:1.3 !important;
+  letter-spacing:0 !important;
+}
+.learning-page .library-page-hero > span,
+.learning-page .honor-page-hero > span,
+.learning-page .character-hero > span:not(.hero-score),
+.learning-page .date-memory-hero > span {
+  max-width:760px;
+  font-size:.98rem !important;
+  line-height:1.85 !important;
+}
+.learning-page .library-page-hero .hero-accent,
+.learning-page .honor-page-hero .hero-accent {
+  display:inline;
+  margin:0;
+  font-size:inherit;
+  line-height:inherit;
+}
+.learning-page .character-hero {
+  padding-left:190px !important;
+}
+.learning-page .character-hero .hero-score {
+  left:clamp(22px,4vw,46px);
+  bottom:clamp(22px,4vw,42px);
+  min-width:100px;
+  min-height:100px;
+  padding:13px;
+  border-radius:20px;
+}
+.learning-page .character-hero .hero-score b { font-size:1.75rem; }
+.learning-page .date-memory-hero .date-memory-title { color:#fff !important; }
+.learning-page .date-memory-hero .hero-accent { color:#efd18d !important; }
+.learning-page .library-hero-pills { margin-top:15px; }
+.learning-page .library-hero-pills span {
+  padding:6px 12px;
+  border:1px solid rgba(239,209,141,.24);
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  color:rgba(255,255,255,.9);
+  font-size:.84rem;
+}
+.learning-page .learning-grid article>a,
+.learning-page .character-actions button,
+.learning-page .date-memory-button {
+  width:fit-content !important;
+  max-width:100%;
+  min-height:38px;
+  padding:8px 14px !important;
+  border-radius:10px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.88rem !important;
+  font-weight:650 !important;
+  line-height:1.4 !important;
+}
+.learning-page .learning-grid article>a,
+.learning-page .character-actions button.gold-action,
+.learning-page .date-memory-button {
+  background:linear-gradient(135deg,#c99a3d,#ad7c25) !important;
+  border:1px solid #b8862d !important;
+  color:#fff !important;
+}
+.learning-page .character-actions button.hint-action {
+  background:#fffdf8 !important;
+  color:#234365 !important;
+  border:1px solid #ded4c1 !important;
+}
+@media(max-width:620px) {
+  .learning-page .historical-learning-hero { padding:24px !important; }
+  .learning-page .character-hero { padding-left:24px !important; }
+  .learning-page .character-hero .hero-score {
+    position:relative;
+    left:auto;
+    bottom:auto;
+    align-self:flex-start;
+    margin-top:12px;
+  }
+}
