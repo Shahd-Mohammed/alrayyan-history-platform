@@ -13,14 +13,14 @@
 
         <header class="attempt-result-hero">
             <div class="attempt-result-copy">
-                <span>نتيجة ورقة العمل</span>
+                <span>{{ 'نتيجة الاختبار' if attempt.worksheet.creation_method == 'test' else 'نتيجة ورقة العمل' }}</span>
                 <h1>{{ attempt.worksheet.title }}</h1>
                 {% if attempt.worksheet.lesson %}<p>{{ attempt.worksheet.lesson.title }}</p>{% endif %}
 
                 {% if pending_manual_grading %}
                     <div class="result-message result-message-pending"><strong>النتيجة مؤقتة</strong><span>يوجد سؤال بانتظار تصحيح المعلمة.</span></div>
                 {% elif attempt.is_passed %}
-                    <div class="result-message result-message-success"><strong>أحسنتِ!</strong><span>اجتزتِ ورقة العمل بنجاح.</span></div>
+                    <div class="result-message result-message-success"><strong>أحسنتِ!</strong><span>{{ 'اجتزتِ الاختبار بنجاح.' if attempt.worksheet.creation_method == 'test' else 'اجتزتِ ورقة العمل بنجاح.' }}</span></div>
                 {% else %}
                     <div class="result-message result-message-review"><strong>خطوة جيدة، تابعي المحاولة</strong><span>راجعي الإجابات ثم عودي للمحاولة المتاحة.</span></div>
                 {% endif %}
