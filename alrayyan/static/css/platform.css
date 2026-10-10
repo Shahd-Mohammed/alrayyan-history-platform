@@ -490,3 +490,17 @@ button,input[type="submit"],input[type="button"],input[type="reset"],
   background:linear-gradient(135deg,#b8862d,#94671b)!important;
   color:#fff!important;
 }
+
+
+/* Shared button typography: calm weight, readable Arabic and content-sized controls */
+button,input[type="submit"],input[type="button"],.platform-login-link,.platform-footer a.footer-cta{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+  letter-spacing:0;
+}
+.platform-navigation button:not(.platform-menu-toggle),
+.platform-user-menu button,
+.platform-login-link{
+  width:auto;max-width:100%;font-size:.91rem;font-weight:600;line-height:1.4;
+}
+.platform-user-menu button{min-height:32px;padding:6px 10px}
+.platform-login-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 16px}
