@@ -1351,3 +1351,43 @@ button,input[type="submit"],input[type="button"],a.button,.button,.btn{
  .form-page .assessment-tabs{gap:7px!important}
  .form-page .assessment-tabs a,.form-page .assessment-tabs button{padding:9px 12px!important}
 }
+
+
+/* Compact gold action buttons and shared type rhythm on teacher question/results pages */
+.form-page button,
+.form-page input[type="submit"],
+.form-page .primary-action,
+.form-page .grade-attempt-action,
+.form-page .return-link,
+.form-page a.button {
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:36px!important;
+  padding:8px 14px!important;
+  border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.87rem!important;
+  font-weight:750!important;
+  line-height:1.35!important;
+  letter-spacing:0!important;
+  white-space:nowrap;
+}
+.form-page input[type="submit"],
+.form-page button[type="submit"],
+.form-page .primary-action,
+.form-page .grade-attempt-action {
+  background:linear-gradient(135deg,#d2a84f,#b48127)!important;
+  border:1px solid #b48127!important;
+  color:#fff!important;
+  text-decoration:none!important;
+  box-shadow:0 5px 12px rgba(180,129,39,.12);
+}
+.form-page input[type="submit"]:hover,
+.form-page button[type="submit"]:hover,
+.form-page .primary-action:hover,
+.form-page .grade-attempt-action:hover {background:linear-gradient(135deg,#bf9135,#9e6d1d)!important;color:#fff!important}
+.form-page .assessment-tabs {margin-bottom:28px!important}
+.form-page .test-library-section {margin-top:32px!important}
+.form-page .results-table-wrap,.form-page .results-panel {margin-inline:0!important}
+@media(max-width:650px){.form-page button,.form-page input[type="submit"],.form-page .primary-action,.form-page .grade-attempt-action{white-space:normal}}
