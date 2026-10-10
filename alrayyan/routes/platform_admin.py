@@ -1034,6 +1034,30 @@ def analytics():
         key=lambda item: (item["activity_score"], item["average"]),
         reverse=True,
     )
+    # Pearson correlation helps visualize whether participation and achievement
+    # tend to move together; it is descriptive, not proof of causation.
+    correlation = None
+    correlation_label = "لا تكفي البيانات بعد لتحديد اتجاه العلاقة"
+    if len(rows) > 1:
+        activity_values = [float(row["activity_score"]) for row in rows]
+        score_values = [float(row["average"]) for row in rows]
+        activity_mean = sum(activity_values) / len(activity_values)
+        score_mean = sum(score_values) / len(score_values)
+        covariance = sum(
+            (x - activity_mean) * (y - score_mean)
+            for x, y in zip(activity_values, score_values)
+        )
+        activity_variance = sum((x - activity_mean) ** 2 for x in activity_values)
+        score_variance = sum((y - score_mean) ** 2 for y in score_values)
+        denominator = (activity_variance * score_variance) ** 0.5
+        if denominator:
+            correlation = round(covariance / denominator, 3)
+            if correlation >= 0.25:
+                correlation_label = "علاقة طردية ملحوظة في هذه البيانات"
+            elif correlation <= -0.25:
+                correlation_label = "علاقة عكسية ملحوظة في هذه البيانات"
+            else:
+                correlation_label = "العلاقة ضعيفة أو غير واضحة في هذه البيانات"
     submitted_attempts = [attempt for attempt in all_attempts if attempt.submitted_at is not None]
     class_percentages = [attempt.percentage or 0 for attempt in submitted_attempts]
     total_tutor_interactions = sum(row["tutor_interactions"] for row in rows)
@@ -1058,7 +1082,8 @@ def analytics():
         "points_awarded": sum(transaction.amount for transaction in all_transactions),
         "support_count": sum(1 for row in rows if row["needs_support"]),
     }
-    return render_template("platform/analytics.html", rows=rows, overview=overview)
+    activity_max = max((row["activity_score"] for row in rows), default=1) or 1
+    return render_template("platform/analytics.html", rows=rows, overview=overview, activity_max=activity_max, correlation=correlation, correlation_label=correlation_label)
 
 
 @platform_admin_bp.route("/honor-board", methods=["GET", "POST"])
