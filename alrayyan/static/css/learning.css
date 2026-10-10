@@ -899,3 +899,54 @@ body,button,input,select,textarea,a{font-family:"IBM Plex Sans Arabic",Tahoma,sa
 .learning-page .character-actions{align-items:center;gap:9px}
 .learning-page .character-actions button{flex:0 0 auto!important;width:auto!important;min-width:0;padding:8px 14px!important;font-size:.91rem!important;font-weight:600!important}
 .learning-page .character-answer input{font:500 1rem/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+
+
+/* Student pages: shorter, balanced hero sections and consistent compact buttons */
+.learning-page { font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important; }
+.learning-hero,
+.historical-learning-hero {
+  padding: clamp(22px,3.2vw,38px) !important;
+  min-height: 0 !important;
+  border-radius: 25px !important;
+  background:
+    radial-gradient(circle at 84% 18%,rgba(239,209,141,.13),transparent 24%),
+    linear-gradient(135deg,#0d2744 0%,#173d64 58%,#102a49 100%) !important;
+}
+.learning-hero p { color:#e8c979 !important; font-weight:750 !important; }
+.learning-hero h1 { font-size:clamp(1.85rem,3.3vw,3rem) !important; line-height:1.35 !important; margin:.3rem 0 .55rem !important; }
+.learning-hero > span,
+.learning-hero > div > span { font-size:1rem !important; line-height:1.8 !important; color:rgba(255,255,255,.82) !important; }
+.character-hero { margin-bottom:24px !important; padding:26px clamp(22px,3vw,38px) !important; }
+.character-hero .hero-score { margin-top:12px !important; padding:7px 13px !important; }
+.library-page-hero,.honor-page-hero { padding:27px clamp(22px,3vw,38px) !important; }
+.library-page-hero h1,.honor-page-hero h1 { max-width:850px; }
+.library-page-hero .library-hero-pills { margin-top:13px !important; }
+.honor-page-hero .honor-hero-stats { margin-top:12px !important; }
+.learning-page button,
+.learning-page input[type="submit"],
+.learning-page .learning-grid a,
+.learning-page .character-actions button,
+.learning-page .character-card summary {
+  width:auto !important;
+  max-width:max-content !important;
+  min-width:0 !important;
+  min-height:36px !important;
+  padding:8px 13px !important;
+  border-radius:10px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.88rem !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+}
+.learning-page .learning-grid a,
+.learning-page .character-actions button,
+.learning-page .character-card summary {
+  color:#fff !important;
+  background:linear-gradient(135deg,#c99a3d,#ad7b24) !important;
+  border:1px solid #b7862e !important;
+}
+.learning-page .learning-grid article { min-height:205px !important; }
+@media(max-width:620px) {
+  .learning-hero,.historical-learning-hero { padding:22px !important; border-radius:20px !important; }
+  .learning-hero h1 { font-size:1.8rem !important; }
+}
