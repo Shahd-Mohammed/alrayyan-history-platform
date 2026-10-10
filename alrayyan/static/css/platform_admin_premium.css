@@ -1570,3 +1570,36 @@ button.concept-action,
 .inline-question-form .inline-form-grid{align-items:start}
 .inline-question-form .test-field-full{grid-column:1/-1}
 @media(max-width:650px){.test-question-type-builder .builder-row{grid-template-columns:1fr}.test-question-type-builder .builder-row button{justify-self:start}}
+
+
+/* Concept-map tabs use the full available row without wrapping their labels */
+.platform-admin-page .concept-map-tabs{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  width:100%!important;
+  max-width:100%!important;
+  align-self:stretch!important;
+  margin:30px 0 26px!important;
+  gap:10px!important;
+}
+.platform-admin-page .concept-map-tabs button{
+  width:100%!important;
+  min-width:0!important;
+  padding:9px 12px!important;
+  white-space:nowrap!important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.platform-admin-page .test-card-preview,
+.platform-admin-page .test-card-footer>a,
+.platform-admin-page .test-secondary-button,
+.platform-admin-page .inline-manage-link{
+  width:auto!important;
+  max-width:max-content!important;
+  min-width:0!important;
+  flex:0 0 auto!important;
+}
+@media(max-width:650px){
+  .platform-admin-page .concept-map-tabs{grid-template-columns:1fr!important}
+  .platform-admin-page .concept-map-tabs button{white-space:normal!important}
+}
