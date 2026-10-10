@@ -1,4 +1,4 @@
-"""Grounded AI drafts for teacher-reviewed learning content."""
+"""Grounded AI drafts and student self-study content from curriculum sources."""
 
 import json
 import re
@@ -23,7 +23,7 @@ def _json_payload(text):
 
 def _grounded_request(lesson, task_prompt):
     results = semantic_search(
-        f"{lesson.title} مفاهيم شخصيات أحداث أسباب نتائج",
+        f"{lesson.title} تواريخ سنوات أحداث تاريخية متى عام أسباب نتائج شخصيات مفاهيم",
         top_k=6,
         min_similarity=0.12,
         lesson_id=lesson.id,
