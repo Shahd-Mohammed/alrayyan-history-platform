@@ -1024,6 +1024,7 @@ def analytics():
             "concept_map_views": concept_map_views,
             "points_earned": points_earned,
             "activity_score": activity_score,
+            "has_results": bool(percentages),
             "needs_support": (
                 (bool(percentages) and average < 50)
                 or (bool(mastery_rows) and mastery_average < 50)
@@ -1036,11 +1037,13 @@ def analytics():
     )
     # Pearson correlation helps visualize whether participation and achievement
     # tend to move together; it is descriptive, not proof of causation.
+    # احسبي الارتباط من الطالبات اللاتي لديهن نتائج مكتملة فقط؛ لا نعامل غياب النتيجة كعلامة صفرية.
     correlation = None
-    correlation_label = "لا تكفي البيانات بعد لتحديد اتجاه العلاقة"
-    if len(rows) > 1:
-        activity_values = [float(row["activity_score"]) for row in rows]
-        score_values = [float(row["average"]) for row in rows]
+    correlation_label = "تحتاج اللوحة إلى نتائج فعلية لثلاث طالبات على الأقل"
+    correlation_rows = [row for row in rows if row["has_results"]]
+    if len(correlation_rows) >= 3:
+        activity_values = [float(row["activity_score"]) for row in correlation_rows]
+        score_values = [float(row["average"]) for row in correlation_rows]
         activity_mean = sum(activity_values) / len(activity_values)
         score_mean = sum(score_values) / len(score_values)
         covariance = sum(
@@ -1051,13 +1054,18 @@ def analytics():
         score_variance = sum((y - score_mean) ** 2 for y in score_values)
         denominator = (activity_variance * score_variance) ** 0.5
         if denominator:
-            correlation = round(covariance / denominator, 3)
+            correlation = round(max(-1.0, min(1.0, covariance / denominator)), 3)
             if correlation >= 0.25:
-                correlation_label = "علاقة طردية ملحوظة في هذه البيانات"
+                correlation_label = "علاقة طردية ملحوظة في البيانات المتاحة"
             elif correlation <= -0.25:
-                correlation_label = "علاقة عكسية ملحوظة في هذه البيانات"
+                correlation_label = "علاقة عكسية ملحوظة في البيانات المتاحة"
             else:
-                correlation_label = "العلاقة ضعيفة أو غير واضحة في هذه البيانات"
+                correlation_label = "العلاقة ضعيفة أو غير واضحة في البيانات المتاحة"
+        else:
+            correlation_label = "لا يظهر اتجاه واضح؛ أحد المتغيرين لا يتغير بين الطالبات";
+    elif len(correlation_rows) > 0:
+        correlation_label = "البيانات الحالية قليلة؛ نحتاج نتائج ثلاث طالبات على الأقل";
+
     submitted_attempts = [attempt for attempt in all_attempts if attempt.submitted_at is not None]
     class_percentages = [attempt.percentage or 0 for attempt in submitted_attempts]
     total_tutor_interactions = sum(row["tutor_interactions"] for row in rows)
