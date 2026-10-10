@@ -105,7 +105,7 @@
                         <div class="attempt-summary-heading">
                             <div>
                                 <span>حالة الحل التفاعلي</span>
-                                <h2>محاولاتك في هذه الورقة</h2>
+                                <h2>{{ 'محاولاتكِ في هذا الاختبار' if worksheet.creation_method == 'test' else 'محاولاتكِ في هذه الورقة' }}</h2>
                             </div>
 
                             {% if open_attempt %}
@@ -164,7 +164,7 @@
                         {% elif attempts_remaining == 0 %}
                             <p class="attempt-note exhausted-note">
                                 استخدمت جميع المحاولات التي
-                                حددتها المعلمة لهذه الورقة.
+                                {{ 'حدّدتها المعلمة لهذا الاختبار.' if worksheet.creation_method == 'test' else 'حدّدتها المعلمة لهذه الورقة.' }}
                             </p>
                         {% endif %}
                     </section>
@@ -268,14 +268,14 @@
                             </a>
                         {% else %}
                             <span class="disabled-button">
-                                التنزيل غير متاح لهذه الورقة
+                                {{ 'تنزيل ملف الاختبار غير متاح.' if worksheet.creation_method == 'test' else 'التنزيل غير متاح لهذه الورقة' }}
                             </span>
                         {% endif %}
                     </div>
                 {% else %}
                     <h2>نشاط تفاعلي</h2>
                     <p>
-                        لا يوجد ملف مرفق بهذه الورقة.
+                        {{ 'لا يوجد ملف مرفق بهذا الاختبار.' if worksheet.creation_method == 'test' else 'لا يوجد ملف مرفق بهذه الورقة.' }}
                     </p>
                 {% endif %}
             </aside>
