@@ -639,3 +639,10 @@ button,.learning-grid a,.character-card summary,.character-actions button{
 .concept-tree-preview-children>.concept-tree-preview-branch:before{position:absolute;top:-24px;height:24px;border-right:2px solid #d2b05f;content:""}
 .concept-tree-edge-label{display:inline-flex;padding:4px 9px;border:1px solid #e6d7b3;border-radius:999px;background:#fff;color:#8a6829;font-size:.75rem;font-weight:800}
 @media(max-width:700px){.concept-tree-preview-children{gap:12px}.concept-tree-preview-node{width:205px;padding:14px}.concept-tree-preview-root{align-items:flex-start}}
+
+@import url("platform.css?v=20261010-global-button-4");
+.concept-map-preview-hero{min-height:210px!important;padding:clamp(26px,4vw,44px)!important;border-radius:26px!important}
+.concept-map-preview-hero h1{font-size:clamp(2rem,4vw,3.25rem)!important;line-height:1.25!important}
+.concept-map-preview-hero span{max-width:800px;font-size:.98rem;line-height:1.8}
+.character-hero{min-height:270px!important;padding-top:38px!important;padding-bottom:38px!important}
+@media(max-width:620px){.concept-map-preview-hero{min-height:190px!important;padding:26px 22px!important}.character-hero{min-height:unset!important;padding:28px 22px!important}}
