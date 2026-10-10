@@ -268,6 +268,27 @@
                 </p>
             {% endif %}
         </section>
+
+        <section class="student-dashboard-panel student-recent-challenges">
+            <div class="student-panel-heading">
+                <div><span>مواصلة التقدّم</span><h2>آخر التحديات</h2><p>جولاتكِ الأخيرة وما حققتِه خلالها.</p></div>
+                <a href="{{ url_for('challenges.setup') }}">تحدٍّ جديد</a>
+            </div>
+            {% if latest_challenges %}
+                <div class="student-dashboard-grid">
+                {% for challenge in latest_challenges %}
+                    <article class="student-dashboard-card">
+                        <span>{{ 'مكتمل' if challenge.status == 'completed' else 'قيد التقدّم' }}</span>
+                        <h3>{{ challenge.lesson.title if challenge.lesson else 'تحدٍّ تاريخي' }}</h3>
+                        <p>النتيجة: <strong>{{ challenge.score or 0 }}</strong> · النقاط المكتسبة: <strong>{{ challenge.xp_earned or 0 }}</strong></p>
+                        <small>{{ challenge.started_at.strftime('%Y-%m-%d') if challenge.started_at else '' }}</small>
+                    </article>
+                {% endfor %}
+                </div>
+            {% else %}
+                <p class="student-empty-state">لم تبدئي تحديًا بعد. اختاري درسًا وابدئي أول جولة تدريبية.</p>
+            {% endif %}
+        </section>
     </main>
     {% include '_platform_footer.html' %}
 </body>
