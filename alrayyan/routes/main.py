@@ -169,6 +169,14 @@ def student_dashboard():
         completed_attempts[:3]
     )
 
+    latest_challenges = (
+        ChallengeSession.query
+        .filter_by(student_id=current_user.id)
+        .order_by(ChallengeSession.started_at.desc())
+        .limit(3)
+        .all()
+    )
+
     return render_template(
         "student_dashboard.html",
         available_worksheets=available_worksheets,
@@ -178,6 +186,7 @@ def student_dashboard():
             completed_attempts
         ),
         latest_results=latest_results,
+        latest_challenges=latest_challenges,
     )
 
 
