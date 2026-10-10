@@ -10,7 +10,7 @@
     >
 
     <title>
-        حل {{ worksheet.title }} | الريان
+        {{ 'اختبار' if worksheet.creation_method == 'test' else 'حل ورقة العمل' }}: {{ worksheet.title }} | الريان
     </title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,7 +45,7 @@
                 worksheet_id=worksheet.id
             ) }}"
         >
-            → العودة إلى تفاصيل الورقة
+            → العودة إلى {{ 'تفاصيل الاختبار' if worksheet.creation_method == 'test' else 'تفاصيل الورقة' }}
         </a>
 
         {% set messages = get_flashed_messages(
@@ -379,7 +379,7 @@
                         worksheet_id=worksheet.id
                     ) }}"
                 >
-                    العودة إلى تفاصيل الورقة
+                    العودة إلى {{ 'تفاصيل الاختبار' if worksheet.creation_method == 'test' else 'تفاصيل الورقة' }}
                 </a>
             </section>
         {% endif %}
