@@ -977,7 +977,12 @@ def analytics():
             attempt for attempt in student_attempts
             if not attempt.worksheet or attempt.worksheet.creation_method != "test"
         ]
-        percentages = [attempt.percentage for attempt in student_attempts]
+        # لا ندخل المحاولات التي تنتظر تصحيحًا يدويًا في متوسط النتائج.
+        graded_attempts = [
+            attempt for attempt in student_attempts
+            if not any(answer.is_correct is None for answer in attempt.answers)
+        ]
+        percentages = [attempt.percentage for attempt in graded_attempts]
         mastery_rows = ConceptMastery.query.filter_by(student_id=student.id).all()
         challenge_sessions = ChallengeSession.query.filter_by(
             student_id=student.id
@@ -1067,7 +1072,11 @@ def analytics():
         correlation_label = "البيانات الحالية قليلة؛ نحتاج نتائج ثلاث طالبات على الأقل";
 
     submitted_attempts = [attempt for attempt in all_attempts if attempt.submitted_at is not None]
-    class_percentages = [attempt.percentage or 0 for attempt in submitted_attempts]
+    graded_submitted_attempts = [
+        attempt for attempt in submitted_attempts
+        if not any(answer.is_correct is None for answer in attempt.answers)
+    ]
+    class_percentages = [attempt.percentage or 0 for attempt in graded_submitted_attempts]
     total_tutor_interactions = sum(row["tutor_interactions"] for row in rows)
     total_character_attempts = sum(row["character_attempts"] for row in rows)
     total_plan_verifications = sum(row["plan_verifications"] for row in rows)
