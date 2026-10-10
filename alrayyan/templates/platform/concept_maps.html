@@ -3,7 +3,7 @@
 {% block title %}الخرائط المفاهيمية{% endblock %}
 {% block eyebrow %}استوديو بناء المعرفة{% endblock %}
 {% block heading %}حوّلي الدرس إلى شجرة أفكار واضحة{% endblock %}
-{% block intro %}ابني خريطة واضحة من الفكرة الرئيسية إلى الفروع، ثم راجعيها قبل إتاحتها للطالبات.{% endblock %}
+{% block intro %}حوّلي أفكار الدرس إلى شجرة مترابطة، وراجعيها قبل اعتمادها للطالبات.{% endblock %}
 {% block content %}
 <section class="creation-tabs concept-map-tabs" data-creation-tabs aria-label="طرق إنشاء الخريطة">
   <button type="button" class="is-active" data-tab="manual"><span>01</span> إنشاء بصري</button>
@@ -14,7 +14,7 @@
 <section class="platform-panel map-creator-panel concept-map-workspace is-active" data-panel="manual">
   <div class="concept-section-heading">
     <div class="concept-section-icon">✦</div>
-    <div><span class="concept-kicker">مصمم الشجرة</span><h2>رتّبي المعرفة من الفكرة إلى الفروع</h2><p>ابدئي بالفكرة الرئيسية ثم أضيفي الفروع المتصلة بها. يمكنك سحب أي بطاقة وإفلاتها فوق فرع آخر لتغيير مكانها في الشجرة.</p></div>
+    <div><span class="concept-kicker">مصمم الشجرة</span><h2>رتّبي المعرفة من الفكرة إلى الفروع</h2><p>ابدئي بالفكرة الرئيسية ثم أضيفي الفروع المتصلة بها. يمكنك سحب الفروع وإفلاتها لإعادة ترتيب الشجرة بسهولة.</p></div>
   </div>
   <form method="post" class="platform-form concept-map-form" data-map-form>
     {{ form.hidden_tag() }}
@@ -28,7 +28,7 @@
       </div>
       <p class="tree-builder-hint"><span>↳</span> عند إضافة أول مفهوم سيكون هو الجذر الرئيسي، وبعدها يمكنك اختيار أي مفهوم ليكون أبًا لفرع جديد.</p>
       <div class="builder-canvas tree-canvas" data-builder-canvas aria-label="شجرة الخريطة المفاهيمية">
-        <div class="tree-empty-state" data-builder-empty><span>✧</span><strong>ابدئي من الفكرة الرئيسية</strong><p>اكتبي عنوان الموضوع ثم اضغطي «إضافة إلى الشجرة» لبناء أول عقدة.</p></div>
+        <div class="tree-empty-state" data-builder-empty><span>✧</span><strong>ابدئي من الفكرة الرئيسية</strong><p>اكتبي الفكرة الرئيسية ثم أضيفي الفروع المتصلة بها.</p></div>
       </div>
     </div>
     <div class="concept-form-footer"><p>ستُحفظ الخريطة بالحالة التي اخترتِها، ويمكنك معاينتها قبل نشرها.</p>{{ form.submit(class_='platform-gold-button') }}</div>
