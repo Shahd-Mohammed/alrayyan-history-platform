@@ -44,6 +44,8 @@
                     <summary>نتائجي</summary>
                     <div>
                         <a href="{{ url_for('assessment.my_results') }}">جميع النتائج</a>
+                        <a href="{{ url_for('main.student_progress') }}">سجلّ التقدّم والإنجاز</a>
+                        <a href="{{ url_for('teacher.my_points') }}">محفظة النقاط</a>
                     </div>
                 </details>
                 <details class="student-learning-menu">
@@ -56,9 +58,7 @@
                         <a href="{{ url_for('learning.characters') }}">اعرفي الشخصية</a>
                         <a href="{{ url_for('challenges.setup') }}">التحدي الذكي</a>
                         <a href="{{ url_for('teacher.learning_hub') }}">خطتي التعليمية</a>
-                        <a href="{{ url_for('main.student_progress') }}">رحلتي التعليمية</a>
                         <a href="{{ url_for('learning.date_memory') }}">ذاكرة التواريخ</a>
-                        <a href="{{ url_for('teacher.my_points') }}">محفظة نقاطي</a>
                         <a href="{{ url_for('learning.honor_board') }}">لوحة الشرف</a>
                     </div>
                 </details>
