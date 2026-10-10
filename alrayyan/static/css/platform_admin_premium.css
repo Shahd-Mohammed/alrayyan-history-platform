@@ -1747,3 +1747,130 @@ button.concept-action,
   background:linear-gradient(135deg,#bf9135,#9e6d1d)!important;
   color:#fff!important;
 }
+
+
+/* Final visual consistency pass: compact buttons, calm gold accents, and page spacing */
+.platform-admin-page,
+.platform-admin-page button,
+.platform-admin-page input,
+.platform-admin-page select,
+.platform-admin-page textarea,
+.platform-admin-page a {
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif;
+}
+.platform-admin-page button,
+.platform-admin-page input[type="submit"],
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .concept-action,
+.platform-admin-page .test-card-action,
+.platform-admin-page .classroom-delete-button,
+.platform-admin-page .honor-remove-button,
+.platform-admin-page .review-actions button,
+.platform-admin-page .review-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: auto !important;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+  font-size: .86rem;
+  font-weight: 750;
+  line-height: 1.35;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.platform-admin-page .platform-gold-button,
+.platform-admin-page button.platform-gold-button,
+.platform-admin-page .concept-action,
+.platform-admin-page .test-card-action.publish,
+.platform-admin-page .test-card-action.draft,
+.platform-admin-page .honor-submit-button {
+  background: linear-gradient(135deg,#d2a84f,#b48127) !important;
+  border: 1px solid #b48127 !important;
+  color: #fff !important;
+  box-shadow: 0 5px 13px rgba(180,129,39,.13);
+}
+.platform-admin-page .platform-gold-button *,
+.platform-admin-page .concept-action *,
+.platform-admin-page .test-card-action *,
+.platform-admin-page .honor-submit-button * { color: #fff !important; }
+.platform-admin-page .platform-gold-button:hover,
+.platform-admin-page .concept-action:hover,
+.platform-admin-page .test-card-action:hover,
+.platform-admin-page .honor-submit-button:hover {
+  background: linear-gradient(135deg,#bf9135,#9e6d1d) !important;
+  border-color: #9e6d1d !important;
+  color: #fff !important;
+}
+.platform-admin-page .concept-map-tabs {
+  margin: 30px 0 30px !important;
+  padding: 8px !important;
+  border: 1px solid #e7ddc9 !important;
+  border-radius: 16px !important;
+  background: #fffdf8 !important;
+  gap: 8px !important;
+}
+.platform-admin-page .concept-map-tabs button {
+  border: 1px solid transparent !important;
+  border-radius: 11px !important;
+  background: transparent !important;
+  color: #173657 !important;
+  font-weight: 750 !important;
+}
+.platform-admin-page .concept-map-tabs button.is-active {
+  background: linear-gradient(135deg,#d2a84f,#b48127) !important;
+  border-color: #b48127 !important;
+  color: #fff !important;
+  box-shadow: 0 5px 13px rgba(180,129,39,.16) !important;
+}
+.platform-admin-page .concept-map-tabs button.is-active span,
+.platform-admin-page .concept-map-tabs button.is-active * { color: #fff !important; }
+.platform-admin-page .concept-map-tabs button span { color: #9c711f !important; }
+.platform-admin-page .concept-map-workspace { margin-top: 0 !important; }
+.platform-admin-page .concept-map-library { margin-top: 30px !important; }
+.platform-admin-page .concept-map-card-actions { gap: 9px !important; }
+.platform-admin-page .concept-map-card-actions form { width: auto !important; margin: 0 !important; }
+.platform-admin-page .tree-add-button,
+.platform-admin-page button.tree-add-button {
+  width: auto !important;
+  max-width: max-content !important;
+  min-height: 38px !important;
+  padding: 8px 15px !important;
+  background: linear-gradient(135deg,#d2a84f,#b48127) !important;
+  border: 1px solid #b48127 !important;
+  color: #fff !important;
+  font-family: "IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-weight: 750 !important;
+}
+.platform-admin-page .tree-add-button *,
+.platform-admin-page button.tree-add-button * { color: #fff !important; }
+.platform-admin-page .classroom-admin-page { padding-inline: 14px !important; gap: 26px !important; }
+.platform-admin-page .classroom-admin-row { padding-inline: 12px !important; }
+.platform-admin-page .classroom-details strong { font-size: 1.08rem !important; font-weight: 800 !important; line-height: 1.5; }
+.platform-admin-page .classroom-details p,
+.platform-admin-page .classroom-details small { line-height: 1.7; }
+.platform-admin-page .test-center-page { gap: 28px !important; }
+.platform-admin-page .test-center-intro { margin-bottom: 4px !important; }
+.platform-admin-page .test-library-section { margin-top: 30px !important; padding: 30px !important; border-radius: 25px !important; }
+.platform-admin-page .test-library-heading { margin-bottom: 22px !important; }
+.platform-admin-page .test-library-grid { padding-inline: 8px !important; }
+.platform-admin-page .test-card-actions { gap: 8px !important; }
+.platform-admin-page .test-card-actions form { width: auto !important; }
+.platform-admin-page .test-card-footer a { width: auto !important; }
+.platform-admin-page .analytics-correlation-summary { max-width: 290px; }
+@media(max-width:650px) {
+  .platform-admin-page .concept-map-tabs { margin: 24px 0 24px !important; }
+  .platform-admin-page .concept-map-tabs button { white-space: nowrap !important; }
+  .platform-admin-page .classroom-admin-page { padding-inline: 0 !important; }
+  .platform-admin-page .test-library-section { padding: 20px 16px !important; }
+  .platform-admin-page button,
+  .platform-admin-page input[type="submit"],
+  .platform-admin-page .platform-gold-button,
+  .platform-admin-page .concept-action,
+  .platform-admin-page .test-card-action { white-space: normal; }
+}
