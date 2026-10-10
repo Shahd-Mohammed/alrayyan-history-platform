@@ -1565,3 +1565,24 @@ button,input,select,textarea {
   .form-page .assessment-tabs { justify-content:flex-start !important; }
   .form-page .assessment-tabs a,.form-page .assessment-tabs button { padding:9px 13px !important; }
 }
+
+
+
+/* Assessment editor hero and tabs aligned with the premium worksheet-upload look */
+.form-page .test-editor-hero{
+ display:grid;grid-template-columns:minmax(0,1fr) 190px;align-items:center;gap:24px;
+ margin-bottom:26px;padding:34px 38px;border:1px solid rgba(210,161,59,.35);
+ border-radius:25px;background:radial-gradient(circle at 88% 15%,rgba(210,161,59,.13),transparent 27%),linear-gradient(135deg,#fffdf8,#f8f2e5);
+ color:#173455;box-shadow:0 18px 45px rgba(7,26,53,.07)
+}
+.form-page .test-editor-hero .test-hero-copy>span{color:#a77b25;font-weight:750}
+.form-page .test-editor-hero h1{color:#102a49;font-family:"Aref Ruqaa",serif;line-height:1.35}
+.form-page .test-editor-hero p{max-width:760px;color:#667386;line-height:1.9}
+.form-page .test-editor-hero .test-hero-meta{background:#fff8e7;border:1px solid #e9d5a7;color:#8e661d}
+.form-page .test-editor-hero .test-hero-visual{opacity:.72}
+.form-page .assessment-tabs{display:flex;align-items:center;gap:10px;margin:24px 0 30px;padding:7px;border:1px solid #e8dfcf;border-radius:15px;background:#f7f4ed;width:max-content;max-width:100%;overflow-x:auto}
+.form-page .assessment-tabs a{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:auto!important;min-width:max-content;padding:10px 18px;border-radius:10px;background:transparent;color:#46566b;font:650 .9rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif;text-decoration:none;white-space:nowrap}
+.form-page .assessment-tabs a.active{background:linear-gradient(135deg,#d5ad52,#b78427);color:#fff;box-shadow:0 5px 13px rgba(156,109,28,.13)}
+.form-page .assessment-section{margin-top:0}
+@media(max-width:650px){.form-page .test-editor-hero{grid-template-columns:1fr;padding:25px 22px}.form-page .test-editor-hero .test-hero-visual{display:none}}
+
