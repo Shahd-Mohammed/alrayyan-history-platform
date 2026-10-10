@@ -645,3 +645,20 @@ button,.learning-grid a,.character-card summary,.character-actions button{
 .concept-map-preview-hero span{max-width:800px;font-size:.98rem;line-height:1.8}
 .character-hero{min-height:270px!important;padding-top:38px!important;padding-bottom:38px!important}
 @media(max-width:620px){.concept-map-preview-hero{min-height:190px!important;padding:26px 22px!important}.character-hero{min-height:unset!important;padding:28px 22px!important}}
+
+
+/* Student library, honor board and character discovery: compact navy-and-gold hero */
+.historical-learning-hero.library-page-hero,
+.historical-learning-hero.honor-page-hero{min-height:unset!important;padding:clamp(26px,4vw,42px)!important;border:1px solid rgba(222,190,112,.25)!important;border-radius:28px!important;background:radial-gradient(circle at 88% 12%,rgba(220,184,96,.19),transparent 28%),linear-gradient(130deg,#0b203d 0%,#173b64 58%,#244b73 100%)!important;box-shadow:0 22px 55px rgba(11,32,61,.16)!important}
+.historical-learning-hero.library-page-hero h1,
+.historical-learning-hero.honor-page-hero h1{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:clamp(1.9rem,3.5vw,3rem)!important;line-height:1.3!important;margin:.3rem 0 .6rem!important}
+.historical-learning-hero.library-page-hero>span,
+.historical-learning-hero.honor-page-hero>span{max-width:780px!important;font-size:.98rem!important;line-height:1.8!important}
+.historical-learning-hero .hero-accent{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;color:#efd18d!important}
+.historical-learning-hero .library-hero-pills,.historical-learning-hero .honor-hero-stats{margin-top:16px!important}
+.character-hero{min-height:unset!important;padding:clamp(28px,4vw,44px)!important;border-radius:28px!important;background:radial-gradient(circle at 88% 12%,rgba(220,184,96,.2),transparent 28%),linear-gradient(130deg,#0b203d 0%,#173b64 58%,#244b73 100%)!important}
+.character-hero .hero-score{min-width:104px!important;min-height:104px!important;padding:14px!important;border-radius:20px!important}
+.character-hero .hero-score b{font-size:1.75rem!important}
+body,button,input,select,textarea,a{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}
+.learning-page button,.learning-page a.button,.learning-page .button,.learning-page input[type="submit"]{width:auto;max-width:100%;min-height:38px;padding:8px 15px;border-radius:11px;font-weight:750;line-height:1.35;white-space:nowrap}
+@media(max-width:620px){.historical-learning-hero.library-page-hero,.historical-learning-hero.honor-page-hero,.character-hero{padding:26px 22px!important}.character-hero{padding-left:22px!important}.character-hero .hero-score{position:relative!important;left:auto!important;bottom:auto!important;margin-top:18px!important}}
