@@ -1,6 +1,11 @@
 {% extends "platform/_admin_base.html" %}
 {% block title %}استوديو الاختبارات | منصة الريان{% endblock %}
-{% block eyebrow %}
+{% block eyebrow %}استوديو الاختبارات{% endblock %}
+{% block heading %}اصنعي اختبارًا تاريخيًا من نفس المكان{% endblock %}
+{% block intro %}أنشئي الاختبار، أضيفي الأسئلة، وراجعي ما بنيتِه دون أن تغادري مركز الاختبارات.{% endblock %}
+
+{% block content %}
+<script>
 document.addEventListener("DOMContentLoaded", function () {
   const typeSelect = document.getElementById("question_type");
   if (!typeSelect) return;
@@ -40,11 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
   syncQuestionFields();
 });
 </script>
-{% block eyebrow %}استوديو الاختبارات{% endblock %}
-{% block heading %}اصنعي اختبارًا تاريخيًا من نفس المكان{% endblock %}
-{% block intro %}أنشئي الاختبار، أضيفي الأسئلة، وراجعي ما بنيتِه دون أن تغادري مركز الاختبارات.{% endblock %}
-
-{% block content %}
 
 <div class="test-center-page">
   <section class="test-center-hero">
