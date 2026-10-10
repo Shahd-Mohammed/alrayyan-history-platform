@@ -63,7 +63,7 @@
 
         <section class="student-stats">
             <article>
-                <span>أوراق العمل المتاحة</span>
+                <span>أوراق العمل المنشورة</span>
 
                 <strong>
                     {{ available_worksheets | length }}
@@ -119,9 +119,9 @@
 
                 <article class="student-dashboard-card">
                     <span>اختبارات وتدريبات</span>
-                    <h3>بنك الاختبارات</h3>
-                    <p>اختبارات سريعة، تحديات ذكية، وأوراق عمل منشورة في مكان واحد.</p>
-                    <a href="{{ url_for('challenges.test_bank') }}">فتح بنك الاختبارات</a>
+                    <h3>الاختبارات والتدريبات</h3>
+                    <p>ابدئي اختبارًا أعدّته المعلمة أو تدربي على درس من المنهج.</p>
+                    <a href="{{ url_for('challenges.test_bank') }}">استعراض الاختبارات</a>
                 </article>
 
                 <article class="student-dashboard-card">
@@ -139,6 +139,20 @@
                         {{ current_user.level or 1 }}. شاهدي كيف اكتسبتِ كل نقطة.
                     </p>
                     <a href="{{ url_for('teacher.my_points') }}">عرض محفظة النقاط</a>
+                </article>
+
+                <article class="student-dashboard-card">
+                    <span>تقدّمكِ في المنصة</span>
+                    <h3>مستواي</h3>
+                    <p>تابعي نتائج الاختبارات وأوراق العمل والتحديات وإتقان المفاهيم من لوحة واحدة.</p>
+                    <a href="{{ url_for('main.student_progress') }}">عرض تقدّمي</a>
+                </article>
+
+                <article class="student-dashboard-card">
+                    <span>مراجعة ممتعة</span>
+                    <h3>ذاكرة التواريخ</h3>
+                    <p>تدرّبي على ربط التاريخ بالحدث، وراجعي التواريخ التي تحتاج إلى تثبيت.</p>
+                    <a href="{{ url_for('learning.date_memory') }}">ابدئي المراجعة</a>
                 </article>
             </div>
         </section>
