@@ -514,7 +514,7 @@ button,input[type="submit"],input[type="button"]{font-size:.92rem;font-weight:60
 
 
 /* Site-wide button polish: compact controls, consistent Arabic typography */
-button,
+button:not(.platform-menu-toggle),
 input[type="submit"],
 input[type="button"],
 .platform-gold-button,
