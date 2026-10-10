@@ -511,3 +511,105 @@ button,input[type="submit"],input[type="button"],.platform-login-link,.platform-
 body{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}
 button,input[type="submit"],input[type="button"],select,textarea{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;letter-spacing:0}
 button,input[type="submit"],input[type="button"]{font-size:.92rem;font-weight:600;line-height:1.4}
+
+
+/* Site-wide button polish: compact controls, consistent Arabic typography */
+button,
+input[type="submit"],
+input[type="button"],
+.platform-gold-button,
+.gold-action,
+.primary-action,
+.challenge-primary-button,
+.challenge-secondary-button,
+.date-memory-button,
+.test-card-action,
+.concept-action,
+.tree-add-button {
+  box-sizing: border-box;
+  width: auto !important;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 15px;
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+  font-size: .9rem !important;
+  font-weight: 650 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+button:not(.platform-menu-toggle):not(.platform-user-menu button),
+input[type="submit"],
+input[type="button"] {
+  white-space: normal;
+}
+.platform-gold-button,
+.tree-add-button,
+.test-card-action.publish,
+.concept-action.preview,
+.concept-action.publish,
+.concept-action.delete,
+.concept-action,
+.date-memory-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #b8862d !important;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #c99a3d, #ad7c25) !important;
+  color: #fff !important;
+  box-shadow: 0 5px 12px rgba(151, 105, 27, .12);
+}
+.platform-gold-button:hover,
+.tree-add-button:hover,
+.test-card-action.publish:hover,
+.concept-action:hover,
+.date-memory-button:hover {
+  background: linear-gradient(135deg, #b8862d, #94671b) !important;
+  color: #fff !important;
+}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body button[type="submit"],
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button {
+  width: fit-content !important;
+  max-width: 100%;
+}
+.platform-admin-body .tree-add-button { color: #fff !important; }
+
+/* Replace tall dropdown lists with compact multi-column navigation panels */
+.platform-management-menu > div,
+.student-learning-menu > div {
+  width: min(560px, calc(100vw - 36px));
+  max-width: calc(100vw - 36px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  padding: 12px;
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+}
+.platform-management-menu > div a,
+.student-learning-menu > div a {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 9px 10px;
+  font-size: .88rem;
+  line-height: 1.45;
+  white-space: normal;
+}
+@media (max-width: 720px) {
+  .platform-management-menu > div,
+  .student-learning-menu > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 62vh;
+  }
+}
+@media (max-width: 420px) {
+  .platform-management-menu > div,
+  .student-learning-menu > div {
+    grid-template-columns: 1fr;
+  }
+}
