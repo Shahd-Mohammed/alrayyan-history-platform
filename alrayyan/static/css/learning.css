@@ -704,3 +704,54 @@ body,button,input,select,textarea,a{font-family:"IBM Plex Sans Arabic",Tahoma,sa
  .map-relation-card>strong{flex:1 1 100%}
  .map-relation-link{justify-content:center;width:100%}
 }
+
+
+/* Consistent student action buttons: compact, readable, and never stretched full-width */
+.learning-page button,
+.learning-page input[type="submit"],
+.learning-page a.button,
+.learning-page .button,
+.learning-page .gold-action,
+.learning-page .hint-action {
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:36px!important;
+  padding:8px 14px!important;
+  border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem!important;
+  font-weight:750!important;
+  line-height:1.35!important;
+  letter-spacing:0!important;
+  white-space:nowrap;
+}
+.learning-page .gold-action,
+.learning-page input[type="submit"] {
+  background:linear-gradient(135deg,#d2a84f,#b48127)!important;
+  border:1px solid #b48127!important;
+  color:#fff!important;
+}
+.learning-page .gold-action:hover,
+.learning-page input[type="submit"]:hover {
+  background:linear-gradient(135deg,#bf9135,#9e6d1d)!important;
+  color:#fff!important;
+}
+.learning-page .hint-action {
+  background:#fff9e9!important;
+  border:1px solid #e1c98d!important;
+  color:#79571b!important;
+}
+.learning-page .historical-learning-hero.character-hero {
+  margin-bottom:28px!important;
+}
+.learning-page .historical-learning-hero.character-hero>span {
+  max-width:760px!important;
+}
+.learning-page .historical-learning-hero.library-page-hero,
+.learning-page .historical-learning-hero.honor-page-hero {
+  margin-bottom:28px!important;
+}
+@media(max-width:620px){
+ .learning-page button,.learning-page input[type="submit"],.learning-page .gold-action,.learning-page .hint-action {white-space:normal}
+}
