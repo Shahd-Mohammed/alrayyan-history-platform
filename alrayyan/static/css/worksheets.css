@@ -1646,3 +1646,30 @@ button,input[type="submit"],input[type="button"],input[type="reset"],.button,.bt
 button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
   display:inline-flex;align-items:center;justify-content:center;
 }
+
+
+/* Student dashboard finish: balanced spacing, clearer typography and compact actions */
+.student-dashboard-page{width:min(1220px,calc(100% - 48px));margin:34px auto 76px;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}
+.student-welcome{padding:clamp(28px,4vw,46px);background:radial-gradient(circle at 12% 15%,rgba(222,183,99,.24),transparent 28%),linear-gradient(135deg,#102844,#1d456e);border:1px solid rgba(201,153,54,.24);box-shadow:0 22px 54px rgba(16,40,68,.15)}
+.student-welcome h1{font-size:clamp(2rem,3vw,2.7rem);line-height:1.45;margin:10px 0 14px}
+.student-welcome p{font-size:1.02rem;line-height:1.9}
+.student-primary-action,.student-dashboard-card>a,.student-panel-heading>a{width:auto;max-width:100%;min-height:42px;padding:10px 17px;display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;border-radius:11px;font:600 .94rem/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif;text-decoration:none;white-space:normal}
+.student-primary-action{background:linear-gradient(135deg,#d7ad50,#bd8927);color:#fff;box-shadow:0 8px 18px rgba(143,96,20,.16)}
+.student-stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:22px 0 28px}
+.student-stats article{padding:22px;border-radius:18px;border-color:#e6dcc9;box-shadow:0 10px 28px rgba(16,40,68,.045)}
+.student-stats span{display:block;line-height:1.7;font-size:.92rem}
+.student-stats strong{font-size:2rem;line-height:1.25}
+.student-dashboard-panel{margin-top:26px;padding:clamp(20px,3vw,30px);border-radius:23px;box-shadow:0 12px 32px rgba(16,40,68,.055)}
+.student-panel-heading{margin-bottom:22px;align-items:flex-end}
+.student-panel-heading span{font-size:.85rem;letter-spacing:.01em}
+.student-panel-heading h2{font-size:1.45rem;line-height:1.5}
+.student-dashboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.student-dashboard-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:22px;border-color:#e8e2d7;border-radius:18px;background:linear-gradient(180deg,#fff,#fdfbf7);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.student-dashboard-card:hover{transform:translateY(-3px);border-color:#d9bd7b;box-shadow:0 14px 30px rgba(16,40,68,.09)}
+.student-dashboard-card>span{font-size:.8rem;font-weight:700;letter-spacing:.01em}
+.student-dashboard-card h3{margin:9px 0 8px;font-size:1.13rem;line-height:1.65}
+.student-dashboard-card p{flex:1;margin:0 0 18px;color:#647186;font-size:.94rem;line-height:1.9}
+.student-dashboard-card>a{margin-top:auto;background:#d0a044;color:#fff!important;font-weight:600;box-shadow:0 6px 14px rgba(166,112,27,.12)}
+.student-dashboard-card>a:hover,.student-primary-action:hover{background:#b9872d}
+@media(max-width:900px){.student-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.student-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.student-dashboard-page{width:calc(100% - 24px);margin-top:20px}.student-welcome{align-items:flex-start;flex-direction:column}.student-dashboard-grid{grid-template-columns:1fr}.student-panel-heading{align-items:flex-start;flex-direction:column}}
