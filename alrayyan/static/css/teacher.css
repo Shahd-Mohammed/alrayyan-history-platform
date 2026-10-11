@@ -910,3 +910,14 @@ button,input[type="submit"],input[type="button"],input[type="reset"],.button,.bt
 button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
   display:inline-flex;align-items:center;justify-content:center;
 }
+
+
+/* Learning-plan mastery test is a calm navy secondary action */
+.learning-hub-page .plan-actions .outline-action{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;min-width:0!important;max-width:max-content!important;min-height:37px!important;
+ padding:7px 14px!important;border:1px solid #173455!important;border-radius:10px!important;
+ background:linear-gradient(135deg,#173455,#244d76)!important;color:#fff!important;
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important
+}
+.learning-hub-page .plan-actions .outline-action:hover{background:linear-gradient(135deg,#0e2745,#1b3d61)!important;transform:translateY(-1px)}
