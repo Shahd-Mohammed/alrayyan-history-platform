@@ -453,11 +453,18 @@ def learning_hub():
     db.session.commit()
     masteries = (
         ConceptMastery.query.filter_by(student_id=current_user.id)
-        .order_by(ConceptMastery.mastery_score.asc()).all()
+        .order_by(
+            ConceptMastery.last_reviewed_at.desc(),
+            ConceptMastery.mastery_score.asc(),
+            ConceptMastery.id.desc(),
+        ).all()
     )
     plan_items = (
         LearningPlanItem.query.filter_by(student_id=current_user.id, status="pending")
-        .order_by(LearningPlanItem.priority.desc()).all()
+        .order_by(
+            LearningPlanItem.created_at.desc(),
+            LearningPlanItem.priority.desc(),
+        ).all()
     )
     recommendations = []
     for mastery in masteries[:3]:
