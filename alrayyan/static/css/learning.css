@@ -1782,3 +1782,23 @@ a.grade-attempt-action,
 .learning-page .character-card .character-actions .gold-action{color:#fff!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border-color:#b9872c!important}
 .learning-page .character-card .character-actions .hint-action{color:#102b4f!important;background:#fffdf8!important;border:1px solid #e4d8c3!important}
 .learning-page .learning-grid article>a,.learning-page .character-card summary{width:auto!important;max-width:max-content!important}
+
+
+/* Shared student-facing controls: compact, readable, and never stretched edge-to-edge */
+.learning-page button,.learning-page input[type="submit"],.learning-page a.button,.learning-page .gold-action,.learning-page .hint-action{
+ box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+ width:auto!important;max-width:100%;min-height:40px;padding:9px 16px!important;
+ border-radius:10px;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+ font-size:.91rem!important;font-weight:700!important;line-height:1.4!important;letter-spacing:0!important;
+ text-align:center;white-space:normal
+}
+.learning-page .gold-action,.learning-page input[type="submit"]{background:linear-gradient(135deg,#d8ad4d,#b9872d)!important;border:1px solid #b9872d!important;color:#fff!important}
+.learning-page .hint-action{background:#102f50!important;border:1px solid #102f50!important;color:#fff!important}
+.learning-page button:hover,.learning-page input[type="submit"]:hover{filter:brightness(1.05)}
+.learning-hero.historical-learning-hero.character-hero{margin-bottom:30px!important;padding:clamp(24px,4vw,40px) clamp(22px,5vw,52px)!important;border-radius:26px!important;gap:10px!important}
+.learning-hero.historical-learning-hero.character-hero>p{margin:0!important;color:#f1d694!important;font-weight:700!important}
+.learning-hero.historical-learning-hero.character-hero h1{font-size:clamp(2rem,4vw,3.2rem)!important;line-height:1.25!important;margin:8px 0 10px!important}
+.learning-hero.historical-learning-hero.character-hero>span{max-width:760px!important;line-height:1.8!important}
+.learning-hero.historical-learning-hero.character-hero .hero-score{margin-top:12px!important;padding:10px 15px!important;min-height:0!important;border-radius:14px!important}
+@media(max-width:620px){.learning-page button,.learning-page input[type="submit"],.learning-page .gold-action,.learning-page .hint-action{width:auto!important}.learning-hero.historical-learning-hero.character-hero{padding:24px 18px!important}}
+
