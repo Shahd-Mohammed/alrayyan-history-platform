@@ -3619,3 +3619,74 @@ button.concept-action,
     max-width: 100% !important;
   }
 }
+
+
+/* Test studio: keep the saved-test library separated and aligned to the page margins */
+.platform-admin-body .test-center-page {
+  width: 100% !important;
+  max-width: 1320px !important;
+  margin: 0 auto !important;
+  padding: 0 clamp(12px,2.2vw,28px) 36px !important;
+  box-sizing: border-box !important;
+}
+.platform-admin-body .test-center-page .test-builder-shell {
+  margin-bottom: 28px !important;
+}
+.platform-admin-body .test-center-page .test-library-premium {
+  margin: 30px 0 0 !important;
+  padding: clamp(20px,2.5vw,30px) !important;
+  width: 100% !important;
+  border: 1px solid #e7dcc8 !important;
+  border-radius: 24px !important;
+  background: linear-gradient(155deg,#fff 0%,#fffdf8 100%) !important;
+  box-shadow: 0 14px 34px rgba(13,41,77,.055) !important;
+}
+.platform-admin-body .test-center-page .test-primary-button,
+.platform-admin-body .test-center-page .test-card-action,
+.platform-admin-body .test-center-page .test-card-preview,
+.platform-admin-body .test-center-page .inline-manage-link,
+.platform-admin-body .test-center-page .inline-workspace-actions a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 37px !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  font-family: "IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size: .87rem !important;
+  font-weight: 750 !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+}
+.platform-admin-body .test-center-page .test-card-action.publish,
+.platform-admin-body .test-center-page .test-primary-button,
+.platform-admin-body .test-center-page .inline-workspace-actions a {
+  background: linear-gradient(135deg,#d8b45e,#b9872d) !important;
+  border: 1px solid #b9872d !important;
+  color: #fff !important;
+}
+.platform-admin-body .test-center-page .test-card-action.draft,
+.platform-admin-body .test-center-page .test-card-action.archive,
+.platform-admin-body .test-center-page .test-card-preview,
+.platform-admin-body .test-center-page .inline-manage-link {
+  background: #fffdf8 !important;
+  border: 1px solid #e0d5c0 !important;
+  color: #244b75 !important;
+}
+.platform-admin-body .test-center-page .test-card-action.delete {
+  background: #fff5f5 !important;
+  border: 1px solid #e7c4c4 !important;
+  color: #a33d3d !important;
+}
+@media(max-width:650px) {
+  .platform-admin-body .test-center-page {
+    padding-inline: 10px !important;
+  }
+  .platform-admin-body .test-center-page .test-library-premium {
+    margin-top: 22px !important;
+  }
+}
