@@ -930,3 +930,53 @@ a.btn,
   .classroom-admin-page { margin-inline: 8px !important; gap: 18px !important; }
   .classroom-list-panel .classroom-admin-row { margin-inline: 0 !important; padding: 15px !important; }
 }
+
+
+/* Site-wide button typography: readable labels and compact action widths. */
+button,
+input[type="submit"],
+input[type="button"]{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+}
+button:not(.platform-menu-toggle):not([data-slider-dot]):not([data-slider-next]):not([data-slider-previous]),
+input[type="submit"],
+input[type="button"],
+a.primary-button,
+a.slide-link,
+a.student-primary-action,
+a.results-primary-link,
+a.grade-attempt-action,
+.platform-gold-button,
+.primary-action,
+.primary-button,
+.student-primary-action,
+.test-primary-button,
+.tree-add-button,
+.gold-action,
+.concept-action{
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:0 0 auto!important;
+}
+.platform-gold-button,
+.primary-action,
+.primary-button,
+.student-primary-action,
+.test-primary-button,
+.tree-add-button,
+.gold-action,
+.concept-action,
+.results-primary-link,
+.grade-attempt-action,
+.slide-link{
+  color:#fff!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.88rem!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+}
