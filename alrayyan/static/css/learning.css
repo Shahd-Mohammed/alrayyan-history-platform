@@ -1817,6 +1817,9 @@ a.grade-attempt-action,
 
 
 
+
+.learning-page .character-actions { display:flex!important; flex-wrap:wrap!important; align-items:center!important; gap:9px!important; }
+.learning-page .character-actions button { flex:0 0 auto!important; width:auto!important; max-width:100%!important; }
 /* Unified student learning pages: compact navy-and-gold hero and readable compact actions */
 body,
 body button,
