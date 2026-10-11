@@ -100,14 +100,14 @@ def update_mastery(conversation, payload):
             student_id=current_user.id,
             lesson_id=conversation.lesson_id,
             concept=payload["concept"],
-            mastery_score=50,
+            mastery_score=0,
             correct_count=0,
             partial_count=0,
             incorrect_count=0,
         )
         db.session.add(mastery)
     mastery.mastery_score = min(max(
-        (mastery.mastery_score or 50) + payload["mastery_delta"], 0
+        (mastery.mastery_score or 0) + payload["mastery_delta"], 0
     ), 100)
     if payload["evaluation"] == "correct":
         mastery.correct_count = (mastery.correct_count or 0) + 1
