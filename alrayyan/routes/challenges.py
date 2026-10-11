@@ -505,7 +505,7 @@ def answer(session_id, question_id):
             student_id=current_user.id,
             lesson_id=session.lesson_id,
             concept=question.concept or "المفهوم العام",
-            mastery_score=50,
+            mastery_score=0,
             correct_count=0,
             partial_count=0,
             incorrect_count=0,
@@ -514,13 +514,13 @@ def answer(session_id, question_id):
 
     if is_correct:
         mastery.mastery_score = min(
-            (mastery.mastery_score or 50) + 6,
+            (mastery.mastery_score or 0) + 6,
             100,
         )
         mastery.correct_count = (mastery.correct_count or 0) + 1
     else:
         mastery.mastery_score = max(
-            (mastery.mastery_score or 50) - 5,
+            (mastery.mastery_score or 0) - 5,
             0,
         )
         mastery.incorrect_count = (mastery.incorrect_count or 0) + 1
