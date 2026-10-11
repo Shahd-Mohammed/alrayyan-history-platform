@@ -1409,3 +1409,65 @@ border-color:rgba(201,154,61,.24)!important;
     white-space:normal !important;
   }
 }
+
+/* Keep the date-memory count badge sized to its own content instead of stretching across the hero. */
+.learning-page .date-memory-hero .date-memory-summary {
+  display:inline-flex !important;
+  width:max-content !important;
+  max-width:100% !important;
+  align-self:flex-start !important;
+  justify-self:start !important;
+  flex:0 0 auto !important;
+  margin-top:18px !important;
+}
+.learning-page .date-memory-hero {
+  align-items:flex-start;
+}
+.archive-pagination {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:28px auto 8px;
+  padding:14px;
+}
+.archive-pagination a,
+.archive-pagination span {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:38px;
+  min-height:38px;
+  padding:7px 12px;
+  border:1px solid rgba(19,47,82,.14);
+  border-radius:10px;
+  background:#fff;
+  color:#173653;
+  font-size:.9rem;
+  font-weight:700;
+  line-height:1.35;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.archive-pagination a.is-current {
+  border-color:#b58227;
+  background:linear-gradient(135deg,#d1a64b,#b58227);
+  color:#fff;
+  box-shadow:0 5px 14px rgba(143,96,20,.15);
+}
+.archive-pagination a:hover { border-color:#b58227; transform:translateY(-1px); }
+.archive-unavailable {
+  margin-top:auto;
+  padding:.65rem .8rem;
+  border-radius:10px;
+  background:#f4f1ea;
+  color:#667489 !important;
+  font-size:.88rem !important;
+  font-weight:700;
+}
+.learning-archive-page .learning-hero { margin-bottom:28px; }
+.learning-archive-page .learning-heading { align-items:center; }
+@media(max-width:620px) {
+  .learning-page .date-memory-hero .date-memory-summary { width:max-content !important; max-width:100% !important; }
+}
