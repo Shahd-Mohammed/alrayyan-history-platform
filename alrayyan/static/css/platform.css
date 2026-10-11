@@ -1179,3 +1179,83 @@ body h1, body h2, body h3,
     box-shadow: 0 4px 12px rgba(7,26,53,.07);
   }
 }
+
+
+/* Shared button typography and sizing: compact, readable, never stretched across the page. */
+.platform-header button,
+.platform-admin-body button,
+.platform-admin-body input[type="submit"],
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .platform-primary-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .test-primary-button,
+.platform-admin-body .test-secondary-button,
+.learning-page button,
+.learning-page a.gold-action,
+.learning-page a.hint-action {
+    box-sizing: border-box;
+    width: auto;
+    max-width: 100%;
+    flex: 0 0 auto;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 16px;
+    border-radius: 11px;
+    font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif;
+    font-size: .92rem;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body input[type="submit"].platform-gold-button,
+.platform-admin-body .test-primary-button,
+.platform-admin-body .concept-action.preview {
+    color: #fff !important;
+    background: linear-gradient(135deg, #d5ad55, #b8862b) !important;
+    border: 1px solid #b8862b !important;
+    box-shadow: 0 5px 13px rgba(16, 43, 79, .10);
+}
+.platform-admin-body .platform-gold-button:hover,
+.platform-admin-body .test-primary-button:hover,
+.platform-admin-body .concept-action.preview:hover {
+    background: linear-gradient(135deg, #c99a3d, #a87822) !important;
+}
+.platform-admin-body .concept-action.publish,
+.platform-admin-body .test-secondary-button {
+    color: #fff !important;
+    background: #102b4f !important;
+    border: 1px solid #102b4f !important;
+}
+.platform-admin-body .concept-action.delete {
+    color: #8f3434 !important;
+    background: #fff !important;
+    border: 1px solid #e3b9b9 !important;
+}
+.platform-admin-body .platform-form button,
+.platform-admin-body .platform-form input[type="submit"],
+.platform-admin-body .concept-map-card-actions button,
+.platform-admin-body .concept-map-card-actions a {
+    width: auto !important;
+}
+.platform-admin-body .concept-map-card-actions,
+.platform-admin-body .concept-form-footer,
+.platform-admin-body .test-create-footer,
+.platform-admin-body .inline-workspace-actions {
+    gap: 12px;
+}
+.platform-menu-toggle { display: none !important; }
+@media (max-width: 900px) {
+    .platform-menu-toggle { display: inline-flex !important; }
+    .platform-menu-toggle { align-items: center; justify-content: center; flex-direction: column; }
+    .platform-navigation:not(.is-open) { display: none; }
+}
+@media (min-width: 901px) {
+    .platform-navigation { display: flex !important; }
+}
