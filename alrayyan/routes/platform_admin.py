@@ -1054,6 +1054,14 @@ def analytics():
         concept_map_views = sum(1 for transaction in student_transactions if transaction.reason == "concept_map_viewed")
         library_visits = sum(1 for transaction in student_transactions if transaction.reason == "learning_library_opened")
         points_earned = sum(transaction.amount for transaction in student_transactions)
+        challenge_answers = sum(
+            1 for transaction in student_transactions
+            if transaction.reason == "challenge_answer"
+        )
+        tutor_evaluated_answers = sum(
+            1 for transaction in student_transactions
+            if transaction.reason == "tutor_evaluated_answer"
+        )
         average = round(sum(percentages) / len(percentages), 1) if percentages else 0.0
         mastery_average = (
             round(sum(item.mastery_score for item in mastery_rows) / len(mastery_rows), 1)
@@ -1062,7 +1070,8 @@ def analytics():
         activity_score = (
             len(student_all_attempts) + len(challenge_sessions) + tutor_interactions
             + character_attempts + date_reviews + plan_verifications + resource_downloads
-            + concept_map_views + library_visits
+            + concept_map_views + library_visits + challenge_answers
+            + tutor_evaluated_answers
         )
         rows.append({
             "student": student,
@@ -1071,7 +1080,9 @@ def analytics():
             "average": average,
             "mastery_average": mastery_average,
             "challenge_count": len(challenges),
+            "challenge_answers": challenge_answers,
             "tutor_interactions": tutor_interactions,
+            "tutor_evaluated_answers": tutor_evaluated_answers,
             "character_attempts": character_attempts,
             "date_reviews": date_reviews,
             "plan_items": len(plan_items),
@@ -1145,6 +1156,8 @@ def analytics():
             for student in students
         ),
         "tutor_interactions": total_tutor_interactions,
+        "challenge_answers": sum(row["challenge_answers"] for row in rows),
+        "tutor_evaluated_answers": sum(row["tutor_evaluated_answers"] for row in rows),
         "character_attempts": total_character_attempts,
         "date_reviews": total_date_reviews,
         "plan_verifications": total_plan_verifications,
