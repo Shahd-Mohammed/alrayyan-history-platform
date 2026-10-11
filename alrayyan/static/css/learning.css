@@ -1782,5 +1782,3 @@ a.grade-attempt-action,
 .learning-page .character-card .character-actions .gold-action{color:#fff!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border-color:#b9872c!important}
 .learning-page .character-card .character-actions .hint-action{color:#102b4f!important;background:#fffdf8!important;border:1px solid #e4d8c3!important}
 .learning-page .learning-grid article>a,.learning-page .character-card summary{width:auto!important;max-width:max-content!important}
-
-.plan-unlinked-note{display:inline-flex;align-items:center;max-width:260px;padding:8px 12px;border:1px solid #e5d6b8;border-radius:10px;background:#fff9e9;color:#6e5420;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;font-size:.82rem;font-weight:650;line-height:1.5}
