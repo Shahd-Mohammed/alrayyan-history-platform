@@ -1054,9 +1054,13 @@ def analytics():
         concept_map_views = sum(1 for transaction in student_transactions if transaction.reason == "concept_map_viewed")
         library_visits = sum(1 for transaction in student_transactions if transaction.reason == "learning_library_opened")
         points_earned = sum(transaction.amount for transaction in student_transactions)
+        # Count every saved answer, not only answers that earned XP.
+        # XP transactions are a reward ledger and intentionally omit zero-point answers.
         challenge_answers = sum(
-            1 for transaction in student_transactions
-            if transaction.reason == "challenge_answer"
+            1
+            for session in challenge_sessions
+            for question in session.questions
+            if question.answer is not None
         )
         tutor_evaluated_answers = TutorMessage.query.join(TutorConversation).filter(
             TutorConversation.student_id == student.id,
