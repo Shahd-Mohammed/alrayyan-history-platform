@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261011-global-typography-9') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261011-user-dropdown-10') }}">
 
 <header class="platform-header">
     <a class="platform-brand" href="{{ url_for('main.home') }}">
@@ -72,16 +72,25 @@
                 </details>
             {% endif %}
 
-            <a href="{{ url_for('auth.account_settings') }}">حسابي</a>
-
-            <div class="platform-user-menu">
-                <span class="platform-avatar">{{ current_user.first_name[:1] }}</span>
-                <span>{{ current_user.first_name }}</span>
-                <form method="post" action="{{ url_for('auth.logout') }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit">تسجيل الخروج</button>
-                </form>
-            </div>
+            <details class="platform-user-dropdown">
+                <summary class="platform-user-trigger">
+                    <svg class="platform-user-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <circle cx="12" cy="8" r="3.5"></circle>
+                        <path d="M4.5 20c.5-4 3.2-6 7.5-6s7 2 7.5 6"></path>
+                    </svg>
+                    <span class="platform-user-name">{{ current_user.first_name }}</span>
+                    <span class="platform-user-chevron" aria-hidden="true">⌄</span>
+                </summary>
+                <div class="platform-user-dropdown-panel">
+                    <a href="{{ url_for('auth.account_settings') }}">
+                        <span aria-hidden="true">⚙</span> حسابي
+                    </a>
+                    <form method="post" action="{{ url_for('auth.logout') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit"><span aria-hidden="true">↪</span> تسجيل الخروج</button>
+                    </form>
+                </div>
+            </details>
         {% else %}
             <a class="platform-login-link" href="{{ url_for('auth.login') }}">تسجيل الدخول</a>
         {% endif %}
