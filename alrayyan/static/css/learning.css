@@ -1356,3 +1356,56 @@ border-color:rgba(201,154,61,.24)!important;
   display:inline-block!important;white-space:nowrap!important;overflow:visible!important;
 }
 
+
+
+/* Student hero headlines: keep the two-part titles on one line on laptops */
+.learning-page .learning-hero.historical-learning-hero.library-page-hero h1,
+.learning-page .learning-hero.historical-learning-hero.honor-page-hero h1 {
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:baseline !important;
+  gap:.36em !important;
+  white-space:nowrap !important;
+  max-width:100% !important;
+  font-family:"Aref Ruqaa","IBM Plex Sans Arabic",serif !important;
+  font-size:clamp(1.45rem,2.55vw,2.45rem) !important;
+  line-height:1.45 !important;
+  letter-spacing:0 !important;
+}
+.learning-page .learning-hero.historical-learning-hero.library-page-hero h1 .hero-accent,
+.learning-page .learning-hero.historical-learning-hero.honor-page-hero h1 .hero-accent {
+  display:inline !important;
+  flex:0 0 auto !important;
+  margin:0 !important;
+  white-space:nowrap !important;
+}
+.learning-page .learning-hero.historical-learning-hero.date-memory-hero h1 {
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:baseline !important;
+  gap:.36em !important;
+  white-space:nowrap !important;
+  font-family:"Aref Ruqaa","IBM Plex Sans Arabic",serif !important;
+  font-size:clamp(1.55rem,2.85vw,2.75rem) !important;
+  line-height:1.45 !important;
+}
+.learning-page .learning-hero.historical-learning-hero.date-memory-hero h1 .date-memory-title,
+.learning-page .learning-hero.historical-learning-hero.date-memory-hero h1 .hero-accent {
+  display:inline !important;
+  flex:0 0 auto !important;
+  margin:0 !important;
+  white-space:nowrap !important;
+}
+@media(max-width:760px) {
+  .learning-page .learning-hero.historical-learning-hero.library-page-hero h1,
+  .learning-page .learning-hero.historical-learning-hero.honor-page-hero h1,
+  .learning-page .learning-hero.historical-learning-hero.date-memory-hero h1 {
+    flex-wrap:wrap !important;
+    white-space:normal !important;
+  }
+  .learning-page .learning-hero.historical-learning-hero.library-page-hero h1 .hero-accent,
+  .learning-page .learning-hero.historical-learning-hero.honor-page-hero h1 .hero-accent,
+  .learning-page .learning-hero.historical-learning-hero.date-memory-hero h1 .hero-accent {
+    white-space:normal !important;
+  }
+}
