@@ -2911,3 +2911,96 @@ button.concept-action,
 .test-art-label{border-color:#e5d8bd!important;background:#fff!important;color:#173455!important;box-shadow:0 7px 17px rgba(23,52,85,.07)!important}
 .test-builder-shell,.inline-test-workspace{margin-top:0!important}
 @media(max-width:760px){.test-center-hero{min-height:0!important;padding:27px 22px!important;grid-template-columns:1fr!important}.test-center-hero-art{display:none!important}}
+
+
+/* Final shared Arabic button treatment: compact, readable, and consistently gold */
+.platform-admin-body button,
+.platform-admin-body input[type="submit"],
+.platform-admin-body input[type="button"],
+.platform-admin-body .button,
+.platform-admin-body .btn,
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .classroom-delete-button,
+.platform-admin-body .review-actions a,
+.platform-admin-body .review-actions button {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:38px!important;
+  padding:8px 14px!important;
+  border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.88rem!important;
+  font-weight:700!important;
+  line-height:1.35!important;
+  letter-spacing:0!important;
+  text-align:center!important;
+  text-decoration:none!important;
+  white-space:normal!important;
+  box-shadow:0 4px 12px rgba(116,82,24,.10);
+}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .classroom-delete-button,
+.platform-admin-body .review-actions a,
+.platform-admin-body .review-actions button,
+.platform-admin-body .curriculum-actions button {
+  background:linear-gradient(135deg,#d8b35d,#b7862b)!important;
+  border:1px solid #b7862b!important;
+  color:#fff!important;
+}
+.platform-admin-body .tree-add-button { color:#fff!important; }
+.platform-admin-body .concept-map-tabs {
+  margin:30px 0 34px!important;
+  padding:9px!important;
+  gap:10px!important;
+  border:1px solid #e7d9b8!important;
+  border-radius:16px!important;
+  background:#fffdf8!important;
+  box-shadow:0 10px 28px rgba(20,43,72,.06)!important;
+}
+.platform-admin-body .concept-map-tabs button {
+  flex:0 0 auto!important;
+  min-width:max-content!important;
+  white-space:nowrap!important;
+  background:#fff!important;
+  color:#173653!important;
+  border:1px solid #e5d7b7!important;
+}
+.platform-admin-body .concept-map-tabs button.is-active {
+  background:linear-gradient(135deg,#d8b35d,#b7862b)!important;
+  border-color:#b7862b!important;
+  color:#fff!important;
+}
+.map-status-filter {
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  margin:20px 0 18px;padding:15px 18px;
+  border:1px solid #e8dcc3;border-radius:16px;background:#fffdf8;
+}
+.map-status-filter label {color:#173653;font-weight:750}
+.map-status-filter select {
+  min-width:190px;min-height:40px;padding:8px 12px;
+  border:1px solid #d9c79e;border-radius:10px;background:#fff;
+  color:#173653;font:600 .9rem "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.platform-admin-body .concept-map-card-actions {gap:8px!important;align-items:center!important}
+.platform-admin-body .concept-map-card-actions form {width:auto!important;flex:0 0 auto!important}
+.platform-admin-body .concept-map-card-actions .concept-action {min-height:36px!important;padding:7px 12px!important}
+.platform-admin-body .classroom-admin-page {gap:26px!important}
+.platform-admin-body .classroom-list-panel {min-width:0!important;padding-inline:26px!important}
+.platform-admin-body .classroom-admin-row {margin-inline:8px!important;padding:20px!important;border-radius:16px!important}
+.platform-admin-body .classroom-details strong {font-size:1.08rem!important;font-weight:800!important}
+.platform-admin-body .classroom-details p,.platform-admin-body .classroom-details small {line-height:1.8!important}
+.platform-admin-body .platform-form input[name="name"] {font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+@media(max-width:700px){
+ .map-status-filter {align-items:stretch}
+ .map-status-filter select {width:100%;max-width:100%}
+ .platform-admin-body .classroom-list-panel {padding-inline:16px!important}
+ .platform-admin-body .classroom-admin-row {margin-inline:0!important}
+}
