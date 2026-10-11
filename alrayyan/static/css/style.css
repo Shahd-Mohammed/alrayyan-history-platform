@@ -323,3 +323,46 @@ button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
   .premium-hero h1 { font-size: clamp(2.35rem, 9vw, 3.15rem); line-height: 1.28; }
   .premium-hero-copy > p { font-size: .98rem; }
 }
+
+
+/* Featured worksheets slider: white numbering and a clear gold active control. */
+.featured-learning-section .slide-number {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-family: "IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-weight: 800 !important;
+}
+.featured-learning-section .slider-controls [data-slider-next],
+.featured-learning-section .slider-controls [data-slider-previous] {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  padding: 0 !important;
+  border: 1px solid #d8b45e !important;
+  background: #fffdf8 !important;
+  color: #244b75 !important;
+  border-radius: 50% !important;
+}
+.featured-learning-section .slider-dots button {
+  width: 9px !important;
+  min-width: 9px !important;
+  height: 9px !important;
+  min-height: 9px !important;
+  padding: 0 !important;
+  border: 1px solid #cbb98e !important;
+  border-radius: 99px !important;
+  background: #e8dfcc !important;
+}
+.featured-learning-section .slider-dots button.is-active {
+  width: 25px !important;
+  min-width: 25px !important;
+  background: linear-gradient(135deg,#d8b45e,#b9872d) !important;
+  border-color: #b9872d !important;
+  box-shadow: 0 3px 10px rgba(169,122,34,.2) !important;
+}
+.featured-learning-section .slider-controls [data-slider-next]:hover,
+.featured-learning-section .slider-controls [data-slider-previous]:hover {
+  background: linear-gradient(135deg,#d8b45e,#b9872d) !important;
+  color: #fff !important;
+}
