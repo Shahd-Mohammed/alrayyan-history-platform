@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261011-css-polish-3') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261011-single-open-dropdowns-4') }}">
 
 <header class="platform-header">
     <a class="platform-brand" href="{{ url_for('main.home') }}">
@@ -36,6 +36,9 @@
                         <a href="{{ url_for('platform_admin.characters') }}">الشخصيات التعليمية</a>
                         <a href="{{ url_for('platform_admin.honor_board') }}">لوحة الشرف</a>
                         <a href="{{ url_for('platform_admin.settings') }}">إعدادات المنصة</a>
+                        {% if current_user.role == 'admin' %}
+                        <a href="{{ url_for('platform_admin.admins') }}">إدارة حسابات الإدارة</a>
+                        {% endif %}
                     </div>
                 </details>
             {% elif current_user.role == 'student' %}
@@ -93,6 +96,17 @@
         toggle.addEventListener("click", () => {
             const isOpen = menu.classList.toggle("is-open");
             toggle.setAttribute("aria-expanded", String(isOpen));
+        });
+
+        // Keep only one header dropdown open at a time.
+        const dropdowns = menu.querySelectorAll("details.student-learning-menu");
+        dropdowns.forEach((details) => {
+            details.addEventListener("toggle", () => {
+                if (!details.open) return;
+                dropdowns.forEach((other) => {
+                    if (other !== details) other.open = false;
+                });
+            });
         });
     })();
 </script>
