@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if archive_kind == "maps" %}الخرائط المفاهيمية{% else %}ملخصات وملفات الدروس{% endif %} | مكتبة الريان</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/learning.css', v='20261011-learning-archives-1') }}">
+</head>
+<body>
+  {% include '_platform_header.html' %}
+  <main class="learning-page learning-archive-page">
+    <header class="learning-hero historical-learning-hero library-page-hero">
+      <p>مكتبة الريان</p>
+      <h1>{% if archive_kind == "maps" %}الخرائط المفاهيمية{% else %}ملخصات وملفات الدروس{% endif %}</h1>
+      <span>{% if archive_kind == "maps" %}استكشفي خرائط تربط المفاهيم والأحداث في صورة واحدة واضحة.{% else %}راجعي الملخصات والملفات المساندة المرتبطة بالدروس النشطة.{% endif %}</span>
+    </header>
+    <section>
+      <div class="learning-heading">
+        <h2>{% if archive_kind == "maps" %}كل الخرائط المنشورة{% else %}كل الملفات المنشورة{% endif %}</h2>
+        <a href="{{ url_for('learning.library') }}">العودة إلى المكتبة</a>
+      </div>
+      <div class="learning-grid">
+        {% for row in rows %}
+          <article>
+            <span class="learning-icon">{% if archive_kind == "maps" %}🧠{% else %}📄{% endif %}</span>
+            <small>{{ row.lesson.title if row.lesson else "محتوى عام" }}</small>
+            <h3>{{ row.title if archive_kind == "maps" else row.title }}</h3>
+            {% if archive_kind == "maps" %}
+              <p>{{ row.nodes|length }} مفاهيم مترابطة تساعدكِ على رؤية الصورة الكاملة.</p>
+              <a href="{{ url_for('learning.concept_map', map_id=row.id) }}">استكشاف الخريطة</a>
+            {% else %}
+              <p>{{ row.description or "محتوى أعدّته المعلمة لدعم فهم الدرس." }}</p>
+              {% if row.allow_download %}
+                <a href="{{ url_for('learning.download_resource', resource_id=row.id) }}">تنزيل الملف</a>
+              {% else %}
+                <span class="archive-unavailable">المعاينة والتنزيل غير متاحين لهذا الملف</span>
+              {% endif %}
+            {% endif %}
+          </article>
+        {% else %}
+          <p class="learning-empty">{% if archive_kind == "maps" %}لا توجد خرائط منشورة بعد.{% else %}لا توجد ملخصات أو ملفات منشورة بعد.{% endif %}</p>
+        {% endfor %}
+      </div>
+      {% if pagination.pages > 1 %}
+        <nav class="archive-pagination" aria-label="ترقيم صفحات المكتبة">
+          {% if pagination.has_prev %}<a href="{{ url_for(request.endpoint, page=pagination.prev_num) }}">السابق</a>{% endif %}
+          {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if page_num %}
+              <a href="{{ url_for(request.endpoint, page=page_num) }}" class="{% if page_num == pagination.page %}is-current{% endif %}" {% if page_num == pagination.page %}aria-current="page"{% endif %}>{{ page_num }}</a>
+            {% else %}<span class="pagination-ellipsis">…</span>{% endif %}
+          {% endfor %}
+          {% if pagination.has_next %}<a href="{{ url_for(request.endpoint, page=pagination.next_num) }}">التالي</a>{% endif %}
+        </nav>
+      {% endif %}
+    </section>
+  </main>
+  {% include '_platform_footer.html' %}
+</body>
+</html>
