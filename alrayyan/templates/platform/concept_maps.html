@@ -89,5 +89,21 @@
   {% endfor %}
   </div>
 </section>
-<script src="{{ url_for('static',filename='js/concept_map_builder.js',v='20261010-final-design-2') }}" defer></script>
+<script src="{{ url_for('static',filename='js/concept_map_builder.js',v='20261011-tree-studio-auto-ai-3') }}" defer></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const aiTab = document.querySelector('[data-tab="ai"]');
+  const aiForm = document.querySelector("[data-ai-generate-form]");
+  const manualLesson = document.querySelector('[data-panel="manual"] select[name="lesson_id"]');
+  const aiLesson = aiForm && aiForm.querySelector('select[name="lesson_id"]');
+  if (!aiTab || !aiForm || !aiLesson) return;
+
+  aiTab.addEventListener("click", () => {
+    if (manualLesson && manualLesson.value) aiLesson.value = manualLesson.value;
+    if (!aiLesson.value || aiForm.dataset.submitting === "1") return;
+    aiForm.dataset.submitting = "1";
+    aiForm.requestSubmit();
+  });
+});
+</script>
 {% endblock %}
