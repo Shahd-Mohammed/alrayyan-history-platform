@@ -8,7 +8,7 @@ from alrayyan.services.ai_teacher import build_context, prepare_sources
 from alrayyan.services.semantic_search import semantic_search
 
 
-PROMPT_VERSION = "tutor-v6-evidence-based-mastery"
+PROMPT_VERSION = "tutor-v7-social-message-mastery-guard"
 VALID_ACTIONS = {
     "explain",
     "ask_diagnostic",
@@ -45,6 +45,8 @@ NON_LEARNING_MESSAGE_PATTERNS = (
     r"راح تحفزني|تحكي كلام منيح|شجعيني|شجعني",
     r"على اي اساس|على أي أساس|إتقان المفهوم صار|اتقان المفهوم صار|نسبة الإتقان|نسبة الاتقان",
     r"ليش.*(?:اتقان|إتقان|نقاط|النسبة)|كيف.*(?:اتقان|إتقان|النسبة)",
+    r"^(?:اممم\\s*)?(?:اليوم\\s+)?متحمسة(?:\\s+يا عيني)?[.!؟،\\s]*$",
+    r"^(?:(?:يلا+|يلاا+)\\s*)?(?:ابشر|أبشر|تمام|جاهزة|جاهزين|خلينا نبدأ|يلا نبدأ)[.!؟،\\s]*$",
 )
 
 
