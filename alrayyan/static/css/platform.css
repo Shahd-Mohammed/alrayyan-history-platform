@@ -1129,3 +1129,22 @@ button,input[type="submit"],input[type="button"]{font-weight:700!important}
         align-self: flex-start;
     }
 }
+
+
+/* Shared platform action typography: compact buttons with no oversized full-row controls */
+.platform-admin-body button,
+.platform-admin-body input[type="submit"],
+.platform-admin-body input[type="button"]{
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:36px!important;
+  padding:7px 13px!important;
+  border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+  white-space:nowrap!important;
+}
