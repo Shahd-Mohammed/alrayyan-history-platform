@@ -1544,3 +1544,69 @@ border-color:rgba(201,154,61,.24)!important;
  .learning-hero.historical-learning-hero.library-page-hero,.learning-hero.historical-learning-hero.honor-page-hero,.learning-hero.historical-learning-hero.character-hero{padding:25px 20px!important}
  .learning-hero.historical-learning-hero.library-page-hero h1,.learning-hero.historical-learning-hero.honor-page-hero h1,.learning-hero.historical-learning-hero.character-hero h1{font-size:1.75rem!important}
 }
+
+
+/* Student learning pages: compact gold actions and shorter first sections */
+.learning-grid a,
+.character-card summary,
+.gold-action,
+.hint-action,
+.character-actions button{
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:36px!important;
+  padding:8px 14px!important;
+  border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.88rem!important;
+  font-weight:700!important;
+  line-height:1.45!important;
+  letter-spacing:0!important;
+  text-decoration:none!important;
+}
+.learning-grid a,
+.gold-action{
+  color:#fff!important;
+  background:linear-gradient(135deg,#c99a3d,#ad7c22)!important;
+  border:1px solid #b8892e!important;
+  box-shadow:0 5px 13px rgba(145,102,26,.12)!important;
+}
+.hint-action{
+  color:#173653!important;
+  background:#fffaf0!important;
+  border:1px solid #e3d2ad!important;
+}
+.learning-grid a:hover,.gold-action:hover,.hint-action:hover{transform:translateY(-1px);filter:brightness(1.02)}
+.historical-learning-hero.library-page-hero,
+.historical-learning-hero.honor-page-hero{
+  min-height:235px!important;
+  padding:clamp(26px,4vw,42px)!important;
+  border-radius:26px!important;
+  gap:10px!important;
+}
+.historical-learning-hero.character-hero{
+  min-height:250px!important;
+  padding-top:34px!important;
+  padding-bottom:34px!important;
+  border-radius:26px!important;
+}
+.learning-page > section{margin-top:24px!important}
+.learning-heading{margin-bottom:12px!important}
+.learning-grid{gap:14px!important}
+.learning-grid article{min-height:205px!important;padding:19px!important}
+.character-grid{gap:16px!important}
+.character-card{gap:10px!important}
+.character-actions{display:flex!important;flex-wrap:wrap!important;gap:9px!important}
+.character-actions button{flex:0 0 auto!important}
+@media(max-width:620px){
+  .historical-learning-hero.library-page-hero,
+  .historical-learning-hero.honor-page-hero,
+  .historical-learning-hero.character-hero{
+    min-height:0!important;
+    padding:25px 20px!important;
+    border-radius:20px!important;
+  }
+  .learning-grid article{min-height:0!important}
+  .character-actions button{flex:0 0 auto!important}
+}
