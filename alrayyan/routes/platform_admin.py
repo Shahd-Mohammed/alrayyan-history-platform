@@ -1058,10 +1058,13 @@ def analytics():
             1 for transaction in student_transactions
             if transaction.reason == "challenge_answer"
         )
-        tutor_evaluated_answers = sum(
-            1 for transaction in student_transactions
-            if transaction.reason == "tutor_evaluated_answer"
-        )
+        tutor_evaluated_answers = TutorMessage.query.join(TutorConversation).filter(
+            TutorConversation.student_id == student.id,
+            TutorMessage.role == "tutor",
+            TutorMessage.evaluation.in_([
+                "correct", "partially_correct", "incorrect", "needs_explanation"
+            ]),
+        ).count()
         average = round(sum(percentages) / len(percentages), 1) if percentages else 0.0
         mastery_average = (
             round(sum(item.mastery_score for item in mastery_rows) / len(mastery_rows), 1)
