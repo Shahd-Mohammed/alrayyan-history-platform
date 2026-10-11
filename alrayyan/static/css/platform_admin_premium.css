@@ -3400,3 +3400,16 @@ button.concept-action,
  .platform-admin-page .classroom-admin-page .classroom-admin-row{padding:17px!important}
 }
 
+
+/* Navy is the default action color; the few primary save/create controls stay gold. */
+.platform-admin-page button:not(.platform-gold-button):not(.tree-add-button):not(.platform-menu-toggle){
+ background:#102f50!important;color:#fff!important;border-color:#102f50!important
+}
+.platform-admin-page button:not(.platform-gold-button):not(.tree-add-button):not(.platform-menu-toggle):hover{
+ background:#1b496e!important;color:#fff!important;border-color:#1b496e!important
+}
+.platform-admin-page .concept-map-tabs button{white-space:nowrap!important}
+.platform-admin-page .concept-map-tabs button.is-active{background:#102f50!important;color:#fff!important}
+.platform-admin-page .concept-map-tabs button:not(.is-active){background:#fff!important;color:#183452!important;border-color:#e6dcc9!important}
+.platform-admin-page .concept-map-tabs button:not(.is-active):hover{background:#f4efe5!important;color:#102f50!important}
+
