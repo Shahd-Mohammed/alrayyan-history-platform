@@ -3322,3 +3322,37 @@ button.concept-action,
   background: linear-gradient(135deg,#bd8b2e,#96671b);
   color: #fff;
 }
+
+
+/* Refined concept-map tabs and action palette */
+.platform-admin-page .concept-map-tabs{margin:34px 0 32px!important;padding:8px!important;display:flex!important;flex-wrap:nowrap!important;gap:10px!important;border-radius:17px!important;background:rgba(255,255,255,.94)!important;box-shadow:0 10px 25px rgba(7,26,53,.07)!important}
+.platform-admin-page .concept-map-tabs button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;white-space:nowrap!important;padding:10px 17px!important;border-radius:12px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;font-weight:700!important}
+.platform-admin-page .concept-map-tabs button.is-active{color:#fff!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border-color:#b9872c!important}
+.platform-admin-page .tree-add-button{width:auto!important;max-width:max-content!important;min-width:0!important;min-height:38px!important;padding:8px 15px!important;color:#fff!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border:1px solid #b9872c!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;font-weight:700!important;white-space:nowrap!important}
+.platform-admin-page .tree-add-button span{color:#fff!important}
+.platform-admin-page .concept-map-card-actions .concept-action.preview{background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important}
+.platform-admin-page .concept-map-card-actions .concept-action.publish{background:#102b4f!important;border-color:#102b4f!important;color:#fff!important}
+.platform-admin-page .concept-map-card-actions .concept-action.delete{background:#fff7f7!important;border-color:#e5c2c2!important;color:#973b3b!important}
+
+/* Test studio: deep navy hero, spaced sections, and intentionally varied actions */
+.platform-admin-page .test-center-hero{background:radial-gradient(circle at 86% 14%,rgba(210,170,80,.23),transparent 28%),radial-gradient(circle at 12% 100%,rgba(48,89,133,.32),transparent 34%),linear-gradient(135deg,#071a35 0%,#102b4f 56%,#1c4268 100%)!important;color:#fff!important;border:1px solid rgba(210,170,80,.46)!important;box-shadow:0 24px 56px rgba(7,26,53,.18)!important}
+.platform-admin-page .test-center-hero h2{color:#fff!important}
+.platform-admin-page .test-center-hero p{color:rgba(255,255,255,.82)!important}
+.platform-admin-page .test-hero-kicker,.platform-admin-page .test-hero-points b{color:#f1d694!important}
+.platform-admin-page .test-builder-shell,.platform-admin-page .inline-test-workspace,.platform-admin-page .test-library-section{margin-top:26px!important;border:1px solid #e5d6b8!important;border-radius:24px!important;box-shadow:0 14px 34px rgba(7,26,53,.065)!important}
+.platform-admin-page .test-library-section{margin-inline:8px!important}
+.platform-admin-page .test-card-action.publish,.platform-admin-page .test-card-preview,.platform-admin-page .test-card-footer>a{background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border-color:#b9872c!important;color:#fff!important}
+.platform-admin-page .test-card-action.archive,.platform-admin-page .test-card-action.draft,.platform-admin-page .test-secondary-button{background:#102b4f!important;border-color:#102b4f!important;color:#fff!important}
+.platform-admin-page .test-card-action.delete{background:#fff7f7!important;border-color:#e5c2c2!important;color:#973b3b!important}
+.platform-admin-page .test-card-actions,.platform-admin-page .test-card-footer{display:flex!important;flex-wrap:wrap!important;gap:9px!important;align-items:center!important}
+.platform-admin-page .test-card-actions form,.platform-admin-page .test-card-actions button,.platform-admin-page .test-card-footer>a{width:auto!important;max-width:max-content!important}
+
+/* Classroom card margins and compact actions */
+.platform-admin-page .classroom-admin-page{padding-inline:clamp(8px,2.2vw,26px)!important;gap:26px!important}
+.platform-admin-page .classroom-list-panel{margin-inline:6px!important}
+.platform-admin-page .classroom-admin-row{margin-inline:4px!important;padding:18px 20px!important;border-radius:16px!important}
+.platform-admin-page .classroom-details strong{font-size:1.1rem!important;font-weight:750!important}
+.platform-admin-page .classroom-row-actions form{width:auto!important}
+.platform-admin-page .classroom-delete-button{width:auto!important;padding:8px 14px!important}
+.platform-admin-page .platform-form button[type="submit"],.platform-admin-page .platform-form input[type="submit"]{width:auto!important;min-width:0!important;max-width:max-content!important}
+@media(max-width:760px){.platform-admin-page .concept-map-tabs{margin:25px 0 23px!important;overflow-x:auto!important}.platform-admin-page .test-library-section{margin-inline:0!important}.platform-admin-page .classroom-admin-page{padding-inline:0!important;gap:18px!important}}
