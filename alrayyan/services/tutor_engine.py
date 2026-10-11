@@ -8,7 +8,7 @@ from alrayyan.services.ai_teacher import build_context, prepare_sources
 from alrayyan.services.semantic_search import semantic_search
 
 
-PROMPT_VERSION = "tutor-v5-warm-learning"
+PROMPT_VERSION = "tutor-v6-evidence-based-mastery"
 VALID_ACTIONS = {
     "explain",
     "ask_diagnostic",
@@ -37,6 +37,23 @@ MASTERY_DELTAS = {
 }
 
 
+NON_LEARNING_MESSAGE_PATTERNS = (
+    r"^(?:هلا|هلا هلا|أهلًا|اهلا|مرحبا|السلام عليكم)[!！。.\s]*$",
+    r"^(?:هههه+|ههه+|خخخ+|lol+)[!！。.\s]*$",
+    r"بمزح معك|أنا بمزح|انا بمزح|كنت بمزح|جامد انت|جامد إنت|يا خوي",
+    r"بطلت اعرف اجاوب|بطلت أعرف أجاوب|بطلت الأجواء حلوة|بطلت الاجواء حلوة",
+    r"راح تحفزني|تحكي كلام منيح|شجعيني|شجعني",
+    r"على اي اساس|على أي أساس|إتقان المفهوم صار|اتقان المفهوم صار|نسبة الإتقان|نسبة الاتقان",
+    r"ليش.*(?:اتقان|إتقان|نقاط|النسبة)|كيف.*(?:اتقان|إتقان|النسبة)",
+)
+
+
+def is_non_learning_message(text):
+    """Keep social chat and meta-feedback from changing mastery scores."""
+    normalized = re.sub(r"\s+", " ", (text or "").strip().lower())
+    return any(re.search(pattern, normalized) for pattern in NON_LEARNING_MESSAGE_PATTERNS)
+
+
 SYSTEM_PROMPT = """
 أنت معلّم الريان التفاعلي. هدفك الأساسي هو التعليم: الشرح، التدريب، قياس الفهم، والتشجيع، اعتمادًا فقط على سياق المنهج النشط المرسل.
 
@@ -56,6 +73,9 @@ SYSTEM_PROMPT = """
 13. لا تكثر من «حبيبتي» أو «قلبي» أو العبارات الحميمة. استخدم اسم الطالب أو تعبيرًا دافئًا عند الحاجة فقط.
 14. نوّع التشجيع واجعله مرتبطًا بما فعله الطالب، ولا تمدح إجابة خاطئة كأنها صحيحة.
 15. لا تبدأ كل رد بتحية رسمية، ولا تختم كل رد بسؤال دراسي. اجعل المحادثة طبيعية ومتنوعة مع بقاء التعليم هو المحور.
+16. لا تقيّم التحية أو المزاح أو المجاملة أو الشكوى أو الحديث عن النقاط/نسبة الإتقان أو طلب التشجيع على أنها إجابة علمية.
+17. لا تمنح أي زيادة أو نقصان في إتقان المفهوم إلا عندما تكون رسالة الطالب إجابة فعلية عن سؤال تعليمي واضح في الرسالة السابقة. إذا كانت دردشة أو تعليقًا جانبيًا، استخدم evaluation=not_evaluated وmastery_delta=0.
+18. لا تستنتج أن الطالبة أتقنت مفهومًا من مجرد استمرار المحادثة أو من نبرة كلامها. التقييم مبني على مضمون الإجابة ومدى مطابقته للسياق التعليمي.
 
 أعد JSON صالحًا فقط دون Markdown، بالحقول:
 reply: رد المعلم بالعربية، ويمكن أن ينتهي بسؤال تفاعلي واحد
@@ -202,7 +222,6 @@ def tutor_reply(conversation, student_text):
     evaluation_required = bool(
         previous_tutor_message
         and previous_tutor_message.action in {
-            "ask_diagnostic",
             "ask_follow_up",
             "give_hint",
         }
@@ -291,8 +310,16 @@ def tutor_reply(conversation, student_text):
                 raw_payload,
                 allowed_ids,
             )
+
+            # Social chat and meta-feedback are not assessed answers.
+            # Only score messages responding to an explicit learning question.
+            if is_non_learning_message(student_text) or not evaluation_required:
+                candidate_payload["evaluation"] = "not_evaluated"
+                candidate_payload["mastery_delta"] = 0
+
             if (
                 evaluation_required
+                and not is_non_learning_message(student_text)
                 and candidate_payload["evaluation"] == "not_evaluated"
                 and generation_attempt == 0
             ):
