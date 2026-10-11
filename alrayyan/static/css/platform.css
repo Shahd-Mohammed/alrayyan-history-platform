@@ -1309,3 +1309,42 @@ input[type="button"]:not(.platform-gold-button):hover{
 input[type="submit"]:not(.platform-gold-button):not(.submit-button){background:#102f50;color:#fff;border-color:#102f50}
 input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{background:#1b496e;color:#fff;border-color:#1b496e}
 
+
+
+/* Final navigation polish: warm gold login action and balanced public menu. */
+.platform-header .platform-login-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  max-width: max-content !important;
+  min-height: 40px !important;
+  padding: 9px 17px !important;
+  border: 1px solid #b9872d !important;
+  border-radius: 10px !important;
+  background: linear-gradient(135deg,#d8b45e,#b9872d) !important;
+  color: #fff !important;
+  font-family: "IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size: .9rem !important;
+  font-weight: 750 !important;
+  line-height: 1.35 !important;
+  white-space: nowrap !important;
+  box-shadow: 0 4px 12px rgba(145,102,26,.12) !important;
+}
+.platform-header .platform-login-link:hover {
+  background: linear-gradient(135deg,#e1c474,#c09236) !important;
+  border-color: #a87822 !important;
+  color: #fff !important;
+}
+.platform-navigation > a,
+.platform-navigation > details > summary {
+  font-family: "IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size: .98rem !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+}
+.platform-navigation { gap: clamp(10px,1.25vw,20px) !important; }
+@media (max-width: 980px) {
+  .platform-navigation > a { width: auto !important; max-width: 100% !important; }
+  .platform-header .platform-login-link { align-self: flex-start !important; }
+}
