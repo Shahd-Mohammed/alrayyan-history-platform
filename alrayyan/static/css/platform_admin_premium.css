@@ -3056,3 +3056,27 @@ button.concept-action,
  .platform-admin-body .test-library-section{margin-inline:0!important;padding:19px!important}
  .platform-admin-body .test-library-heading{align-items:flex-start!important;flex-direction:column!important}
 }
+
+
+/* Reduce decorative gold on the concept-map studio; keep gold reserved for actions */
+.platform-admin-body .concept-section-icon,
+.platform-admin-body .concept-section-icon.ai,
+.platform-admin-body .concept-section-icon.upload,
+.platform-admin-body .concept-section-icon.library {
+  color:#244a70!important;background:#eef3f8!important;border-color:#d9e2ec!important;
+}
+.platform-admin-body .concept-kicker {color:#6b7c90!important}
+.platform-admin-body .tree-builder,
+.platform-admin-body .concept-ai-workspace .ai-review-steps,
+.platform-admin-body .concept-map-library .concept-map-card {
+  border-color:#e3e8ee!important;
+}
+.platform-admin-body .tree-count,
+.platform-admin-body .concept-status,
+.platform-admin-body .library-count {
+  border-color:#dce4ec!important;background:#f4f7fa!important;color:#25496d!important;
+}
+.platform-admin-body .concept-map-card-mark {
+  border-color:#dce4ec!important;background:#f4f7fa!important;color:#25496d!important;
+}
+.platform-admin-body .concept-map-tabs button:not(.is-active) span {color:#7a8797!important}
