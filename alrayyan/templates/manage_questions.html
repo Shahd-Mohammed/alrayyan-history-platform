@@ -21,7 +21,7 @@
         rel="stylesheet"
         href="{{ url_for(
             'static',
-            filename='css/dashboard.css', v='20261011-compact-assessment-buttons-7'
+            filename='css/dashboard.css', v='20261011-unified-worksheet-studio-8'
         ) }}"
     >
 
@@ -438,6 +438,80 @@ body{background:linear-gradient(180deg,#fffdf8 0%,#f5f1e8 100%)!important;color:
 @media(max-width:760px) {
   .form-page .assessment-tabs { overflow-x:auto!important; }
   .form-page .assessment-tabs a,.form-page .assessment-tabs button { flex:0 0 auto!important; }
+}
+
+
+/* Final page polish: match the worksheet upload studio */
+body {
+  background: radial-gradient(circle at 95% 2%,rgba(201,154,61,.14),transparent 24rem),linear-gradient(180deg,#fffdf8 0%,#f7f3ea 100%) !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+}
+.form-page { width:min(1220px,calc(100% - 36px))!important; max-width:1220px!important; }
+.form-page,.form-page * { font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif; letter-spacing:0!important; }
+.form-page .assessment-tabs {
+  display:flex!important; flex-wrap:nowrap!important; flex-direction:row!important;
+  align-items:center!important; gap:9px!important; overflow-x:auto!important;
+  margin:30px 0 28px!important; padding:7px!important;
+  border:1px solid #e6dccb!important; border-radius:16px!important;
+  background:linear-gradient(135deg,#fffdf8,#f8f4eb)!important;
+  box-shadow:0 9px 24px rgba(16,43,79,.045)!important;
+}
+.form-page .assessment-tabs a {
+  flex:0 0 auto!important; width:auto!important; min-width:max-content!important;
+  padding:10px 17px!important; border-radius:10px!important;
+  color:#53647a!important; font-size:.9rem!important; font-weight:750!important;
+  line-height:1.35!important; white-space:nowrap!important;
+}
+.form-page .assessment-tabs a.active {
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  border:1px solid #b9872d!important; color:#fff!important;
+  box-shadow:0 5px 12px rgba(169,122,34,.12)!important;
+}
+.form-page .assessment-section {
+  margin-bottom:24px!important; padding:clamp(18px,2.5vw,28px)!important;
+  border-color:#e7dcc8!important; background:linear-gradient(155deg,#fff 0%,#fffdf8 100%)!important;
+  box-shadow:0 12px 30px rgba(13,41,77,.055)!important;
+}
+.form-page .assessment-section>h2 { font-weight:800!important; }
+.form-page .assessment-section button,
+.form-page .assessment-section input[type="submit"],
+.form-page .assessment-section a.button,
+.form-page .worksheet-form button,
+.form-page .worksheet-form input[type="submit"] {
+  display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  width:auto!important; max-width:100%!important; min-width:0!important; min-height:38px!important;
+  padding:8px 15px!important; border-radius:10px!important;
+  font-size:.88rem!important; font-weight:750!important; line-height:1.35!important;
+}
+.form-page .assessment-section button.primary-action,
+.form-page .assessment-section input.primary-action,
+.form-page .assessment-section form[action*="save_worksheet_settings"] button,
+.form-page .worksheet-form button.primary-action,
+.form-page .worksheet-form input.primary-action {
+  width:auto!important; max-width:max-content!important; min-width:0!important;
+  min-height:39px!important; padding:8px 15px!important;
+  border:1px solid #b9872d!important;
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  color:#fff!important; box-shadow:0 5px 13px rgba(169,122,34,.13)!important;
+  font-weight:750!important;
+}
+.form-page .question-actions .question-edit-action {
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  border:1px solid #b9872d!important; color:#fff!important;
+}
+.form-page .question-actions .question-delete-action {
+  background:#fff5f5!important; border:1px solid #e7c4c4!important; color:#a33d3d!important;
+}
+.form-page .builder-add {
+  width:auto!important; max-width:max-content!important; min-height:37px!important;
+  padding:7px 13px!important; border-radius:10px!important;
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  border:1px solid #b9872d!important; color:#fff!important; font-weight:750!important;
+}
+@media(max-width:760px) {
+  .form-page { width:calc(100% - 22px)!important; padding-inline:0!important; }
+  .form-page .assessment-tabs { overflow-x:auto!important; }
+  .form-page .assessment-tabs a { flex:0 0 auto!important; }
 }
 
 </style>
