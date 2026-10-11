@@ -8,7 +8,7 @@ from alrayyan.services.ai_teacher import build_context, prepare_sources
 from alrayyan.services.semantic_search import semantic_search
 
 
-PROMPT_VERSION = "tutor-v8-strict-learning-evaluation"
+PROMPT_VERSION = "tutor-v9-palestinian-warm-teaching"
 VALID_ACTIONS = {
     "explain",
     "ask_diagnostic",
