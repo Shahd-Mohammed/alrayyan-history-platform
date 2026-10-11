@@ -831,3 +831,8 @@ right:auto!important;left:0!important;width:max-content!important;min-width:230p
   .platform-header .student-learning-menu > div,
   .platform-header .platform-management-menu > div { right:0 !important; left:auto !important; }
 }
+
+/* Universal compact button sizing: keep controls as wide as their labels */
+button,input[type="submit"],input[type="button"],input[type="reset"],.button,.btn,a.button,a.btn,.platform-gold-button,.primary-action,.gold-action,.hint-action,.concept-action,.tree-add-button,.test-card-action{
+ width:auto!important;min-width:0!important;max-width:max-content!important;justify-self:start!important;align-self:start!important;flex:0 0 auto!important;
+}
