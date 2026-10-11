@@ -219,23 +219,28 @@ def create_conversation():
     )
     db.session.add(conversation)
     db.session.flush()
+    if initial_concept and lesson:
+        opening_message = (
+            f"يا هلا {current_user.first_name}، خلّينا نراجع «{initial_concept}» "
+            f"من درس «{lesson.title}» خطوة خطوة. بنبدأ بفكرة بسيطة، وبعدها بنتدرّب على إجابتك."
+        )
+    elif lesson:
+        opening_message = (
+            f"تمام، اخترنا درس «{lesson.title}». خلّينا نبدأ بسؤال خفيف: "
+            "شو أول فكرة بتتذكريها من الدرس؟ خذي وقتك، وبنرتّبها سوا."
+        )
+    else:
+        opening_message = (
+            f"أهلًا {current_user.first_name}، يا هلا فيك. اختاري درس من القائمة "
+            "أو اكتبي الفكرة اللي بدك تفهميها، وبنبلّش من الأساس خطوة خطوة."
+        )
+
     greeting = TutorMessage(
         conversation_id=conversation.id,
         role="tutor",
         action="ask_diagnostic",
         evaluation="not_evaluated",
-        content=(
-            (
-                f"يا هلا {current_user.first_name} 🤍 خلينا ناخذها على راحتنا. "
-                + (
-                    f"اليوم نركز على «{initial_concept}» من درس «{lesson.title}»؟ احكيلي من وين بدك نبدأ."
-                    if initial_concept
-                    else f"درس «{lesson.title}» جاهز إلنا، بس مش لازم نبلش رسمي 😄 احكيلي شو حابة نفهم أو نحكي عنه."
-                )
-            )
-            if lesson else
-            f"يا هلا {current_user.first_name} 🤍 خذي راحتك، أنا معك. بدك ندرس، نسولف شوي، ولا نعملها بطريقة ألطف؟"
-        ),
+        content=opening_message,
     )
     db.session.add(greeting)
     db.session.commit()
