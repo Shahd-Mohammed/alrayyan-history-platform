@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-ara && pip install -r requirements.txt
-    preDeployCommand: flask --app app db upgrade
+    preDeployCommand: "flask --app app db upgrade && python scripts/create_initial_admin.py"
     startCommand: gunicorn --workers 2 --threads 4 --timeout 120 app:app
     healthCheckPath: /health
     envVars:
