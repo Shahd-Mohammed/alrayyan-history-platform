@@ -281,11 +281,15 @@ def send_tutor_message(conversation_id):
         db.session.flush()
         was_verifying_mastery = conversation.tutor_state == "verify_mastery"
         payload = tutor_reply(conversation, student_text)
-        awaiting_mastery_verification = False
+        awaiting_mastery_verification = (
+            was_verifying_mastery
+            and payload["evaluation"] != "correct"
+            and payload["action"] in {"ask_diagnostic", "ask_follow_up", "give_hint"}
+        )
 
-        # A first correct answer is encouraging but not enough to award mastery.
-        # Require one additional lesson-grounded answer before recording mastery or XP.
-        if payload["evaluation"] == "correct" and not was_verifying_mastery:
+        # A correct or partly correct first answer is not enough to award mastery.
+        # Keep the student on the same concept until a correct verification answer.
+        if payload["evaluation"] in {"correct", "partially_correct"} and not was_verifying_mastery:
             payload["evaluation"] = "not_evaluated"
             payload["mastery_delta"] = 0
             payload["action"] = "ask_follow_up"
@@ -324,10 +328,10 @@ def send_tutor_message(conversation_id):
         if conversation.title == "محادثة تعليمية جديدة":
             conversation.title = student_text[:80]
         mastery = update_mastery(conversation, payload)
-        xp_awarded = {
-            "correct": 5,
-            "partially_correct": 2,
-        }.get(payload["evaluation"], 0)
+        # AI-tutor XP is awarded only for a correct answer to the verification question.
+        xp_awarded = 5 if (
+            was_verifying_mastery and payload["evaluation"] == "correct"
+        ) else 0
         if xp_awarded:
             db.session.add(XPTransaction(
                 student_id=current_user.id,
