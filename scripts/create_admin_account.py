@@ -35,11 +35,13 @@ def main():
 
     with app.app_context():
         user = User.query.filter_by(email=email).first()
-        if user is not None and user.role != "admin":
+        if user is not None:
+            required_confirmation = "RESET" if user.role == "admin" else "PROMOTE"
+            action_text = "إعادة ضبط كلمة مرور الأدمن" if user.role == "admin" else f"ترقية الحساب من {user.role!r} إلى أدمن"
             confirmation = input(
-                f"البريد موجود بدور {user.role!r}. اكتبي PROMOTE فقط إذا كنتِ متأكدة من ترقية هذا الحساب: "
+                f"الحساب موجود. {action_text}. اكتبي {required_confirmation} للتأكيد: "
             ).strip()
-            if confirmation != "PROMOTE":
+            if confirmation != required_confirmation:
                 raise SystemExit("أُلغيت العملية دون تغيير الحساب.")
 
         if user is None:
