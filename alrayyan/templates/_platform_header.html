@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261011-user-dropdown-10') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261011-logout-inline-11') }}">
 
 <header class="platform-header">
     <a class="platform-brand" href="{{ url_for('main.home') }}">
@@ -85,12 +85,12 @@
                     <a href="{{ url_for('auth.account_settings') }}">
                         <span aria-hidden="true">⚙</span> حسابي
                     </a>
-                    <form method="post" action="{{ url_for('auth.logout') }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit"><span aria-hidden="true">↪</span> تسجيل الخروج</button>
-                    </form>
                 </div>
             </details>
+            <form class="platform-logout-inline" method="post" action="{{ url_for('auth.logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"><span aria-hidden="true">↪</span> تسجيل الخروج</button>
+            </form>
         {% else %}
             <a class="platform-login-link" href="{{ url_for('auth.login') }}">تسجيل الدخول</a>
         {% endif %}
