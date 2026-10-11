@@ -8,7 +8,7 @@ from alrayyan.services.ai_teacher import build_context, prepare_sources
 from alrayyan.services.semantic_search import semantic_search
 
 
-PROMPT_VERSION = "tutor-v7-social-message-mastery-guard"
+PROMPT_VERSION = "tutor-v8-strict-learning-evaluation"
 VALID_ACTIONS = {
     "explain",
     "ask_diagnostic",
@@ -40,7 +40,8 @@ MASTERY_DELTAS = {
 NON_LEARNING_MESSAGE_PATTERNS = (
     r"^(?:هلا|أهلًا|اهلا|أهلا|مرحبا|السلام عليكم)\b",
     r"^(?:هههه+|ههه+|خخخ+|lol+)\b",
-    r"بمزح معك|أنا بمزح|انا بمزح|كنت بمزح|جامد انت|جامد إنت|يا خوي",
+    r"بمزح معك|أنا بمزح|انا بمزح|كنت بمزح|جامد انت|جامد إنت",
+    r"^(?:حبيبي(?:\s+انت|\s+إنت)?|حبيبتي(?:\s+انتي|\s+إنتِ)?|يا\s*خوي|يا\s*خيو|لا\s+عنجد|مش\s+غلط|عنجد|يسلمو|تسلم|تسلمي|تمام|خلص|طيب|حلو|منيح|ماشي|الله\s+يسعدك)[.!؟،\s]*$",
     r"بطلت اعرف اجاوب|بطلت أعرف أجاوب|بطلت الأجواء حلوة|بطلت الاجواء حلوة",
     r"راح تحفزني|تحكي كلام منيح|شجعيني|شجعني",
     r"على اي اساس|على أي أساس|إتقان المفهوم صار|اتقان المفهوم صار|نسبة الإتقان|نسبة الاتقان",
@@ -141,11 +142,9 @@ def _validate_payload(payload, allowed_chunk_ids):
     if evaluation not in VALID_EVALUATIONS:
         evaluation = "not_evaluated"
 
-    try:
-        mastery_delta = int(payload.get("mastery_delta", 0))
-    except (TypeError, ValueError):
-        mastery_delta = MASTERY_DELTAS[evaluation]
-    mastery_delta = min(max(mastery_delta, -10), 10)
+    # Mastery changes are controlled by the application, not by arbitrary model output.
+    # Social/off-topic messages can never change the score.
+    mastery_delta = MASTERY_DELTAS.get(evaluation, 0)
 
     source_ids = []
     for raw_id in payload.get("source_chunk_ids", []):
