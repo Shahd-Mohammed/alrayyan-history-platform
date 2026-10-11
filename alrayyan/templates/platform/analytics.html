@@ -51,7 +51,7 @@
       <line class="scatter-axis" x1="78" y1="70" x2="78" y2="320"></line>
       <line class="scatter-axis" x1="78" y1="320" x2="790" y2="320"></line>
       <text class="scatter-axis-title" x="28" y="195" transform="rotate(-90 28 195)" text-anchor="middle">متوسط النتائج</text>
-      <text class="scatter-axis-title" x="434" y="370" text-anchor="middle">عدد الأنشطة المسجّلة، بما فيها إجابات التحديات وإجابات المعلم الذكي المقيمة</text>
+      <text class="scatter-axis-title" x="434" y="370" text-anchor="middle">إجمالي التفاعلات المسجّلة</text>
       {% for row in rows %}
       <circle class="scatter-point" cx="{{ 78 + ((row.activity_score / activity_max) * 712) }}" cy="{{ 320 - ([row.average,100]|min * 2.5) }}" r="7">
         <title>{{ row.student.full_name }} — {{ row.activity_score }} نشاط — {{ row.average }}%</title>
