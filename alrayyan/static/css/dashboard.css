@@ -1822,3 +1822,20 @@ a.grade-attempt-action,
   line-height:1.4!important;
   letter-spacing:0!important;
 }
+
+
+/* Shared button typography and compact sizing for teacher assessment pages */
+:where(button,input[type="submit"],input[type="button"],.submit-button,.primary-button,.results-primary-link,.test-card-preview,.inline-manage-link){
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:700!important;letter-spacing:0!important;line-height:1.4!important
+}
+.form-page button,.form-page input[type="submit"],.results-dashboard button,.results-dashboard input[type="submit"],.results-dashboard .results-primary-link{
+ width:auto!important;max-width:100%!important;min-width:0!important;min-height:40px!important;padding:9px 16px!important;border-radius:10px!important;font-size:.91rem!important;font-weight:700!important
+}
+.form-page .assessment-tabs button,.results-dashboard .assessment-tabs a{white-space:nowrap}
+.form-page .form-intro,.results-dashboard .results-intro{background:radial-gradient(circle at 12% 10%,rgba(201,154,61,.18),transparent 28%),linear-gradient(130deg,#0b203d 0%,#173b64 65%,#244b73 100%)!important}
+.form-page .form-intro h1,.results-dashboard .results-intro h1{font-family:"Aref Ruqaa",serif!important}
+.form-page .save-question-button,.form-page .save-settings-button,.form-page button[type="submit"],.results-dashboard .results-primary-link{
+ background:linear-gradient(135deg,#d8ad4d,#b9872d)!important;color:#fff!important;border:1px solid #b9872d!important
+}
+@media(max-width:700px){.form-page button,.form-page input[type="submit"],.results-dashboard button,.results-dashboard input[type="submit"],.results-dashboard .results-primary-link{width:auto!important;max-width:100%!important}.form-page .assessment-tabs{overflow-x:auto}.form-page .assessment-tabs button{flex:0 0 auto}}
+
