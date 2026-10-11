@@ -20,7 +20,7 @@
         href="{{ url_for(
             'static',
             filename='css/dashboard.css',
-            v='20261011-compact-assessment-buttons-7'
+            v='20261011-unified-worksheet-studio-8'
         ) }}"
     >
 
@@ -311,6 +311,56 @@ body{background:linear-gradient(180deg,#fffdf8 0%,#f5f1e8 100%)!important}
   width:auto!important;
   min-width:max-content!important;
   white-space:nowrap!important;
+}
+
+
+/* Final result-page consistency pass */
+body,.results-dashboard,.results-dashboard * {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  letter-spacing:0!important;
+}
+.results-dashboard { width:min(1220px,calc(100% - 36px))!important; }
+.results-dashboard .assessment-tabs {
+  margin:30px 0 28px!important; gap:9px!important; padding:7px!important;
+  border-color:#e6dccb!important;
+  background:linear-gradient(135deg,#fffdf8,#f8f4eb)!important;
+}
+.results-dashboard .assessment-tabs a {
+  display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  flex:0 0 auto!important; width:auto!important; min-width:max-content!important;
+  min-height:38px!important; padding:9px 16px!important;
+  color:#53647a!important; font-size:.88rem!important; font-weight:750!important;
+  line-height:1.35!important; white-space:nowrap!important;
+}
+.results-dashboard .assessment-tabs a.active {
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  border:1px solid #b9872d!important; color:#fff!important;
+  box-shadow:0 5px 12px rgba(169,122,34,.12)!important;
+}
+.results-dashboard button,
+.results-dashboard input[type="submit"],
+.results-dashboard a.button,
+.results-dashboard .button,
+.results-dashboard .results-primary-link,
+.results-dashboard .score-policy-banner a,
+.results-dashboard .grade-attempt-action {
+  display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  width:auto!important; max-width:100%!important; min-width:0!important; min-height:37px!important;
+  padding:8px 14px!important; border-radius:10px!important;
+  font-size:.87rem!important; font-weight:750!important; line-height:1.35!important;
+}
+.results-dashboard .results-primary-link,
+.results-dashboard .score-policy-banner a,
+.results-dashboard .grade-attempt-action {
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  border:1px solid #b9872d!important; color:#fff!important;
+}
+.results-dashboard .score-policy-banner a { flex:0 0 auto!important; }
+@media(max-width:650px) {
+  .results-dashboard { width:calc(100% - 22px)!important; }
+  .results-dashboard .assessment-tabs { overflow-x:auto!important; }
+  .results-dashboard .assessment-tabs a { flex:0 0 auto!important; }
+  .results-dashboard .score-policy-banner a { width:auto!important; }
 }
 
 </style>
