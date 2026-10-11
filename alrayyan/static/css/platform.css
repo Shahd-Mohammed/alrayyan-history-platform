@@ -1305,3 +1305,7 @@ input[type="button"]:not(.platform-gold-button):hover{
  background-color:#1b496e;color:#fff;border-color:#1b496e
 }
 
+
+input[type="submit"]:not(.platform-gold-button):not(.submit-button){background:#102f50;color:#fff;border-color:#102f50}
+input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{background:#1b496e;color:#fff;border-color:#1b496e}
+
