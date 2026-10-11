@@ -125,6 +125,10 @@
                         <span>{{ form.remember.label.text }}</span>
                     </label>
 
+                    <div class="forgot-password-row">
+                        <a href="{{ url_for('auth.forgot_password') }}">نسيتِ كلمة المرور؟</a>
+                    </div>
+
                     {{ form.submit(class="submit-button") }}
                 </form>
 
