@@ -3220,3 +3220,92 @@ button.concept-action,
 .concept-map-card-actions .concept-action.preview,.concept-map-card-actions .concept-action.publish,.concept-map-card-actions .concept-action.delete{background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border-color:#b9872c!important;box-shadow:none!important}
 .concept-map-card-actions .concept-action:hover{filter:brightness(.97);transform:translateY(-1px)}
 @media(max-width:680px){.concept-map-tabs{margin:18px 0 24px!important}.concept-map-tabs button{flex:0 0 auto!important}.concept-map-card-actions{gap:7px!important}}
+
+
+/* Final polish: one shared compact button system and consistent test layouts */
+.platform-admin-page button,
+.platform-admin-page input[type="submit"],
+.platform-admin-page input[type="button"],
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .test-primary-button,
+.platform-admin-page .test-secondary-button,
+.platform-admin-page .test-card-action,
+.platform-admin-page .test-card-preview,
+.platform-admin-page .test-card-footer>a,
+.platform-admin-page .inline-manage-link,
+.platform-admin-page .review-actions>a,
+.platform-admin-page .review-actions button,
+.platform-admin-page .classroom-delete-button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:36px!important;
+  padding:7px 13px!important;
+  border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+}
+.platform-admin-page .test-primary-button,
+.platform-admin-page .test-card-action.publish,
+.platform-admin-page .test-card-preview,
+.platform-admin-page .test-card-footer>a,
+.platform-admin-page .inline-manage-link,
+.platform-admin-page .review-actions>a,
+.platform-admin-page .review-actions button{
+  border:1px solid #b8892e!important;
+  background:linear-gradient(135deg,#d2aa50,#b9872c)!important;
+  color:#fff!important;
+  box-shadow:0 4px 11px rgba(145,102,26,.11)!important;
+}
+.platform-admin-page .test-card-action.draft,
+.platform-admin-page .test-card-action.archive,
+.platform-admin-page .test-secondary-button{
+  border:1px solid #e2d7c2!important;
+  background:#fffdf8!important;
+  color:#244363!important;
+}
+.platform-admin-page .test-card-action.delete,
+.platform-admin-page .classroom-delete-button{
+  border:1px solid #e6c9c9!important;
+  background:#fff6f6!important;
+  color:#a33d3d!important;
+}
+.platform-admin-page .test-center-page{gap:26px!important;padding:8px 0 24px!important}
+.platform-admin-page .test-library-section{
+  margin-top:8px!important;
+  padding:clamp(22px,3vw,32px)!important;
+  border-radius:24px!important;
+}
+.platform-admin-page .test-library-heading{margin-bottom:22px!important;gap:24px!important}
+.platform-admin-page .test-library-heading p{max-width:68ch!important;line-height:1.8!important}
+.platform-admin-page .test-card-actions{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+.platform-admin-page .test-card-actions form{width:auto!important;max-width:100%!important;margin:0!important}
+.platform-admin-page .test-card-footer{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important}
+.platform-admin-page .concept-map-tabs{margin:26px 0 30px!important}
+.platform-admin-page .concept-map-tabs button.is-active{
+  background:linear-gradient(135deg,#d2aa50,#b9872c)!important;
+  border-color:#b9872c!important;
+  color:#fff!important;
+  box-shadow:0 3px 9px rgba(145,102,26,.12)!important;
+}
+.platform-admin-page .concept-map-tabs button:not(.is-active){background:#f7f5f0!important;border-color:#e8e1d5!important}
+.platform-admin-page .tree-add-button{color:#fff!important}
+.platform-admin-page .tree-add-button span{color:#fff!important}
+@media(max-width:680px){
+  .platform-admin-page .test-center-page{gap:18px!important}
+  .platform-admin-page .test-library-section{padding:19px!important}
+  .platform-admin-page .test-card-actions{align-items:flex-start!important}
+}
