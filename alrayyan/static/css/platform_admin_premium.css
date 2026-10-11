@@ -3413,3 +3413,7 @@ button.concept-action,
 .platform-admin-page .concept-map-tabs button:not(.is-active){background:#fff!important;color:#183452!important;border-color:#e6dcc9!important}
 .platform-admin-page .concept-map-tabs button:not(.is-active):hover{background:#f4efe5!important;color:#102f50!important}
 
+
+.platform-admin-page input[type="submit"]:not(.platform-gold-button){background:#102f50!important;color:#fff!important;border:1px solid #102f50!important}
+.platform-admin-page input[type="submit"]:not(.platform-gold-button):hover{background:#1b496e!important;color:#fff!important}
+
