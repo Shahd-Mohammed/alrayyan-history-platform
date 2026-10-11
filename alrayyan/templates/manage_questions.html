@@ -342,6 +342,17 @@ body{background:radial-gradient(circle at 94% 2%,rgba(201,154,61,.12),transparen
 @media(max-width:760px){.form-page{width:calc(100% - 22px)!important}.assessment-tabs{overflow-x:auto!important}.assessment-tabs a{flex:0 0 auto!important}}
 </style>
 
+<style>
+/* Final pass: match the worksheet-upload visual identity and keep controls compact */
+.form-page{width:min(1200px,calc(100% - 36px))!important;margin:28px auto 70px!important}
+.form-page .form-intro,.form-page .test-editor-hero{border-radius:24px!important}
+.form-page .assessment-tabs{width:max-content!important;max-width:100%!important;align-self:flex-start!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:8px!important;margin:22px 0 28px!important;padding:7px!important;overflow-x:auto!important;background:#fffdf8!important;border:1px solid #e7dcc8!important;border-radius:15px!important;box-shadow:0 8px 20px rgba(23,47,82,.045)!important}
+.form-page .assessment-tabs a{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;padding:10px 15px!important;border:1px solid #e7dcc8!important;border-radius:10px!important;background:#f8f5ee!important;color:#314963!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:650!important;line-height:1.35!important;white-space:nowrap!important;box-shadow:none!important}
+.form-page .assessment-tabs a.active{background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border-color:#b9872c!important;color:#fff!important;box-shadow:0 4px 12px rgba(150,106,31,.13)!important}
+.form-page .assessment-section{margin-top:24px!important;border-radius:20px!important}
+.form-page button[type=submit],.form-page input[type=submit],.form-page .primary-action,.form-page .save-question-button,.form-page .save-settings-button,.form-page .question-actions a,.form-page .question-actions button{width:auto!important;max-width:max-content!important;min-width:0!important;min-height:36px!important;padding:8px 14px!important;border-radius:10px!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border:1px solid #b9872c!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:650!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important}
+@media(max-width:760px){.form-page{width:calc(100% - 22px)!important}.form-page .assessment-tabs{max-width:100%!important}.form-page .assessment-section{padding:18px!important}}
+</style>
 </head>
 
 <body>
