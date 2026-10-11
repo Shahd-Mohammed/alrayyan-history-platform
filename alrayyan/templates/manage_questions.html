@@ -389,6 +389,57 @@ body{background:linear-gradient(180deg,#fffdf8 0%,#f5f1e8 100%)!important;color:
 .form-page .question-form input[type="submit"]{
  background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border:1px solid #b8892e!important
 }
+
+/* Final override: management tabs stay in one row; save buttons remain compact. */
+.form-page .assessment-tabs {
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:8px!important;
+  overflow-x:auto!important;
+  align-items:stretch!important;
+  margin:0 0 24px!important;
+  padding:7px!important;
+}
+.form-page .assessment-tabs a,
+.form-page .assessment-tabs button {
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:max-content!important;
+  max-width:none!important;
+  white-space:nowrap!important;
+  padding:10px 17px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.9rem!important;
+  font-weight:700!important;
+  line-height:1.35!important;
+}
+.form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action,
+.form-page .assessment-section button.primary-action,
+.form-page .question-form button[type="submit"],
+.form-page .question-form input[type="submit"] {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:max-content!important;
+  min-height:37px!important;
+  padding:8px 15px!important;
+  border-radius:10px!important;
+  background:linear-gradient(135deg,#d2aa50,#b9872c)!important;
+  color:#fff!important;
+  border:1px solid #b9872c!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.88rem!important;
+  font-weight:700!important;
+  line-height:1.35!important;
+  white-space:nowrap!important;
+}
+@media(max-width:760px) {
+  .form-page .assessment-tabs { overflow-x:auto!important; }
+  .form-page .assessment-tabs a,.form-page .assessment-tabs button { flex:0 0 auto!important; }
+}
+
 </style>
 </head>
 
