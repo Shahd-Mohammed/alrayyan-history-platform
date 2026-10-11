@@ -1991,3 +1991,42 @@ button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
 .results-intro .assessment-tabs{margin-top:24px!important;margin-bottom:24px!important}
 @media(max-width:900px){.student-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.student-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:640px){.student-dashboard-page{width:calc(100% - 22px)!important;margin:18px auto 48px!important}.student-welcome{align-items:flex-start!important;flex-direction:column!important;padding:25px 21px!important}.student-dashboard-panel{padding:18px!important}.student-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.student-dashboard-grid{grid-template-columns:1fr!important}.student-dashboard-card{padding:17px!important}.student-panel-heading{align-items:flex-start!important;flex-direction:column!important}}
+
+
+/* Student dashboard: clear routes, quieter surfaces, and compact actions */
+.student-dashboard-page{
+  width:min(1220px,calc(100% - 44px))!important;
+  margin:26px auto 64px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:22px!important;
+}
+.student-dashboard-page > section{margin:0!important}
+.student-welcome{min-height:205px!important;padding:clamp(28px,4vw,44px)!important;gap:26px!important}
+.student-primary-action{white-space:nowrap!important}
+.student-stats{margin:0!important}
+.student-dashboard-panel{margin:0!important}
+.student-learning-hub{padding:clamp(22px,3vw,34px)!important}
+.student-dashboard-group{margin-top:22px!important;padding-top:20px!important}
+.student-dashboard-grid{align-items:stretch!important}
+.student-dashboard-card{min-height:205px!important}
+.student-dashboard-card > p{max-width:54ch!important}
+.student-dashboard-card > a{margin-top:auto!important;white-space:nowrap!important}
+.student-panel-heading{flex-wrap:wrap!important}
+.student-panel-heading > a{white-space:nowrap!important}
+.student-empty-state{margin-top:8px!important}
+@media(max-width:900px){
+  .student-dashboard-page{width:calc(100% - 30px)!important;gap:18px!important}
+  .student-welcome{min-height:0!important}
+  .student-dashboard-card{min-height:190px!important}
+}
+@media(max-width:640px){
+  .student-dashboard-page{width:calc(100% - 20px)!important;margin:16px auto 42px!important;gap:14px!important}
+  .student-welcome{padding:23px 20px!important}
+  .student-stats{gap:10px!important}
+  .student-stats article{padding:14px!important}
+  .student-stats article strong{font-size:1.55rem!important}
+  .student-dashboard-panel,.student-learning-hub{padding:17px!important;border-radius:18px!important}
+  .student-dashboard-card{min-height:0!important}
+  .student-dashboard-card > a{white-space:normal!important}
+}
