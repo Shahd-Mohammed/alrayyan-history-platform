@@ -1770,3 +1770,15 @@ a.grade-attempt-action,
   .learning-page .character-hero .hero-score{grid-column:1!important;grid-row:auto!important;min-height:78px!important;width:auto!important;min-width:100px!important;justify-self:start!important}
   .learning-page .character-actions{align-items:flex-start!important}
 }
+
+
+/* Refined student character discovery hero and compact actions */
+.learning-page .character-hero{background:radial-gradient(circle at 88% 16%,rgba(210,170,80,.23),transparent 28%),radial-gradient(circle at 12% 100%,rgba(48,89,133,.34),transparent 35%),linear-gradient(135deg,#071a35 0%,#102b4f 58%,#1c4268 100%)!important;border:1px solid rgba(210,170,80,.46)!important;box-shadow:0 24px 56px rgba(7,26,53,.18)!important}
+.learning-page .character-hero>p{color:#f1d694!important}
+.learning-page .character-hero>span{color:rgba(255,255,255,.84)!important}
+.learning-page .character-hero .hero-score{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.24)!important}
+.learning-page .learning-hero .hero-score b{color:#f1d694!important}
+.learning-page .character-card .character-actions button{width:auto!important;max-width:100%!important;min-width:0!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;font-weight:700!important}
+.learning-page .character-card .character-actions .gold-action{color:#fff!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border-color:#b9872c!important}
+.learning-page .character-card .character-actions .hint-action{color:#102b4f!important;background:#fffdf8!important;border:1px solid #e4d8c3!important}
+.learning-page .learning-grid article>a,.learning-page .character-card summary{width:auto!important;max-width:max-content!important}
