@@ -2877,3 +2877,16 @@ button.concept-action,
 .concept-map-workspace .concept-map-card-mark{background:#edf2f7!important;color:#173455!important}
 .concept-map-workspace .concept-status.draft{background:#f3f1eb!important;color:#6c7480!important;border-color:#e1ddd4!important}
 .concept-map-workspace .concept-status.published{background:#eef4f0!important;color:#416b55!important;border-color:#d8e5dc!important}
+
+
+/* Test library: clearly separated panel and compact, consistent status actions */
+.test-library-section{margin:8px 8px 0!important;padding:26px!important;border:1px solid #e5dfd4!important;border-radius:23px!important;background:rgba(255,255,255,.86)!important;box-shadow:0 12px 32px rgba(19,47,82,.055)!important}
+.test-library-heading{margin-bottom:22px!important}
+.test-library-grid{gap:16px!important}
+.test-card-actions{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important}
+.test-card-actions form{display:inline-flex!important;flex:0 0 auto!important;margin:0!important}
+.test-card-actions .test-card-action{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:0!important;max-width:100%!important;min-height:36px!important;padding:7px 12px!important;border:1px solid #b9892d!important;border-radius:10px!important;background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.84rem!important;font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important;box-shadow:0 4px 10px rgba(153,105,24,.1)!important}
+.test-card-actions .test-card-action:hover{background:linear-gradient(135deg,#bd8b2b,#8d6116)!important;transform:translateY(-1px)}
+.test-card-footer{flex-wrap:wrap!important}
+.test-card-footer a{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:0!important;max-width:100%!important;min-height:36px!important;padding:7px 12px!important;border-radius:10px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.85rem!important;font-weight:750!important;line-height:1.35!important;white-space:nowrap!important}
+@media(max-width:700px){.test-library-section{margin-inline:0!important;padding:18px!important}.test-card-actions{align-items:flex-start!important}.test-card-actions .test-card-action{font-size:.82rem!important}}
