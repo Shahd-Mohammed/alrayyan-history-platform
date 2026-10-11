@@ -20,6 +20,11 @@ def main():
     email = (os.getenv("INITIAL_ADMIN_EMAIL") or "").strip().lower()
     password = os.getenv("INITIAL_ADMIN_PASSWORD") or ""
 
+    # No bootstrap variables means normal deployments continue unchanged.
+    if not email and not password:
+        print("Initial admin bootstrap skipped; no INITIAL_ADMIN_* variables were set.")
+        return
+
     if not email or email.count("@") != 1 or "." not in email.rsplit("@", 1)[-1]:
         raise SystemExit("Set INITIAL_ADMIN_EMAIL to a valid email address.")
     if len(password) < 12 or len(password) > 128:
@@ -29,10 +34,11 @@ def main():
 
     with app.app_context():
         if User.query.filter_by(role="admin").first():
-            raise SystemExit(
-                "An administrator already exists. Use the protected admin UI "
+            print(
+                "An administrator already exists; use the protected admin UI "
                 "to create additional administrator accounts."
             )
+            return
 
         existing = User.query.filter_by(email=email).first()
         if existing:
