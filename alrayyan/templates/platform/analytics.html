@@ -11,7 +11,9 @@
     <article><span>التسليمات المكتملة</span><strong>{{ overview.submissions }}</strong></article>
     <article><span>متوسط النتائج</span><strong>{{ overview.average }}%</strong></article>
     <article><span>التحديات المكتملة</span><strong>{{ overview.challenge_completions }}</strong></article>
+    <article><span>إجابات التحديات</span><strong>{{ overview.challenge_answers }}</strong></article>
     <article><span>تفاعلات المعلم الذكي</span><strong>{{ overview.tutor_interactions }}</strong></article>
+    <article><span>إجابات قيّمها المعلم الذكي</span><strong>{{ overview.tutor_evaluated_answers }}</strong></article>
     <article><span>محاولات الشخصيات</span><strong>{{ overview.character_attempts }}</strong></article>
     <article><span>مراجعات التواريخ</span><strong>{{ overview.date_reviews }}</strong></article>
     <article><span>تحققات خطة المراجعة</span><strong>{{ overview.plan_verifications }}</strong></article>
@@ -49,7 +51,7 @@
       <line class="scatter-axis" x1="78" y1="70" x2="78" y2="320"></line>
       <line class="scatter-axis" x1="78" y1="320" x2="790" y2="320"></line>
       <text class="scatter-axis-title" x="28" y="195" transform="rotate(-90 28 195)" text-anchor="middle">متوسط النتائج</text>
-      <text class="scatter-axis-title" x="434" y="370" text-anchor="middle">عدد الأنشطة المسجّلة</text>
+      <text class="scatter-axis-title" x="434" y="370" text-anchor="middle">عدد الأنشطة المسجّلة، بما فيها إجابات التحديات وإجابات المعلم الذكي المقيمة</text>
       {% for row in rows %}
       <circle class="scatter-point" cx="{{ 78 + ((row.activity_score / activity_max) * 712) }}" cy="{{ 320 - ([row.average,100]|min * 2.5) }}" r="7">
         <title>{{ row.student.full_name }} — {{ row.activity_score }} نشاط — {{ row.average }}%</title>
@@ -64,22 +66,22 @@
 </section>
 <section class="platform-panel analytics-panel">
     <div class="analytics-heading"><div><h2>الأداء الفردي</h2><p>تعرض هذه النظرة الأنشطة المسجّلة في المنصة مجتمعة، حتى لا يُختزل تقدّم الطالبة في علامة واحدة.</p></div></div>
-    <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات</th><th>المعلم الذكي</th><th>محاولات الشخصيات</th><th>مراجعات التواريخ</th><th>خطة المراجعة</th><th>تنزيلات المواد</th><th>استكشاف الخرائط</th><th>زيارات مكتبة التعلّم</th><th>النقاط المكتسبة</th><th>الحالة</th></tr></thead><tbody>
+    <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات المكتملة</th><th>إجابات التحديات</th><th>رسائل المعلم الذكي</th><th>إجابات قيّمها المعلم الذكي</th><th>محاولات الشخصيات</th><th>مراجعات التواريخ</th><th>خطة المراجعة</th><th>تنزيلات المواد</th><th>استكشاف الخرائط</th><th>زيارات مكتبة التعلّم</th><th>النقاط المكتسبة</th><th>الحالة</th></tr></thead><tbody>
     {% for row in rows %}
     <tr>
       <td><strong>{{ row.student.full_name }}</strong><small>{{ row.student.email }}</small></td>
       <td>{{ row.test_count }}</td><td>{{ row.worksheet_count }}</td>
       <td><div class="metric-bar"><i style="width:{{ [row.average,100]|min }}%"></i></div>{{ row.average }}%</td>
       <td><div class="metric-bar mastery"><i style="width:{{ [row.mastery_average,100]|min }}%"></i></div>{{ row.mastery_average }}%</td>
-      <td>{{ row.challenge_count }}</td><td>{{ row.tutor_interactions }}</td><td>{{ row.character_attempts }}</td><td>{{ row.date_reviews }}</td><td>{{ row.plan_verifications }}</td><td>{{ row.resource_downloads }}</td><td>{{ row.concept_map_views }}</td><td>{{ row.library_visits }}</td><td>{{ row.points_earned }}</td>
+      <td>{{ row.challenge_count }}</td><td>{{ row.challenge_answers }}</td><td>{{ row.tutor_interactions }}</td><td>{{ row.tutor_evaluated_answers }}</td><td>{{ row.character_attempts }}</td><td>{{ row.date_reviews }}</td><td>{{ row.plan_verifications }}</td><td>{{ row.resource_downloads }}</td><td>{{ row.concept_map_views }}</td><td>{{ row.library_visits }}</td><td>{{ row.points_earned }}</td>
       <td>{% if row.needs_support %}<span class="analytics-status support">تحتاج متابعة</span>{% elif row.activity_score %}<span class="analytics-status active">متفاعلة</span>{% else %}<span class="analytics-status quiet">لم تبدأ</span>{% endif %}</td>
     </tr>
-    {% else %}<tr><td colspan="15" class="platform-empty">ستظهر التحليلات بعد انضمام الطالبات وبدء الأنشطة.</td></tr>{% endfor %}
+    {% else %}<tr><td colspan="17" class="platform-empty">ستظهر التحليلات بعد انضمام الطالبات وبدء الأنشطة.</td></tr>{% endfor %}
     </tbody></table></div>
 </section>
 <section class="platform-panel analytics-note">
   <h2>كيف نقرأ هذه اللوحة؟</h2>
-  <p>تعرض اللوحة صورة أوسع عن تعلّم الطالبة: نتائج الاختبارات وأوراق العمل، وإتقان المفاهيم، والتحديات، ورسائل المعلّم الذكي، ومحاولات الشخصيات والتواريخ، وتنزيل الموارد، واستكشاف الخرائط، والتحقق من خطة المراجعة. تُقرأ هذه المؤشرات معًا لفهم التقدّم، لا للحكم على الطالبة من علامة واحدة.</p>
-  <p class="analytics-note-secondary">النقاط المعروضة هي مجموع المكافآت المحفوظة في سجل النقاط. يشمل التحليل المحاولات المكتملة أو الجارية، والتحديات، والتفاعل مع المعلّم الذكي، والشخصيات والتواريخ، والموارد والخرائط ومكتبة التعلّم وخطة المراجعة بحسب البيانات التي تسجّلها الوظائف الحالية. ليس كل نشاط مكافأة مستقلة، ولا تُمنح نقاط لمجرد النقر أو تحديث الصفحة.</p>
+  <p>تعرض اللوحة صورة أوسع عن تعلّم الطالبة: نتائج الاختبارات وأوراق العمل، وإتقان المفاهيم، وجلسات التحديات وإجاباتها، ورسائل المعلّم الذكي والإجابات التي قيّمها، ومحاولات الشخصيات والتواريخ، وتنزيل الموارد، واستكشاف الخرائط، والتحقق من خطة المراجعة. تُقرأ هذه المؤشرات معًا لفهم التقدّم، لا للحكم على الطالبة من علامة واحدة.</p>
+  <p class="analytics-note-secondary">النقاط المعروضة هي مجموع المكافآت المحفوظة في سجل النقاط. يشمل سجل النقاط المكافآت المسجّلة للاختبارات وأوراق العمل وإجابات التحديات التي تسجّل لها مكافأة وإجابات المعلم الذكي المقيمة والإجابات الصحيحة في تحدي الشخصيات والتواريخ، إضافة إلى استكشاف الخرائط وتنزيل المواد وزيارة مكتبة التعلّم وخطة المراجعة بحسب الوظائف الحالية. ليس كل نشاط مكافأة مستقلة، ولا تُمنح نقاط لمجرد النقر أو تحديث الصفحة.</p>
 </section>
 {% endblock %}
