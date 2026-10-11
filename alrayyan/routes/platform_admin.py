@@ -582,7 +582,19 @@ def concept_maps():
             db.session.commit(); flash("تم إنشاء الخريطة المفاهيمية", "success")
             return redirect(url_for("platform_admin.concept_maps"))
     query = ConceptMap.query if current_user.role == "admin" else ConceptMap.query.filter_by(created_by_id=current_user.id)
-    return render_template("platform/concept_maps.html", form=form, upload_form=upload_form, maps=query.order_by(ConceptMap.created_at.desc()).all())
+    status_filter = (request.args.get("status") or "all").strip().lower()
+    if status_filter not in {"all", "draft", "published"}:
+        status_filter = "all"
+    if status_filter in {"draft", "published"}:
+        query = query.filter_by(publication_status=status_filter)
+    maps = query.order_by(ConceptMap.created_at.desc()).all()
+    return render_template(
+        "platform/concept_maps.html",
+        form=form,
+        upload_form=upload_form,
+        maps=maps,
+        status_filter=status_filter,
+    )
 
 
 @platform_admin_bp.post("/concept-maps/upload")
