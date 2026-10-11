@@ -3083,13 +3083,13 @@ button.concept-action,
 
 
 /* Consistent compact gold actions and calmer concept-map tabs */
-.platform-admin-shell button,
-.platform-admin-shell input[type="submit"],
-.platform-admin-shell a.platform-button,
-.platform-admin-shell .platform-gold-button,
-.platform-admin-shell .tree-add-button,
-.platform-admin-shell .honor-submit-button,
-.platform-admin-shell .concept-action{
+.platform-admin-page button,
+.platform-admin-page input[type="submit"],
+.platform-admin-page a.platform-button,
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .tree-add-button,
+.platform-admin-page .honor-submit-button,
+.platform-admin-page .concept-action{
   width:auto!important;
   min-width:0!important;
   max-width:100%!important;
@@ -3103,19 +3103,19 @@ button.concept-action,
   letter-spacing:0!important;
   flex:0 0 auto!important;
 }
-.platform-admin-shell .platform-gold-button,
-.platform-admin-shell .tree-add-button,
-.platform-admin-shell .honor-submit-button,
-.platform-admin-shell .concept-action{
+.platform-admin-page .platform-gold-button,
+.platform-admin-page .tree-add-button,
+.platform-admin-page .honor-submit-button,
+.platform-admin-page .concept-action{
   color:#fff!important;
   background:linear-gradient(135deg,#c99a3d,#ad7c22)!important;
   border:1px solid #b8892e!important;
   box-shadow:0 5px 13px rgba(145,102,26,.13)!important;
 }
-.platform-admin-shell .platform-gold-button:hover,
-.platform-admin-shell .tree-add-button:hover,
-.platform-admin-shell .honor-submit-button:hover,
-.platform-admin-shell .concept-action:hover{
+.platform-admin-page .platform-gold-button:hover,
+.platform-admin-page .tree-add-button:hover,
+.platform-admin-page .honor-submit-button:hover,
+.platform-admin-page .concept-action:hover{
   background:linear-gradient(135deg,#b8892e,#966819)!important;
   transform:translateY(-1px);
 }
