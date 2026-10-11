@@ -1701,3 +1701,38 @@ button[type="submit"],input[type="submit"],.gold-action,.primary-action,.results
 button,input[type="submit"],input[type="button"],input[type="reset"],.button,.btn,a.button,a.btn,.primary-action,.gold-action,.hint-action,.results-primary-link,.save-question-button,.save-settings-button{
  width:auto!important;min-width:0!important;max-width:max-content!important;justify-self:start!important;align-self:start!important;flex:0 0 auto!important;
 }
+
+
+/* Assessment editor: wider single-line tabs and compact gold save actions */
+.form-page .assessment-tabs {
+  display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+  width:max-content!important;max-width:100%!important;gap:10px!important;
+  margin:30px 0 36px!important;padding:9px!important;overflow-x:auto!important;
+  border:1px solid #e6d8ba!important;border-radius:16px!important;
+  background:#fffdf8!important;box-shadow:0 10px 28px rgba(20,43,72,.06)!important;
+}
+.form-page .assessment-tabs a {
+  display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;
+  justify-content:center!important;width:auto!important;min-width:max-content!important;
+  min-height:40px!important;padding:9px 20px!important;border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;
+  font-weight:700!important;line-height:1.35!important;white-space:nowrap!important;
+  color:#173653!important;background:#fff!important;border:1px solid #e5d7b7!important;
+}
+.form-page .assessment-tabs a.active {
+  color:#fff!important;background:linear-gradient(135deg,#d8b35d,#b7862b)!important;
+  border-color:#b7862b!important;
+}
+.form-page .primary-action,
+.form-page button[type="submit"],
+.form-page input[type="submit"],
+.form-page .save-question-button,
+.form-page .save-settings-button {
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:100%!important;min-width:0!important;min-height:38px!important;
+  padding:8px 15px!important;border:1px solid #b7862b!important;border-radius:10px!important;
+  color:#fff!important;background:linear-gradient(135deg,#d8b35d,#b7862b)!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;
+  font-weight:700!important;line-height:1.35!important;box-shadow:0 4px 12px rgba(116,82,24,.10)!important;
+}
+@media(max-width:650px){.form-page .assessment-tabs{width:100%!important}.form-page .assessment-tabs a{padding-inline:14px!important}}
