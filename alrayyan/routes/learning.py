@@ -51,10 +51,56 @@ def library():
     active_lessons = db.session.query(Lesson.id).join(Unit).join(Curriculum).filter(Curriculum.is_active.is_(True))
     return render_template(
         "learning/library.html",
-        resources=LearningResource.query.filter(LearningResource.publication_status == "published", LearningResource.lesson_id.in_(active_lessons)).order_by(LearningResource.created_at.desc()).all(),
-        maps=ConceptMap.query.filter(ConceptMap.publication_status == "published", ConceptMap.lesson_id.in_(active_lessons)).order_by(ConceptMap.created_at.desc()).all(),
+        resources=LearningResource.query.filter(LearningResource.publication_status == "published", LearningResource.lesson_id.in_(active_lessons)).order_by(LearningResource.created_at.desc()).limit(6).all(),
+        maps=ConceptMap.query.filter(ConceptMap.publication_status == "published", ConceptMap.lesson_id.in_(active_lessons)).order_by(ConceptMap.created_at.desc()).limit(6).all(),
         characters=HistoricalCharacter.query.filter(HistoricalCharacter.publication_status == "published", HistoricalCharacter.lesson_id.in_(active_lessons)).order_by(HistoricalCharacter.created_at.desc()).all(),
         honor_entries=HonorBoardEntry.query.filter_by(is_active=True).order_by(HonorBoardEntry.created_at.desc()).limit(8).all(),
+    )
+
+
+@learning_bp.get("/maps")
+@login_required
+def maps_archive():
+    """Show published concept maps in a paginated archive."""
+    active_lessons = db.session.query(Lesson.id).join(Unit).join(Curriculum).filter(
+        Curriculum.is_active.is_(True)
+    )
+    pagination = ConceptMap.query.filter(
+        ConceptMap.publication_status == "published",
+        ConceptMap.lesson_id.in_(active_lessons),
+    ).order_by(ConceptMap.created_at.desc()).paginate(
+        page=max(request.args.get("page", 1, type=int), 1),
+        per_page=12,
+        error_out=False,
+    )
+    return render_template(
+        "learning/archive.html",
+        archive_kind="maps",
+        pagination=pagination,
+        rows=pagination.items,
+    )
+
+
+@learning_bp.get("/resources")
+@login_required
+def resources_archive():
+    """Show published lesson summaries and supporting files in a paginated archive."""
+    active_lessons = db.session.query(Lesson.id).join(Unit).join(Curriculum).filter(
+        Curriculum.is_active.is_(True)
+    )
+    pagination = LearningResource.query.filter(
+        LearningResource.publication_status == "published",
+        LearningResource.lesson_id.in_(active_lessons),
+    ).order_by(LearningResource.created_at.desc()).paginate(
+        page=max(request.args.get("page", 1, type=int), 1),
+        per_page=12,
+        error_out=False,
+    )
+    return render_template(
+        "learning/archive.html",
+        archive_kind="resources",
+        pagination=pagination,
+        rows=pagination.items,
     )
 
 
