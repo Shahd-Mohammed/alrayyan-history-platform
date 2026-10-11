@@ -1610,3 +1610,15 @@ border-color:rgba(201,154,61,.24)!important;
   .learning-grid article{min-height:0!important}
   .character-actions button{flex:0 0 auto!important}
 }
+
+/* Final student page copy layout and consistent compact gold buttons */
+.learning-page .historical-learning-hero.character-hero{padding:clamp(24px,3.5vw,38px)!important;gap:10px!important;min-height:0!important}
+.learning-page .historical-learning-hero.character-hero h1{font-size:clamp(1.9rem,3.2vw,2.8rem)!important;line-height:1.4!important;white-space:normal!important;margin:7px 0!important}
+.learning-page .historical-learning-hero.character-hero>span{max-width:780px!important;font-size:.98rem!important;line-height:1.85!important}
+.learning-page .historical-learning-hero.character-hero .hero-score{position:static!important;display:inline-flex!important;align-self:flex-start!important;align-items:center!important;justify-content:center!important;flex-direction:row!important;gap:9px!important;min-width:0!important;min-height:0!important;margin:8px 0 0!important;padding:9px 14px!important;border-radius:12px!important}
+.learning-page .historical-learning-hero.character-hero .hero-score b{font-size:1.25rem!important}
+.learning-page .character-actions{display:flex!important;flex-wrap:wrap!important;gap:9px!important}
+.learning-page .character-actions button,.learning-page .learning-grid article>a,.learning-page .date-memory-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;max-width:100%!important;min-width:0!important;min-height:36px!important;padding:8px 13px!important;border-radius:10px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;font-weight:650!important;line-height:1.4!important;white-space:nowrap!important}
+.learning-page .character-actions button.gold-action,.learning-page .learning-grid article>a,.learning-page .date-memory-button{background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border:1px solid #b9872c!important;color:#fff!important}
+.learning-page .character-actions button.hint-action{background:#fffdf8!important;border:1px solid #dfd2b9!important;color:#294461!important}
+@media(max-width:620px){.learning-page .historical-learning-hero.character-hero{padding:22px!important}.learning-page .historical-learning-hero.character-hero h1{font-size:1.8rem!important}}
