@@ -20,7 +20,7 @@
         href="{{ url_for(
             'static',
             filename='css/dashboard.css',
-            v='20261011-premium-assessment-results-1'
+            v='20261011-final-results-design-2'
         ) }}"
     >
 
@@ -230,6 +230,16 @@ body{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;background:l
 @media(max-width:760px){.results-dashboard .assessment-tabs{overflow-x:auto!important}.results-dashboard .assessment-tabs a{flex:0 0 auto!important}}
 </style>
 
+<style>
+/* Final results-page spacing and compact action controls */
+.results-dashboard{width:min(1220px,calc(100% - 36px))!important;gap:24px!important}
+.results-intro{margin-bottom:4px!important;padding:clamp(28px,3.5vw,42px)!important}
+.results-dashboard .assessment-tabs{width:max-content!important;max-width:100%!important;align-self:flex-start!important;display:flex!important;flex-wrap:nowrap!important;gap:8px!important;margin:0 0 4px!important;padding:7px!important;overflow-x:auto!important;background:#fffdf8!important;border:1px solid #e7dcc8!important;border-radius:15px!important}
+.results-dashboard .assessment-tabs a{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;padding:10px 15px!important;border:1px solid #e7dcc8!important;border-radius:10px!important;background:#f8f5ee!important;color:#314963!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:650!important;line-height:1.35!important;white-space:nowrap!important;box-shadow:none!important}
+.results-dashboard .assessment-tabs a.active{background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border-color:#b9872c!important;color:#fff!important}
+.results-dashboard button,.results-dashboard input[type=submit],.results-dashboard input[type=button],.results-dashboard a.button,.results-dashboard .button,.results-dashboard .results-primary-link,.results-dashboard .score-policy-banner a,.results-dashboard .grade-attempt-action{width:auto!important;max-width:max-content!important;min-width:0!important;min-height:36px!important;padding:8px 14px!important;border-radius:10px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:650!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important}
+@media(max-width:650px){.results-dashboard{width:calc(100% - 22px)!important}.results-dashboard .assessment-tabs{max-width:100%!important}.results-dashboard .results-intro{padding:24px 20px!important}}
+</style>
 </head>
 
 <body>
