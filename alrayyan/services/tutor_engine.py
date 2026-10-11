@@ -39,6 +39,7 @@ MASTERY_DELTAS = {
 
 NON_LEARNING_MESSAGE_PATTERNS = (
     r"^(?:هلا|أهلًا|اهلا|أهلا|مرحبا|السلام عليكم)\b",
+    r"يسعدك ربنا|يسعد قلبك|يسعد مساك|يسعد مساكم|الله يسعدك|مساء الخير|صباح الخير|انت جاهز|إنت جاهز|أنت جاهز|كيفك|كيف حالك",
     r"^(?:هههه+|ههه+|خخخ+|lol+)\b",
     r"بمزح معك|أنا بمزح|انا بمزح|كنت بمزح|جامد انت|جامد إنت",
     r"^(?:حبيبي(?:\s+انت|\s+إنت)?|حبيبتي(?:\s+انتي|\s+إنتِ)?|يا\s*خوي|يا\s*خيو|لا\s+عنجد|مش\s+غلط|عنجد|يسلمو|تسلم|تسلمي|تمام|خلص|طيب|حلو|منيح|ماشي|الله\s+يسعدك)[.!؟،\s]*$",
@@ -202,6 +203,11 @@ def tutor_reply(conversation, student_text):
                 "أهلًا فيك 😄 بنخلي الجو خفيف، وبنضل قريبين من هدفنا. "
                 "خلّينا نبدأ بسؤال سهل من الدرس أو أشرحلك فكرة بطريقة أبسط."
             )
+        elif re.search(r"يسعدك ربنا|يسعد قلبك|يسعد مساك|يسعد مساكم|الله يسعدك|مساء الخير|صباح الخير|انت جاهز|إنت جاهز|أنت جاهز|كيفك|كيف حالك", normalized):
+            reply = (
+                "يسعد مساكِ، وأنا جاهز 😄 خلّينا نبدأ على راحتك: بدك نكمل سؤال الدرس، "
+                "ولا أشرحلك الفكرة بطريقة أبسط؟"
+            )
         elif re.search(r"^(?:هلا|أهلًا|اهلا|أهلا|مرحبا|السلام عليكم)\b", normalized):
             reply = (
                 "يا هلا! جاهزين نبلّش بخطوة خفيفة؟ اختاري درس من القائمة، "
@@ -307,7 +313,7 @@ def tutor_reply(conversation, student_text):
     request_body = {
         "model": model,
         "temperature": 0.55,
-        "max_tokens": 900,
+        "max_tokens": 600,
         "response_format": {"type": "json_object"},
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
@@ -347,7 +353,7 @@ def tutor_reply(conversation, student_text):
                         "Content-Type": "application/json",
                     },
                     json=request_body,
-                    timeout=60,
+                    timeout=35,
                 )
                 break
             except requests.RequestException as error:
