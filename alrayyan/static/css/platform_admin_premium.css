@@ -2822,3 +2822,38 @@ button.concept-action,
   color:#fff;
 }
 .test-archive-pagination a:hover { border-color:#b58227; transform:translateY(-1px); }
+
+
+/* Final compact gold actions and balanced spacing for concept maps and class cards */
+.concept-map-tabs{margin-top:30px!important;margin-bottom:26px!important;gap:11px!important;padding:8px!important;border-radius:17px!important;background:#fff!important;border:1px solid #e8dfcf!important}
+.concept-map-tabs button{flex:0 0 auto!important;width:auto!important;min-width:145px!important;min-height:42px!important;padding:9px 17px!important;border:1px solid #e3d8c4!important;border-radius:11px!important;background:#fbf8f1!important;color:#173455!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;font-weight:750!important;white-space:nowrap!important;box-shadow:none!important}
+.concept-map-tabs button span{color:#9b7a37!important;font-size:.76rem!important}
+.concept-map-tabs button.is-active{border-color:#b9892d!important;background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important;box-shadow:0 6px 14px rgba(153,105,24,.13)!important}
+.concept-map-tabs button.is-active span{color:#fff!important}
+.concept-map-tabs button:hover{border-color:#c99a3d!important;background:#fff2d4!important;color:#805b17!important}
+.concept-map-tabs button.is-active:hover{background:linear-gradient(135deg,#c99a3d,#986717)!important;color:#fff!important}
+.concept-map-card-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+.concept-map-card-actions form{margin:0!important}
+.concept-map-card-actions .concept-action,.tree-add-button,.concept-form-footer .platform-gold-button,.concept-ai-form .platform-gold-button,.concept-upload-form .platform-gold-button{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;min-height:36px!important;
+ padding:7px 13px!important;border:1px solid #b9892d!important;border-radius:10px!important;
+ background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important;
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;
+ font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;text-decoration:none!important;
+ box-shadow:0 4px 11px rgba(153,105,24,.11)!important;white-space:nowrap!important;cursor:pointer!important
+}
+.concept-map-card-actions .concept-action:hover,.tree-add-button:hover,.concept-form-footer .platform-gold-button:hover,.concept-ai-form .platform-gold-button:hover,.concept-upload-form .platform-gold-button:hover{background:linear-gradient(135deg,#bd8b2b,#8d6116)!important;transform:translateY(-1px)}
+.tree-add-button span{color:#fff!important}
+.concept-map-card-actions .concept-action.delete{background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important;border-color:#b9892d!important}
+.concept-map-card-actions .concept-action.preview{background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important}
+.concept-map-card-actions .concept-action.publish{background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important}
+.classroom-admin-page{gap:26px!important;padding-inline:12px!important}
+.classroom-admin-page>.platform-panel{min-width:0!important;padding:clamp(20px,2.5vw,30px)!important}
+.classroom-list-panel .platform-list{display:grid!important;gap:14px!important;margin-top:20px!important}
+.classroom-admin-row{margin-inline:4px!important;padding:20px!important;border:1px solid #e7dcc8!important;border-radius:17px!important;background:#fff!important;box-shadow:0 8px 20px rgba(23,47,82,.045)!important}
+.classroom-admin-row .classroom-details strong{font-size:1.08rem!important;font-weight:800!important;line-height:1.7!important}
+.classroom-admin-row .classroom-details p,.classroom-admin-row .classroom-details small{line-height:1.8!important}
+.classroom-row-actions{gap:9px!important}
+.classroom-delete-button{width:auto!important;min-width:0!important;max-width:max-content!important;min-height:36px!important;padding:7px 13px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;font-weight:750!important;line-height:1.35!important}
+@media(max-width:700px){.concept-map-tabs{overflow-x:auto!important;flex-wrap:nowrap!important}.concept-map-tabs button{min-width:max-content!important}.classroom-admin-page{padding-inline:0!important}.classroom-admin-page>.platform-panel{padding:18px!important}.classroom-admin-row{margin-inline:0!important}}
