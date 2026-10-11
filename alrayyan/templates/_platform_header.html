@@ -110,8 +110,10 @@
             toggle.setAttribute("aria-expanded", String(isOpen));
         });
 
-        // Keep only one header dropdown open at a time.
-        const dropdowns = menu.querySelectorAll("details.student-learning-menu");
+        // Keep only one header dropdown open at a time, including the account menu.
+        const dropdowns = document.querySelectorAll(
+            ".platform-navigation details.student-learning-menu, .platform-navigation details.platform-user-dropdown"
+        );
         dropdowns.forEach((details) => {
             details.addEventListener("toggle", () => {
                 if (!details.open) return;
@@ -119,6 +121,12 @@
                     if (other !== details) other.open = false;
                 });
             });
+        });
+
+        // Close open dropdowns when the user clicks outside the navigation.
+        document.addEventListener("click", (event) => {
+            if (menu.contains(event.target)) return;
+            dropdowns.forEach((details) => { details.open = false; });
         });
     })();
 </script>
