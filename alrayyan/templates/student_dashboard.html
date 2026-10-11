@@ -15,7 +15,7 @@
         rel="stylesheet"
         href="{{ url_for(
             'static',
-            filename='css/worksheets.css',v='20261011-student-dashboard-navigation-2'
+            filename='css/worksheets.css',v='20261011-student-dashboard-refresh-3'
         ) }}"
     >
 </head>
@@ -91,40 +91,60 @@
             </article>
         </section>
 
-        <section class="student-dashboard-panel student-learning-hub">
-  <div class="student-panel-heading">
-    <div><span>مساحتك التعليمية</span><h2>اختاري خطوتك التالية</h2><p>كل أدوات التعلّم والمراجعة والتقدّم مرتبة في مجموعات واضحة.</p></div>
+        <section class="student-dashboard-panel student-learning-hub student-dashboard-refresh">
+  <div class="student-panel-heading student-dashboard-heading">
+    <div><span>ابدئي من هنا</span><h2>مساحتكِ في الريان</h2><p>كل ما تحتاجينه للدراسة والمراجعة ومتابعة إنجازكِ، بترتيب واضح وخطوات بسيطة.</p></div>
   </div>
 
-  <div class="student-dashboard-group">
-    <div class="student-dashboard-group-heading"><span>01</span><div><h3>تعلّمي وتدرّبي</h3><p>اسألي، جرّبي، واختبري فهمكِ.</p></div></div>
-    <div class="student-dashboard-grid">
-      <article class="student-dashboard-card"><span>حوار تعليمي</span><h3>معلّم الريان الذكي</h3><p>ناقشي المفاهيم، واحصلي على تلميحات وشرح مستند إلى محتوى المنهج.</p><a href="{{ url_for('teacher.teacher_page') }}">ابدئي المحادثة</a></article>
-      <article class="student-dashboard-card"><span>تحديات تفاعلية</span><h3>تحدّي المعلّم الذكي</h3><p>تدرّبي في جولات تتكيّف مع إجاباتكِ وتساعدكِ على تطوير مستواكِ.</p><a href="{{ url_for('challenges.setup') }}">ابدئي التحدّي</a></article>
-      <article class="student-dashboard-card"><span>الاختبارات</span><h3>اختباراتي</h3><p>استعرضي الاختبارات المنشورة وتدرّبي على الدروس المتاحة لكِ.</p><a href="{{ url_for('challenges.test_bank') }}">استعراض الاختبارات</a></article>
-    </div>
+  <div class="student-dashboard-primary-grid">
+    <article class="student-dashboard-card student-main-tool-card">
+      <span>شرح وفهم</span><h3>معلّم الريان الذكي</h3>
+      <p>اسألي عن الدرس، وناقشي الأفكار، وتدرّبي على إجاباتكِ العلمية.</p>
+      <a href="{{ url_for('teacher.teacher_page') }}">ابدئي التعلّم</a>
+    </article>
+    <article class="student-dashboard-card student-main-tool-card">
+      <span>تدريب تفاعلي</span><h3>التحديات الذكية</h3>
+      <p>أجيبي عن أسئلة تاريخية، وراجعي تفسير كل إجابة ومصدرها.</p>
+      <a href="{{ url_for('challenges.setup') }}">ابدئي التحدّي</a>
+    </article>
+    <article class="student-dashboard-card student-main-tool-card">
+      <span>قياس الفهم</span><h3>اختباراتي</h3>
+      <p>انتقلي إلى الاختبارات المنشورة وتابعي نتائج محاولاتكِ.</p>
+      <a href="{{ url_for('challenges.test_bank') }}">استعرضي الاختبارات</a>
+    </article>
+    <article class="student-dashboard-card student-main-tool-card">
+      <span>مراجعة المصادر</span><h3>مكتبة التعلّم</h3>
+      <p>اجمعي أفكار الدرس من الملخصات والملفات والخرائط والشخصيات.</p>
+      <a href="{{ url_for('learning.library') }}">افتحي المكتبة</a>
+    </article>
   </div>
 
-  <div class="student-dashboard-group">
-    <div class="student-dashboard-group-heading"><span>02</span><div><h3>اكتشفي وراجعي</h3><p>مصادر وأنشطة تساعدكِ على تثبيت المعلومات.</p></div></div>
-    <div class="student-dashboard-grid">
-      <article class="student-dashboard-card"><span>محتوى تعليمي</span><h3>مكتبة التعلّم</h3><p>تصفّحي الملخصات والملفات والخرائط المفاهيمية والشخصيات التاريخية.</p><a href="{{ url_for('learning.library') }}">استكشفي المكتبة</a></article>
-      <article class="student-dashboard-card"><span>استرجاع نشط</span><h3>ذاكرة التواريخ</h3><p>راجعي الأحداث والتواريخ على فترات متباعدة حتى تثبت في ذاكرتكِ.</p><a href="{{ url_for('learning.date_memory') }}">ابدئي المراجعة</a></article>
-      <article class="student-dashboard-card"><span>لعبة تاريخية</span><h3>اعرفي الشخصية</h3><p>استنتجي الشخصية من التلميحات، واختبري فهمكِ لأحداث الدرس.</p><a href="{{ url_for('learning.characters') }}">ابدئي التحدّي</a></article>
-      <article class="student-dashboard-card"><span>إنجازات الطالبات</span><h3>لوحة الشرف</h3><p>شاهدي الإنجازات والنقاط والتقدّم الذي تحقّقه الطالبات في المنصة.</p><a href="{{ url_for('learning.honor_board') }}">عرض لوحة الشرف</a></article>
-    </div>
-  </div>
-
-  <div class="student-dashboard-group">
-    <div class="student-dashboard-group-heading"><span>03</span><div><h3>تابعي تقدّمكِ</h3><p>راجعي إنجازاتكِ وخطواتكِ التالية من مكان واحد.</p></div></div>
-    <div class="student-dashboard-grid">
-      <article class="student-dashboard-card"><span>خطة شخصية</span><h3>خطتي ونقاط الضعف</h3><p>تابعي المفاهيم التي أتقنتِها والخطوات المقترحة لمراجعة ما يحتاج إلى دعم.</p><a href="{{ url_for('teacher.learning_hub') }}">عرض خطتي</a></article>
-      <article class="student-dashboard-card points-dashboard-card"><span>رصيد التعلّم</span><h3>محفظة نقاطي</h3><p>رصيدكِ الحالي {{ current_user.points or 0 }} نقطة في المستوى {{ current_user.level or 1 }}. اطلعي على سجل المكافآت.</p><a href="{{ url_for('teacher.my_points') }}">عرض محفظة النقاط</a></article>
-      <article class="student-dashboard-card"><span>ملخّص الأداء</span><h3>تقدّمي في المنصة</h3><p>راجعي نتائج الاختبارات وأوراق العمل والتحديات وإتقان المفاهيم.</p><a href="{{ url_for('main.student_progress') }}">عرض تقدّمي</a></article>
-    </div>
+  <div class="student-dashboard-secondary">
+    <a href="{{ url_for('learning.honor_board') }}"><span>🏆</span><div><strong>لوحة الشرف</strong><small>شاهدي أسماء الطالبات المتفوقات وإنجازاتهن.</small></div><b>←</b></a>
+    <a href="{{ url_for('teacher.learning_hub') }}"><span>✦</span><div><strong>خطتي التعليمية</strong><small>راجعي المفاهيم التي تحتاج إلى تدريب إضافي.</small></div><b>←</b></a>
+    <a href="{{ url_for('teacher.my_points') }}"><span>◇</span><div><strong>محفظة نقاطي</strong><small>تابعي رصيدكِ وسجل المكافآت.</small></div><b>←</b></a>
+    <a href="{{ url_for('main.student_progress') }}"><span>↗</span><div><strong>تقدّمي في المنصة</strong><small>ملخّص نتائجكِ وتفاعلكِ في الأنشطة.</small></div><b>←</b></a>
+    <a href="{{ url_for('learning.characters') }}"><span>🏛</span><div><strong>اعرفي الشخصية</strong><small>اكتشفي الشخصيات من التلميحات التاريخية.</small></div><b>←</b></a>
+    <a href="{{ url_for('learning.date_memory') }}"><span>◷</span><div><strong>ذاكرة التواريخ</strong><small>راجعي الأحداث والتواريخ المهمة.</small></div><b>←</b></a>
   </div>
 </section>
 
+<section class="student-dashboard-panel student-dashboard-honor-preview">
+  <div class="student-panel-heading">
+    <div><span>إلهام من زميلاتكِ</span><h2>متصدّرات لوحة الشرف</h2><p>خطوات صغيرة ومثابرة مستمرة تصنع إنجازًا يستحق الاحتفاء.</p></div>
+    <a class="student-honor-all-link" href="{{ url_for('learning.honor_board') }}">عرض لوحة الشرف</a>
+  </div>
+  <div class="student-dashboard-leaderboard">
+    {% for student in top_students %}
+      <article class="student-leader-card{% if loop.first %} student-leader-first{% endif %}">
+        <span class="student-leader-medal">{{ '🥇' if loop.index == 1 else ('🥈' if loop.index == 2 else '🥉') }}</span>
+        <div><small>المركز {{ loop.index }}</small><strong>{{ student.full_name }}</strong><span>{{ student.points or 0 }} نقطة · المستوى {{ student.level or 1 }}</span></div>
+      </article>
+    {% else %}
+      <p class="student-leader-empty">ستظهر أسماء المتفوقات هنا مع بدء تسجيل الإنجازات.</p>
+    {% endfor %}
+  </div>
+</section>
 {% if open_attempts %}
             <section class="student-dashboard-panel">
                 <div class="student-panel-heading">
