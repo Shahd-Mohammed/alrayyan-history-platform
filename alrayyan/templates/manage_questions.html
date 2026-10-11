@@ -271,6 +271,13 @@ display:inline-flex!important;align-items:center!important;justify-content:cente
 .form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action:hover,.form-page .question-form button[type="submit"]:hover,.form-page .question-form input[type="submit"]:hover{background:linear-gradient(135deg,#bd8b2b,#8d6116)!important}
 @media(max-width:760px){.form-page .assessment-tabs{flex-direction:row!important;overflow-x:auto!important}.form-page .assessment-tabs a,.form-page .assessment-tabs button{flex:0 0 auto!important}}
 
+
+/* Last pass: one-line tabs and balanced gold save controls */
+.form-page .assessment-tabs{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:10px!important;margin:28px 0 30px!important;padding:8px!important;overflow-x:auto!important;scrollbar-width:thin!important}
+.form-page .assessment-tabs a,.form-page .assessment-tabs button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;white-space:nowrap!important;padding:10px 18px!important;font-size:.9rem!important;font-weight:750!important}
+.form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action,.form-page .assessment-section button.primary-action,.form-page .question-form button[type="submit"],.form-page .question-form input[type="submit"],.form-page .save-question-button,.form-page .save-settings-button,.form-page .question-actions button,.form-page .question-actions a{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:0!important;max-width:max-content!important;min-height:37px!important;padding:8px 14px!important;border:1px solid #b9872d!important;border-radius:10px!important;background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important;box-shadow:0 4px 11px rgba(153,105,24,.12)!important}
+@media(max-width:760px){.form-page .assessment-tabs{flex-direction:row!important;overflow-x:auto!important}.form-page .assessment-tabs a,.form-page .assessment-tabs button{flex:0 0 auto!important}}
+
 </style>
 <style>
 /* Verified in-head styling: tabs stay on one line and save actions stay compact gold */
