@@ -121,7 +121,7 @@ class ConceptMastery(db.Model):
         index=True,
     )
     concept = db.Column(db.String(250), nullable=False)
-    mastery_score = db.Column(db.Integer, nullable=False, default=50)
+    mastery_score = db.Column(db.Integer, nullable=False, default=0)
     correct_count = db.Column(db.Integer, nullable=False, default=0)
     partial_count = db.Column(db.Integer, nullable=False, default=0)
     incorrect_count = db.Column(db.Integer, nullable=False, default=0)
