@@ -485,6 +485,7 @@ def my_points():
         "character_identified": "التعرّف على شخصية تاريخية",
         "concept_map_viewed": "استكشاف خريطة مفاهيمية",
         "resource_downloaded": "تنزيل مادة تعليمية",
+        "learning_library_opened": "زيارة مكتبة التعلّم لأول مرة",
         "test_completed": "إكمال اختبار",
         "worksheet_completed": "إكمال ورقة عمل",
         "historical_date_recalled": "تذكّر تاريخ تاريخي",

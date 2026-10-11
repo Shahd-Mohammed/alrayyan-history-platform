@@ -2684,3 +2684,108 @@ button.concept-action,
 .platform-admin-body .platform-admin-hero nav a{white-space:nowrap!important;min-width:0!important;padding:9px 10px!important;font-size:13px!important}
 .platform-admin-body .platform-admin-hero nav a:hover{transform:translateY(-1px)!important}
 @media(max-width:700px){.platform-admin-body .classroom-admin-page{padding-inline:12px!important}.platform-admin-body .creation-tabs.concept-map-tabs{overflow-x:auto!important}.platform-admin-body .platform-admin-hero nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+/* Focused finish: calm admin surfaces, warm gold actions, consistent button sizing */
+.platform-admin-body,
+.platform-admin-body button,
+.platform-admin-body input,
+.platform-admin-body select,
+.platform-admin-body textarea {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+}
+.platform-admin-body button,
+.platform-admin-body input[type="submit"],
+.platform-admin-body input[type="button"],
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .review-actions a,
+.platform-admin-body .classroom-delete-button,
+.platform-admin-body .honor-remove-button,
+.platform-admin-body .test-card-action,
+.platform-admin-body .test-card-preview,
+.platform-admin-body .test-primary-button,
+.platform-admin-body .test-secondary-button {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  width:auto !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  min-height:37px !important;
+  padding:8px 13px !important;
+  border-radius:10px !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.86rem !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+  letter-spacing:0 !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  flex:0 0 auto !important;
+}
+.platform-admin-body .platform-form > button[type="submit"],
+.platform-admin-body .platform-form > input[type="submit"],
+.platform-admin-body .concept-form-footer > button,
+.platform-admin-body .concept-upload-form > button,
+.platform-admin-body .concept-ai-form > button,
+.platform-admin-body .test-create-footer > button,
+.platform-admin-body .inline-question-form > button {
+  justify-self:start !important;
+  align-self:start !important;
+}
+.platform-admin-body .concept-map-card-actions .concept-action,
+.platform-admin-body .concept-map-card-actions .concept-action.preview,
+.platform-admin-body .concept-map-card-actions .concept-action.publish,
+.platform-admin-body .concept-map-card-actions .concept-action.delete {
+  background:linear-gradient(135deg,#d7b45e,#b9872d) !important;
+  border:1px solid #b9872d !important;
+  color:#fff !important;
+  box-shadow:0 4px 10px rgba(139,101,30,.12) !important;
+}
+.platform-admin-body .concept-map-card-actions .concept-action:hover {
+  background:linear-gradient(135deg,#c99a3d,#986b1d) !important;
+  color:#fff !important;
+}
+.platform-admin-body .tree-add-button,
+.platform-admin-body .tree-add-button span { color:#fff !important; }
+.platform-admin-body .concept-map-tabs {
+  margin:32px 0 30px !important;
+  padding:7px !important;
+  gap:9px !important;
+  background:#fffdf8 !important;
+  border:1px solid #e7ddca !important;
+}
+.platform-admin-body .concept-map-tabs button {
+  background:#f7f3ea !important;
+  color:#314963 !important;
+  border:1px solid #e5dccb !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active {
+  background:linear-gradient(135deg,#d7b45e,#b9872d) !important;
+  color:#fff !important;
+  border-color:#b9872d !important;
+}
+.platform-admin-body .concept-map-tabs button span { color:inherit !important; }
+.platform-admin-body .concept-map-tabs button.is-active span { background:rgba(255,255,255,.18) !important; }
+.platform-admin-body .test-center-page .test-center-hero {
+  margin-bottom:30px !important;
+}
+.platform-admin-body .test-center-page .test-library-section {
+  margin-inline:clamp(0px,1vw,12px) !important;
+  padding-inline:clamp(18px,2.5vw,30px) !important;
+}
+.platform-admin-body .test-center-page .test-builder-shell,
+.platform-admin-body .test-center-page #inline-test-workspace {
+  margin-inline:clamp(0px,1vw,12px) !important;
+}
+.platform-admin-body .classroom-admin-page { padding-inline:clamp(16px,3vw,38px) !important; }
+.platform-admin-body .classroom-list-panel { margin-inline:0 !important; }
+@media(max-width:760px) {
+  .platform-admin-body .test-center-page .test-library-section,
+  .platform-admin-body .test-center-page .test-builder-shell,
+  .platform-admin-body .test-center-page #inline-test-workspace { margin-inline:0 !important; }
+  .platform-admin-body .classroom-admin-page { padding-inline:12px !important; }
+}
+

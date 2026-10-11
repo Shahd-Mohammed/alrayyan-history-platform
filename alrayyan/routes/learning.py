@@ -42,6 +42,12 @@ def award_content_interaction(student, reason, source_type, source_id, amount=2)
 @learning_bp.get("/")
 @login_required
 def library():
+    # Award a one-time reward for reaching the learning library; repeat refreshes do not farm points.
+    if current_user.role == "student":
+        award_content_interaction(
+            current_user, "learning_library_opened", "student", current_user.id, amount=2
+        )
+        db.session.commit()
     active_lessons = db.session.query(Lesson.id).join(Unit).join(Curriculum).filter(Curriculum.is_active.is_(True))
     return render_template(
         "learning/library.html",
