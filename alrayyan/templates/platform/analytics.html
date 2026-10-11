@@ -17,6 +17,7 @@
     <article><span>تحققات خطة المراجعة</span><strong>{{ overview.plan_verifications }}</strong></article>
     <article><span>تنزيلات المواد التعليمية</span><strong>{{ overview.resource_downloads }}</strong></article>
     <article><span>استكشاف الخرائط</span><strong>{{ overview.concept_map_views }}</strong></article>
+    <article><span>زيارات مكتبة التعلّم</span><strong>{{ overview.library_visits }}</strong></article>
     <article><span>النقاط المسجّلة</span><strong>{{ overview.points_awarded }}</strong></article>
     <article><span>يحتجن متابعة</span><strong>{{ overview.support_count }}</strong></article>
 </section>
@@ -25,7 +26,7 @@
     <div>
       <span class="analytics-kicker">قراءة البيانات</span>
       <h2>العلاقة بين المشاركة والتحصيل</h2>
-      <p>كل نقطة تمثل طالبة. يجمع مؤشر النشاط محاولات الاختبارات وأوراق العمل، والتحديات، ورسائل المعلم الذكي، ومحاولات الشخصيات والتواريخ، وتنزيل المواد، واستكشاف الخرائط، والتحقق من خطة المراجعة. المحور العمودي يعرض متوسط النتائج المكتملة فقط.</p>
+      <p>كل نقطة تمثل طالبة. يجمع مؤشر النشاط محاولات الاختبارات وأوراق العمل، والتحديات، ورسائل المعلم الذكي، ومحاولات الشخصيات والتواريخ، وتنزيل المواد، وزيارات مكتبة التعلّم، واستكشاف الخرائط، والتحقق من خطة المراجعة. المحور العمودي يعرض متوسط النتائج المكتملة فقط.</p>
     </div>
     <div class="analytics-correlation-summary">
       <span>اتجاه العلاقة</span>
@@ -73,7 +74,7 @@
       <td>{{ row.challenge_count }}</td><td>{{ row.tutor_interactions }}</td><td>{{ row.character_attempts }}</td><td>{{ row.date_reviews }}</td><td>{{ row.plan_verifications }}</td><td>{{ row.resource_downloads }}</td><td>{{ row.concept_map_views }}</td><td>{{ row.library_visits }}</td><td>{{ row.points_earned }}</td>
       <td>{% if row.needs_support %}<span class="analytics-status support">تحتاج متابعة</span>{% elif row.activity_score %}<span class="analytics-status active">متفاعلة</span>{% else %}<span class="analytics-status quiet">لم تبدأ</span>{% endif %}</td>
     </tr>
-    {% else %}<tr><td colspan="14" class="platform-empty">ستظهر التحليلات بعد انضمام الطالبات وبدء الأنشطة.</td></tr>{% endfor %}
+    {% else %}<tr><td colspan="15" class="platform-empty">ستظهر التحليلات بعد انضمام الطالبات وبدء الأنشطة.</td></tr>{% endfor %}
     </tbody></table></div>
 </section>
 <section class="platform-panel analytics-note">
