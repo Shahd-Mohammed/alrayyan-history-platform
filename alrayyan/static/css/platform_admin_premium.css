@@ -2857,3 +2857,23 @@ button.concept-action,
 .classroom-row-actions{gap:9px!important}
 .classroom-delete-button{width:auto!important;min-width:0!important;max-width:max-content!important;min-height:36px!important;padding:7px 13px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;font-weight:750!important;line-height:1.35!important}
 @media(max-width:700px){.concept-map-tabs{overflow-x:auto!important;flex-wrap:nowrap!important}.concept-map-tabs button{min-width:max-content!important}.classroom-admin-page{padding-inline:0!important}.classroom-admin-page>.platform-panel{padding:18px!important}.classroom-admin-row{margin-inline:0!important}}
+
+
+/* Reduce decorative gold on concept-map pages; reserve gold for primary actions */
+.concept-map-workspace{border-color:#e5dfd4!important;box-shadow:0 12px 30px rgba(19,47,82,.055)!important}
+.concept-map-workspace .concept-kicker,.concept-map-workspace .concept-section-heading>div>span{color:#536b86!important}
+.concept-map-workspace .concept-section-icon{background:#edf2f7!important;border:1px solid #dce4ec!important;color:#173455!important}
+.concept-map-workspace .concept-section-icon.ai{background:#eef2f7!important;color:#173455!important}
+.concept-map-workspace .tree-builder{border-color:#e4dfd5!important;background:linear-gradient(180deg,#fff,#faf8f3)!important}
+.concept-map-workspace .tree-builder-topline{border-bottom-color:#e9e3d8!important}
+.concept-map-workspace .tree-count,.concept-map-workspace .library-count{border-color:#e1d8c6!important;background:#f8f5ee!important;color:#536b86!important}
+.concept-map-workspace .tree-builder-hint{color:#68788b!important}
+.concept-map-workspace .tree-builder-hint>span{color:#9b7a37!important}
+.concept-map-workspace .ai-review-steps>div{border-color:#e2e5e9!important;background:#fff!important}
+.concept-map-workspace .ai-review-steps>div>span{background:#edf2f7!important;color:#173455!important}
+.concept-map-workspace .ai-draft-note{border-color:#e2e5e9!important;background:#f7f8fa!important}
+.concept-map-workspace .ai-draft-note>span{color:#9b7a37!important}
+.concept-map-workspace .concept-map-card{border-color:#e5dfd4!important}
+.concept-map-workspace .concept-map-card-mark{background:#edf2f7!important;color:#173455!important}
+.concept-map-workspace .concept-status.draft{background:#f3f1eb!important;color:#6c7480!important;border-color:#e1ddd4!important}
+.concept-map-workspace .concept-status.published{background:#eef4f0!important;color:#416b55!important;border-color:#d8e5dc!important}
