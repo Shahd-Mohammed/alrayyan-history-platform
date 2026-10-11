@@ -60,7 +60,24 @@
             </a>
         </section>
 
-        <section class="student-stats">
+        <section class="student-dashboard-panel student-dashboard-honor-preview">
+  <div class="student-panel-heading">
+    <div><span>إلهام من زميلاتكِ</span><h2>متصدّرات لوحة الشرف</h2><p>خطوات صغيرة ومثابرة مستمرة تصنع إنجازًا يستحق الاحتفاء.</p></div>
+    <a class="student-honor-all-link" href="{{ url_for('learning.honor_board') }}">عرض لوحة الشرف</a>
+  </div>
+  <div class="student-dashboard-leaderboard">
+    {% for student in top_students %}
+      <article class="student-leader-card{% if loop.first %} student-leader-first{% endif %}">
+        <span class="student-leader-medal">{{ '🥇' if loop.index == 1 else ('🥈' if loop.index == 2 else '🥉') }}</span>
+        <div><small>المركز {{ loop.index }}</small><strong>{{ student.full_name }}</strong><span>{{ student.points or 0 }} نقطة · المستوى {{ student.level or 1 }}</span></div>
+      </article>
+    {% else %}
+      <p class="student-leader-empty">ستظهر أسماء المتفوقات هنا مع بدء تسجيل الإنجازات.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="student-stats">
             <article>
                 <span>أوراق العمل المنشورة</span>
 
@@ -129,22 +146,7 @@
   </div>
 </section>
 
-<section class="student-dashboard-panel student-dashboard-honor-preview">
-  <div class="student-panel-heading">
-    <div><span>إلهام من زميلاتكِ</span><h2>متصدّرات لوحة الشرف</h2><p>خطوات صغيرة ومثابرة مستمرة تصنع إنجازًا يستحق الاحتفاء.</p></div>
-    <a class="student-honor-all-link" href="{{ url_for('learning.honor_board') }}">عرض لوحة الشرف</a>
-  </div>
-  <div class="student-dashboard-leaderboard">
-    {% for student in top_students %}
-      <article class="student-leader-card{% if loop.first %} student-leader-first{% endif %}">
-        <span class="student-leader-medal">{{ '🥇' if loop.index == 1 else ('🥈' if loop.index == 2 else '🥉') }}</span>
-        <div><small>المركز {{ loop.index }}</small><strong>{{ student.full_name }}</strong><span>{{ student.points or 0 }} نقطة · المستوى {{ student.level or 1 }}</span></div>
-      </article>
-    {% else %}
-      <p class="student-leader-empty">ستظهر أسماء المتفوقات هنا مع بدء تسجيل الإنجازات.</p>
-    {% endfor %}
-  </div>
-</section>
+
 {% if open_attempts %}
             <section class="student-dashboard-panel">
                 <div class="student-panel-heading">
