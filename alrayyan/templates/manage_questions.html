@@ -21,7 +21,7 @@
         rel="stylesheet"
         href="{{ url_for(
             'static',
-            filename='css/dashboard.css', v='20261011-premium-assessment-buttons-1'
+            filename='css/dashboard.css', v='20261011-shared-assessment-polish-5'
         ) }}"
     >
 
@@ -352,6 +352,21 @@ body{background:radial-gradient(circle at 94% 2%,rgba(201,154,61,.12),transparen
 .form-page .assessment-section{margin-top:24px!important;border-radius:20px!important}
 .form-page button[type=submit],.form-page input[type=submit],.form-page .primary-action,.form-page .save-question-button,.form-page .save-settings-button,.form-page .question-actions a,.form-page .question-actions button{width:auto!important;max-width:max-content!important;min-width:0!important;min-height:36px!important;padding:8px 14px!important;border-radius:10px!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border:1px solid #b9872c!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:650!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important}
 @media(max-width:760px){.form-page{width:calc(100% - 22px)!important}.form-page .assessment-tabs{max-width:100%!important}.form-page .assessment-section{padding:18px!important}}
+
+/* Final shared visual system: light ivory surfaces, IBM Plex Sans Arabic, compact gold actions. */
+body,.form-page,.form-page label,.form-page input,.form-page select,.form-page textarea,.form-page button{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+body{background:linear-gradient(180deg,#fffdf8 0%,#f5f1e8 100%)!important;color:#172f52!important}
+.form-intro{background:radial-gradient(circle at 10% 0%,rgba(215,180,94,.18),transparent 25%),linear-gradient(128deg,#0b203d 0%,#173b64 58%,#244b73 100%)!important;border:1px solid rgba(201,154,61,.38)!important}
+.form-intro h1{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:800!important;line-height:1.4!important}
+.assessment-tabs{width:100%!important;max-width:100%!important;align-self:stretch!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;justify-content:flex-start!important;gap:9px!important;margin:22px 0 28px!important;padding:8px!important;overflow-x:auto!important;scrollbar-width:thin!important;border:1px solid #e5dccb!important;border-radius:15px!important;background:#fffdf8!important}
+.assessment-tabs a{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;max-width:none!important;padding:11px 18px!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;font-weight:700!important;line-height:1.4!important;border-radius:10px!important}
+.assessment-tabs a.active{background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border:1px solid #b9872c!important;box-shadow:0 4px 12px rgba(150,106,31,.13)!important}
+.assessment-section{margin-bottom:22px!important;background:#fffdf9!important;border:1px solid #e7dfd1!important;border-radius:21px!important;box-shadow:0 12px 30px rgba(23,47,82,.055)!important}
+.assessment-section>h2,.question-card-title strong,.question-type-builder__heading strong{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:800!important}
+.form-page button[type=submit],.form-page input[type=submit],.form-page .primary-action,.form-page .save-question-button,.form-page .save-settings-button,.form-page .question-actions a,.form-page .question-actions button,.form-page .builder-add{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;max-width:100%!important;min-width:0!important;min-height:36px!important;padding:8px 14px!important;border-radius:10px!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border:1px solid #b9872c!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:700!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important;box-shadow:0 4px 11px rgba(150,106,31,.12)!important}
+.form-page .question-delete-action{background:#fff7f7!important;color:#9a3434!important;border:1px solid #e2bcbc!important;box-shadow:none!important}
+@media(max-width:760px){.form-page .assessment-tabs{width:100%!important;max-width:100%!important;align-self:stretch!important}.form-page .assessment-tabs a{flex:0 0 auto!important;white-space:nowrap!important}.form-page .assessment-section{padding:18px!important}}
+
 </style>
 </head>
 
