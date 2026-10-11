@@ -3417,3 +3417,205 @@ button.concept-action,
 .platform-admin-page input[type="submit"]:not(.platform-gold-button){background:#102f50!important;color:#fff!important;border:1px solid #102f50!important}
 .platform-admin-page input[type="submit"]:not(.platform-gold-button):hover{background:#1b496e!important;color:#fff!important}
 
+
+
+/* Unified interface pass: worksheet-upload palette, consistent Arabic type, compact buttons */
+.platform-admin-body,
+.platform-admin-body button,
+.platform-admin-body input,
+.platform-admin-body select,
+.platform-admin-body textarea,
+.platform-admin-body a {
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+}
+.platform-admin-body h1,
+.platform-admin-body h2,
+.platform-admin-body h3,
+.platform-admin-body p,
+.platform-admin-body label,
+.platform-admin-body button,
+.platform-admin-body input,
+.platform-admin-body select,
+.platform-admin-body textarea {
+  letter-spacing: 0 !important;
+}
+.platform-admin-body button,
+.platform-admin-body input[type="submit"],
+.platform-admin-body input[type="button"],
+.platform-admin-body a.platform-gold-button,
+.platform-admin-body .platform-gold-button,
+.platform-admin-body .concept-action,
+.platform-admin-body .tree-add-button,
+.platform-admin-body .classroom-delete-button,
+.platform-admin-body .honor-remove-button,
+.platform-admin-body .review-actions a,
+.platform-admin-body .review-actions button,
+.platform-admin-body .curriculum-actions button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 38px !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  font-size: .88rem !important;
+  font-weight: 750 !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0 !important;
+  white-space: normal;
+  text-decoration: none !important;
+  box-sizing: border-box !important;
+}
+.platform-admin-body .platform-gold-button,
+.platform-admin-body input.platform-gold-button,
+.platform-admin-body button.platform-gold-button,
+.platform-admin-body a.platform-gold-button {
+  width: auto !important;
+  max-width: max-content !important;
+  min-width: 0 !important;
+  min-height: 40px !important;
+  padding: 9px 17px !important;
+  border: 1px solid #b9872d !important;
+  background: linear-gradient(135deg,#d8b45e,#b9872d) !important;
+  color: #fff !important;
+  box-shadow: 0 5px 13px rgba(169,122,34,.13) !important;
+}
+.platform-admin-body .platform-gold-button:hover,
+.platform-admin-body input.platform-gold-button:hover,
+.platform-admin-body button.platform-gold-button:hover,
+.platform-admin-body a.platform-gold-button:hover {
+  background: linear-gradient(135deg,#e1c474,#c09236) !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+.platform-admin-body .platform-form > input[type="submit"],
+.platform-admin-body .platform-form > button[type="submit"],
+.platform-admin-body .platform-form button.platform-gold-button,
+.platform-admin-body .platform-form input.platform-gold-button {
+  width: auto !important;
+  max-width: max-content !important;
+  align-self: flex-start !important;
+}
+.platform-admin-body .platform-two-columns {
+  gap: 24px !important;
+}
+.platform-admin-body .platform-panel {
+  min-width: 0;
+}
+.platform-admin-body .concept-map-tabs {
+  position: relative !important;
+  margin: 28px 0 30px !important;
+  padding: 7px !important;
+  gap: 9px !important;
+  border-color: #e5dccb !important;
+  border-radius: 16px !important;
+  background: linear-gradient(135deg,#fffdf8,#f8f4eb) !important;
+  box-shadow: 0 9px 24px rgba(16,43,79,.045) !important;
+}
+.platform-admin-body .concept-map-tabs button {
+  flex: 1 1 0 !important;
+  min-width: max-content !important;
+  min-height: 42px !important;
+  padding: 9px 15px !important;
+  border: 1px solid transparent !important;
+  border-radius: 11px !important;
+  background: transparent !important;
+  color: #53647a !important;
+  font-size: .9rem !important;
+  font-weight: 750 !important;
+  white-space: nowrap !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active,
+.platform-admin-body .concept-map-tabs button[aria-selected="true"] {
+  background: linear-gradient(135deg,#d8b45e,#b9872d) !important;
+  color: #fff !important;
+  border-color: #b9872d !important;
+  box-shadow: 0 5px 12px rgba(169,122,34,.12) !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active span,
+.platform-admin-body .concept-map-tabs button[aria-selected="true"] span {
+  background: rgba(255,255,255,.18) !important;
+  color: #fff !important;
+}
+.platform-admin-body .concept-map-tabs button:hover {
+  background: #f5eddd !important;
+  color: #8b651e !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active:hover {
+  background: linear-gradient(135deg,#e1c474,#c09236) !important;
+  color: #fff !important;
+}
+.platform-admin-body .concept-map-tabs + .concept-map-workspace {
+  margin-top: 0 !important;
+}
+.platform-admin-body .tree-builder-toolbar .tree-add-button,
+.platform-admin-body .tree-builder-toolbar .tree-add-button span,
+.platform-admin-body .tree-builder-toolbar .tree-add-button * {
+  color: #fff !important;
+}
+.platform-admin-body .concept-map-card-actions .concept-action,
+.platform-admin-body .concept-map-card-actions .concept-action.preview,
+.platform-admin-body .concept-map-card-actions .concept-action.publish,
+.platform-admin-body .concept-map-card-actions .concept-action.delete {
+  min-height: 37px !important;
+  padding: 7px 12px !important;
+  border: 1px solid #b9872d !important;
+  border-radius: 10px !important;
+  background: linear-gradient(135deg,#d8b45e,#b9872d) !important;
+  color: #fff !important;
+  font-size: .82rem !important;
+  font-weight: 750 !important;
+  box-shadow: none !important;
+}
+.platform-admin-body .concept-map-card-actions .concept-action:hover {
+  background: linear-gradient(135deg,#e1c474,#c09236) !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+.platform-admin-body .concept-map-card-actions form,
+.platform-admin-body .classroom-row-actions form,
+.platform-admin-body .review-actions form {
+  display: inline-flex;
+  margin: 0;
+}
+.platform-admin-body .concept-map-card-actions {
+  gap: 8px !important;
+}
+.platform-admin-body .concept-section-heading .concept-section-icon {
+  background: #f2eee5 !important;
+  color: #244b75 !important;
+  border-color: #e5dccb !important;
+}
+.platform-admin-body .concept-section-heading .concept-section-icon.ai,
+.platform-admin-body .concept-section-heading .concept-section-icon.upload,
+.platform-admin-body .concept-section-heading .concept-section-icon.library {
+  background: #f2eee5 !important;
+  color: #244b75 !important;
+  border-color: #e5dccb !important;
+}
+.platform-admin-body .test-center-page .test-primary-button,
+.platform-admin-body .test-center-page button[type="submit"],
+.platform-admin-body .test-center-page input[type="submit"] {
+  width: auto !important;
+  max-width: max-content !important;
+  min-width: 0 !important;
+}
+@media (max-width: 760px) {
+  .platform-admin-body .concept-map-tabs {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    margin: 22px 0 24px !important;
+  }
+  .platform-admin-body .concept-map-tabs button {
+    flex: 0 0 auto !important;
+  }
+  .platform-admin-body .platform-form > input[type="submit"],
+  .platform-admin-body .platform-form > button[type="submit"],
+  .platform-admin-body .platform-form button.platform-gold-button,
+  .platform-admin-body .platform-form input.platform-gold-button {
+    width: auto !important;
+    max-width: 100% !important;
+  }
+}
