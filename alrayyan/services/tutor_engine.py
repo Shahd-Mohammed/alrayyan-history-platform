@@ -172,6 +172,39 @@ def tutor_reply(conversation, student_text):
     if len(student_text) > 1200:
         raise ValueError("الرسالة طويلة جدًا. اختصريها قليلًا.")
 
+    # Keep greetings, jokes, encouragement requests, and score complaints
+    # conversational without sending them through the learning evaluator.
+    if is_non_learning_message(student_text):
+        normalized = student_text.lower()
+        if re.search(r"على اي اساس|على أي أساس|إتقان المفهوم صار|اتقان المفهوم صار|نسبة الإتقان|نسبة الاتقان|ليش.*(?:اتقان|إتقان|نقاط|النسبة)|كيف.*(?:اتقان|إتقان|النسبة)", normalized):
+            reply = (
+                "معك حق تسألي عن النسبة. إتقان المفهوم لازم يتغيّر بناءً على إجابة تعليمية واضحة "
+                "وقابلة للتقييم، مش على المزاح أو الكلام عن النقاط. رح أتعامل مع رسالتك كتوضيح، "
+                "من دون تعديل الإتقان أو إضافة نقاط."
+            )
+        elif re.search(r"راح تحفزني|تحكي كلام منيح|شجعيني|شجعني", normalized):
+            reply = (
+                "أكيد، لما تقدّمي إجابة صحيحة رح أشجّعك على الشيء اللي أتقنتيه فعلًا، "
+                "وإذا احتجنا نراجع نقطة بنعملها بهدوء ومن غير مبالغة."
+            )
+        else:
+            reply = (
+                "هههه وصلت الفكرة 😄 خلّينا نخفف الرسمية شوي. لما تكوني جاهزة نرجع للدرس، "
+                "بمشي معك خطوة خطوة وبشجّعك على إجاباتك الفعلية."
+            )
+        return {
+            "reply": reply,
+            "action": "review",
+            "evaluation": "not_evaluated",
+            "concept": conversation.current_concept or "المفهوم العام",
+            "mastery_delta": 0,
+            "source_chunk_ids": [],
+            "sources": [],
+            "suggest_quick_quiz": False,
+            "model": None,
+            "prompt_version": PROMPT_VERSION,
+        }
+
     query_parts = [student_text]
     if conversation.current_concept:
         query_parts.append(conversation.current_concept)
