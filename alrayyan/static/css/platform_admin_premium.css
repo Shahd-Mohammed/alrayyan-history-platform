@@ -3004,3 +3004,55 @@ button.concept-action,
  .platform-admin-body .classroom-list-panel {padding-inline:16px!important}
  .platform-admin-body .classroom-admin-row {margin-inline:0!important}
 }
+
+
+/* Test library spacing and visible status/action controls */
+.platform-admin-body .test-library-section {
+  margin:20px 12px 0!important;
+  padding:28px!important;
+  border:1px solid #e8decb!important;
+  border-radius:24px!important;
+  background:#fff!important;
+  box-shadow:0 13px 34px rgba(19,47,82,.055)!important;
+}
+.platform-admin-body .test-library-heading {
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:20px!important;margin-bottom:22px!important;padding-bottom:18px!important;
+  border-bottom:1px solid #eee5d5!important;
+}
+.platform-admin-body .test-library-heading h2 {
+  margin:5px 0!important;color:#173653!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:800!important;
+}
+.platform-admin-body .test-library-heading p {margin:0!important;color:#687587!important;line-height:1.8!important}
+.platform-admin-body .test-library-grid {gap:16px!important}
+.platform-admin-body .test-library-card {min-width:0!important;border-radius:17px!important;border-color:#e8decb!important}
+.platform-admin-body .test-card-actions {
+  display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important;
+  padding:14px 16px 16px!important;border-top:1px solid #f0e8d8!important;
+}
+.platform-admin-body .test-card-actions form {display:inline-flex!important;width:auto!important;flex:0 0 auto!important;margin:0!important}
+.platform-admin-body .test-card-actions button,
+.platform-admin-body .test-card-footer a {
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:100%!important;min-width:0!important;min-height:36px!important;
+  padding:7px 11px!important;border-radius:9px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.84rem!important;
+  font-weight:700!important;line-height:1.35!important;white-space:normal!important;
+}
+.platform-admin-body .test-card-actions .publish,
+.platform-admin-body .test-card-footer .test-card-preview,
+.platform-admin-body .test-card-footer a:last-child {
+  color:#fff!important;background:linear-gradient(135deg,#d8b35d,#b7862b)!important;border:1px solid #b7862b!important;
+}
+.platform-admin-body .test-card-actions .draft,
+.platform-admin-body .test-card-actions .archive {
+  color:#173653!important;background:#fffaf0!important;border:1px solid #e0cca0!important;
+}
+.platform-admin-body .test-card-actions .delete {
+  color:#fff!important;background:#a94747!important;border:1px solid #963a3a!important;
+}
+@media(max-width:700px){
+ .platform-admin-body .test-library-section{margin-inline:0!important;padding:19px!important}
+ .platform-admin-body .test-library-heading{align-items:flex-start!important;flex-direction:column!important}
+}
