@@ -27,7 +27,7 @@ def teacher_required(view_function):
 @worksheet_center_bp.get("")
 @teacher_required
 def center():
-    query = Worksheet.query
+    query = Worksheet.query.filter(Worksheet.creation_method != "test")
 
     if current_user.role != "admin":
         query = query.filter_by(created_by_id=current_user.id)
@@ -69,16 +69,21 @@ def center():
         error_out=False,
     )
 
-    archived_worksheets = query.filter_by(
+    archived_pagination = query.filter_by(
         is_archived=True,
     ).order_by(
         Worksheet.archived_at.desc()
-    ).all()
+    ).paginate(
+        page=max(request.args.get("archive_page", 1, type=int), 1),
+        per_page=12,
+        error_out=False,
+    )
 
     return render_template(
         "worksheet_center.html",
         worksheets=pagination.items,
-        archived_worksheets=archived_worksheets,
+        archived_worksheets=archived_pagination.items,
+        archived_pagination=archived_pagination,
         pagination=pagination,
         search_term=search_term,
         status_filter=status_filter,
