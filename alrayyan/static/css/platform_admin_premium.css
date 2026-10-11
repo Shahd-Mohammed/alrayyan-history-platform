@@ -3158,3 +3158,51 @@ button.concept-action,
   .concept-map-tabs{display:flex!important;flex-wrap:wrap!important;margin:16px 0 20px!important}
   .concept-map-tabs button{white-space:normal!important;flex:1 1 auto!important}
 }
+
+
+/* Class cards: keep comfortable side margins and balanced action typography */
+.classroom-admin-page{
+  gap:24px!important;
+  align-items:start!important;
+}
+.classroom-admin-page > .platform-panel{
+  min-width:0!important;
+}
+.classroom-list-panel{
+  padding:clamp(22px,3vw,32px)!important;
+}
+.classroom-admin-row{
+  gap:20px!important;
+  margin-inline:4px!important;
+  padding:20px!important;
+  border-radius:17px!important;
+  border:1px solid #e8decb!important;
+  background:linear-gradient(180deg,#fff,#fffdf8)!important;
+}
+.classroom-details strong{
+  font-size:1.1rem!important;
+  font-weight:800!important;
+  line-height:1.65!important;
+}
+.classroom-details p,.classroom-details small{
+  line-height:1.8!important;
+}
+.classroom-row-actions{
+  gap:10px!important;
+  flex-wrap:wrap!important;
+}
+.classroom-delete-button{
+  width:auto!important;
+  min-width:0!important;
+  min-height:36px!important;
+  padding:7px 13px!important;
+  border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.86rem!important;
+  font-weight:700!important;
+}
+@media(max-width:700px){
+  .classroom-admin-page{gap:16px!important}
+  .classroom-admin-row{margin-inline:0!important;padding:15px!important;gap:12px!important}
+  .classroom-row-actions{align-items:flex-start!important}
+}
