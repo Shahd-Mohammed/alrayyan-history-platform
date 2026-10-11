@@ -67,6 +67,7 @@ def worksheet_details(worksheet_id):
 
     worksheet = (
         Worksheet.query
+        .filter(Worksheet.creation_method != "test")
         .filter_by(
             id=worksheet_id,
             publication_status="published",
@@ -162,6 +163,7 @@ def download_worksheet(worksheet_id):
 
     worksheet = (
         Worksheet.query
+        .filter(Worksheet.creation_method != "test")
         .filter_by(
             id=worksheet_id,
             publication_status="published",
