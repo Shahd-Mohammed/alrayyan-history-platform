@@ -501,7 +501,7 @@ def my_points():
         .all()
     )
     labels = {
-        "tutor_evaluated_answer": "إجابة قيّمها المعلم الذكي",
+        "tutor_evaluated_answer": "إجابة تحقق صحيحة مع المعلّم الذكي",
         "challenge_answer": "إجابة في التحدي",
         "challenge_completed": "إكمال تحدٍ",
         "character_identified": "التعرّف على شخصية تاريخية",
