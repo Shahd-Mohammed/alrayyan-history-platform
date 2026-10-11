@@ -58,7 +58,7 @@
                 <span class="hero-icon">✦</span>
 
                 <strong>
-                    {{ worksheets | length }}
+                    {{ pagination.total }}
                 </strong>
 
                 <p>ورقة عمل متاحة الآن</p>
@@ -84,7 +84,7 @@
                         <article class="worksheet-card">
                             <div class="card-top">
                                 <span class="worksheet-number">
-                                    {{ loop.index }}
+                                    {{ loop.index + ((pagination.page - 1) * pagination.per_page) }}
                                 </span>
 
                                 <span class="difficulty {{ worksheet.difficulty_level }}">
@@ -150,6 +150,17 @@
                         </article>
                     {% endfor %}
                 </div>
+                {% if pagination.pages > 1 %}
+                    <nav class="archive-pagination" aria-label="ترقيم صفحات أوراق العمل">
+                        {% if pagination.has_prev %}<a href="{{ url_for('worksheets.worksheet_list', page=pagination.prev_num) }}">السابق</a>{% endif %}
+                        {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                            {% if page_num %}
+                                <a href="{{ url_for('worksheets.worksheet_list', page=page_num) }}" class="{% if page_num == pagination.page %}is-current{% endif %}" {% if page_num == pagination.page %}aria-current="page"{% endif %}>{{ page_num }}</a>
+                            {% else %}<span class="pagination-ellipsis">…</span>{% endif %}
+                        {% endfor %}
+                        {% if pagination.has_next %}<a href="{{ url_for('worksheets.worksheet_list', page=pagination.next_num) }}">التالي</a>{% endif %}
+                    </nav>
+                {% endif %}
             {% else %}
                 <div class="empty-state">
                     <div class="empty-icon">📚</div>
