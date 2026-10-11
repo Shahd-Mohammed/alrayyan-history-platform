@@ -1276,3 +1276,83 @@ background:radial-gradient(circle at 85% 15%,rgba(117,160,194,.18),transparent 2
 border-color:rgba(201,154,61,.24)!important;
 }
 .learning-hero.historical-learning-hero.character-hero .hero-score{border-color:rgba(239,209,141,.24)!important;background:rgba(255,255,255,.07)!important}
+
+/* Final student learning polish: keep hero copy readable on one line where space allows */
+.learning-page,.learning-page button,.learning-page input,.learning-page select,.learning-page textarea,.learning-page a {
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+}
+.learning-hero .hero-accent {
+  display:inline !important;
+  margin-inline-start:.28em !important;
+  white-space:nowrap !important;
+}
+.learning-hero.historical-learning-hero.library-page-hero h1,
+.learning-hero.historical-learning-hero.honor-page-hero h1,
+.learning-hero.historical-learning-hero.date-memory-hero h1 {
+  display:block !important;
+  max-width:100% !important;
+  white-space:nowrap !important;
+  line-height:1.45 !important;
+  letter-spacing:0 !important;
+}
+.learning-hero.historical-learning-hero.library-page-hero,
+.learning-hero.historical-learning-hero.honor-page-hero {
+  min-height:0 !important;
+  padding-block:clamp(25px,3vw,36px) !important;
+  margin-bottom:26px !important;
+  background:radial-gradient(circle at 88% 10%,rgba(201,154,61,.16),transparent 25%),linear-gradient(125deg,#102b4f 0%,#1b4167 62%,#173654 100%) !important;
+}
+.learning-hero.historical-learning-hero.library-page-hero h1,
+.learning-hero.historical-learning-hero.honor-page-hero h1 {
+  font-size:clamp(1.55rem,2.7vw,2.65rem) !important;
+}
+.learning-hero.historical-learning-hero.date-memory-hero h1 {
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:baseline !important;
+  gap:.28em !important;
+  font-size:clamp(1.7rem,3.3vw,3.2rem) !important;
+}
+.learning-hero.historical-learning-hero.date-memory-hero .date-memory-title,
+.learning-hero.historical-learning-hero.date-memory-hero .hero-accent {
+  display:inline !important;
+  margin:0 !important;
+  white-space:nowrap !important;
+  font-size:inherit !important;
+  line-height:1.4 !important;
+}
+.learning-hero.historical-learning-hero.character-hero {
+  background:radial-gradient(circle at 85% 15%,rgba(117,160,194,.16),transparent 28%),linear-gradient(125deg,#102b4f 0%,#1c456d 58%,#173654 100%) !important;
+  padding-block:clamp(25px,3vw,38px) !important;
+}
+.learning-hero.historical-learning-hero.character-hero h1 {
+  font-size:clamp(1.9rem,3.3vw,3rem) !important;
+  line-height:1.35 !important;
+}
+.learning-page .character-actions button,
+.learning-page button,.learning-page input[type="submit"] {
+  width:auto !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  font-size:.86rem !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+}
+@media(max-width:760px) {
+  .learning-hero.historical-learning-hero.library-page-hero h1,
+  .learning-hero.historical-learning-hero.honor-page-hero h1,
+  .learning-hero.historical-learning-hero.date-memory-hero h1 {
+    white-space:normal !important;
+    flex-wrap:wrap !important;
+  }
+}
+.learning-hero.historical-learning-hero.character-hero .hero-score{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;min-width:max-content!important;max-width:100%!important;
+  gap:9px!important;white-space:nowrap!important;box-sizing:border-box!important;
+}
+.learning-hero.historical-learning-hero.character-hero .hero-score b,
+.learning-hero.historical-learning-hero.character-hero .hero-score small{
+  display:inline-block!important;white-space:nowrap!important;overflow:visible!important;
+}
+
