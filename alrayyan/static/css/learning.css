@@ -1815,3 +1815,141 @@ a.grade-attempt-action,
 .learning-hero.historical-learning-hero.library-page-hero .library-hero-pills span,
 .learning-hero.historical-learning-hero.honor-page-hero .honor-hero-stats span{border-color:rgba(255,255,255,.18)!important;background:rgba(255,255,255,.06)!important;color:#f1d694!important}
 
+
+
+/* Unified student learning pages: compact navy-and-gold hero and readable compact actions */
+body,
+body button,
+body input,
+body select,
+body textarea,
+body a {
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+  letter-spacing: 0 !important;
+}
+.learning-page .historical-learning-hero.library-page-hero,
+.learning-page .historical-learning-hero.honor-page-hero,
+.learning-page .historical-learning-hero.character-hero {
+  min-height: 0 !important;
+  padding: clamp(24px,3.5vw,38px) clamp(22px,4vw,48px) !important;
+  border: 1px solid rgba(201,154,61,.4) !important;
+  border-radius: 26px !important;
+  background:
+    radial-gradient(circle at 12% 12%,rgba(201,154,61,.2),transparent 27%),
+    linear-gradient(130deg,#0b203d 0%,#173b64 58%,#244b73 100%) !important;
+  box-shadow: 0 18px 42px rgba(11,32,61,.14) !important;
+}
+.learning-page .historical-learning-hero.library-page-hero h1,
+.learning-page .historical-learning-hero.honor-page-hero h1,
+.learning-page .historical-learning-hero.character-hero h1 {
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+  font-size: clamp(1.8rem,3.3vw,2.65rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.4 !important;
+  margin: 8px 0 !important;
+}
+.learning-page .historical-learning-hero.library-page-hero > p,
+.learning-page .historical-learning-hero.honor-page-hero > p,
+.learning-page .historical-learning-hero.character-hero > p {
+  margin: 0 0 7px !important;
+  color: #f1d694 !important;
+  font-weight: 800 !important;
+}
+.learning-page .historical-learning-hero.library-page-hero > span,
+.learning-page .historical-learning-hero.honor-page-hero > span,
+.learning-page .historical-learning-hero.character-hero > span {
+  max-width: 760px !important;
+  color: rgba(255,255,255,.84) !important;
+  line-height: 1.85 !important;
+  font-size: .94rem !important;
+}
+.learning-page .historical-learning-hero .hero-accent {
+  display: inline !important;
+  margin: 0 !important;
+  color: #f1d694 !important;
+  font-family: inherit !important;
+}
+.learning-page .historical-learning-hero .library-hero-pills,
+.learning-page .historical-learning-hero .honor-hero-stats {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-top: 15px !important;
+}
+.learning-page .historical-learning-hero .library-hero-pills span,
+.learning-page .historical-learning-hero .honor-hero-stats span {
+  padding: 7px 11px !important;
+  border: 1px solid rgba(241,214,148,.26) !important;
+  border-radius: 12px !important;
+  background: rgba(255,255,255,.07) !important;
+  color: #fff !important;
+  font-size: .8rem !important;
+  font-weight: 700 !important;
+}
+.learning-page .historical-learning-hero .hero-score {
+  position: static !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: row !important;
+  gap: 9px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 14px 0 0 !important;
+  padding: 8px 13px !important;
+  border-radius: 12px !important;
+  background: rgba(255,255,255,.08) !important;
+  box-shadow: none !important;
+}
+.learning-page .historical-learning-hero .hero-score b {
+  font-size: 1.15rem !important;
+  color: #f1d694 !important;
+}
+.learning-page .historical-learning-hero .hero-score small {
+  margin: 0 !important;
+  color: rgba(255,255,255,.8) !important;
+}
+.learning-page .character-hero {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 5px !important;
+}
+.learning-page button,
+.learning-page input[type="submit"],
+.learning-page a.button,
+.learning-page .gold-action,
+.learning-page .hint-action {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 38px !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  font-size: .88rem !important;
+  font-weight: 750 !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0 !important;
+}
+.learning-page .gold-action {
+  background: linear-gradient(135deg,#d8b45e,#b9872d) !important;
+  border: 1px solid #b9872d !important;
+  color: #fff !important;
+}
+.learning-page .hint-action {
+  background: #fffdf8 !important;
+  border: 1px solid #d9cba9 !important;
+  color: #244b75 !important;
+}
+@media(max-width:650px) {
+  .learning-page .historical-learning-hero.library-page-hero,
+  .learning-page .historical-learning-hero.honor-page-hero,
+  .learning-page .historical-learning-hero.character-hero {
+    padding: 24px 20px !important;
+    border-radius: 22px !important;
+  }
+}
