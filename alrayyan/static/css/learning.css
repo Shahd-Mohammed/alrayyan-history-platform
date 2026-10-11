@@ -1346,4 +1346,13 @@ border-color:rgba(201,154,61,.24)!important;
     flex-wrap:wrap !important;
   }
 }
+.learning-hero.historical-learning-hero.character-hero .hero-score{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;min-width:max-content!important;max-width:100%!important;
+  gap:9px!important;white-space:nowrap!important;box-sizing:border-box!important;
+}
+.learning-hero.historical-learning-hero.character-hero .hero-score b,
+.learning-hero.historical-learning-hero.character-hero .hero-score small{
+  display:inline-block!important;white-space:nowrap!important;overflow:visible!important;
+}
 
