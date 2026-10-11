@@ -87,10 +87,14 @@
                                 {% if item.lesson %}
                                     <a class="gold-action" href="{{ url_for('teacher.teacher_page', lesson_id=item.lesson.id, concept=item.title | replace('راجعي مفهوم: ', ''), mode='review') }}">ابدأ المراجعة</a>
                                 {% endif %}
-                                <form method="post" action="{{ url_for('teacher.verify_plan_item', item_id=item.id) }}">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button class="outline-action" type="submit">اختبر إتقاني</button>
-                                </form>
+                                {% if item.lesson %}
+                                    <form method="post" action="{{ url_for('teacher.verify_plan_item', item_id=item.id) }}">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button class="outline-action" type="submit">اختبر إتقاني</button>
+                                    </form>
+                                {% else %}
+                                    <span class="plan-unlinked-note">اختاري الدرس المرتبط في محادثة جديدة</span>
+                                {% endif %}
                             </div>
                         </article>
                     {% endfor %}
