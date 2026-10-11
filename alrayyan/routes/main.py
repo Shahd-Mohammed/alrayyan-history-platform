@@ -251,6 +251,7 @@ def student_progress():
         "character_identified": "التعرّف على الشخصيات",
         "concept_map_viewed": "استكشاف الخرائط المفاهيمية",
         "resource_downloaded": "تنزيل ملفات تعليمية",
+        "learning_library_opened": "زيارة مكتبة التعلّم",
         "test_completed": "إكمال الاختبارات",
         "worksheet_completed": "إكمال أوراق العمل",
         "historical_date_recalled": "مراجعة التواريخ التاريخية",
