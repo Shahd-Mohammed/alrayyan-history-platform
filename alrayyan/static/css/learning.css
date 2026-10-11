@@ -1490,3 +1490,8 @@ border-color:rgba(201,154,61,.24)!important;
 .learning-page .gold-action,.learning-page .character-card summary{background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important;border:1px solid #b9892d!important}
 .learning-page .hint-action{background:#fff!important;color:#173455!important;border:1px solid #d8c8a7!important}
 @media(max-width:620px){.learning-page{width:calc(100% - 22px)!important}.historical-learning-hero.library-page-hero,.historical-learning-hero.honor-page-hero,.historical-learning-hero.character-hero{padding:26px 22px!important}.historical-learning-hero.character-hero .hero-score{position:relative!important;left:auto!important;bottom:auto!important;margin-top:16px!important;align-self:flex-start!important;min-height:0!important}}
+
+/* Learning pages use compact, label-width action buttons */
+.learning-page button,.learning-page input[type="submit"],.learning-page input[type="button"],.learning-page a.button,.learning-page .button,.learning-page .gold-action,.learning-page .hint-action,.learning-page .concept-action{
+ width:auto!important;min-width:0!important;max-width:max-content!important;justify-self:start!important;align-self:start!important;flex:0 0 auto!important;
+}
