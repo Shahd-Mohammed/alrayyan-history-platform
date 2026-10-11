@@ -1696,3 +1696,8 @@ button,input[type="submit"],input[type="button"],input[type="reset"],a.button,.b
 button[type="submit"],input[type="submit"],.gold-action,.primary-action,.results-primary-link,.score-policy-banner a{
  width:auto!important;min-width:0!important;max-width:100%!important;min-height:37px!important;padding:7px 14px!important
 }
+
+/* Dashboard action controls should never fill an entire row */
+button,input[type="submit"],input[type="button"],input[type="reset"],.button,.btn,a.button,a.btn,.primary-action,.gold-action,.hint-action,.results-primary-link,.save-question-button,.save-settings-button{
+ width:auto!important;min-width:0!important;max-width:max-content!important;justify-self:start!important;align-self:start!important;flex:0 0 auto!important;
+}
