@@ -245,7 +245,7 @@ def student_progress():
         points_by_reason[transaction.reason] = points_by_reason.get(transaction.reason, 0) + transaction.amount
 
     reason_labels = {
-        "tutor_evaluated_answer": "إجابات قيّمها المعلّم الذكي",
+        "tutor_evaluated_answer": "إجابات تحقق صحيحة مع المعلّم الذكي",
         "challenge_answer": "إجابات التحديات",
         "challenge_completed": "إكمال التحديات",
         "character_identified": "التعرّف على الشخصيات",
