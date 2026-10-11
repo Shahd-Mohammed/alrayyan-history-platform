@@ -1004,6 +1004,7 @@ def analytics():
         ]
         resource_downloads = sum(1 for transaction in student_transactions if transaction.reason == "resource_downloaded")
         concept_map_views = sum(1 for transaction in student_transactions if transaction.reason == "concept_map_viewed")
+        library_visits = sum(1 for transaction in student_transactions if transaction.reason == "learning_library_opened")
         points_earned = sum(transaction.amount for transaction in student_transactions)
         average = round(sum(percentages) / len(percentages), 1) if percentages else 0.0
         mastery_average = (
@@ -1013,7 +1014,7 @@ def analytics():
         activity_score = (
             len(student_all_attempts) + len(challenge_sessions) + tutor_interactions
             + character_attempts + date_reviews + plan_verifications + resource_downloads
-            + concept_map_views
+            + concept_map_views + library_visits
         )
         rows.append({
             "student": student,
@@ -1029,6 +1030,7 @@ def analytics():
             "plan_verifications": plan_verifications,
             "resource_downloads": resource_downloads,
             "concept_map_views": concept_map_views,
+            "library_visits": library_visits,
             "points_earned": points_earned,
             "activity_score": activity_score,
             "has_results": bool(percentages),
@@ -1100,6 +1102,7 @@ def analytics():
         "plan_verifications": total_plan_verifications,
         "resource_downloads": sum(row["resource_downloads"] for row in rows),
         "concept_map_views": sum(row["concept_map_views"] for row in rows),
+        "library_visits": sum(row["library_visits"] for row in rows),
         "points_awarded": sum(transaction.amount for transaction in all_transactions),
         "support_count": sum(1 for row in rows if row["needs_support"]),
     }
