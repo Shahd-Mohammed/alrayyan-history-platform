@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import re
 
 from flask import (
     Blueprint,
@@ -298,10 +299,18 @@ def send_tutor_message(conversation_id):
             payload["evaluation"] = "not_evaluated"
             payload["mastery_delta"] = 0
             payload["action"] = "ask_follow_up"
+            # The model may include a reward claim in its prose. Do not show points
+            # unless this route actually records them in the database.
+            payload["reply"] = re.sub(
+                r"إجابة\s+صحيحة\s*(?:\+\s*5\s*XP)?|\+\s*5\s*XP",
+                "",
+                payload["reply"],
+                flags=re.IGNORECASE,
+            ).strip()
             if "؟" not in payload["reply"] and "?" not in payload["reply"]:
                 payload["reply"] += (
                     "\n\nللتأكد من ثبات الفهم، جاوبي بجملة واحدة: "
-                    "ما السبب أو الدليل من الدرس الذي يدعم إجابتكِ؟"
+                    "ما السبب أو الدليل الذي يدعم إجابتكِ؟"
                 )
             awaiting_mastery_verification = True
 
@@ -348,6 +357,40 @@ def send_tutor_message(conversation_id):
             current_user.points = (current_user.points or 0) + xp_awarded
             current_user.level = max(1, current_user.points // 500 + 1)
         refresh_learning_plan(current_user.id)
+
+        # A conversation without a selected lesson cannot update a lesson-specific
+        # mastery row. Still record a real verified success in the learning plan.
+        if xp_awarded and conversation.lesson_id is None:
+            concept_title = (
+                payload.get("concept")
+                or conversation.current_concept
+                or student_text
+                or "مراجعة عامة"
+            ).strip()[:100]
+            plan_title = f"راجعي من محادثة المعلّم الذكي: {concept_title}"
+            plan_item = LearningPlanItem.query.filter_by(
+                student_id=current_user.id,
+                lesson_id=None,
+                item_type="tutor_review",
+                title=plan_title,
+                status="pending",
+            ).order_by(LearningPlanItem.created_at.desc()).first()
+            plan_description = (
+                "أكملتِ إجابة تحقق صحيحة في محادثة المعلّم الذكي وحصلتِ على 5 نقاط. "
+                "اختاري الدرس المرتبط بهذا المفهوم في محادثة لاحقة حتى يُسجّل إتقانك ضمن الدرس."
+            )
+            if plan_item:
+                plan_item.description = plan_description
+                plan_item.priority = 65
+            else:
+                db.session.add(LearningPlanItem(
+                    student_id=current_user.id,
+                    lesson_id=None,
+                    item_type="tutor_review",
+                    title=plan_title,
+                    description=plan_description,
+                    priority=65,
+                ))
         db.session.commit()
         return jsonify({
             "success": True,
