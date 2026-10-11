@@ -252,12 +252,28 @@ def tutor_reply(conversation, student_text):
         ),
         None,
     )
+    topic_invitation = bool(
+        previous_tutor_message
+        and previous_tutor_message.action == "ask_diagnostic"
+        and any(
+            phrase in previous_tutor_message.content
+            for phrase in (
+                "شو حابة نفهم",
+                "من وين بدك نبدأ",
+                "احكيلي شو حابة",
+                "بدك ندرس",
+                "بدك نراجع",
+            )
+        )
+    )
     evaluation_required = bool(
         previous_tutor_message
         and previous_tutor_message.action in {
+            "ask_diagnostic",
             "ask_follow_up",
             "give_hint",
         }
+        and not topic_invitation
         and (
             "؟" in previous_tutor_message.content
             or "?" in previous_tutor_message.content
