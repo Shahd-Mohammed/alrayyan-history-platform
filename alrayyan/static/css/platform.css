@@ -980,3 +980,14 @@ a.grade-attempt-action,
   line-height:1.4!important;
   letter-spacing:0!important;
 }
+
+
+/* Unified Arabic typography across platform content and controls. */
+body,
+h1,h2,h3,h4,h5,h6,
+p,a,button,input,select,textarea,label,small,strong,span,summary,
+li,th,td,dt,dd,legend,figcaption{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+}
+h1,h2,h3,h4,h5,h6{font-weight:800!important;line-height:1.5!important}
+button,input[type="submit"],input[type="button"]{font-weight:700!important}
