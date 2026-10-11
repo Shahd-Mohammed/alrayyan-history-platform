@@ -247,3 +247,11 @@ body {
 .password-field-wrap>input{width:100%;box-sizing:border-box;padding-left:78px!important}
 .password-visibility-toggle{position:absolute!important;left:7px;top:50%;transform:translateY(-50%);min-height:28px!important;padding:4px 8px!important;border:1px solid #dfd2b9!important;border-radius:8px!important;background:#fffaf0!important;color:#8a641e!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.78rem!important;font-weight:600!important;box-shadow:none!important}
 .submit-button{width:auto!important;max-width:100%!important;min-width:0!important;padding:10px 18px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;font-weight:650!important;line-height:1.4!important}
+
+
+.forgot-password-row{display:flex;justify-content:flex-start;margin:10px 0 14px}
+.forgot-password-row a{color:var(--navy-light);font-size:.9rem;font-weight:700;text-decoration:none}
+.forgot-password-row a:hover{color:var(--gold);text-decoration:underline}
+.auth-box .submit-button{width:auto;min-width:180px;max-width:100%;font-family:"IBM Plex Sans Arabic",sans-serif;font-size:.95rem;font-weight:700;letter-spacing:0}
+.auth-box .field-group input{font-family:"IBM Plex Sans Arabic",sans-serif}
+
