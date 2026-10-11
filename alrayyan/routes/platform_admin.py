@@ -929,7 +929,7 @@ def admins():
 
         if len(full_name) < 2 or len(full_name) > 150:
             flash("اكتبي اسمًا كاملًا صحيحًا.", "error")
-        elif len(email) > 255 or not re.fullmatch(r"[^\\s@]+@[^\\s@]+\\.[^\\s@]+", email):
+        elif len(email) > 255 or email.count("@") != 1 or "." not in email.rsplit("@", 1)[-1] or any(char.isspace() for char in email):
             flash("تحققي من صيغة البريد الإلكتروني.", "error")
         elif len(password) < 12 or len(password) > 128:
             flash("كلمة مرور الإدارة يجب أن تحتوي على 12 حرفًا على الأقل.", "error")
