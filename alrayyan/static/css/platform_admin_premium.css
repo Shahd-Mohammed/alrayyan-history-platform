@@ -3309,3 +3309,16 @@ button.concept-action,
   .platform-admin-page .test-library-section{padding:19px!important}
   .platform-admin-page .test-card-actions{align-items:flex-start!important}
 }
+
+
+/* Make the administrator account shortcut visibly actionable. */
+.platform-admin-hero nav a.admin-create-shortcut {
+  border-color: rgba(241,214,148,.72);
+  background: linear-gradient(135deg,#d4a849,#b9872c);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(151,105,27,.2);
+}
+.platform-admin-hero nav a.admin-create-shortcut:hover {
+  background: linear-gradient(135deg,#bd8b2e,#96671b);
+  color: #fff;
+}
