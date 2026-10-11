@@ -2890,3 +2890,24 @@ button.concept-action,
 .test-card-footer{flex-wrap:wrap!important}
 .test-card-footer a{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:0!important;max-width:100%!important;min-height:36px!important;padding:7px 12px!important;border-radius:10px!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.85rem!important;font-weight:750!important;line-height:1.35!important;white-space:nowrap!important}
 @media(max-width:700px){.test-library-section{margin-inline:0!important;padding:18px!important}.test-card-actions{align-items:flex-start!important}.test-card-actions .test-card-action{font-size:.82rem!important}}
+
+
+/* Test studio hero: use the light upload-page palette instead of consecutive dark panels */
+.test-center-hero{
+ min-height:275px!important;padding:36px clamp(24px,4vw,44px)!important;gap:28px!important;
+ border:1px solid #e5d8bd!important;border-radius:27px!important;
+ background:radial-gradient(circle at 78% 38%,rgba(210,161,59,.13),transparent 28%),linear-gradient(135deg,#fffdf8 0%,#f8f3e9 100%)!important;
+ box-shadow:0 16px 38px rgba(23,47,82,.065)!important
+}
+.test-center-hero:before{background-image:linear-gradient(rgba(23,52,85,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(23,52,85,.025) 1px,transparent 1px)!important}
+.test-center-hero-copy h2{color:#173455!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:clamp(2rem,3.5vw,3rem)!important;font-weight:800!important;line-height:1.35!important}
+.test-center-hero-copy p{color:#68778a!important;max-width:680px!important;line-height:1.9!important}
+.test-hero-kicker{color:#9a6b16!important}
+.test-hero-points span{border-color:#e4d8c2!important;background:rgba(255,255,255,.88)!important;color:#173455!important;font-weight:750!important}
+.test-hero-points b{color:#9a6b16!important}
+.test-art-ring{border-color:rgba(185,137,45,.28)!important}
+.test-art-ring-two{border-color:rgba(23,52,85,.18)!important}
+.test-art-core{background:linear-gradient(135deg,#173455,#244d76)!important;color:#f1d694!important;box-shadow:0 14px 30px rgba(23,52,85,.15)!important}
+.test-art-label{border-color:#e5d8bd!important;background:#fff!important;color:#173455!important;box-shadow:0 7px 17px rgba(23,52,85,.07)!important}
+.test-builder-shell,.inline-test-workspace{margin-top:0!important}
+@media(max-width:760px){.test-center-hero{min-height:0!important;padding:27px 22px!important;grid-template-columns:1fr!important}.test-center-hero-art{display:none!important}}
