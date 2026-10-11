@@ -32,6 +32,7 @@ from alrayyan.models import (
     Worksheet,
     WorksheetAttempt,
     XPTransaction,
+    User,
 )
 
 
@@ -177,6 +178,15 @@ def student_dashboard():
         .all()
     )
 
+    # Show a small, motivating leaderboard directly on the student dashboard.
+    top_students = (
+        User.query
+        .filter_by(role="student", is_active_account=True)
+        .order_by(User.points.desc(), User.level.desc(), User.full_name.asc())
+        .limit(3)
+        .all()
+    )
+
     return render_template(
         "student_dashboard.html",
         available_worksheets=available_worksheets,
@@ -187,6 +197,7 @@ def student_dashboard():
         ),
         latest_results=latest_results,
         latest_challenges=latest_challenges,
+        top_students=top_students,
     )
 
 
