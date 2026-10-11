@@ -227,10 +227,17 @@ def student_progress():
         .all()
     )
     tutor_conversations = TutorConversation.query.filter_by(student_id=current_user.id).count()
-    tutor_evaluations = XPTransaction.query.filter_by(
-        student_id=current_user.id,
-        reason="tutor_evaluated_answer",
-    ).count()
+    tutor_evaluations = (
+        TutorMessage.query.join(TutorConversation)
+        .filter(
+            TutorConversation.student_id == current_user.id,
+            TutorMessage.role == "tutor",
+            TutorMessage.evaluation.in_([
+                "correct", "partially_correct", "incorrect", "needs_explanation"
+            ]),
+        )
+        .count()
+    )
     character_attempts = CharacterAttempt.query.filter_by(student_id=current_user.id).count()
     date_reviews = DateReview.query.filter_by(student_id=current_user.id).count()
     points_by_reason = {}
