@@ -1091,3 +1091,41 @@ button,input[type="submit"],input[type="button"]{font-weight:700!important}
     }
     .platform-admin-account-shortcut { align-items: flex-start; flex-direction: column; }
 }
+
+
+/* Compact sign-out action beside the account trigger, not inside its dropdown. */
+.platform-header .platform-logout-inline {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    margin: 0;
+}
+.platform-header .platform-logout-inline button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: auto !important;
+    max-width: max-content !important;
+    min-height: 40px;
+    padding: 8px 12px !important;
+    border: 1px solid #ead8b4;
+    border-radius: 11px;
+    background: #fffaf0;
+    color: #79551d;
+    font: 600 .86rem/1.4 "IBM Plex Sans Arabic", Tahoma, sans-serif !important;
+    white-space: nowrap;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+.platform-header .platform-logout-inline button:hover {
+    border-color: #d2a13b;
+    background: #f8edcf;
+    color: #0d294d;
+}
+@media (max-width: 980px) {
+    .platform-header .platform-logout-inline {
+        width: auto;
+        align-self: flex-start;
+    }
+}
