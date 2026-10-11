@@ -2789,3 +2789,36 @@ button.concept-action,
   .platform-admin-body .classroom-admin-page { padding-inline:12px !important; }
 }
 
+.test-archive-pagination {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:28px auto 8px;
+  padding:14px 0;
+}
+.test-archive-pagination a,
+.test-archive-pagination span {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:38px;
+  min-height:38px;
+  padding:7px 12px;
+  border:1px solid rgba(19,47,82,.14);
+  border-radius:10px;
+  background:#fff;
+  color:#173653;
+  font-size:.9rem;
+  font-weight:700;
+  line-height:1.35;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.test-archive-pagination a.is-current {
+  border-color:#b58227;
+  background:linear-gradient(135deg,#d1a64b,#b58227);
+  color:#fff;
+}
+.test-archive-pagination a:hover { border-color:#b58227; transform:translateY(-1px); }
