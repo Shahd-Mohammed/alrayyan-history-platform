@@ -1259,3 +1259,21 @@ body h1, body h2, body h3,
 @media (min-width: 901px) {
     .platform-navigation { display: flex !important; }
 }
+
+
+/* Site-wide action text consistency without forcing full-width buttons. */
+button:not(.platform-menu-toggle),
+input[type="submit"],
+input[type="button"] {
+  font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.35;
+  width: auto !important;
+  max-width: 100%;
+}
+button:not(.platform-menu-toggle):not(.node-tools button),
+input[type="submit"],
+input[type="button"] {
+  white-space: nowrap;
+}
