@@ -3690,3 +3690,22 @@ button.concept-action,
     margin-top: 22px !important;
   }
 }
+
+
+/* Concept map tabs: active gold, inactive warm neutral (not navy). */
+.platform-admin-body .concept-map-tabs button:not(.is-active):not([aria-selected="true"]) {
+  background: #f2eee5 !important;
+  color: #59697b !important;
+  border-color: #e7ddca !important;
+}
+.platform-admin-body .concept-map-tabs button:not(.is-active):not([aria-selected="true"]):hover {
+  background: #fff7e7 !important;
+  color: #8b651e !important;
+  border-color: #d8b45e !important;
+}
+.platform-admin-body .concept-map-tabs button.is-active,
+.platform-admin-body .concept-map-tabs button[aria-selected="true"] {
+  background: linear-gradient(135deg,#d8b45e,#b9872d) !important;
+  border-color: #b9872d !important;
+  color: #fff !important;
+}
