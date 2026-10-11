@@ -7,6 +7,7 @@ from flask import (
     current_app,
     render_template,
     send_file,
+    request,
 )
 from flask_login import (
     current_user,
@@ -35,22 +36,23 @@ def worksheet_list():
     Display published worksheets only.
     """
 
-    worksheets = (
+    page = max(request.args.get("page", 1, type=int), 1)
+    pagination = (
         Worksheet.query
-        .filter_by(
-            publication_status="published",
-            is_published=True,
-            is_archived=False,
+        .filter(
+            Worksheet.creation_method != "test",
+            Worksheet.publication_status == "published",
+            Worksheet.is_published.is_(True),
+            Worksheet.is_archived.is_(False),
         )
-        .order_by(
-            Worksheet.created_at.desc()
-        )
-        .all()
+        .order_by(Worksheet.created_at.desc())
+        .paginate(page=page, per_page=12, error_out=False)
     )
 
     return render_template(
         "worksheets.html",
-        worksheets=worksheets,
+        worksheets=pagination.items,
+        pagination=pagination,
     )
 
 
