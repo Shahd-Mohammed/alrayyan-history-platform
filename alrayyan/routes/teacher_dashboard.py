@@ -194,7 +194,8 @@ def dashboard():
     created by the current teacher.
     """
 
-    query = Worksheet.query
+    # Keep assessments in the test center; this dashboard is only for uploaded worksheets.
+    query = Worksheet.query.filter(Worksheet.creation_method != "test")
 
     if current_user.role != "admin":
         query = query.filter_by(
