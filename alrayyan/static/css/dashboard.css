@@ -1687,3 +1687,12 @@ button[type="submit"]:hover,input[type="submit"]:hover,.save-question-button:hov
   .form-page .test-editor-hero h1 { font-size:1.7rem !important; }
   .form-page .assessment-tabs { width:100% !important; }
 }
+
+
+/* Final compact Arabic action buttons for assessment management */
+button,input[type="submit"],input[type="button"],input[type="reset"],a.button,.button,.btn{
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;font-weight:750!important;letter-spacing:0!important;line-height:1.35!important;text-transform:none!important
+}
+button[type="submit"],input[type="submit"],.gold-action,.primary-action,.results-primary-link,.score-policy-banner a{
+ width:auto!important;min-width:0!important;max-width:100%!important;min-height:37px!important;padding:7px 14px!important
+}
