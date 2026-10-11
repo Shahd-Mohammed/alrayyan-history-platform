@@ -161,11 +161,6 @@ def login():
             remember=form.remember.data,
         )
 
-        flash(
-            f"أهلًا بكِ {user.full_name}.",
-            "success",
-        )
-
         next_page = request.args.get(
             "next"
         )
