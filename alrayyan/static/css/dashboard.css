@@ -1839,3 +1839,7 @@ a.grade-attempt-action,
 }
 @media(max-width:700px){.form-page button,.form-page input[type="submit"],.results-dashboard button,.results-dashboard input[type="submit"],.results-dashboard .results-primary-link{width:auto!important;max-width:100%!important}.form-page .assessment-tabs{overflow-x:auto}.form-page .assessment-tabs button{flex:0 0 auto}}
 
+
+.results-dashboard button:not(.results-primary-link):not(.platform-gold-button){background:#102f50!important;color:#fff!important;border-color:#102f50!important}
+.results-dashboard button:not(.results-primary-link):not(.platform-gold-button):hover{background:#1b496e!important;color:#fff!important;border-color:#1b496e!important}
+
