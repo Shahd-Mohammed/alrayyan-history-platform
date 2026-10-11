@@ -1294,3 +1294,14 @@ input[type="button"] {
 .platform-navigation .platform-login-link{padding:10px 17px;border-radius:10px;background:#102f50;color:#fff;font-weight:700}
 @media(max-width:980px){.platform-navigation{gap:8px}.platform-navigation>a,.platform-navigation>details>summary{white-space:normal}}
 
+
+/* Navy default for site actions; branded gold buttons retain their explicit styles. */
+button:not(.platform-menu-toggle):not(.platform-gold-button):not(.gold-action):not(.hint-action),
+input[type="button"]:not(.platform-gold-button){
+ background-color:#102f50;color:#fff;border-color:#102f50
+}
+button:not(.platform-menu-toggle):not(.platform-gold-button):not(.gold-action):not(.hint-action):hover,
+input[type="button"]:not(.platform-gold-button):hover{
+ background-color:#1b496e;color:#fff;border-color:#1b496e
+}
+
