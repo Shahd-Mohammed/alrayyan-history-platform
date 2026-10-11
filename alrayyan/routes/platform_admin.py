@@ -916,6 +916,42 @@ def settings():
     return render_template("platform/settings.html", form=form)
 
 
+@platform_admin_bp.route("/admins", methods=["GET", "POST"])
+def admins():
+    """Allow only existing administrators to create additional admin accounts."""
+    if current_user.role != "admin":
+        abort(403)
+
+    if request.method == "POST":
+        full_name = (request.form.get("full_name") or "").strip()
+        email = (request.form.get("email") or "").strip().lower()
+        password = request.form.get("password") or ""
+
+        if len(full_name) < 2 or len(full_name) > 150:
+            flash("اكتبي اسمًا كاملًا صحيحًا.", "error")
+        elif len(email) > 255 or not re.fullmatch(r"[^\\s@]+@[^\\s@]+\\.[^\\s@]+", email):
+            flash("تحققي من صيغة البريد الإلكتروني.", "error")
+        elif len(password) < 12 or len(password) > 128:
+            flash("كلمة مرور الإدارة يجب أن تحتوي على 12 حرفًا على الأقل.", "error")
+        elif User.query.filter_by(email=email).first():
+            flash("هذا البريد مستخدم بالفعل. لم يتم تغيير أي حساب.", "error")
+        else:
+            account = User(
+                full_name=full_name,
+                email=email,
+                role="admin",
+                is_active_account=True,
+            )
+            account.set_password(password)
+            db.session.add(account)
+            db.session.commit()
+            flash("تم إنشاء حساب الإدارة بنجاح.", "success")
+            return redirect(url_for("platform_admin.admins"))
+
+    admins = User.query.filter_by(role="admin").order_by(User.created_at.asc()).all()
+    return render_template("platform/admins.html", admins=admins)
+
+
 @platform_admin_bp.get("/analytics")
 def analytics():
     """Summarize assessment, practice, AI tutor, character, and points activity."""
