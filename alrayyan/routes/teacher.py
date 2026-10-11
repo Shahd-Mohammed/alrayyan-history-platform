@@ -279,7 +279,23 @@ def send_tutor_message(conversation_id):
         )
         db.session.add(student_message)
         db.session.flush()
+        was_verifying_mastery = conversation.tutor_state == "verify_mastery"
         payload = tutor_reply(conversation, student_text)
+        awaiting_mastery_verification = False
+
+        # A first correct answer is encouraging but not enough to award mastery.
+        # Require one additional lesson-grounded answer before recording mastery or XP.
+        if payload["evaluation"] == "correct" and not was_verifying_mastery:
+            payload["evaluation"] = "not_evaluated"
+            payload["mastery_delta"] = 0
+            payload["action"] = "ask_follow_up"
+            if "؟" not in payload["reply"] and "?" not in payload["reply"]:
+                payload["reply"] += (
+                    "\n\nللتأكد من ثبات الفهم، جاوبي بجملة واحدة: "
+                    "ما السبب أو الدليل من الدرس الذي يدعم إجابتكِ؟"
+                )
+            awaiting_mastery_verification = True
+
         tutor_message = TutorMessage(
             conversation_id=conversation.id,
             role="tutor",
@@ -301,7 +317,9 @@ def send_tutor_message(conversation_id):
                 message_id=tutor_message.id, chunk_id=chunk.id
             ))
         conversation.current_concept = payload["concept"]
-        conversation.tutor_state = payload["action"]
+        conversation.tutor_state = (
+            "verify_mastery" if awaiting_mastery_verification else payload["action"]
+        )
         conversation.updated_at = utc_now()
         if conversation.title == "محادثة تعليمية جديدة":
             conversation.title = student_text[:80]
