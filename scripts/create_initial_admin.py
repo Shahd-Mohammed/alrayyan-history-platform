@@ -4,6 +4,11 @@ This script only bootstraps an administrator when none exists. Once an admin
 account exists, create additional admins through the protected admin UI.
 """
 import os
+import sys
+from pathlib import Path
+
+# Make the project root importable when this script is launched by file path.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app import app
 from alrayyan.extensions import db
