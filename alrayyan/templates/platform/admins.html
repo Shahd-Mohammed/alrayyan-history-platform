@@ -1,0 +1,27 @@
+{% extends 'platform/_admin_base.html' %}
+{% block title %}حسابات الإدارة{% endblock %}
+{% block eyebrow %}صلاحيات المنصة{% endblock %}
+{% block heading %}حسابات الإدارة{% endblock %}
+{% block intro %}أنشئي حسابات موثوقة للمديرة أو فريق الإدارة، واحتفظي بصلاحيات الإشراف محصورة بالمخولات فقط.{% endblock %}
+{% block content %}
+<section class="platform-panel admin-accounts-panel">
+  <div class="panel-title"><span>01</span><div><h2>إضافة مديرة أو مسؤولة</h2><p>يُمنح الحساب صلاحيات الإدارة الكاملة، لذلك أضيفي فقط الأشخاص المخوّلين. كلمة المرور لا تُعرض بعد الحفظ.</p></div></div>
+  <form method="post" class="platform-form admin-account-form" autocomplete="off">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="admin-full-name">الاسم الكامل<input id="admin-full-name" name="full_name" type="text" maxlength="150" required autocomplete="name" placeholder="اسم المديرة"></label>
+    <label for="admin-email">البريد الإلكتروني<input id="admin-email" name="email" type="email" maxlength="255" required autocomplete="email" dir="ltr" placeholder="manager@example.com"></label>
+    <label for="admin-password">كلمة مرور قوية<input id="admin-password" name="password" type="password" minlength="12" maxlength="128" required autocomplete="new-password" placeholder="12 حرفًا على الأقل"></label>
+    <p class="admin-password-guidance">استخدمي كلمة مرور فريدة لا تقل عن 12 حرفًا. يمكنك الضغط على «إظهار» لمراجعتها قبل الحفظ.</p>
+    <button class="platform-gold-button" type="submit">إنشاء حساب الإدارة</button>
+  </form>
+</section>
+<section class="platform-panel admin-accounts-panel">
+  <div class="panel-title"><span>02</span><div><h2>الحسابات الحالية</h2><p>هذه القائمة تعرض حسابات الإدارة المسجلة فقط.</p></div></div>
+  <div class="platform-list admin-account-list">
+    {% for account in admins %}
+    <article><div><strong>{{ account.full_name }}</strong><p><bdi>{{ account.email }}</bdi></p><small>أُنشئ في {{ account.created_at.strftime('%Y-%m-%d') if account.created_at else '—' }}</small></div><span class="status-pill {{ 'used' if account.is_active_account else '' }}">{{ 'نشط' if account.is_active_account else 'غير نشط' }}</span></article>
+    {% else %}<div class="platform-empty">لا توجد حسابات إدارة مسجلة.</div>{% endfor %}
+  </div>
+</section>
+<script src="{{ url_for('static', filename='js/password_toggle.js', v='20261011-admin-password-toggle-1') }}" defer></script>
+{% endblock %}
