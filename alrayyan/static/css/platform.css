@@ -1348,3 +1348,10 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
   .platform-navigation > a { width: auto !important; max-width: 100% !important; }
   .platform-header .platform-login-link { align-self: flex-start !important; }
 }
+
+/* On the test center, keep navigation available on small screens without the toggle. */
+@media (max-width: 980px) {
+  .test-center-page .platform-navigation {
+    display: flex !important;
+  }
+}
