@@ -46,3 +46,6 @@ jobs:
 
       - name: Test worksheet lifecycle and protected deletion
         run: PYTHONPATH=. python scripts/test_worksheet_lifecycle.py
+
+      - name: Test admin permissions, password reset, and curriculum history
+        run: PYTHONPATH=. python scripts/test_security_and_curriculum.py
