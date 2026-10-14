@@ -182,7 +182,15 @@ def teacher_page():
                 "الوحدة — الدرس احتياطي",
             }),
         )
-        .distinct()
+        # Group by the lesson and sort keys instead of DISTINCT: PostgreSQL
+        # rejects ORDER BY columns that are not selected with SELECT DISTINCT.
+        .group_by(
+            Lesson.id,
+            Curriculum.subject,
+            Curriculum.grade,
+            Unit.order_index,
+            Lesson.order_index,
+        )
         .order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index)
         .all()
     )
