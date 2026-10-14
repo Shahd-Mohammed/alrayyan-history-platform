@@ -296,15 +296,41 @@ def delete_curriculum(curriculum_id):
         has_date_reviews = DateReview.query.join(HistoricalDate).filter(
             HistoricalDate.lesson_id.in_(lesson_ids)
         ).first() is not None
+        has_tutor_conversations = TutorConversation.query.filter(
+            TutorConversation.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        has_learning_plan_items = LearningPlanItem.query.filter(
+            LearningPlanItem.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        character_ids = db.session.query(HistoricalCharacter.id).filter(
+            HistoricalCharacter.lesson_id.in_(lesson_ids)
+        )
+        has_character_attempts = CharacterAttempt.query.filter(
+            CharacterAttempt.character_id.in_(character_ids)
+        ).first() is not None
+        concept_map_ids = db.session.query(ConceptMap.id).filter(
+            ConceptMap.lesson_id.in_(lesson_ids)
+        )
+        has_concept_map_rewards = XPTransaction.query.filter(
+            XPTransaction.reason == "concept_map_viewed",
+            XPTransaction.source_id.in_(concept_map_ids),
+        ).first() is not None
+
+        # Deleting lessons cascades to worksheets, characters, maps and dates;
+        # protect every linked student record before SQLAlchemy can cascade.
         if (
             has_worksheets
             or has_mastery_records
             or has_challenge_sessions
             or has_date_reviews
+            or has_tutor_conversations
+            or has_learning_plan_items
+            or has_character_attempts
+            or has_concept_map_rewards
         ):
             flash(
-                "لا يمكن حذف هذا المنهج لأنه مرتبط بأوراق عمل أو تقدم مسجل للطالبات. "
-                "عطّلي المنهج بدلًا من حذفه حتى لا تفقدي الأسئلة أو النتائج أو التقدم.",
+                "لا يمكن حذف هذا المنهج لأنه مرتبط بسجلات تعلم أو محاولات أو نتائج للطالبات. "
+                "عطّلي المنهج، أو احتفظي بنسخة أرشيفية منه قبل بدء فصل جديد.",
                 "error",
             )
             return redirect(url_for("platform_admin.curricula"))
