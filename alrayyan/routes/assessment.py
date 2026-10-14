@@ -956,6 +956,7 @@ def calculate_attempt_result(attempt):
             source_type="worksheet_attempt",
             source_id=attempt.id,
         ).first()
+        student = db.session.get(User, attempt.student_id)
         if existing_award is None:
             db.session.add(
                 XPTransaction(
@@ -966,9 +967,17 @@ def calculate_attempt_result(attempt):
                     source_id=attempt.id,
                 )
             )
-            student = db.session.get(User, attempt.student_id)
             if student is not None:
                 student.points = (student.points or 0) + earned_points
+                student.level = max(1, student.points // 500 + 1)
+        elif existing_award.amount != earned_points:
+            # A teacher may revise a manual grade later. Update the original
+            # award by its difference instead of duplicating XP or leaving the
+            # student's point total inconsistent with the corrected score.
+            point_delta = earned_points - existing_award.amount
+            existing_award.amount = earned_points
+            if student is not None:
+                student.points = (student.points or 0) + point_delta
                 student.level = max(1, student.points // 500 + 1)
 
 
