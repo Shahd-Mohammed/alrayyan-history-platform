@@ -3731,3 +3731,9 @@ button.concept-action,
 .platform-admin-hero nav a.admin-create-shortcut:hover{background:linear-gradient(135deg,#d2a13b,#a96f14);color:#fff}
 .floating-whatsapp[aria-disabled="true"]{opacity:.92;cursor:default;pointer-events:none}
 @media(max-width:640px){.platform-admin-account-shortcut{align-items:stretch;flex-direction:column}.admin-account-form>.platform-gold-button{width:100%}}
+
+/* Final placement override: keep password visibility inside the right edge of the field in RTL. */
+.admin-account-form .password-field-wrap{display:block!important;position:relative!important;width:100%!important}
+.admin-account-form .password-field-wrap>input{padding-right:88px!important;padding-left:14px!important}
+.admin-account-form .password-visibility-toggle{left:auto!important;right:8px!important;top:50%!important;transform:translateY(-50%)!important;min-width:66px!important;min-height:34px!important;padding:6px 10px!important;border-color:#dfbf70!important;border-radius:10px!important;background:linear-gradient(135deg,#fff4d3,#f0d38a)!important;color:#74500e!important;font-size:.85rem!important;font-weight:900!important;box-shadow:0 3px 8px rgba(128,91,21,.08)!important}
+.admin-account-form .password-visibility-toggle:hover,.admin-account-form .password-visibility-toggle:focus-visible{background:linear-gradient(135deg,#d2a13b,#a96f14)!important;color:#fff!important;box-shadow:0 5px 12px rgba(169,111,20,.2)!important}
