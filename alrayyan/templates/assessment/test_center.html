@@ -308,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       {% for question in selected_test.questions %}
         <article class="inline-question-item">
-          <div class="inline-question-index">{{ "%02d"|format(loop.index + ((pagination.page - 1) * pagination.per_page)) }}</div>
+          <div class="inline-question-index">{{ "%02d"|format(loop.index) }}</div>
           <div class="inline-question-content">
             <h4>{{ question.question_text }}</h4>
             <div class="inline-question-meta">
