@@ -161,7 +161,17 @@ def process_source_document(
     batch_size = current_app.config.get("EMBEDDING_BATCH_SIZE", 20)
     for start in range(0, len(chunk_data), batch_size):
         batch = chunk_data[start:start + batch_size]
-        vectors.extend(generate_embeddings([item["text"] for item in batch]))
+        batch_vectors = generate_embeddings([item["text"] for item in batch])
+        if len(batch_vectors) != len(batch):
+            raise ValueError(
+                "لم يكتمل إنشاء embeddings لكل مقاطع المصدر؛ لم يتم استبدال الفهرس السابق."
+            )
+        vectors.extend(batch_vectors)
+
+    if len(vectors) != len(chunk_data) or any(not vector for vector in vectors):
+        raise ValueError(
+            "عدد embeddings لا يطابق عدد المقاطع المستخرجة؛ لم يتم اعتماد فهرسة غير مكتملة."
+        )
 
     embedded_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
