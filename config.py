@@ -67,6 +67,8 @@ class Config:
     }
 
 
+    PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL")
+
     SMTP_HOST = os.getenv("SMTP_HOST")
     SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
     SMTP_USERNAME = os.getenv("SMTP_USERNAME")
