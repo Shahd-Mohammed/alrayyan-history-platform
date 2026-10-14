@@ -1,0 +1,44 @@
+name: Safe merge checks
+
+on:
+  push:
+    branches:
+      - "safe-merge/**"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  focused-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install system OCR dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-ara
+
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Test question interaction grading
+        run: python scripts/test_question_interactions.py
+
+      - name: Test adaptive challenge scoring
+        run: python scripts/test_challenge_engine.py
+
+      - name: Test AI tutor payload validation
+        run: python scripts/test_tutor_logic.py
+
+      - name: Test worksheet lifecycle and protected deletion
+        run: python scripts/test_worksheet_lifecycle.py
