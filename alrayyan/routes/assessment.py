@@ -826,13 +826,15 @@ def delete_question(question_id):
         .first()
         is not None
     )
+    # Even an empty attempt is historical activity: removing its question
+    # would silently change the attempt's total possible score.
+    has_worksheet_attempts = bool(worksheet.attempts)
 
-    if has_student_answers:
+    if has_student_answers or has_worksheet_attempts:
         flash(
             (
-                "لا يمكن حذف هذا السؤال "
-                "لوجود نتائج طلاب مرتبطة به. "
-                "يمكنك تعديل نصه وشرحه فقط."
+                "لا يمكن حذف هذا السؤال لوجود محاولات أو نتائج طالبات مرتبطة به. "
+                "يمكنك تعديل نصه وشرحه فقط للحفاظ على سجل الاختبار."
             ),
             "error",
         )
