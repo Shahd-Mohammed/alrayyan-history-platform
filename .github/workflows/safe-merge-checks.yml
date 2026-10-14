@@ -28,6 +28,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y tesseract-ocr tesseract-ocr-ara
 
+      - name: Verify Arabic OCR runtime
+        run: |
+          tesseract --version
+          tesseract --list-langs | grep -x ara
+
       - name: Install Python dependencies
         run: python -m pip install -r requirements.txt
 
