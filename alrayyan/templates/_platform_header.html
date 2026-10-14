@@ -8,7 +8,7 @@
         <img src="{{ url_for('static', filename='images/alrayyan-logo.png') }}" alt="الريان في الدراسات التاريخية">
     </a>
 
-    {% if request.endpoint != 'assessment.test_center' %}
+    {% if request.blueprint != 'assessment' %}
     <button class="platform-menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" data-platform-menu-toggle>
         <span></span><span></span><span></span>
     </button>
