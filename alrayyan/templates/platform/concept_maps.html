@@ -98,11 +98,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const aiLesson = aiForm && aiForm.querySelector('select[name="lesson_id"]');
   if (!aiTab || !aiForm || !aiLesson) return;
 
+  // Switching tabs must only reveal the AI form; generating a map is a
+  // separate, explicit action from the form's submit button.
   aiTab.addEventListener("click", () => {
     if (manualLesson && manualLesson.value) aiLesson.value = manualLesson.value;
-    if (!aiLesson.value || aiForm.dataset.submitting === "1") return;
-    aiForm.dataset.submitting = "1";
-    aiForm.requestSubmit();
   });
 });
 </script>
