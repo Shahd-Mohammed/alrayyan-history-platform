@@ -457,7 +457,7 @@ def answer(session_id, question_id):
 
     data = request.get_json(silent=True) or {}
     selected_index = data.get("selected_option_index")
-    if not isinstance(selected_index, int) or selected_index not in range(4):
+    if isinstance(selected_index, bool) or not isinstance(selected_index, int) or selected_index not in range(4):
         return jsonify(
             {"success": False, "error": "الإجابة المختارة غير صالحة."}
         ), 400
