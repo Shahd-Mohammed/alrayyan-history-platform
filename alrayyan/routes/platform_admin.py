@@ -274,6 +274,33 @@ def reindex_curriculum(curriculum_id):
 @platform_admin_bp.post("/curricula/<int:curriculum_id>/delete")
 def delete_curriculum(curriculum_id):
     curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
+
+    # Never cascade-delete curriculum lessons that already contain worksheets,
+    # questions, attempts, or recorded concept mastery. Archive/deactivation is
+    # safer than silently destroying assessment history or student progress.
+    lesson_ids = [
+        lesson.id
+        for unit in curriculum.units
+        for lesson in unit.lessons
+    ]
+    if lesson_ids:
+        has_worksheets = Worksheet.query.filter(
+            Worksheet.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        has_mastery_records = ConceptMastery.query.filter(
+            ConceptMastery.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        has_challenge_sessions = ChallengeSession.query.filter(
+            ChallengeSession.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        if has_worksheets or has_mastery_records or has_challenge_sessions:
+            flash(
+                "لا يمكن حذف هذا المنهج لأنه مرتبط بأوراق عمل أو تقدم مسجل للطالبات. "
+                "عطّلي المنهج بدلًا من حذفه حتى لا تفقدي الأسئلة أو النتائج أو التقدم.",
+                "error",
+            )
+            return redirect(url_for("platform_admin.curricula"))
+
     relative_paths = [source.stored_path for source in curriculum.sources if source.stored_path]
     was_active = curriculum.is_active
 
