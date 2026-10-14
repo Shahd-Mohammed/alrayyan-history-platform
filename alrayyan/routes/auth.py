@@ -236,11 +236,18 @@ def forgot_password():
                 {"user_id": user.id, "email": user.email},
                 salt="alrayyan-password-reset",
             )
-            reset_url = url_for("auth.reset_password", token=token, _external=True)
-            try:
-                _send_password_reset_email(user, reset_url)
-            except Exception:
-                current_app.logger.exception("Unable to send a password reset email.")
+            public_base_url = (current_app.config.get("PUBLIC_BASE_URL") or "").strip().rstrip("/")
+            if not public_base_url:
+                current_app.logger.error(
+                    "Password reset email skipped: PUBLIC_BASE_URL is not configured."
+                )
+            else:
+                reset_path = url_for("auth.reset_password", token=token)
+                reset_url = urljoin(public_base_url + "/", reset_path.lstrip("/"))
+                try:
+                    _send_password_reset_email(user, reset_url)
+                except Exception:
+                    current_app.logger.exception("Unable to send a password reset email.")
         flash(
             "إذا كان البريد مسجّلًا ونشطًا، فستصلك رسالة تتضمن رابط إعادة التعيين خلال دقائق.",
             "info",
