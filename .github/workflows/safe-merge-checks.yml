@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "safe-merge/**"
+      - "merge-candidate/**"
   pull_request:
     branches:
       - master
