@@ -264,17 +264,22 @@ def test_center():
     if worksheet_id:
         selected_test = get_teacher_worksheet_or_404(worksheet_id)
 
-    tests = Worksheet.query.filter_by(
+    tests_query = Worksheet.query.filter_by(
         creation_method="test",
         is_archived=False,
     )
     if current_user.role != "admin":
-        tests = tests.filter_by(created_by_id=current_user.id)
-    tests = tests.order_by(Worksheet.created_at.desc()).all()
+        tests_query = tests_query.filter_by(created_by_id=current_user.id)
+    pagination = tests_query.order_by(Worksheet.created_at.desc()).paginate(
+        page=max(request.args.get("page", 1, type=int), 1),
+        per_page=12,
+        error_out=False,
+    )
 
     return render_template(
         "assessment/test_center.html",
-        tests=tests,
+        tests=pagination.items,
+        pagination=pagination,
         lessons=lessons,
         selected_test=selected_test,
         form=form,
@@ -821,13 +826,15 @@ def delete_question(question_id):
         .first()
         is not None
     )
+    # Even an empty attempt is historical activity: removing its question
+    # would silently change the attempt's total possible score.
+    has_worksheet_attempts = bool(worksheet.attempts)
 
-    if has_student_answers:
+    if has_student_answers or has_worksheet_attempts:
         flash(
             (
-                "لا يمكن حذف هذا السؤال "
-                "لوجود نتائج طلاب مرتبطة به. "
-                "يمكنك تعديل نصه وشرحه فقط."
+                "لا يمكن حذف هذا السؤال لوجود محاولات أو نتائج طالبات مرتبطة به. "
+                "يمكنك تعديل نصه وشرحه فقط للحفاظ على سجل الاختبار."
             ),
             "error",
         )
@@ -949,6 +956,7 @@ def calculate_attempt_result(attempt):
             source_type="worksheet_attempt",
             source_id=attempt.id,
         ).first()
+        student = db.session.get(User, attempt.student_id)
         if existing_award is None:
             db.session.add(
                 XPTransaction(
@@ -959,9 +967,17 @@ def calculate_attempt_result(attempt):
                     source_id=attempt.id,
                 )
             )
-            student = db.session.get(User, attempt.student_id)
             if student is not None:
                 student.points = (student.points or 0) + earned_points
+                student.level = max(1, student.points // 500 + 1)
+        elif existing_award.amount != earned_points:
+            # A teacher may revise a manual grade later. Update the original
+            # award by its difference instead of duplicating XP or leaving the
+            # student's point total inconsistent with the corrected score.
+            point_delta = earned_points - existing_award.amount
+            existing_award.amount = earned_points
+            if student is not None:
+                student.points = (student.points or 0) + point_delta
                 student.level = max(1, student.points // 500 + 1)
 
 

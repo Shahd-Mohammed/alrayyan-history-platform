@@ -56,7 +56,10 @@
         .worksheet-more-menu .danger-action { color:var(--danger); }
         .inline-form { margin:0; }
         .worksheet-pagination { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:20px; }
-        .worksheet-pagination a { padding:8px 14px; border-radius:9px; background:var(--gold); color:#fff; font-weight:800; }
+        .worksheet-pagination { flex-wrap:wrap; gap:8px; }
+        .worksheet-pagination a,.worksheet-pagination span { min-width:38px; min-height:38px; padding:8px 12px; display:inline-flex; align-items:center; justify-content:center; border:1px solid #e5d6b8; border-radius:9px; background:#fff; color:var(--navy); font-weight:800; }
+        .worksheet-pagination a.is-current { border-color:#b58227; background:linear-gradient(135deg,#d1a64b,#b58227); color:#fff; }
+        .worksheet-pagination .pagination-ellipsis { border-color:transparent; background:transparent; }
         .empty-state { padding:52px 24px; text-align:center; border:1px dashed #d9c69e; border-radius:18px; background:#fffdf8; }
         .empty-icon { width:72px; height:72px; margin:0 auto 18px; display:grid; place-items:center; color:var(--gold); background:#f9efd9; border-radius:50%; font-size:32px; }
         .empty-state h3 { margin:0 0 8px; color:var(--navy); font-size:21px; }
@@ -125,7 +128,7 @@
 
             {% if worksheets %}
             <div class="worksheet-list">
-                {% for worksheet in worksheets if worksheet.creation_method != "test" %}
+                {% for worksheet in worksheets %}
                 <article class="worksheet-card">
                     <div class="worksheet-main">
                         <h3>{{ worksheet.title }}</h3>
@@ -148,12 +151,12 @@
                 </article>
                 {% endfor %}
             </div>
-            {% if pagination.pages > 1 %}<nav class="worksheet-pagination" aria-label="صفحات أوراق العمل">{% if pagination.has_prev %}<a href="{{ url_for('worksheet_center.center',page=pagination.prev_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">السابق</a>{% endif %}<span>صفحة {{ pagination.page }} من {{ pagination.pages }}</span>{% if pagination.has_next %}<a href="{{ url_for('worksheet_center.center',page=pagination.next_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">التالي</a>{% endif %}</nav>{% endif %}
+            {% if pagination.pages > 1 %}<nav class="worksheet-pagination" aria-label="صفحات أوراق العمل">{% if pagination.has_prev %}<a href="{{ url_for('worksheet_center.center',page=pagination.prev_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">السابق</a>{% endif %}{% for page_num in pagination.iter_pages(left_edge=1,right_edge=1,left_current=2,right_current=2) %}{% if page_num %}<a href="{{ url_for('worksheet_center.center',page=page_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}" class="{% if page_num==pagination.page %}is-current{% endif %}" {% if page_num==pagination.page %}aria-current="page"{% endif %}>{{ page_num }}</a>{% else %}<span class="pagination-ellipsis">…</span>{% endif %}{% endfor %}{% if pagination.has_next %}<a href="{{ url_for('worksheet_center.center',page=pagination.next_num,q=search_term,status=status_filter,difficulty=difficulty_filter) }}">التالي</a>{% endif %}</nav>{% endif %}
             {% else %}
             <div class="empty-state"><div class="empty-icon">📄</div><h3>لا توجد أوراق عمل حتى الآن</h3><p>ارفعي أول ورقة عمل من جهازك، ثم اختاري حفظها كمسودة أو نشرها مباشرة للطلاب.</p><a class="primary-button" href="{{ url_for('teacher_dashboard.upload_worksheet') }}">رفع أول ورقة عمل</a></div>
             {% endif %}
 
-            {% if archived_worksheets %}<details class="archived-worksheets-panel"><summary>الأوراق المؤرشفة ({{ archived_worksheets|length }})</summary><div class="archived-worksheet-list">{% for worksheet in archived_worksheets %}<article><div><strong>{{ worksheet.title }}</strong><small>محفوظة مع نتائجها ولا تظهر للطلاب.</small></div><form method="POST" action="{{ url_for('teacher_dashboard.restore_worksheet', worksheet_id=worksheet.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">استعادة كمسودة</button></form></article>{% endfor %}</div></details>{% endif %}
+            {% if archived_pagination.total %}<details class="archived-worksheets-panel" {% if request.args.get('archive_page', 1, type=int) > 1 %}open{% endif %}><summary>الأوراق المؤرشفة ({{ archived_pagination.total }})</summary><div class="archived-worksheet-list">{% for worksheet in archived_worksheets %}<article><div><strong>{{ worksheet.title }}</strong><small>محفوظة مع نتائجها ولا تظهر للطلاب.</small></div><form method="POST" action="{{ url_for('teacher_dashboard.restore_worksheet', worksheet_id=worksheet.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">استعادة كمسودة</button></form></article>{% endfor %}</div>{% if archived_pagination.pages > 1 %}<nav class="worksheet-pagination" aria-label="صفحات الأوراق المؤرشفة">{% if archived_pagination.has_prev %}<a href="{{ url_for('worksheet_center.center',archive_page=archived_pagination.prev_num) }}">السابق</a>{% endif %}{% for page_num in archived_pagination.iter_pages(left_edge=1,right_edge=1,left_current=2,right_current=2) %}{% if page_num %}<a href="{{ url_for('worksheet_center.center',archive_page=page_num) }}" class="{% if page_num==archived_pagination.page %}is-current{% endif %}" {% if page_num==archived_pagination.page %}aria-current="page"{% endif %}>{{ page_num }}</a>{% else %}<span class="pagination-ellipsis">…</span>{% endif %}{% endfor %}{% if archived_pagination.has_next %}<a href="{{ url_for('worksheet_center.center',archive_page=archived_pagination.next_num) }}">التالي</a>{% endif %}</nav>{% endif %}</details>{% endif %}
         </section>
     </main>
     {% include '_platform_footer.html' %}

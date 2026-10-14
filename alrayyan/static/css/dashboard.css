@@ -1596,3 +1596,250 @@ button[type="submit"]:hover,input[type="submit"]:hover,.save-question-button:hov
 .assessment-tabs{margin-top:24px!important;margin-bottom:24px!important;gap:10px!important}
 .assessment-tabs a{white-space:nowrap!important;padding:11px 18px!important}
 @media(max-width:640px){.assessment-tabs{overflow-x:auto!important}.assessment-tabs a{flex:0 0 auto!important}}
+
+
+/* Final CSS-only readability pass for the assessment editor */
+.form-page .test-editor-hero {
+  background:
+    radial-gradient(circle at 86% 14%,rgba(215,180,94,.2),transparent 28%),
+    linear-gradient(128deg,#0b203d 0%,#15395f 58%,#1d456a 100%) !important;
+  border:1px solid rgba(215,180,94,.42) !important;
+  color:#fff !important;
+  box-shadow:0 20px 48px rgba(11,32,61,.16) !important;
+}
+.form-page .test-editor-hero .test-hero-copy > span {
+  color:#f1d694 !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.95rem !important;
+  font-weight:750 !important;
+  letter-spacing:0 !important;
+}
+.form-page .test-editor-hero h1 {
+  color:#fff !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-weight:750 !important;
+  font-size:clamp(1.8rem,3.2vw,2.8rem) !important;
+  line-height:1.4 !important;
+  overflow-wrap:anywhere;
+}
+.form-page .test-editor-hero p {
+  color:rgba(255,255,255,.88) !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:1rem !important;
+  font-weight:500 !important;
+  line-height:1.9 !important;
+}
+.form-page .test-editor-hero .test-hero-meta {
+  display:inline-flex !important;
+  align-items:baseline !important;
+  gap:9px !important;
+  background:rgba(255,255,255,.08) !important;
+  border:1px solid rgba(241,214,148,.34) !important;
+  color:#fff !important;
+}
+.form-page .test-editor-hero .test-hero-meta b {
+  color:#f1d694 !important;
+  font-size:1.35rem !important;
+  font-weight:750 !important;
+}
+.form-page .test-editor-hero .test-hero-meta small {
+  color:rgba(255,255,255,.9) !important;
+  font-weight:600 !important;
+}
+.form-page .assessment-tabs {
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+  gap:10px !important;
+  width:max-content !important;
+  max-width:100% !important;
+  margin:28px 0 30px !important;
+  padding:8px !important;
+  overflow-x:auto !important;
+  border:1px solid #e5d8bd !important;
+  border-radius:15px !important;
+  background:#fffdf8 !important;
+}
+.form-page .assessment-tabs a {
+  display:inline-flex !important;
+  flex:0 0 auto !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:auto !important;
+  min-width:max-content !important;
+  min-height:42px !important;
+  padding:10px 20px !important;
+  border-radius:10px !important;
+  color:#344960 !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+  font-size:.9rem !important;
+  font-weight:700 !important;
+  line-height:1.4 !important;
+  white-space:nowrap !important;
+}
+.form-page .assessment-tabs a.active {
+  background:linear-gradient(135deg,#d7b45e,#b9872d) !important;
+  border:1px solid #b9872d !important;
+  color:#fff !important;
+}
+@media(max-width:650px) {
+  .form-page .test-editor-hero { grid-template-columns:1fr !important; padding:25px 22px !important; }
+  .form-page .test-editor-hero h1 { font-size:1.7rem !important; }
+  .form-page .assessment-tabs { width:100% !important; }
+}
+
+
+/* Final compact Arabic action buttons for assessment management */
+button,input[type="submit"],input[type="button"],input[type="reset"],a.button,.button,.btn{
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;font-weight:750!important;letter-spacing:0!important;line-height:1.35!important;text-transform:none!important
+}
+button[type="submit"],input[type="submit"],.gold-action,.primary-action,.results-primary-link,.score-policy-banner a{
+ width:auto!important;min-width:0!important;max-width:100%!important;min-height:37px!important;padding:7px 14px!important
+}
+
+/* Dashboard action controls should never fill an entire row */
+button,input[type="submit"],input[type="button"],input[type="reset"],.button,.btn,a.button,a.btn,.primary-action,.gold-action,.hint-action,.results-primary-link,.save-question-button,.save-settings-button{
+ width:auto!important;min-width:0!important;max-width:max-content!important;justify-self:start!important;align-self:start!important;flex:0 0 auto!important;
+}
+
+
+/* Assessment editor: wider single-line tabs and compact gold save actions */
+.form-page .assessment-tabs {
+  display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+  width:max-content!important;max-width:100%!important;gap:10px!important;
+  margin:30px 0 36px!important;padding:9px!important;overflow-x:auto!important;
+  border:1px solid #e6d8ba!important;border-radius:16px!important;
+  background:#fffdf8!important;box-shadow:0 10px 28px rgba(20,43,72,.06)!important;
+}
+.form-page .assessment-tabs a {
+  display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;
+  justify-content:center!important;width:auto!important;min-width:max-content!important;
+  min-height:40px!important;padding:9px 20px!important;border-radius:10px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;
+  font-weight:700!important;line-height:1.35!important;white-space:nowrap!important;
+  color:#173653!important;background:#fff!important;border:1px solid #e5d7b7!important;
+}
+.form-page .assessment-tabs a.active {
+  color:#fff!important;background:linear-gradient(135deg,#d8b35d,#b7862b)!important;
+  border-color:#b7862b!important;
+}
+.form-page .primary-action,
+.form-page button[type="submit"],
+.form-page input[type="submit"],
+.form-page .save-question-button,
+.form-page .save-settings-button {
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:100%!important;min-width:0!important;min-height:38px!important;
+  padding:8px 15px!important;border:1px solid #b7862b!important;border-radius:10px!important;
+  color:#fff!important;background:linear-gradient(135deg,#d8b35d,#b7862b)!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;
+  font-weight:700!important;line-height:1.35!important;box-shadow:0 4px 12px rgba(116,82,24,.10)!important;
+}
+@media(max-width:650px){.form-page .assessment-tabs{width:100%!important}.form-page .assessment-tabs a{padding-inline:14px!important}}
+
+
+/* Results page: align hero and status controls with the premium worksheet upload screen */
+.results-dashboard .results-intro {
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  border:1px solid rgba(215,180,94,.42)!important;border-radius:26px!important;
+  background:radial-gradient(circle at 86% 14%,rgba(215,180,94,.2),transparent 28%),linear-gradient(128deg,#0b203d 0%,#15395f 58%,#1d456a 100%)!important;
+  color:#fff!important;box-shadow:0 20px 48px rgba(11,32,61,.16)!important;
+}
+.results-dashboard .results-intro h1,
+.results-dashboard .results-intro h2,
+.results-dashboard .results-intro h3 {font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;color:#fff!important;font-weight:800!important;line-height:1.45!important}
+.results-dashboard .results-intro p {color:rgba(255,255,255,.86)!important;line-height:1.9!important}
+.results-dashboard .assessment-tabs {
+  display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:10px!important;
+  width:max-content!important;max-width:100%!important;margin:28px 0 34px!important;padding:9px!important;
+  overflow-x:auto!important;border:1px solid #e6d8ba!important;border-radius:16px!important;background:#fffdf8!important;
+}
+.results-dashboard .assessment-tabs a {
+  display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;min-width:max-content!important;min-height:40px!important;padding:9px 18px!important;
+  border:1px solid #e5d7b7!important;border-radius:10px!important;background:#fff!important;color:#173653!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.88rem!important;font-weight:700!important;white-space:nowrap!important;
+}
+.results-dashboard .assessment-tabs a.active {background:linear-gradient(135deg,#d8b35d,#b7862b)!important;border-color:#b7862b!important;color:#fff!important}
+.results-dashboard .results-stats {gap:14px!important;margin:24px 0!important}
+.results-dashboard .stat-card {border:1px solid #e7dcc8!important;border-radius:17px!important;background:#fff!important;box-shadow:0 10px 28px rgba(19,47,82,.055)!important}
+.results-dashboard .results-panel {margin-top:26px!important;border:1px solid #e8decb!important;border-radius:22px!important;background:#fff!important;box-shadow:0 13px 34px rgba(19,47,82,.055)!important}
+.results-dashboard .results-panel-heading h2 {font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:800!important;color:#173653!important}
+.results-dashboard .grade-attempt-action {
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:max-content!important;min-height:37px!important;padding:8px 13px!important;
+  border:1px solid #b7862b!important;border-radius:10px!important;background:linear-gradient(135deg,#d8b35d,#b7862b)!important;
+  color:#fff!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;font-weight:700!important;text-decoration:none!important;white-space:nowrap!important;
+}
+@media(max-width:650px){.results-dashboard .assessment-tabs{width:100%!important}.results-dashboard .assessment-tabs a{padding-inline:13px!important}}
+
+
+/* Site-wide button typography: readable labels and compact action widths. */
+button,
+input[type="submit"],
+input[type="button"]{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+}
+button:not(.platform-menu-toggle):not([data-slider-dot]):not([data-slider-next]):not([data-slider-previous]),
+input[type="submit"],
+input[type="button"],
+a.primary-button,
+a.slide-link,
+a.student-primary-action,
+a.results-primary-link,
+a.grade-attempt-action,
+.platform-gold-button,
+.primary-action,
+.primary-button,
+.student-primary-action,
+.test-primary-button,
+.tree-add-button,
+.gold-action,
+.concept-action{
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:0 0 auto!important;
+}
+.platform-gold-button,
+.primary-action,
+.primary-button,
+.student-primary-action,
+.test-primary-button,
+.tree-add-button,
+.gold-action,
+.concept-action,
+.results-primary-link,
+.grade-attempt-action,
+.slide-link{
+  color:#fff!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.88rem!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+}
+
+
+/* Shared button typography and compact sizing for teacher assessment pages */
+:where(button,input[type="submit"],input[type="button"],.submit-button,.primary-button,.results-primary-link,.test-card-preview,.inline-manage-link){
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:700!important;letter-spacing:0!important;line-height:1.4!important
+}
+.form-page button,.form-page input[type="submit"],.results-dashboard button,.results-dashboard input[type="submit"],.results-dashboard .results-primary-link{
+ width:auto!important;max-width:100%!important;min-width:0!important;min-height:40px!important;padding:9px 16px!important;border-radius:10px!important;font-size:.91rem!important;font-weight:700!important
+}
+.form-page .assessment-tabs button,.results-dashboard .assessment-tabs a{white-space:nowrap}
+.form-page .form-intro,.results-dashboard .results-intro{background:radial-gradient(circle at 12% 10%,rgba(201,154,61,.18),transparent 28%),linear-gradient(130deg,#0b203d 0%,#173b64 65%,#244b73 100%)!important}
+.form-page .form-intro h1,.results-dashboard .results-intro h1{font-family:"Aref Ruqaa",serif!important}
+.form-page .save-question-button,.form-page .save-settings-button,.form-page button[type="submit"],.results-dashboard .results-primary-link{
+ background:linear-gradient(135deg,#d8ad4d,#b9872d)!important;color:#fff!important;border:1px solid #b9872d!important
+}
+@media(max-width:700px){.form-page button,.form-page input[type="submit"],.results-dashboard button,.results-dashboard input[type="submit"],.results-dashboard .results-primary-link{width:auto!important;max-width:100%!important}.form-page .assessment-tabs{overflow-x:auto}.form-page .assessment-tabs button{flex:0 0 auto}}
+
+
+.results-dashboard button:not(.results-primary-link):not(.platform-gold-button){background:#102f50!important;color:#fff!important;border-color:#102f50!important}
+.results-dashboard button:not(.results-primary-link):not(.platform-gold-button):hover{background:#1b496e!important;color:#fff!important;border-color:#1b496e!important}
+

@@ -4,6 +4,7 @@ from alrayyan.services.tutor_engine import (
     _extract_json,
     _history_text,
     _validate_payload,
+    is_non_learning_message,
 )
 
 
@@ -41,7 +42,7 @@ def run_tests():
     )
     assert safe["action"] == "explain"
     assert safe["evaluation"] == "not_evaluated"
-    assert safe["mastery_delta"] == 10
+    assert safe["mastery_delta"] == 0
 
     history = _history_text([
         SimpleNamespace(role="student", content="ما السبب؟"),
@@ -49,7 +50,15 @@ def run_tests():
     ])
     assert "الطالب: ما السبب؟" in history
     assert "المعلم: ماذا تتذكر؟" in history
-    print("PASS: Tutor payload validation and conversation history")
+
+    # Casual replies must never count as academic answers, while a real answer
+    # that ends with a friendly phrase must still be evaluated normally.
+    assert is_non_learning_message("حبيبي انت")
+    assert is_non_learning_message("ياخوي")
+    assert is_non_learning_message("لا عنجد")
+    assert not is_non_learning_message("عشان تسيطر على ثرواتها ياخوي")
+
+    print("PASS: Tutor payload validation, social-message guard, and conversation history")
 
 
 if __name__ == "__main__":

@@ -1,1 +1,23 @@
-{% extends 'platform/_admin_base.html' %}{% from 'platform/_form_fields.html' import fields %}{% block title %}إعدادات المنصة{% endblock %}{% block heading %}هوية المنصة والتواصل{% endblock %}{% block intro %}من هنا تضبطين هوية منصة الريان ووسائل التواصل التي تظهر للطالبات في الصفحات المختلفة.{% endblock %}{% block content %}<section class="platform-panel platform-narrow"><form method="post" class="platform-form">{{ form.hidden_tag() }}{{ fields(form,[form.platform_name,form.tagline,form.whatsapp_url,form.support_email]) }}{{ form.submit(class_='platform-gold-button') }}</form></section>{% endblock %}
+{% extends 'platform/_admin_base.html' %}
+{% from 'platform/_form_fields.html' import fields %}
+{% block title %}إعدادات المنصة{% endblock %}
+{% block heading %}هوية المنصة والتواصل{% endblock %}
+{% block intro %}عدّلي اسم المنصة وعبارتها التعريفية ووسائل التواصل من مكان واحد.{% endblock %}
+{% block content %}
+<section class="platform-panel platform-narrow">
+  <form method="post" class="platform-form">
+    {{ form.hidden_tag() }}
+    {{ fields(form,[form.platform_name,form.tagline,form.whatsapp_url,form.support_email]) }}
+    {{ form.submit(class_='platform-gold-button') }}
+  </form>
+</section>
+{% if current_user.role == 'admin' %}
+<section class="platform-panel platform-admin-account-shortcut">
+  <div>
+    <h2>إدارة حسابات الإدارة</h2>
+    <p>هذا القسم مخصص للحسابات التي تملك صلاحية المدير، ويمكن منه إنشاء حسابات إدارة إضافية ومراجعة الحسابات الحالية.</p>
+  </div>
+  <a class="platform-gold-button" href="{{ url_for('platform_admin.admins') }}">فتح حسابات الإدارة</a>
+</section>
+{% endif %}
+{% endblock %}

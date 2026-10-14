@@ -97,7 +97,7 @@
                         <div class="message-content">
                             <span class="message-name">معلّم الريان</span>
                             <div class="message-bubble">
-                                أهلًا {{ current_user.first_name }}. اختاري درسًا ثم ابدئي محادثة؛ سأشرح لك وأسألك وأساعدك على اكتشاف الإجابة.
+                                يا هلا {{ current_user.first_name }}، اختاري الدرس أو اكتبي الفكرة اللي بدك تفهميها. بنبلّش من الأساس، وبنمشي خطوة خطوة لحد ما تثبت المعلومة.
                             </div>
                         </div>
                     </article>
@@ -127,7 +127,7 @@
         </section>
     </main>
 
-    <script src="{{ url_for('static', filename='js/teacher.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/teacher.js', v='20261011-mastery-feedback-2') }}" defer></script>
     {% include '_platform_footer.html' %}
 </body>
 </html>

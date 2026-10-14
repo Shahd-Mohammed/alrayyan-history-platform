@@ -60,6 +60,15 @@
 
 <section id="concept-map-library" class="platform-panel maps-library concept-map-library">
   <div class="concept-section-heading library-heading"><div class="concept-section-icon library">▤</div><div><span class="concept-kicker">مكتبة الخرائط</span><h2>خرائطك ومسوداتك</h2><p>راجعي خرائطك، وعاينيها قبل النشر، واحتفظي بالمسودات التي ما زلتِ تعملين عليها.</p></div><span class="library-count">{{ maps|length }} خريطة</span></div>
+  <form class="map-status-filter" method="get" action="{{ url_for('platform_admin.concept_maps') }}">
+    <label for="map-status-filter">تصفية الخرائط</label>
+    <select id="map-status-filter" name="status" onchange="this.form.submit()">
+      <option value="all" {{ 'selected' if status_filter == 'all' else '' }}>كل الخرائط</option>
+      <option value="draft" {{ 'selected' if status_filter == 'draft' else '' }}>المسودات</option>
+      <option value="published" {{ 'selected' if status_filter == 'published' else '' }}>الخرائط المنشورة</option>
+    </select>
+    <noscript><button class="concept-action publish" type="submit">تطبيق</button></noscript>
+  </form>
   <div class="concept-map-list">
   {% for row in maps %}
     <article class="concept-map-card">
@@ -80,5 +89,20 @@
   {% endfor %}
   </div>
 </section>
-<script src="{{ url_for('static',filename='js/concept_map_builder.js',v='20261010-final-design-2') }}" defer></script>
+<script src="{{ url_for('static',filename='js/concept_map_builder.js',v='20261011-tree-studio-auto-ai-3') }}" defer></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const aiTab = document.querySelector('[data-tab="ai"]');
+  const aiForm = document.querySelector("[data-ai-generate-form]");
+  const manualLesson = document.querySelector('[data-panel="manual"] select[name="lesson_id"]');
+  const aiLesson = aiForm && aiForm.querySelector('select[name="lesson_id"]');
+  if (!aiTab || !aiForm || !aiLesson) return;
+
+  // Switching tabs must only reveal the AI form; generating a map is a
+  // separate, explicit action from the form's submit button.
+  aiTab.addEventListener("click", () => {
+    if (manualLesson && manualLesson.value) aiLesson.value = manualLesson.value;
+  });
+});
+</script>
 {% endblock %}

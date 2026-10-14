@@ -21,7 +21,7 @@
         rel="stylesheet"
         href="{{ url_for(
             'static',
-            filename='css/dashboard.css', v='20261010-final-design-4'
+            filename='css/dashboard.css', v='20261011-unified-worksheet-studio-8'
         ) }}"
     >
 
@@ -262,6 +262,22 @@ button,.assessment-tabs a,input[type="submit"],input[type="button"],.primary-act
 }
 @media(max-width:760px){.form-page{width:calc(100% - 22px)!important}.form-page .assessment-tabs a{flex:0 0 auto!important}.form-intro.test-editor-hero{align-items:flex-start!important}}
 
+
+/* Last pass: one-line tabs and balanced gold save controls */
+.form-page .assessment-tabs{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:10px!important;margin:28px 0 30px!important;padding:8px!important;overflow-x:auto!important;scrollbar-width:thin!important}
+.form-page .assessment-tabs a,.form-page .assessment-tabs button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;white-space:nowrap!important;padding:10px 18px!important;font-size:.9rem!important;font-weight:750!important}
+.form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action,.form-page .assessment-section button.primary-action,.form-page .question-form button[type="submit"],.form-page .question-form input[type="submit"],.form-page .save-question-button,.form-page .save-settings-button,.form-page .question-actions button,.form-page .question-actions a{
+display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:0!important;max-width:max-content!important;min-height:37px!important;padding:8px 14px!important;border:1px solid #b9872d!important;border-radius:10px!important;background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important;box-shadow:0 4px 11px rgba(153,105,24,.12)!important}
+.form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action:hover,.form-page .question-form button[type="submit"]:hover,.form-page .question-form input[type="submit"]:hover{background:linear-gradient(135deg,#bd8b2b,#8d6116)!important}
+@media(max-width:760px){.form-page .assessment-tabs{flex-direction:row!important;overflow-x:auto!important}.form-page .assessment-tabs a,.form-page .assessment-tabs button{flex:0 0 auto!important}}
+
+
+/* Last pass: one-line tabs and balanced gold save controls */
+.form-page .assessment-tabs{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:10px!important;margin:28px 0 30px!important;padding:8px!important;overflow-x:auto!important;scrollbar-width:thin!important}
+.form-page .assessment-tabs a,.form-page .assessment-tabs button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;white-space:nowrap!important;padding:10px 18px!important;font-size:.9rem!important;font-weight:750!important}
+.form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action,.form-page .assessment-section button.primary-action,.form-page .question-form button[type="submit"],.form-page .question-form input[type="submit"],.form-page .save-question-button,.form-page .save-settings-button,.form-page .question-actions button,.form-page .question-actions a{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:0!important;max-width:max-content!important;min-height:37px!important;padding:8px 14px!important;border:1px solid #b9872d!important;border-radius:10px!important;background:linear-gradient(135deg,#d2a13b,#aa761e)!important;color:#fff!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important;box-shadow:0 4px 11px rgba(153,105,24,.12)!important}
+@media(max-width:760px){.form-page .assessment-tabs{flex-direction:row!important;overflow-x:auto!important}.form-page .assessment-tabs a,.form-page .assessment-tabs button{flex:0 0 auto!important}}
+
 </style>
 <style>
 /* Verified in-head styling: tabs stay on one line and save actions stay compact gold */
@@ -326,6 +342,181 @@ body{background:radial-gradient(circle at 94% 2%,rgba(201,154,61,.12),transparen
 @media(max-width:760px){.form-page{width:calc(100% - 22px)!important}.assessment-tabs{overflow-x:auto!important}.assessment-tabs a{flex:0 0 auto!important}}
 </style>
 
+<style>
+/* Final pass: match the worksheet-upload visual identity and keep controls compact */
+.form-page{width:min(1200px,calc(100% - 36px))!important;margin:28px auto 70px!important}
+.form-page .form-intro,.form-page .test-editor-hero{border-radius:24px!important}
+.form-page .assessment-tabs{width:max-content!important;max-width:100%!important;align-self:flex-start!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:8px!important;margin:22px 0 28px!important;padding:7px!important;overflow-x:auto!important;background:#fffdf8!important;border:1px solid #e7dcc8!important;border-radius:15px!important;box-shadow:0 8px 20px rgba(23,47,82,.045)!important}
+.form-page .assessment-tabs a{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;padding:10px 15px!important;border:1px solid #e7dcc8!important;border-radius:10px!important;background:#f8f5ee!important;color:#314963!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:650!important;line-height:1.35!important;white-space:nowrap!important;box-shadow:none!important}
+.form-page .assessment-tabs a.active{background:linear-gradient(135deg,#d2aa50,#b9872c)!important;border-color:#b9872c!important;color:#fff!important;box-shadow:0 4px 12px rgba(150,106,31,.13)!important}
+.form-page .assessment-section{margin-top:24px!important;border-radius:20px!important}
+.form-page button[type=submit],.form-page input[type=submit],.form-page .primary-action,.form-page .save-question-button,.form-page .save-settings-button,.form-page .question-actions a,.form-page .question-actions button{width:auto!important;max-width:max-content!important;min-width:0!important;min-height:36px!important;padding:8px 14px!important;border-radius:10px!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border:1px solid #b9872c!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:650!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important}
+@media(max-width:760px){.form-page{width:calc(100% - 22px)!important}.form-page .assessment-tabs{max-width:100%!important}.form-page .assessment-section{padding:18px!important}}
+
+/* Final shared visual system: light ivory surfaces, IBM Plex Sans Arabic, compact gold actions. */
+body,.form-page,.form-page label,.form-page input,.form-page select,.form-page textarea,.form-page button{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+body{background:linear-gradient(180deg,#fffdf8 0%,#f5f1e8 100%)!important;color:#172f52!important}
+.form-intro{background:radial-gradient(circle at 10% 0%,rgba(215,180,94,.18),transparent 25%),linear-gradient(128deg,#0b203d 0%,#173b64 58%,#244b73 100%)!important;border:1px solid rgba(201,154,61,.38)!important}
+.form-intro h1{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:800!important;line-height:1.4!important}
+.assessment-tabs{width:100%!important;max-width:100%!important;align-self:stretch!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;justify-content:flex-start!important;gap:9px!important;margin:22px 0 28px!important;padding:8px!important;overflow-x:auto!important;scrollbar-width:thin!important;border:1px solid #e5dccb!important;border-radius:15px!important;background:#fffdf8!important}
+.assessment-tabs a{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;max-width:none!important;padding:11px 18px!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;font-weight:700!important;line-height:1.4!important;border-radius:10px!important}
+.assessment-tabs a.active{background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border:1px solid #b9872c!important;box-shadow:0 4px 12px rgba(150,106,31,.13)!important}
+.assessment-section{margin-bottom:22px!important;background:#fffdf9!important;border:1px solid #e7dfd1!important;border-radius:21px!important;box-shadow:0 12px 30px rgba(23,47,82,.055)!important}
+.assessment-section>h2,.question-card-title strong,.question-type-builder__heading strong{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:800!important}
+.form-page button[type=submit],.form-page input[type=submit],.form-page .primary-action,.form-page .save-question-button,.form-page .save-settings-button,.form-page .question-actions a,.form-page .question-actions button,.form-page .builder-add{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;max-width:100%!important;min-width:0!important;min-height:36px!important;padding:8px 14px!important;border-radius:10px!important;background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border:1px solid #b9872c!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.87rem!important;font-weight:700!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important;box-shadow:0 4px 11px rgba(150,106,31,.12)!important}
+.form-page .question-delete-action{background:#fff7f7!important;color:#9a3434!important;border:1px solid #e2bcbc!important;box-shadow:none!important}
+@media(max-width:760px){.form-page .assessment-tabs{width:100%!important;max-width:100%!important;align-self:stretch!important}.form-page .assessment-tabs a{flex:0 0 auto!important;white-space:nowrap!important}.form-page .assessment-section{padding:18px!important}}
+
+
+/* Final layout and button pass */
+.form-page .assessment-tabs{margin:26px 0 30px!important;gap:10px!important}
+.form-page .assessment-tabs a{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.9rem!important;font-weight:700!important;line-height:1.35!important}
+.form-page .assessment-section button,
+.form-page .assessment-section input[type="submit"],
+.form-page .question-form button[type="submit"],
+.form-page .question-form input[type="submit"],
+.form-page .question-actions button,
+.form-page .question-actions a,
+.form-page .builder-add{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;min-height:36px!important;
+ padding:7px 13px!important;border-radius:10px!important;
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;
+ font-weight:700!important;line-height:1.4!important;letter-spacing:0!important;white-space:nowrap!important
+}
+.form-page .assessment-section button[type="submit"],
+.form-page .question-form button[type="submit"],
+.form-page .question-form input[type="submit"]{
+ background:linear-gradient(135deg,#d2aa50,#b9872c)!important;color:#fff!important;border:1px solid #b8892e!important
+}
+
+/* Final override: management tabs stay in one row; save buttons remain compact. */
+.form-page .assessment-tabs {
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:8px!important;
+  overflow-x:auto!important;
+  align-items:stretch!important;
+  margin:0 0 24px!important;
+  padding:7px!important;
+}
+.form-page .assessment-tabs a,
+.form-page .assessment-tabs button {
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:max-content!important;
+  max-width:none!important;
+  white-space:nowrap!important;
+  padding:10px 17px!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.9rem!important;
+  font-weight:700!important;
+  line-height:1.35!important;
+}
+.form-page .assessment-section form[action*="save_worksheet_settings"]>button.primary-action,
+.form-page .assessment-section button.primary-action,
+.form-page .question-form button[type="submit"],
+.form-page .question-form input[type="submit"] {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:max-content!important;
+  min-height:37px!important;
+  padding:8px 15px!important;
+  border-radius:10px!important;
+  background:linear-gradient(135deg,#d2aa50,#b9872c)!important;
+  color:#fff!important;
+  border:1px solid #b9872c!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.88rem!important;
+  font-weight:700!important;
+  line-height:1.35!important;
+  white-space:nowrap!important;
+}
+@media(max-width:760px) {
+  .form-page .assessment-tabs { overflow-x:auto!important; }
+  .form-page .assessment-tabs a,.form-page .assessment-tabs button { flex:0 0 auto!important; }
+}
+
+
+
+.form-page .question-actions>* { flex:0 0 auto!important; width:auto!important; max-width:100%!important; }
+/* Final page polish: match the worksheet upload studio */
+body {
+  background: radial-gradient(circle at 95% 2%,rgba(201,154,61,.14),transparent 24rem),linear-gradient(180deg,#fffdf8 0%,#f7f3ea 100%) !important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif !important;
+}
+.form-page { width:min(1220px,calc(100% - 36px))!important; max-width:1220px!important; }
+.form-page,.form-page * { font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif; letter-spacing:0!important; }
+.form-page .assessment-tabs {
+  display:flex!important; flex-wrap:nowrap!important; flex-direction:row!important;
+  align-items:center!important; gap:9px!important; overflow-x:auto!important;
+  margin:30px 0 28px!important; padding:7px!important;
+  border:1px solid #e6dccb!important; border-radius:16px!important;
+  background:linear-gradient(135deg,#fffdf8,#f8f4eb)!important;
+  box-shadow:0 9px 24px rgba(16,43,79,.045)!important;
+}
+.form-page .assessment-tabs a {
+  flex:0 0 auto!important; width:auto!important; min-width:max-content!important;
+  padding:10px 17px!important; border-radius:10px!important;
+  color:#53647a!important; font-size:.9rem!important; font-weight:750!important;
+  line-height:1.35!important; white-space:nowrap!important;
+}
+.form-page .assessment-tabs a.active {
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  border:1px solid #b9872d!important; color:#fff!important;
+  box-shadow:0 5px 12px rgba(169,122,34,.12)!important;
+}
+.form-page .assessment-section {
+  margin-bottom:24px!important; padding:clamp(18px,2.5vw,28px)!important;
+  border-color:#e7dcc8!important; background:linear-gradient(155deg,#fff 0%,#fffdf8 100%)!important;
+  box-shadow:0 12px 30px rgba(13,41,77,.055)!important;
+}
+.form-page .assessment-section>h2 { font-weight:800!important; }
+.form-page .assessment-section button,
+.form-page .assessment-section input[type="submit"],
+.form-page .assessment-section a.button,
+.form-page .worksheet-form button,
+.form-page .worksheet-form input[type="submit"] {
+  display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  width:auto!important; max-width:100%!important; min-width:0!important; min-height:38px!important;
+  padding:8px 15px!important; border-radius:10px!important;
+  font-size:.88rem!important; font-weight:750!important; line-height:1.35!important;
+}
+.form-page .assessment-section button.primary-action,
+.form-page .assessment-section input.primary-action,
+.form-page .assessment-section form[action*="save_worksheet_settings"] button,
+.form-page .worksheet-form button.primary-action,
+.form-page .worksheet-form input.primary-action {
+  width:auto!important; max-width:max-content!important; min-width:0!important;
+  min-height:39px!important; padding:8px 15px!important;
+  border:1px solid #b9872d!important;
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  color:#fff!important; box-shadow:0 5px 13px rgba(169,122,34,.13)!important;
+  font-weight:750!important;
+}
+.form-page .question-actions .question-edit-action {
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  border:1px solid #b9872d!important; color:#fff!important;
+}
+.form-page .question-actions .question-delete-action {
+  background:#fff5f5!important; border:1px solid #e7c4c4!important; color:#a33d3d!important;
+}
+.form-page .builder-add {
+  width:auto!important; max-width:max-content!important; min-height:37px!important;
+  padding:7px 13px!important; border-radius:10px!important;
+  background:linear-gradient(135deg,#d8b45e,#b9872d)!important;
+  border:1px solid #b9872d!important; color:#fff!important; font-weight:750!important;
+}
+@media(max-width:760px) {
+  .form-page { width:calc(100% - 22px)!important; padding-inline:0!important; }
+  .form-page .assessment-tabs { overflow-x:auto!important; }
+  .form-page .assessment-tabs a { flex:0 0 auto!important; }
+}
+
+</style>
 </head>
 
 <body>

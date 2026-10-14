@@ -8,7 +8,7 @@ from alrayyan.services.ai_teacher import build_context, prepare_sources
 from alrayyan.services.semantic_search import semantic_search
 
 
-PROMPT_VERSION = "tutor-v5-warm-learning"
+PROMPT_VERSION = "tutor-v9-palestinian-warm-teaching"
 VALID_ACTIONS = {
     "explain",
     "ask_diagnostic",
@@ -37,6 +37,30 @@ MASTERY_DELTAS = {
 }
 
 
+NON_LEARNING_MESSAGE_PATTERNS = (
+    r"^(?:هلا|أهلًا|اهلا|أهلا|مرحبا|السلام عليكم)\b",
+    r"يسعدك ربنا|يسعد قلبك|يسعد مساك|يسعد مساكم|الله يسعدك|مساء الخير|صباح الخير|انت جاهز|إنت جاهز|أنت جاهز|كيفك|كيف حالك",
+    r"^(?:هههه+|ههه+|خخخ+|lol+)\b",
+    r"بمزح معك|أنا بمزح|انا بمزح|كنت بمزح|جامد انت|جامد إنت",
+    r"^(?:حبيبي(?:\s+انت|\s+إنت)?|حبيبتي(?:\s+انتي|\s+إنتِ)?|يا\s*خوي|يا\s*خيو|لا\s+عنجد|مش\s+غلط|عنجد|يسلمو|تسلم|تسلمي|تمام|خلص|طيب|حلو|منيح|ماشي|الله\s+يسعدك)[.!؟،\s]*$",
+    r"بطلت اعرف اجاوب|بطلت أعرف أجاوب|بطلت الأجواء حلوة|بطلت الاجواء حلوة",
+    r"راح تحفزني|تحكي كلام منيح|شجعيني|شجعني",
+    r"على اي اساس|على أي أساس|إتقان المفهوم صار|اتقان المفهوم صار|نسبة الإتقان|نسبة الاتقان",
+    r"ليش.*(?:اتقان|إتقان|نقاط|النسبة)|كيف.*(?:اتقان|إتقان|النسبة)",
+    r"^(?:اممم\s*)?(?:اليوم\s+)?متحمسة(?:\s+يا عيني)?[.!؟،\s]*$",
+    r"^(?:(?:يلا+|يلاا+)\s*)?(?:ابشر|أبشر|تمام|جاهزة|جاهزين|خلينا نبدأ|يلا نبدأ)[.!؟،\s]*$",
+    r"(?:تعبانة|تعبان|مرهقة|مرهق|مش قادرة أدرس|مش قادر أدرس|مش قادرة أركز|مش قادر أركز)",
+    r"^(?:بدنا نسولف|بدي أسولف|نحكي شوي|نسولف شوي)[.!؟،\s]*$",
+    r"زهقت.*(?:درس|دراسة)|طفشت.*(?:درس|دراسة)|(?:ملّيت|مليت).*درس|ما بدي أدرس|ما بدي ادرس|مش حابة أدرس|مش حابة ادرس|مش طايقة الدرس|مش طايقه الدرس",
+)
+
+
+def is_non_learning_message(text):
+    """Keep social chat and meta-feedback from changing mastery scores."""
+    normalized = re.sub(r"\s+", " ", (text or "").strip().lower())
+    return any(re.search(pattern, normalized) for pattern in NON_LEARNING_MESSAGE_PATTERNS)
+
+
 SYSTEM_PROMPT = """
 أنت معلّم الريان التفاعلي. هدفك الأساسي هو التعليم: الشرح، التدريب، قياس الفهم، والتشجيع، اعتمادًا فقط على سياق المنهج النشط المرسل.
 
@@ -56,6 +80,10 @@ SYSTEM_PROMPT = """
 13. لا تكثر من «حبيبتي» أو «قلبي» أو العبارات الحميمة. استخدم اسم الطالب أو تعبيرًا دافئًا عند الحاجة فقط.
 14. نوّع التشجيع واجعله مرتبطًا بما فعله الطالب، ولا تمدح إجابة خاطئة كأنها صحيحة.
 15. لا تبدأ كل رد بتحية رسمية، ولا تختم كل رد بسؤال دراسي. اجعل المحادثة طبيعية ومتنوعة مع بقاء التعليم هو المحور.
+16. لا تقيّم التحية أو المزاح أو المجاملة أو الشكوى أو الحديث عن النقاط/نسبة الإتقان أو طلب التشجيع على أنها إجابة علمية.
+17. لا تمنح أي زيادة أو نقصان في إتقان المفهوم إلا عندما تكون رسالة الطالب إجابة فعلية عن سؤال تعليمي واضح في الرسالة السابقة. إذا كانت دردشة أو تعليقًا جانبيًا، استخدم evaluation=not_evaluated وmastery_delta=0.
+18. لا تستنتج أن الطالبة أتقنت مفهومًا من مجرد استمرار المحادثة أو من نبرة كلامها. التقييم مبني على مضمون الإجابة ومدى مطابقته للسياق التعليمي.
+19. عند أول إجابة صحيحة عن سؤال تعليمي، اطرح سؤال تحقق قصيرًا ثانيًا عن المفهوم نفسه قبل الانتقال إلى مفهوم جديد. لا تعتبر المفهوم متقنًا ولا تمنح نقاطًا في هذه المرحلة؛ التحقق الناجح التالي هو الذي يثبت الفهم.
 
 أعد JSON صالحًا فقط دون Markdown، بالحقول:
 reply: رد المعلم بالعربية، ويمكن أن ينتهي بسؤال تفاعلي واحد
@@ -119,11 +147,9 @@ def _validate_payload(payload, allowed_chunk_ids):
     if evaluation not in VALID_EVALUATIONS:
         evaluation = "not_evaluated"
 
-    try:
-        mastery_delta = int(payload.get("mastery_delta", 0))
-    except (TypeError, ValueError):
-        mastery_delta = MASTERY_DELTAS[evaluation]
-    mastery_delta = min(max(mastery_delta, -10), 10)
+    # Mastery changes are controlled by the application, not by arbitrary model output.
+    # Social/off-topic messages can never change the score.
+    mastery_delta = MASTERY_DELTAS.get(evaluation, 0)
 
     source_ids = []
     for raw_id in payload.get("source_chunk_ids", []):
@@ -151,6 +177,66 @@ def tutor_reply(conversation, student_text):
         raise ValueError("اكتبي رسالة أولًا.")
     if len(student_text) > 1200:
         raise ValueError("الرسالة طويلة جدًا. اختصريها قليلًا.")
+
+    # Keep greetings, jokes, encouragement requests, and score complaints
+    # conversational without sending them through the learning evaluator.
+    if is_non_learning_message(student_text):
+        normalized = student_text.lower()
+        if re.search(r"على اي اساس|على أي أساس|إتقان المفهوم صار|اتقان المفهوم صار|نسبة الإتقان|نسبة الاتقان|ليش.*(?:اتقان|إتقان|نقاط|النسبة)|كيف.*(?:اتقان|إتقان|النسبة)", normalized):
+            reply = (
+                "معك حق تسألي عن النسبة. إتقان المفهوم لازم يتغيّر بناءً على إجابة تعليمية واضحة "
+                "وقابلة للتقييم، مش على المزاح أو الكلام عن النقاط. رح أتعامل مع رسالتك كتوضيح، "
+                "من دون تعديل الإتقان أو إضافة نقاط."
+            )
+        elif re.search(r"راح تحفزني|تحكي كلام منيح|شجعيني|شجعني", normalized):
+            reply = (
+                "أكيد، لما تقدّمي إجابة صحيحة رح أشجّعك على الشيء اللي أتقنتيه فعلًا، "
+                "وإذا احتجنا نراجع نقطة بنعملها بهدوء ومن غير مبالغة."
+            )
+        elif re.search(r"تعبانة|تعبان|مرهقة|مرهق|مش قادرة أدرس|مش قادر أدرس|مش قادرة أركز|مش قادر أركز", normalized):
+            reply = (
+                "ولا يهمك، خلّينا نخفّفها شوي. مش مطلوب منكِ تفهمي كل إشي دفعة وحدة؛ "
+                "نبدأ بفكرة صغيرة من الدرس، ونمشي فيها خطوة خطوة. "
+                "اختاري أسهل نقطة أو خلّيني أبدأ بسؤال بسيط."
+            )
+        elif re.search(r"زهقت|طفشت|ملّيت|مليت|ما بدي أدرس|ما بدي ادرس|مش حابة أدرس|مش حابة ادرس|مش طايقة الدرس|مش طايقه الدرس", normalized):
+            reply = (
+                "فاهمتك، أحيانًا الدرس بكون ثقيل. مش رح أعتبر هالرسالة إجابة عن سؤال، "
+                "ولا رح أغيّر إتقانك أو نقاطك بسببها. بنقدر نعمل مراجعة خفيفة جدًا، "
+                "أو نرجع للدرس لما تكوني جاهزة."
+            )
+        elif re.search(r"بدنا نسولف|بدي أسولف|نحكي شوي|نسولف شوي", normalized):
+            reply = (
+                "أهلًا فيك 😄 بنخلي الجو خفيف، وبنضل قريبين من هدفنا. "
+                "خلّينا نبدأ بسؤال سهل من الدرس أو أشرحلك فكرة بطريقة أبسط."
+            )
+        elif re.search(r"يسعدك ربنا|يسعد قلبك|يسعد مساك|يسعد مساكم|الله يسعدك|مساء الخير|صباح الخير|انت جاهز|إنت جاهز|أنت جاهز|كيفك|كيف حالك", normalized):
+            reply = (
+                "يسعد مساكِ، وأنا جاهز 😄 خلّينا نبدأ على راحتك: بدك نكمل سؤال الدرس، "
+                "ولا أشرحلك الفكرة بطريقة أبسط؟"
+            )
+        elif re.search(r"^(?:هلا|أهلًا|اهلا|أهلا|مرحبا|السلام عليكم)\b", normalized):
+            reply = (
+                "يا هلا! جاهزين نبلّش بخطوة خفيفة؟ اختاري درس من القائمة، "
+                "أو اكتبي اسم الفكرة اللي بدك نفهمها."
+            )
+        else:
+            reply = (
+                "هههه وصلت 😄 خلّينا نرجع للعلم بطريقة خفيفة. "
+                "اختاري فكرة من الدرس، وأنا بمشي معك خطوة خطوة وبشجّعك على إجاباتك الفعلية."
+            )
+        return {
+            "reply": reply,
+            "action": "review",
+            "evaluation": "not_evaluated",
+            "concept": conversation.current_concept or "المفهوم العام",
+            "mastery_delta": 0,
+            "source_chunk_ids": [],
+            "sources": [],
+            "suggest_quick_quiz": False,
+            "model": None,
+            "prompt_version": PROMPT_VERSION,
+        }
 
     query_parts = [student_text]
     if conversation.current_concept:
@@ -199,6 +285,20 @@ def tutor_reply(conversation, student_text):
         ),
         None,
     )
+    topic_invitation = bool(
+        previous_tutor_message
+        and previous_tutor_message.action == "ask_diagnostic"
+        and any(
+            phrase in previous_tutor_message.content
+            for phrase in (
+                "شو حابة نفهم",
+                "من وين بدك نبدأ",
+                "احكيلي شو حابة",
+                "بدك ندرس",
+                "بدك نراجع",
+            )
+        )
+    )
     evaluation_required = bool(
         previous_tutor_message
         and previous_tutor_message.action in {
@@ -206,6 +306,7 @@ def tutor_reply(conversation, student_text):
             "ask_follow_up",
             "give_hint",
         }
+        and not topic_invitation
         and (
             "؟" in previous_tutor_message.content
             or "?" in previous_tutor_message.content
@@ -219,7 +320,7 @@ def tutor_reply(conversation, student_text):
     request_body = {
         "model": model,
         "temperature": 0.55,
-        "max_tokens": 900,
+        "max_tokens": 600,
         "response_format": {"type": "json_object"},
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
@@ -259,7 +360,7 @@ def tutor_reply(conversation, student_text):
                         "Content-Type": "application/json",
                     },
                     json=request_body,
-                    timeout=60,
+                    timeout=35,
                 )
                 break
             except requests.RequestException as error:
@@ -291,8 +392,16 @@ def tutor_reply(conversation, student_text):
                 raw_payload,
                 allowed_ids,
             )
+
+            # Social chat and meta-feedback are not assessed answers.
+            # Only score messages responding to an explicit learning question.
+            if is_non_learning_message(student_text) or not evaluation_required:
+                candidate_payload["evaluation"] = "not_evaluated"
+                candidate_payload["mastery_delta"] = 0
+
             if (
                 evaluation_required
+                and not is_non_learning_message(student_text)
                 and candidate_payload["evaluation"] == "not_evaluated"
                 and generation_attempt == 0
             ):
