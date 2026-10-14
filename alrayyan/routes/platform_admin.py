@@ -293,7 +293,15 @@ def delete_curriculum(curriculum_id):
         has_challenge_sessions = ChallengeSession.query.filter(
             ChallengeSession.lesson_id.in_(lesson_ids)
         ).first() is not None
-        if has_worksheets or has_mastery_records or has_challenge_sessions:
+        has_date_reviews = DateReview.query.join(HistoricalDate).filter(
+            HistoricalDate.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        if (
+            has_worksheets
+            or has_mastery_records
+            or has_challenge_sessions
+            or has_date_reviews
+        ):
             flash(
                 "لا يمكن حذف هذا المنهج لأنه مرتبط بأوراق عمل أو تقدم مسجل للطالبات. "
                 "عطّلي المنهج بدلًا من حذفه حتى لا تفقدي الأسئلة أو النتائج أو التقدم.",
