@@ -166,7 +166,7 @@
 .concept-map-tabs button{display:inline-flex;align-items:center;justify-content:center;gap:9px;flex:1;min-height:48px;padding:11px 16px;border:1px solid transparent;border-radius:12px;background:#faf7f0;color:#5e6c80;font:inherit;font-weight:900;cursor:pointer;transition:transform .18s,background .18s,box-shadow .18s}
 .concept-map-tabs button>span{display:grid;width:27px;height:27px;place-items:center;border-radius:9px;background:#fff;color:#9a6b16;font-size:.76rem}
 .concept-map-tabs button:hover{transform:translateY(-1px);background:#fff5db;color:#173455}
-.concept-map-tabs button.is-active{border-color:#173455;background:linear-gradient(135deg,#0d294d,#244d78);color:#fff;box-shadow:0 8px 20px rgba(13,41,77,.17)}
+.concept-map-tabs button.is-active{border-color:#d2a13b;background:linear-gradient(135deg,#d2a13b,#a96f14);color:#fff;box-shadow:0 8px 20px rgba(169,111,20,.22)}
 .concept-map-tabs button.is-active>span{background:#f1d694;color:#102b4f}
 .map-creator-panel{display:none}
 .map-creator-panel.is-active{display:block}
