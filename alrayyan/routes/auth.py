@@ -1,15 +1,19 @@
 from datetime import datetime, timezone
+from email.message import EmailMessage
 import re
+import smtplib
 from urllib.parse import urljoin, urlparse
 
 from flask import (
     Blueprint,
+    current_app,
     flash,
     redirect,
     render_template,
     request,
     url_for,
 )
+from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from flask_login import (
     current_user,
     login_required,
@@ -161,11 +165,6 @@ def login():
             remember=form.remember.data,
         )
 
-        flash(
-            f"أهلًا بكِ {user.full_name}.",
-            "success",
-        )
-
         next_page = request.args.get(
             "next"
         )
@@ -185,6 +184,105 @@ def login():
         "login.html",
         form=form,
     )
+
+
+def _password_reset_serializer():
+    return URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+
+
+def _send_password_reset_email(user, reset_url):
+    host = current_app.config.get("SMTP_HOST")
+    username = current_app.config.get("SMTP_USERNAME")
+    password = current_app.config.get("SMTP_PASSWORD")
+    sender = current_app.config.get("SMTP_FROM_EMAIL")
+    if not all((host, username, password, sender)):
+        current_app.logger.warning("Password reset email is not configured: SMTP settings are incomplete.")
+        return False
+
+    message = EmailMessage()
+    message["Subject"] = "إعادة تعيين كلمة مرور منصة الريان"
+    message["From"] = sender
+    message["To"] = user.email
+    message.set_content(
+        f"مرحبًا {user.first_name}،\n\n"
+        "وصلنا طلب لإعادة تعيين كلمة المرور لحسابك في منصة الريان. "
+        "إذا لم تطلبي ذلك، تجاهلي هذه الرسالة.\n\n"
+        f"افتحي الرابط التالي خلال 30 دقيقة لإعادة التعيين:\n{reset_url}\n\n"
+        "لأمان حسابك، لا تشاركي هذا الرابط مع أي شخص."
+    )
+
+    with smtplib.SMTP(
+        host,
+        int(current_app.config.get("SMTP_PORT", 587)),
+        timeout=20,
+    ) as server:
+        if current_app.config.get("SMTP_USE_TLS", True):
+            server.starttls()
+        server.login(username, password)
+        server.send_message(message)
+    return True
+
+
+@auth_bp.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(get_user_homepage(current_user))
+
+    if request.method == "POST":
+        email = (request.form.get("email") or "").strip().lower()
+        user = User.query.filter_by(email=email).first() if email else None
+        if user and user.is_active_account:
+            token = _password_reset_serializer().dumps(
+                {"user_id": user.id, "email": user.email},
+                salt="alrayyan-password-reset",
+            )
+            reset_url = url_for("auth.reset_password", token=token, _external=True)
+            try:
+                _send_password_reset_email(user, reset_url)
+            except Exception:
+                current_app.logger.exception("Unable to send a password reset email.")
+        flash(
+            "إذا كان البريد مسجّلًا ونشطًا، فستصلك رسالة تتضمن رابط إعادة التعيين خلال دقائق.",
+            "info",
+        )
+        return redirect(url_for("auth.forgot_password"))
+
+    return render_template("forgot_password.html")
+
+
+@auth_bp.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    try:
+        payload = _password_reset_serializer().loads(
+            token,
+            salt="alrayyan-password-reset",
+            max_age=1800,
+        )
+        user = User.query.filter_by(
+            id=payload.get("user_id"),
+            email=payload.get("email"),
+        ).first()
+    except (BadSignature, SignatureExpired, AttributeError, TypeError, ValueError):
+        user = None
+
+    if user is None or not user.is_active_account:
+        flash("رابط إعادة التعيين غير صالح أو انتهت صلاحيته. اطلبي رابطًا جديدًا.", "error")
+        return redirect(url_for("auth.forgot_password"))
+
+    if request.method == "POST":
+        password = request.form.get("password") or ""
+        confirmation = request.form.get("confirm_password") or ""
+        if len(password) < 12 or len(password) > 128:
+            flash("اختاري كلمة مرور من 12 إلى 128 حرفًا.", "error")
+        elif password != confirmation:
+            flash("كلمتا المرور غير متطابقتين.", "error")
+        else:
+            user.set_password(password)
+            db.session.commit()
+            flash("تم تغيير كلمة المرور بنجاح. سجّلي الدخول بكلمة المرور الجديدة.", "success")
+            return redirect(url_for("auth.login"))
+
+    return render_template("reset_password.html", token=token)
 
 
 @auth_bp.post("/logout")

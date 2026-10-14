@@ -111,16 +111,20 @@ if (tutorApp) {
         if (loading) scrollToLatest();
     }
 
-    function showInsight(message, masteryScore, xpAwarded = 0) {
+    function showInsight(message, masteryScore, xpAwarded = 0, progressUpdated = false) {
         if (!message.evaluation || message.evaluation === "not_evaluated") {
             insight.hidden = true;
             return;
         }
         evaluationBadge.textContent = evaluationLabels[message.evaluation] || "تقييم جديد";
-        masteryBadge.textContent = masteryScore === null
+        masteryBadge.textContent = masteryScore === null || masteryScore === undefined
             ? "" : `إتقان المفهوم: ${masteryScore}%`;
-        xpBadge.textContent = xpAwarded > 0 ? `+${xpAwarded} XP` : "تم تحديث خطتك";
-        progressLink.hidden = false;
+        xpBadge.textContent = xpAwarded > 0
+            ? `+${xpAwarded} XP`
+            : progressUpdated
+                ? "تم تحديث إتقان المفهوم"
+                : "لم يتغير الإتقان";
+        progressLink.hidden = !progressUpdated && xpAwarded <= 0;
         insight.hidden = false;
     }
 
@@ -192,7 +196,7 @@ if (tutorApp) {
                 { method: "POST", body: JSON.stringify({ message: text }) }
             );
             createMessage(data.message);
-            showInsight(data.message, data.mastery_score, data.xp_awarded);
+            showInsight(data.message, data.mastery_score, data.xp_awarded, data.progress_updated);
             if (data.suggest_quick_quiz) {
                 quizButton.classList.add("recommended");
                 quizButton.textContent = "اختبار سريع مقترح — 5 أسئلة";

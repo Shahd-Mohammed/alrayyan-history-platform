@@ -1880,3 +1880,348 @@ button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
   .details-page .interactive-button { max-width:100%!important; }
   .attempt-result-actions { align-items:flex-start!important; }
 }
+
+.archive-pagination,
+.test-archive-pagination {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:28px auto 8px;
+  padding:14px;
+}
+.archive-pagination a,
+.archive-pagination span,
+.test-archive-pagination a,
+.test-archive-pagination span {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:38px;
+  min-height:38px;
+  padding:7px 12px;
+  border:1px solid rgba(19,47,82,.14);
+  border-radius:10px;
+  background:#fff;
+  color:#173653;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+  font-size:.9rem;
+  font-weight:700;
+  line-height:1.35;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.archive-pagination a.is-current,
+.test-archive-pagination a.is-current {
+  border-color:#b58227;
+  background:linear-gradient(135deg,#d1a64b,#b58227);
+  color:#fff;
+  box-shadow:0 5px 14px rgba(143,96,20,.15);
+}
+.archive-pagination a:hover,
+.test-archive-pagination a:hover {
+  border-color:#b58227;
+  transform:translateY(-1px);
+}
+.pagination-ellipsis { min-width:20px!important;padding-inline:3px!important;border-color:transparent!important;background:transparent!important; }
+
+
+/* Student dashboard: calmer hierarchy for school-age learners */
+.student-dashboard-page {
+  width:min(1180px,calc(100% - 36px))!important;
+  margin:30px auto 72px!important;
+  display:grid;gap:22px;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+}
+.student-welcome {
+  position:relative;isolation:isolate;overflow:hidden;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:24px!important;min-height:190px!important;padding:34px 38px!important;
+  border:1px solid rgba(215,180,94,.45)!important;border-radius:26px!important;
+  color:#fff!important;
+  background:radial-gradient(circle at 88% 18%,rgba(215,180,94,.23),transparent 27%),linear-gradient(125deg,#0b203d,#15395f 62%,#1d456a)!important;
+  box-shadow:0 20px 48px rgba(11,32,61,.14)!important;
+}
+.student-welcome:after{content:"";position:absolute;z-index:-1;right:-65px;bottom:-160px;width:300px;height:300px;border:1px solid rgba(241,214,148,.18);border-radius:50%;box-shadow:0 0 0 28px rgba(241,214,148,.025),0 0 0 56px rgba(241,214,148,.02)}
+.student-welcome>div{position:relative;z-index:1}
+.student-welcome>div>span{color:#f1d694!important;font-weight:800!important}
+.student-welcome h1{margin:8px 0 10px!important;color:#fff!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-weight:800!important;font-size:clamp(1.8rem,3.5vw,2.65rem)!important;line-height:1.35!important}
+.student-welcome p{max-width:680px;color:rgba(255,255,255,.83)!important;line-height:1.9!important;margin:0!important}
+.student-stats{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}
+.student-stats article{padding:20px!important;border:1px solid #e6dcc8!important;border-radius:17px!important;background:#fff!important;box-shadow:0 9px 26px rgba(19,47,82,.055)!important}
+.student-stats article span{display:block;color:#687587!important;font-size:.86rem!important;font-weight:650!important;line-height:1.65!important}
+.student-stats article strong{display:block;margin-top:7px;color:#15395f!important;font-size:1.8rem!important;font-weight:800!important;line-height:1.2!important}
+.student-dashboard-panel{padding:28px!important;border:1px solid #e8decb!important;border-radius:24px!important;background:#fff!important;box-shadow:0 13px 34px rgba(19,47,82,.055)!important}
+.student-panel-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;margin-bottom:22px!important}
+.student-panel-heading h2{margin:4px 0!important;color:#173653!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:1.45rem!important;font-weight:800!important;line-height:1.5!important}
+.student-panel-heading p{margin:0!important;color:#687587!important;line-height:1.8!important}
+.student-panel-heading>div>span{color:#a17627!important;font-weight:800!important;font-size:.88rem!important}
+.student-dashboard-group{margin-top:24px!important;padding-top:22px!important;border-top:1px solid #eee5d5!important}
+.student-dashboard-group:first-of-type{margin-top:0!important;padding-top:0!important;border-top:0!important}
+.student-dashboard-group-heading{display:flex!important;align-items:flex-start!important;gap:13px!important;margin-bottom:15px!important}
+.student-dashboard-group-heading>span{display:grid!important;place-items:center!important;flex:0 0 38px!important;width:38px!important;height:38px!important;border:1px solid #e4d0a3!important;border-radius:12px!important;background:#fff7e5!important;color:#a17627!important;font-weight:800!important}
+.student-dashboard-group-heading h3{margin:0!important;color:#173653!important;font-size:1.1rem!important;font-weight:800!important}
+.student-dashboard-group-heading p{margin:4px 0 0!important;color:#748093!important;font-size:.9rem!important;line-height:1.7!important}
+.student-dashboard-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+.student-dashboard-card{min-width:0!important;padding:20px!important;border:1px solid #e8decb!important;border-radius:17px!important;background:linear-gradient(180deg,#fff,#fffdf8)!important;box-shadow:0 7px 20px rgba(19,47,82,.035)!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:8px!important}
+.student-dashboard-card>span{color:#9c742a!important;font-size:.8rem!important;font-weight:800!important;line-height:1.5!important}
+.student-dashboard-card h3{margin:0!important;color:#173653!important;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:1.08rem!important;font-weight:800!important;line-height:1.55!important}
+.student-dashboard-card>p{margin:0 0 5px!important;color:#687587!important;font-size:.91rem!important;line-height:1.85!important}
+.student-dashboard-card>a,.student-primary-action,.student-panel-heading>a{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:100%!important;min-width:0!important;min-height:37px!important;
+  margin-top:auto!important;padding:8px 14px!important;border:1px solid #b7862b!important;border-radius:10px!important;
+  background:linear-gradient(135deg,#d8b35d,#b7862b)!important;color:#fff!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;font-weight:700!important;
+  line-height:1.4!important;text-decoration:none!important;white-space:normal!important;
+}
+.student-dashboard-card>a:hover,.student-primary-action:hover,.student-panel-heading>a:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.student-dashboard-card.points-dashboard-card{border-color:#d9c28e!important;background:linear-gradient(150deg,#fffaf0,#fff)!important}
+.student-dashboard-card.points-dashboard-card>span{color:#9c742a!important}
+.student-empty-state{padding:24px!important;border:1px dashed #d9cba9!important;border-radius:15px!important;background:#fffdf8!important;color:#758093!important;text-align:center!important;line-height:1.8!important}
+.results-intro{
+  background:radial-gradient(circle at 86% 14%,rgba(215,180,94,.2),transparent 28%),linear-gradient(128deg,#0b203d 0%,#15395f 58%,#1d456a 100%)!important;
+  border:1px solid rgba(215,180,94,.42)!important;border-radius:26px!important;color:#fff!important;
+  box-shadow:0 20px 48px rgba(11,32,61,.14)!important;
+}
+.results-intro h1,.results-intro h2,.results-intro p{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important}
+.results-intro h1,.results-intro h2{color:#fff!important;font-weight:800!important;line-height:1.45!important}
+.results-intro p{color:rgba(255,255,255,.84)!important;line-height:1.9!important}
+.results-intro .assessment-tabs{margin-top:24px!important;margin-bottom:24px!important}
+@media(max-width:900px){.student-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.student-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:640px){.student-dashboard-page{width:calc(100% - 22px)!important;margin:18px auto 48px!important}.student-welcome{align-items:flex-start!important;flex-direction:column!important;padding:25px 21px!important}.student-dashboard-panel{padding:18px!important}.student-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.student-dashboard-grid{grid-template-columns:1fr!important}.student-dashboard-card{padding:17px!important}.student-panel-heading{align-items:flex-start!important;flex-direction:column!important}}
+
+
+/* Student dashboard: clear routes, quieter surfaces, and compact actions */
+.student-dashboard-page{
+  width:min(1220px,calc(100% - 44px))!important;
+  margin:26px auto 64px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:22px!important;
+}
+.student-dashboard-page > section{margin:0!important}
+.student-welcome{min-height:205px!important;padding:clamp(28px,4vw,44px)!important;gap:26px!important}
+.student-primary-action{white-space:nowrap!important}
+.student-stats{margin:0!important}
+.student-dashboard-panel{margin:0!important}
+.student-learning-hub{padding:clamp(22px,3vw,34px)!important}
+.student-dashboard-group{margin-top:22px!important;padding-top:20px!important}
+.student-dashboard-grid{align-items:stretch!important}
+.student-dashboard-card{min-height:205px!important}
+.student-dashboard-card > p{max-width:54ch!important}
+.student-dashboard-card > a{margin-top:auto!important;white-space:nowrap!important}
+.student-panel-heading{flex-wrap:wrap!important}
+.student-panel-heading > a{white-space:nowrap!important}
+.student-empty-state{margin-top:8px!important}
+@media(max-width:900px){
+  .student-dashboard-page{width:calc(100% - 30px)!important;gap:18px!important}
+  .student-welcome{min-height:0!important}
+  .student-dashboard-card{min-height:190px!important}
+}
+@media(max-width:640px){
+  .student-dashboard-page{width:calc(100% - 20px)!important;margin:16px auto 42px!important;gap:14px!important}
+  .student-welcome{padding:23px 20px!important}
+  .student-stats{gap:10px!important}
+  .student-stats article{padding:14px!important}
+  .student-stats article strong{font-size:1.55rem!important}
+  .student-dashboard-panel,.student-learning-hub{padding:17px!important;border-radius:18px!important}
+  .student-dashboard-card{min-height:0!important}
+  .student-dashboard-card > a{white-space:normal!important}
+}
+
+
+/* Student dashboard refresh: compact, readable, and encouraging. */
+.student-dashboard-page {
+  width: min(1180px, calc(100% - 40px));
+  margin-inline: auto;
+  padding-block: 28px 52px;
+  color: #243149;
+  font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", Tahoma, sans-serif;
+}
+.student-welcome {
+  border-radius: 26px;
+  padding: clamp(24px, 4vw, 42px);
+  background: linear-gradient(125deg, #17263f 0%, #243b5b 68%, #314969 100%);
+  box-shadow: 0 18px 44px rgba(23, 38, 63, .14);
+}
+.student-welcome h1 { font-size: clamp(27px, 3vw, 38px); line-height: 1.35; font-weight: 800; }
+.student-welcome p { max-width: 620px; line-height: 1.9; }
+.student-primary-action,
+.student-dashboard-card a,
+.student-honor-all-link {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: 0 !important;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  padding: 10px 17px !important;
+  border-radius: 12px !important;
+  background: #b88a35 !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  border: 1px solid #b88a35 !important;
+  box-shadow: none !important;
+  transition: background .18s ease, transform .18s ease;
+}
+.student-primary-action:hover,
+.student-dashboard-card a:hover,
+.student-honor-all-link:hover { background: #9e7428 !important; transform: translateY(-1px); }
+.student-dashboard-page .student-stats { margin-block: 22px 26px; gap: 14px; }
+.student-dashboard-page .student-stats article {
+  border: 1px solid #e7e0d3;
+  border-radius: 18px;
+  background: #fffdf8;
+  padding: 18px 20px;
+  box-shadow: 0 7px 22px rgba(31, 44, 64, .045);
+}
+.student-dashboard-refresh,
+.student-dashboard-honor-preview {
+  border: 1px solid #e8e0d2;
+  border-radius: 24px;
+  background: #fbf8f1;
+  padding: clamp(20px, 3vw, 32px);
+  margin-block: 22px;
+  box-shadow: 0 10px 30px rgba(31, 44, 64, .045);
+}
+.student-dashboard-heading { margin-bottom: 20px; }
+.student-dashboard-heading h2,
+.student-dashboard-honor-preview .student-panel-heading h2 { color: #17263f; font-size: clamp(22px, 2.5vw, 29px); font-weight: 800; }
+.student-dashboard-heading p,
+.student-dashboard-honor-preview .student-panel-heading p { color: #667085; line-height: 1.8; margin-top: 6px; }
+.student-dashboard-primary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.student-dashboard-page .student-dashboard-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  gap: 9px;
+  border: 1px solid #e7e0d3;
+  border-radius: 18px;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 7px 20px rgba(31, 44, 64, .04);
+}
+.student-dashboard-page .student-dashboard-card > span { color: #a37a2c; font-size: 12px; font-weight: 800; letter-spacing: .01em; }
+.student-dashboard-page .student-dashboard-card h3 { margin: 0; color: #17263f; font-size: 18px; line-height: 1.55; font-weight: 800; }
+.student-dashboard-page .student-dashboard-card p { margin: 0 0 7px; color: #697386; line-height: 1.8; font-size: 13px; flex: 1; }
+.student-dashboard-secondary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.student-dashboard-secondary > a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid #e7e0d3;
+  border-radius: 15px;
+  background: #fffdf8;
+  color: #17263f;
+  text-decoration: none;
+}
+.student-dashboard-secondary > a > span { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 38px; border-radius: 12px; background: #f4ead3; color: #946b22; font-size: 19px; }
+.student-dashboard-secondary > a div { display: grid; gap: 4px; min-width: 0; }
+.student-dashboard-secondary strong { font-size: 14px; font-weight: 800; }
+.student-dashboard-secondary small { color: #71798a; font-size: 12px; line-height: 1.6; }
+.student-dashboard-secondary b { margin-inline-start: auto; color: #a77a28; }
+.student-dashboard-leaderboard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+.student-leader-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 17px 18px;
+  min-width: 0;
+  border: 1px solid #e7e0d3;
+  border-radius: 17px;
+  background: #fff;
+}
+.student-leader-first { background: linear-gradient(135deg, #fffaf0, #f6ead0); border-color: #d9bd7b; }
+.student-leader-medal { font-size: 27px; flex: 0 0 auto; }
+.student-leader-card > div { display: grid; gap: 4px; min-width: 0; }
+.student-leader-card small { color: #a0782b; font-size: 11px; font-weight: 800; }
+.student-leader-card strong { color: #17263f; font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+.student-leader-card div span { color: #657084; font-size: 12px; }
+.student-leader-empty { grid-column: 1 / -1; color: #667085; padding: 18px; background: #fff; border-radius: 14px; }
+.student-dashboard-honor-preview .student-panel-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+@media (max-width: 1050px) {
+  .student-dashboard-primary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .student-dashboard-secondary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .student-dashboard-page { width: min(100% - 24px, 1180px); padding-top: 16px; }
+  .student-dashboard-primary-grid,
+  .student-dashboard-secondary,
+  .student-dashboard-leaderboard { grid-template-columns: 1fr; }
+  .student-dashboard-refresh,
+  .student-dashboard-honor-preview { padding: 18px; border-radius: 18px; }
+  .student-dashboard-honor-preview .student-panel-heading { align-items: flex-start; flex-direction: column; }
+  .student-welcome { border-radius: 20px; }
+}
+
+
+/* Site-wide button typography: readable labels and compact action widths. */
+button,
+input[type="submit"],
+input[type="button"]{
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+}
+button:not(.platform-menu-toggle):not([data-slider-dot]):not([data-slider-next]):not([data-slider-previous]),
+input[type="submit"],
+input[type="button"],
+a.primary-button,
+a.slide-link,
+a.student-primary-action,
+a.results-primary-link,
+a.grade-attempt-action,
+.platform-gold-button,
+.primary-action,
+.primary-button,
+.student-primary-action,
+.test-primary-button,
+.tree-add-button,
+.gold-action,
+.concept-action{
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:0 0 auto!important;
+}
+.platform-gold-button,
+.primary-action,
+.primary-button,
+.student-primary-action,
+.test-primary-button,
+.tree-add-button,
+.gold-action,
+.concept-action,
+.results-primary-link,
+.grade-attempt-action,
+.slide-link{
+  color:#fff!important;
+  font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;
+  font-size:.88rem!important;
+  font-weight:700!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+}

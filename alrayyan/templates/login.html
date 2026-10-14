@@ -28,7 +28,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='css/auth.css', v='20261010-login-input-3') }}"
+        href="{{ url_for('static', filename='css/auth.css', v='20261011-password-reset-2') }}"
     >
 </head>
 
@@ -125,6 +125,10 @@
                         <span>{{ form.remember.label.text }}</span>
                     </label>
 
+                    <div class="forgot-password-row">
+                        <a href="{{ url_for('auth.forgot_password') }}">نسيتِ كلمة المرور؟</a>
+                    </div>
+
                     {{ form.submit(class="submit-button") }}
                 </form>
 
@@ -135,6 +139,7 @@
             </div>
         </section>
     </main>
+  <script src="{{ url_for('static', filename='js/password_toggle.js', v='20261011-admin-password-toggle-1') }}" defer></script>
 </body>
 
 </html>

@@ -32,6 +32,7 @@ from alrayyan.models import (
     Worksheet,
     WorksheetAttempt,
     XPTransaction,
+    User,
 )
 
 
@@ -177,6 +178,15 @@ def student_dashboard():
         .all()
     )
 
+    # Show a small, motivating leaderboard directly on the student dashboard.
+    top_students = (
+        User.query
+        .filter_by(role="student", is_active_account=True)
+        .order_by(User.points.desc(), User.level.desc(), User.full_name.asc())
+        .limit(3)
+        .all()
+    )
+
     return render_template(
         "student_dashboard.html",
         available_worksheets=available_worksheets,
@@ -187,6 +197,7 @@ def student_dashboard():
         ),
         latest_results=latest_results,
         latest_challenges=latest_challenges,
+        top_students=top_students,
     )
 
 
@@ -216,10 +227,17 @@ def student_progress():
         .all()
     )
     tutor_conversations = TutorConversation.query.filter_by(student_id=current_user.id).count()
-    tutor_evaluations = XPTransaction.query.filter_by(
-        student_id=current_user.id,
-        reason="tutor_evaluated_answer",
-    ).count()
+    tutor_evaluations = (
+        TutorMessage.query.join(TutorConversation)
+        .filter(
+            TutorConversation.student_id == current_user.id,
+            TutorMessage.role == "tutor",
+            TutorMessage.evaluation.in_([
+                "correct", "partially_correct", "incorrect", "needs_explanation"
+            ]),
+        )
+        .count()
+    )
     character_attempts = CharacterAttempt.query.filter_by(student_id=current_user.id).count()
     date_reviews = DateReview.query.filter_by(student_id=current_user.id).count()
     points_by_reason = {}
@@ -227,12 +245,13 @@ def student_progress():
         points_by_reason[transaction.reason] = points_by_reason.get(transaction.reason, 0) + transaction.amount
 
     reason_labels = {
-        "tutor_evaluated_answer": "إجابات قيّمها المعلّم الذكي",
+        "tutor_evaluated_answer": "إجابات تحقق صحيحة مع المعلّم الذكي",
         "challenge_answer": "إجابات التحديات",
         "challenge_completed": "إكمال التحديات",
         "character_identified": "التعرّف على الشخصيات",
         "concept_map_viewed": "استكشاف الخرائط المفاهيمية",
         "resource_downloaded": "تنزيل ملفات تعليمية",
+        "learning_library_opened": "زيارة مكتبة التعلّم",
         "test_completed": "إكمال الاختبارات",
         "worksheet_completed": "إكمال أوراق العمل",
         "historical_date_recalled": "مراجعة التواريخ التاريخية",

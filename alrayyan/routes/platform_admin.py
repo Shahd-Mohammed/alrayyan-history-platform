@@ -274,6 +274,41 @@ def reindex_curriculum(curriculum_id):
 @platform_admin_bp.post("/curricula/<int:curriculum_id>/delete")
 def delete_curriculum(curriculum_id):
     curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
+
+    # Never cascade-delete curriculum lessons that already contain worksheets,
+    # questions, attempts, or recorded concept mastery. Archive/deactivation is
+    # safer than silently destroying assessment history or student progress.
+    lesson_ids = [
+        lesson.id
+        for unit in curriculum.units
+        for lesson in unit.lessons
+    ]
+    if lesson_ids:
+        has_worksheets = Worksheet.query.filter(
+            Worksheet.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        has_mastery_records = ConceptMastery.query.filter(
+            ConceptMastery.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        has_challenge_sessions = ChallengeSession.query.filter(
+            ChallengeSession.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        has_date_reviews = DateReview.query.join(HistoricalDate).filter(
+            HistoricalDate.lesson_id.in_(lesson_ids)
+        ).first() is not None
+        if (
+            has_worksheets
+            or has_mastery_records
+            or has_challenge_sessions
+            or has_date_reviews
+        ):
+            flash(
+                "لا يمكن حذف هذا المنهج لأنه مرتبط بأوراق عمل أو تقدم مسجل للطالبات. "
+                "عطّلي المنهج بدلًا من حذفه حتى لا تفقدي الأسئلة أو النتائج أو التقدم.",
+                "error",
+            )
+            return redirect(url_for("platform_admin.curricula"))
+
     relative_paths = [source.stored_path for source in curriculum.sources if source.stored_path]
     was_active = curriculum.is_active
 
@@ -582,7 +617,19 @@ def concept_maps():
             db.session.commit(); flash("تم إنشاء الخريطة المفاهيمية", "success")
             return redirect(url_for("platform_admin.concept_maps"))
     query = ConceptMap.query if current_user.role == "admin" else ConceptMap.query.filter_by(created_by_id=current_user.id)
-    return render_template("platform/concept_maps.html", form=form, upload_form=upload_form, maps=query.order_by(ConceptMap.created_at.desc()).all())
+    status_filter = (request.args.get("status") or "all").strip().lower()
+    if status_filter not in {"all", "draft", "published"}:
+        status_filter = "all"
+    if status_filter in {"draft", "published"}:
+        query = query.filter_by(publication_status=status_filter)
+    maps = query.order_by(ConceptMap.created_at.desc()).all()
+    return render_template(
+        "platform/concept_maps.html",
+        form=form,
+        upload_form=upload_form,
+        maps=maps,
+        status_filter=status_filter,
+    )
 
 
 @platform_admin_bp.post("/concept-maps/upload")
@@ -904,6 +951,42 @@ def settings():
     return render_template("platform/settings.html", form=form)
 
 
+@platform_admin_bp.route("/admins", methods=["GET", "POST"])
+def admins():
+    """Allow only existing administrators to create additional admin accounts."""
+    if current_user.role != "admin":
+        abort(403)
+
+    if request.method == "POST":
+        full_name = (request.form.get("full_name") or "").strip()
+        email = (request.form.get("email") or "").strip().lower()
+        password = request.form.get("password") or ""
+
+        if len(full_name) < 2 or len(full_name) > 150:
+            flash("اكتبي اسمًا كاملًا صحيحًا.", "error")
+        elif len(email) > 255 or email.count("@") != 1 or "." not in email.rsplit("@", 1)[-1] or any(char.isspace() for char in email):
+            flash("تحققي من صيغة البريد الإلكتروني.", "error")
+        elif len(password) < 12 or len(password) > 128:
+            flash("كلمة مرور الإدارة يجب أن تحتوي على 12 حرفًا على الأقل.", "error")
+        elif User.query.filter_by(email=email).first():
+            flash("هذا البريد مستخدم بالفعل. لم يتم تغيير أي حساب.", "error")
+        else:
+            account = User(
+                full_name=full_name,
+                email=email,
+                role="admin",
+                is_active_account=True,
+            )
+            account.set_password(password)
+            db.session.add(account)
+            db.session.commit()
+            flash("تم إنشاء حساب الإدارة بنجاح.", "success")
+            return redirect(url_for("platform_admin.admins"))
+
+    admins = User.query.filter_by(role="admin").order_by(User.created_at.asc()).all()
+    return render_template("platform/admins.html", admins=admins)
+
+
 @platform_admin_bp.get("/analytics")
 def analytics():
     """Summarize assessment, practice, AI tutor, character, and points activity."""
@@ -1006,6 +1089,21 @@ def analytics():
         concept_map_views = sum(1 for transaction in student_transactions if transaction.reason == "concept_map_viewed")
         library_visits = sum(1 for transaction in student_transactions if transaction.reason == "learning_library_opened")
         points_earned = sum(transaction.amount for transaction in student_transactions)
+        # Count every saved answer, not only answers that earned XP.
+        # XP transactions are a reward ledger and intentionally omit zero-point answers.
+        challenge_answers = sum(
+            1
+            for session in challenge_sessions
+            for question in session.questions
+            if question.answer is not None
+        )
+        tutor_evaluated_answers = TutorMessage.query.join(TutorConversation).filter(
+            TutorConversation.student_id == student.id,
+            TutorMessage.role == "tutor",
+            TutorMessage.evaluation.in_([
+                "correct", "partially_correct", "incorrect", "needs_explanation"
+            ]),
+        ).count()
         average = round(sum(percentages) / len(percentages), 1) if percentages else 0.0
         mastery_average = (
             round(sum(item.mastery_score for item in mastery_rows) / len(mastery_rows), 1)
@@ -1014,7 +1112,8 @@ def analytics():
         activity_score = (
             len(student_all_attempts) + len(challenge_sessions) + tutor_interactions
             + character_attempts + date_reviews + plan_verifications + resource_downloads
-            + concept_map_views + library_visits
+            + concept_map_views + library_visits + challenge_answers
+            + tutor_evaluated_answers
         )
         rows.append({
             "student": student,
@@ -1023,7 +1122,9 @@ def analytics():
             "average": average,
             "mastery_average": mastery_average,
             "challenge_count": len(challenges),
+            "challenge_answers": challenge_answers,
             "tutor_interactions": tutor_interactions,
+            "tutor_evaluated_answers": tutor_evaluated_answers,
             "character_attempts": character_attempts,
             "date_reviews": date_reviews,
             "plan_items": len(plan_items),
@@ -1097,6 +1198,8 @@ def analytics():
             for student in students
         ),
         "tutor_interactions": total_tutor_interactions,
+        "challenge_answers": sum(row["challenge_answers"] for row in rows),
+        "tutor_evaluated_answers": sum(row["tutor_evaluated_answers"] for row in rows),
         "character_attempts": total_character_attempts,
         "date_reviews": total_date_reviews,
         "plan_verifications": total_plan_verifications,

@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import re
 
 from flask import (
     Blueprint,
@@ -100,14 +101,14 @@ def update_mastery(conversation, payload):
             student_id=current_user.id,
             lesson_id=conversation.lesson_id,
             concept=payload["concept"],
-            mastery_score=50,
+            mastery_score=0,
             correct_count=0,
             partial_count=0,
             incorrect_count=0,
         )
         db.session.add(mastery)
     mastery.mastery_score = min(max(
-        (mastery.mastery_score or 50) + payload["mastery_delta"], 0
+        (mastery.mastery_score or 0) + payload["mastery_delta"], 0
     ), 100)
     if payload["evaluation"] == "correct":
         mastery.correct_count = (mastery.correct_count or 0) + 1
@@ -219,23 +220,28 @@ def create_conversation():
     )
     db.session.add(conversation)
     db.session.flush()
+    if initial_concept and lesson:
+        opening_message = (
+            f"يا هلا {current_user.first_name}، خلّينا نراجع «{initial_concept}» "
+            f"من درس «{lesson.title}» خطوة خطوة. بنبدأ بفكرة بسيطة، وبعدها بنتدرّب على إجابتك."
+        )
+    elif lesson:
+        opening_message = (
+            f"تمام، اخترنا درس «{lesson.title}». خلّينا نبدأ بسؤال خفيف: "
+            "شو أول فكرة بتتذكريها من الدرس؟ خذي وقتك، وبنرتّبها سوا."
+        )
+    else:
+        opening_message = (
+            f"أهلًا {current_user.first_name}، يا هلا فيك. اختاري درس من القائمة "
+            "أو اكتبي الفكرة اللي بدك تفهميها، وبنبلّش من الأساس خطوة خطوة."
+        )
+
     greeting = TutorMessage(
         conversation_id=conversation.id,
         role="tutor",
         action="ask_diagnostic",
         evaluation="not_evaluated",
-        content=(
-            (
-                f"يا هلا {current_user.first_name} 🤍 خلينا ناخذها على راحتنا. "
-                + (
-                    f"اليوم نركز على «{initial_concept}» من درس «{lesson.title}»؟ احكيلي من وين بدك نبدأ."
-                    if initial_concept
-                    else f"درس «{lesson.title}» جاهز إلنا، بس مش لازم نبلش رسمي 😄 احكيلي شو حابة نفهم أو نحكي عنه."
-                )
-            )
-            if lesson else
-            f"يا هلا {current_user.first_name} 🤍 خذي راحتك، أنا معك. بدك ندرس، نسولف شوي، ولا نعملها بطريقة ألطف؟"
-        ),
+        content=opening_message,
     )
     db.session.add(greeting)
     db.session.commit()
@@ -279,7 +285,35 @@ def send_tutor_message(conversation_id):
         )
         db.session.add(student_message)
         db.session.flush()
+        was_verifying_mastery = conversation.tutor_state == "verify_mastery"
         payload = tutor_reply(conversation, student_text)
+        awaiting_mastery_verification = (
+            was_verifying_mastery
+            and payload["evaluation"] != "correct"
+            and payload["action"] in {"ask_diagnostic", "ask_follow_up", "give_hint"}
+        )
+
+        # A correct or partly correct first answer is not enough to award mastery.
+        # Keep the student on the same concept until a correct verification answer.
+        if payload["evaluation"] in {"correct", "partially_correct"} and not was_verifying_mastery:
+            payload["evaluation"] = "not_evaluated"
+            payload["mastery_delta"] = 0
+            payload["action"] = "ask_follow_up"
+            # The model may include a reward claim in its prose. Do not show points
+            # unless this route actually records them in the database.
+            payload["reply"] = re.sub(
+                r"إجابة\s+صحيحة\s*(?:\+\s*5\s*XP)?|\+\s*5\s*XP",
+                "",
+                payload["reply"],
+                flags=re.IGNORECASE,
+            ).strip()
+            if "؟" not in payload["reply"] and "?" not in payload["reply"]:
+                payload["reply"] += (
+                    "\n\nللتأكد من ثبات الفهم، جاوبي بجملة واحدة: "
+                    "ما السبب أو الدليل الذي يدعم إجابتكِ؟"
+                )
+            awaiting_mastery_verification = True
+
         tutor_message = TutorMessage(
             conversation_id=conversation.id,
             role="tutor",
@@ -301,15 +335,17 @@ def send_tutor_message(conversation_id):
                 message_id=tutor_message.id, chunk_id=chunk.id
             ))
         conversation.current_concept = payload["concept"]
-        conversation.tutor_state = payload["action"]
+        conversation.tutor_state = (
+            "verify_mastery" if awaiting_mastery_verification else payload["action"]
+        )
         conversation.updated_at = utc_now()
         if conversation.title == "محادثة تعليمية جديدة":
             conversation.title = student_text[:80]
         mastery = update_mastery(conversation, payload)
-        xp_awarded = {
-            "correct": 5,
-            "partially_correct": 2,
-        }.get(payload["evaluation"], 0)
+        # AI-tutor XP is awarded only for a correct answer to the verification question.
+        xp_awarded = 5 if (
+            was_verifying_mastery and payload["evaluation"] == "correct"
+        ) else 0
         if xp_awarded:
             db.session.add(XPTransaction(
                 student_id=current_user.id,
@@ -321,6 +357,40 @@ def send_tutor_message(conversation_id):
             current_user.points = (current_user.points or 0) + xp_awarded
             current_user.level = max(1, current_user.points // 500 + 1)
         refresh_learning_plan(current_user.id)
+
+        # A conversation without a selected lesson cannot update a lesson-specific
+        # mastery row. Still record a real verified success in the learning plan.
+        if xp_awarded and conversation.lesson_id is None:
+            concept_title = (
+                payload.get("concept")
+                or conversation.current_concept
+                or student_text
+                or "مراجعة عامة"
+            ).strip()[:100]
+            plan_title = f"راجعي من محادثة المعلّم الذكي: {concept_title}"
+            plan_item = LearningPlanItem.query.filter_by(
+                student_id=current_user.id,
+                lesson_id=None,
+                item_type="tutor_review",
+                title=plan_title,
+                status="pending",
+            ).order_by(LearningPlanItem.created_at.desc()).first()
+            plan_description = (
+                "أكملتِ إجابة تحقق صحيحة في محادثة المعلّم الذكي وحصلتِ على 5 نقاط. "
+                "اختاري الدرس المرتبط بهذا المفهوم في محادثة لاحقة حتى يُسجّل إتقانك ضمن الدرس."
+            )
+            if plan_item:
+                plan_item.description = plan_description
+                plan_item.priority = 65
+            else:
+                db.session.add(LearningPlanItem(
+                    student_id=current_user.id,
+                    lesson_id=None,
+                    item_type="tutor_review",
+                    title=plan_title,
+                    description=plan_description,
+                    priority=65,
+                ))
         db.session.commit()
         return jsonify({
             "success": True,
@@ -383,11 +453,18 @@ def learning_hub():
     db.session.commit()
     masteries = (
         ConceptMastery.query.filter_by(student_id=current_user.id)
-        .order_by(ConceptMastery.mastery_score.asc()).all()
+        .order_by(
+            ConceptMastery.last_reviewed_at.desc(),
+            ConceptMastery.mastery_score.asc(),
+            ConceptMastery.id.desc(),
+        ).all()
     )
     plan_items = (
         LearningPlanItem.query.filter_by(student_id=current_user.id, status="pending")
-        .order_by(LearningPlanItem.priority.desc()).all()
+        .order_by(
+            LearningPlanItem.created_at.desc(),
+            LearningPlanItem.priority.desc(),
+        ).all()
     )
     recommendations = []
     for mastery in masteries[:3]:
@@ -479,7 +556,7 @@ def my_points():
         .all()
     )
     labels = {
-        "tutor_evaluated_answer": "إجابة قيّمها المعلم الذكي",
+        "tutor_evaluated_answer": "إجابة تحقق صحيحة مع المعلّم الذكي",
         "challenge_answer": "إجابة في التحدي",
         "challenge_completed": "إكمال تحدٍ",
         "character_identified": "التعرّف على شخصية تاريخية",

@@ -910,3 +910,21 @@ button,input[type="submit"],input[type="button"],input[type="reset"],.button,.bt
 button,input[type="submit"],input[type="button"],.button,.btn,a.button,a.btn{
   display:inline-flex;align-items:center;justify-content:center;
 }
+
+
+/* Learning-plan mastery test is a calm navy secondary action */
+.learning-hub-page .plan-actions .outline-action{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;min-width:0!important;max-width:max-content!important;min-height:37px!important;
+ padding:7px 14px!important;border:1px solid #173455!important;border-radius:10px!important;
+ background:linear-gradient(135deg,#173455,#244d76)!important;color:#fff!important;
+ font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif!important;font-size:.86rem!important;font-weight:750!important;line-height:1.35!important;letter-spacing:0!important;white-space:nowrap!important
+}
+.learning-hub-page .plan-actions .outline-action:hover{background:linear-gradient(135deg,#0e2745,#1b3d61)!important;transform:translateY(-1px)}
+
+/* Teacher tools use compact action controls instead of full-width buttons */
+.learning-hub-page button,.learning-hub-page input[type="submit"],.learning-hub-page input[type="button"],.learning-hub-page a.button,.learning-hub-page .button,.learning-hub-page .gold-action,.learning-hub-page .outline-action,.learning-hub-page .outline-light-action{
+ width:auto!important;min-width:0!important;max-width:max-content!important;justify-self:start!important;align-self:start!important;flex:0 0 auto!important;
+}
+
+.plan-unlinked-note{display:inline-flex;align-items:center;max-width:260px;padding:8px 12px;border:1px solid #e5d6b8;border-radius:10px;background:#fff9e9;color:#6e5420;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;font-size:.82rem;font-weight:650;line-height:1.5}

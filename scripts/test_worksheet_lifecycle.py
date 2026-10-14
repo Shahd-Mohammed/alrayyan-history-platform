@@ -11,7 +11,7 @@ os.environ["DATABASE_URL"] = f"sqlite:///{database_file.name}"
 
 from app import app  # noqa: E402
 from alrayyan.extensions import db  # noqa: E402
-from alrayyan.models import Curriculum, Lesson, Unit, User, Worksheet, WorksheetAttempt  # noqa: E402
+from alrayyan.models import Curriculum, Lesson, Question, Unit, User, Worksheet, WorksheetAttempt  # noqa: E402
 from alrayyan.routes.assessment import get_remaining_seconds  # noqa: E402
 
 
@@ -60,6 +60,17 @@ with app.app_context():
     worksheet = db.session.get(Worksheet, worksheet_id)
     worksheet.publication_status = "published"
     worksheet.is_published = True
+    question = Question(
+        worksheet_id=worksheet.id,
+        question_text="سؤال محفوظ",
+        question_type="short_answer",
+        correct_answer_text="إجابة",
+        points=2,
+        order_index=1,
+    )
+    db.session.add(question)
+    db.session.flush()
+    question_id = question.id
     attempt = WorksheetAttempt(
         worksheet_id=worksheet.id,
         student_id=student_id,
@@ -68,6 +79,11 @@ with app.app_context():
     db.session.add(attempt)
     db.session.commit()
     assert get_remaining_seconds(attempt) == 0
+
+response = client.post(f"/assessment/teacher/questions/{question_id}/delete")
+assert response.status_code == 302
+with app.app_context():
+    assert db.session.get(Question, question_id) is not None
 
 response = client.post(f"/teacher-dashboard/worksheets/{worksheet_id}/delete")
 assert response.status_code == 302

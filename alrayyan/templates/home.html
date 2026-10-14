@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css',v='20261009-global-button-1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css',v='20261011-home-slider-gold-2') }}">
 </head>
 <body class="premium-home">
     {% include '_platform_header.html' %}
@@ -19,7 +19,7 @@
 
             <div class="premium-hero-copy">
                 <span class="premium-kicker"><i></i> الريان في الدراسات التاريخية</span>
-                <h1>التاريخ ليس ماضيًا بعيدًا…<br><em>إنه حكاية تستحق أن تعيشيها.</em></h1>
+                <h1>التاريخ حكاية نعيشها…<br><em>ونتعلّم منها ما يضيء الحاضر.</em></h1>
                 <p>
                     خذي مكانكِ بين صفحات التاريخ؛ افهمي الأحداث، تعرّفي إلى الشخصيات،
                     اربطي الأسباب بالنتائج، واختبري معرفتكِ بتجارب تفاعلية صُممت لتجعل التاريخ أقرب، أعمق، وأمتع.
@@ -74,7 +74,7 @@
                 <a href="{{ url_for('worksheets.worksheet_list') }}"><i>✓</i><small>{{ public_stats.activities }} نشاطًا منشورًا</small><h3>أوراق العمل</h3><p>حل مؤقت، حفظ تلقائي، محاولات، تصحيح إلكتروني ونتائج واضحة.</p><b>تصفحي الأوراق ←</b></a>
                 <a href="{{ url_for('learning.library') }}"><i>🧠</i><small>{{ public_stats.maps }} خرائط</small><h3>مكتبة التعلّم</h3><p>ملخصات ومراجعات وخرائط مفاهيمية ومحتوى مساند لكل درس.</p><b>افتحي المكتبة ←</b></a>
                 <a href="{{ url_for('learning.characters') }}"><i>🏛</i><small>{{ public_stats.characters }} شخصيات</small><h3>من أنا؟</h3><p>تعرفي إلى شخصيات المنهج من تلميحات حقيقية واكسبي نقاطًا من إجابتك.</p><b>ابدئي اللعب ←</b></a>
-                <a href="{{ url_for('learning.honor_board') }}"><i>🏆</i><small>تقدير عادل</small><h3>لوحة الشرف</h3><p>تحتفي بالنشاط والتحسن والإتقان، لا بالعلامة النهائية وحدها.</p><b>شاهدي المتميزين ←</b></a>
+                <a href="{{ url_for('learning.honor_board') }}"><i>🏆</i><small>تقدير عادل</small><h3>لوحة الشرف</h3><p>نحتفي بالمثابرة والتقدم والمشاركة؛ فكل خطوة في التعلّم تستحق التقدير.</p><b>شاهدي المتميزين ←</b></a>
             </div>
         </section>
 
@@ -91,7 +91,7 @@
                     <div class="history-card-icon">♜</div>
                     <small>لعبة الشخصيات</small>
                     <h3>من أنا؟</h3>
-                    <p>تلقّي تلميحات تاريخية، فكّري، ثم اكتشفي الشخصية قبل أن تكشفي الإجابة.</p>
+                    <p>اربطي التلميحات بأدلة الدرس، واكتشفي الشخصية التاريخية خطوةً خطوة.</p>
                     <b>ابدئي التخمين ←</b>
                 </a>
                 <a href="{{ url_for('challenges.setup') }}" class="history-game-card">
@@ -99,7 +99,7 @@
                     <small>تحدي سريع</small>
                     <h3>اختبري ذاكرتكِ التاريخية</h3>
                     <p>جولات قصيرة وتحديات تفاعلية تساعدكِ على تثبيت ما تعلّمتِه بطريقة ممتعة.</p>
-                    <b>دخلي التحدي ←</b>
+                    <b>ادخلي التحدي ←</b>
                 </a>
                 <a href="{{ url_for('learning.library') }}" class="history-game-card">
                     <div class="history-card-icon">⌁</div>

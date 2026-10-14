@@ -2,22 +2,24 @@
 {% block title %}تحليلات التعلّم{% endblock %}
 {% block eyebrow %}صورة أوسع للتقدّم{% endblock %}
 {% block heading %}تحليلات التعلّم والإنجاز{% endblock %}
-{% block intro %}صورة موحّدة لتقدّم الطالبات عبر الاختبارات وأوراق العمل والتحديات والمعلم الذكي والخرائط والشخصيات ومراجعة التواريخ وخطة التعلّم، مع فصل النتائج عن النقاط المكتسبة فعليًا.{% endblock %}
+{% block intro %}قراءة شاملة للتفاعلات والنتائج التي تسجّلها المنصة عبر الاختبارات وأوراق العمل والتحديات والمعلم الذكي والشخصيات والتواريخ وموارد التعلّم.{% endblock %}
 {% block content %}
 <section class="analytics-stats">
     <article><span>الطالبات</span><strong>{{ overview.students }}</strong></article>
-    <article><span>الاختبارات</span><strong>{{ overview.tests }}</strong></article>
+    <article><span>الاختبارات المتاحة</span><strong>{{ overview.tests }}</strong></article>
     <article><span>أوراق العمل</span><strong>{{ overview.worksheets }}</strong></article>
     <article><span>التسليمات المكتملة</span><strong>{{ overview.submissions }}</strong></article>
     <article><span>متوسط النتائج</span><strong>{{ overview.average }}%</strong></article>
     <article><span>التحديات المكتملة</span><strong>{{ overview.challenge_completions }}</strong></article>
+    <article><span>إجابات التحديات المحفوظة</span><strong>{{ overview.challenge_answers }}</strong></article>
     <article><span>تفاعلات المعلم الذكي</span><strong>{{ overview.tutor_interactions }}</strong></article>
-    <article><span>محاولات الشخصيات</span><strong>{{ overview.character_attempts }}</strong></article>
-    <article><span>مراجعات التواريخ</span><strong>{{ overview.date_reviews }}</strong></article>
+    <article><span>إجابات قيّمها المعلم الذكي</span><strong>{{ overview.tutor_evaluated_answers }}</strong></article>
+    <article><span>شخصيات تم التفاعل معها</span><strong>{{ overview.character_attempts }}</strong></article>
+    <article><span>تواريخ تمت مراجعتها</span><strong>{{ overview.date_reviews }}</strong></article>
     <article><span>تحققات خطة المراجعة</span><strong>{{ overview.plan_verifications }}</strong></article>
-    <article><span>تنزيلات المواد التعليمية</span><strong>{{ overview.resource_downloads }}</strong></article>
-    <article><span>استكشاف الخرائط</span><strong>{{ overview.concept_map_views }}</strong></article>
-    <article><span>زيارات مكتبة التعلّم</span><strong>{{ overview.library_visits }}</strong></article>
+    <article><span>ملفات نالت مكافأة التنزيل</span><strong>{{ overview.resource_downloads }}</strong></article>
+    <article><span>خرائط نالت مكافأة الاستكشاف</span><strong>{{ overview.concept_map_views }}</strong></article>
+    <article><span>طالبات زرن المكتبة مرة على الأقل</span><strong>{{ overview.library_visits }}</strong></article>
     <article><span>النقاط المسجّلة</span><strong>{{ overview.points_awarded }}</strong></article>
     <article><span>يحتجن متابعة</span><strong>{{ overview.support_count }}</strong></article>
 </section>
@@ -49,7 +51,7 @@
       <line class="scatter-axis" x1="78" y1="70" x2="78" y2="320"></line>
       <line class="scatter-axis" x1="78" y1="320" x2="790" y2="320"></line>
       <text class="scatter-axis-title" x="28" y="195" transform="rotate(-90 28 195)" text-anchor="middle">متوسط النتائج</text>
-      <text class="scatter-axis-title" x="434" y="370" text-anchor="middle">عدد الأنشطة المسجّلة</text>
+      <text class="scatter-axis-title" x="434" y="370" text-anchor="middle">إجمالي التفاعلات المسجّلة</text>
       {% for row in rows %}
       <circle class="scatter-point" cx="{{ 78 + ((row.activity_score / activity_max) * 712) }}" cy="{{ 320 - ([row.average,100]|min * 2.5) }}" r="7">
         <title>{{ row.student.full_name }} — {{ row.activity_score }} نشاط — {{ row.average }}%</title>
@@ -64,22 +66,22 @@
 </section>
 <section class="platform-panel analytics-panel">
     <div class="analytics-heading"><div><h2>الأداء الفردي</h2><p>تعرض هذه النظرة الأنشطة المسجّلة في المنصة مجتمعة، حتى لا يُختزل تقدّم الطالبة في علامة واحدة.</p></div></div>
-    <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات</th><th>المعلم الذكي</th><th>محاولات الشخصيات</th><th>مراجعات التواريخ</th><th>خطة المراجعة</th><th>تنزيلات المواد</th><th>استكشاف الخرائط</th><th>زيارات مكتبة التعلّم</th><th>النقاط المكتسبة</th><th>الحالة</th></tr></thead><tbody>
+    <div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>الطالبة</th><th>محاولات الاختبارات</th><th>محاولات أوراق العمل</th><th>متوسط النتائج</th><th>إتقان المفاهيم</th><th>التحديات المكتملة</th><th>إجابات التحديات</th><th>رسائل المعلم الذكي</th><th>إجابات قيّمها المعلم الذكي</th><th>محاولات الشخصيات</th><th>مراجعات التواريخ</th><th>خطة المراجعة</th><th>تنزيلات المواد</th><th>استكشاف الخرائط</th><th>زيارات مكتبة التعلّم</th><th>النقاط المكتسبة</th><th>الحالة</th></tr></thead><tbody>
     {% for row in rows %}
     <tr>
       <td><strong>{{ row.student.full_name }}</strong><small>{{ row.student.email }}</small></td>
       <td>{{ row.test_count }}</td><td>{{ row.worksheet_count }}</td>
       <td><div class="metric-bar"><i style="width:{{ [row.average,100]|min }}%"></i></div>{{ row.average }}%</td>
       <td><div class="metric-bar mastery"><i style="width:{{ [row.mastery_average,100]|min }}%"></i></div>{{ row.mastery_average }}%</td>
-      <td>{{ row.challenge_count }}</td><td>{{ row.tutor_interactions }}</td><td>{{ row.character_attempts }}</td><td>{{ row.date_reviews }}</td><td>{{ row.plan_verifications }}</td><td>{{ row.resource_downloads }}</td><td>{{ row.concept_map_views }}</td><td>{{ row.library_visits }}</td><td>{{ row.points_earned }}</td>
+      <td>{{ row.challenge_count }}</td><td>{{ row.challenge_answers }}</td><td>{{ row.tutor_interactions }}</td><td>{{ row.tutor_evaluated_answers }}</td><td>{{ row.character_attempts }}</td><td>{{ row.date_reviews }}</td><td>{{ row.plan_verifications }}</td><td>{{ row.resource_downloads }}</td><td>{{ row.concept_map_views }}</td><td>{{ row.library_visits }}</td><td>{{ row.points_earned }}</td>
       <td>{% if row.needs_support %}<span class="analytics-status support">تحتاج متابعة</span>{% elif row.activity_score %}<span class="analytics-status active">متفاعلة</span>{% else %}<span class="analytics-status quiet">لم تبدأ</span>{% endif %}</td>
     </tr>
-    {% else %}<tr><td colspan="15" class="platform-empty">ستظهر التحليلات بعد انضمام الطالبات وبدء الأنشطة.</td></tr>{% endfor %}
+    {% else %}<tr><td colspan="17" class="platform-empty">ستظهر التحليلات بعد انضمام الطالبات وبدء الأنشطة.</td></tr>{% endfor %}
     </tbody></table></div>
 </section>
 <section class="platform-panel analytics-note">
-  <h2>كيف نكوّن صورة متكاملة عن التعلّم؟</h2>
-  <p>تجمع اللوحة نتائج الاختبارات وأوراق العمل المسلّمة، ومتوسط العلامات المصحّحة، وإتقان المفاهيم، والتحديات المكتملة، ورسائل الطالبات إلى المعلم الذكي، ومحاولات الشخصيات، وخطة المراجعة، وتنزيل المواد، وزيارات مكتبة التعلّم، واستكشاف الخرائط، ومراجعة التواريخ، ومعاملات النقاط. تُقرأ هذه المؤشرات معًا لتكوين صورة أوسع عن تقدّم كل طالبة.</p>
-  <p class="analytics-note-secondary">النقاط المعروضة هي مجموع معاملات المكافآت المسجّلة فعلًا، وليست عدّادًا لكل نقرة. يشمل التحليل الاختبارات وأوراق العمل والتحديات والمعلم الذكي والشخصيات والتواريخ والمواد والخرائط وخطة المراجعة بحسب ما تسجّله وظائف المنصة حاليًا. بعض الأنشطة تُحتسب في التحليل دون أن تمنح نقاطًا مستقلة؛ لذلك لا تعني كل مشاركة بالضرورة زيادة الرصيد.</p>
+  <h2>كيف نقرأ هذه اللوحة؟</h2>
+  <p>تجمع هذه اللوحة ما تسجّله المنصة عن تعلّم الطالبة: محاولات الاختبارات وأوراق العمل ونتائجها، وإتقان المفاهيم، وجلسات التحديات وإجاباتها، ورسائل المعلم الذكي والإجابات التي قيّمها، ومحاولات الشخصيات والتواريخ، وتنزيل الملفات، وزيارات مكتبة التعلم واستكشاف الخرائط، وخطوات خطة المراجعة. نقرأ هذه المؤشرات معًا لفهم التقدم، لا للحكم من علامة واحدة.</p>
+  <p class="analytics-note-secondary">النقاط المعروضة هي مجموع المكافآت المحفوظة فعليًا في سجل النقاط. يشمل النظام مكافآت إكمال الاختبارات وأوراق العمل وفق سياسة التصحيح، وإجابات التحديات التي تستحق مكافأة، وإجابات التحقق الصحيحة مع المعلم الذكي، والإجابات الصحيحة في تحدي الشخصيات والتواريخ، وبعض أنشطة التعلّم. بعض مؤشرات المكتبة والخرائط والتنزيلات تعتمد على سجل المكافآت الفريدة، لذلك لا تعني بالضرورة عدد مرات فتح الصفحة أو تكرار التنزيل. تسجّل المنصة الأنشطة التعليمية ذات المعنى، لكنها لا تمنح نقاطًا لكل نقرة أو تحديث؛ وذلك لمنع تكرار المكافآت دون تعلّم فعلي.</p>
 </section>
 {% endblock %}
