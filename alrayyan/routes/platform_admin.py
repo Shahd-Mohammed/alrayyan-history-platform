@@ -209,11 +209,26 @@ def curricula():
             db.session.add(source)
             db.session.flush()
 
-            extracted_count = process_source_document(
-                source,
-                fallback_unit_title=(form.unit_title.data or "").strip(),
-                fallback_lesson_title=(form.lesson_title.data or "").strip(),
-            )
+            # A curriculum is only ready when every source has been re-extracted
+            # and every chunk has a valid embedding. Re-index all sources because
+            # an older source may have incomplete embeddings from a prior attempt.
+            extracted_count = 0
+            for indexed_source in curriculum.sources:
+                if indexed_source.id == source.id:
+                    extracted_count += process_source_document(
+                        indexed_source,
+                        fallback_unit_title=(form.unit_title.data or "").strip(),
+                        fallback_lesson_title=(form.lesson_title.data or "").strip(),
+                    )
+                else:
+                    extracted_count += process_source_document(indexed_source)
+
+            if not curriculum_ready_for_activation(curriculum):
+                raise ValueError(
+                    "اكتمل استخراج النص، لكن فهرسة embeddings غير مكتملة لأحد المصادر. "
+                    "لم يتم تفعيل المنهج؛ أعيدي الفهرسة بعد التحقق من إعدادات خدمة embeddings."
+                )
+
             # Uploading and indexing a curriculum does not activate it.
             # Activation remains an explicit manual choice from the curriculum
             # management screen.
@@ -256,6 +271,12 @@ def reindex_curriculum(curriculum_id):
         total_chunks = 0
         for source in curriculum.sources:
             total_chunks += process_source_document(source)
+
+        if not curriculum_ready_for_activation(curriculum):
+            raise ValueError(
+                "إعادة الفهرسة لم تُنتج embeddings كاملة لكل المقاطع. "
+                "لم يتم اعتماد المنهج؛ تحققي من إعدادات خدمة embeddings ثم أعيدي المحاولة."
+            )
 
         curriculum.processing_status = "ready"
         db.session.commit()
