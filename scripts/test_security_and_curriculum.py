@@ -16,6 +16,7 @@ from alrayyan.models import (  # noqa: E402
     HistoricalCharacter,
     Lesson,
     Unit,
+    Worksheet,
     User,
 )
 from alrayyan.routes.auth import _password_reset_serializer  # noqa: E402
@@ -67,12 +68,44 @@ with app.app_context():
         attempted_at=datetime.now(timezone.utc).replace(tzinfo=None),
     )
     db.session.add(attempt)
+    # A separate curriculum with an unused worksheet should remain deletable.
+    clean_curriculum = Curriculum(
+        created_by_id=teacher.id,
+        name="منهج بلا محاولات",
+        subject="تاريخ",
+        grade="11",
+        semester="2",
+        academic_year="2026",
+        version="unused-test",
+    )
+    db.session.add(clean_curriculum)
+    db.session.flush()
+    clean_unit = Unit(curriculum_id=clean_curriculum.id, title="وحدة فارغة", order_index=1)
+    db.session.add(clean_unit)
+    db.session.flush()
+    clean_lesson = Lesson(
+        unit_id=clean_unit.id,
+        title="درس بلا محاولات",
+        slug="security-clean-delete-test",
+        order_index=1,
+    )
+    db.session.add(clean_lesson)
+    db.session.flush()
+    clean_worksheet = Worksheet(
+        lesson_id=clean_lesson.id,
+        created_by_id=teacher.id,
+        title="اختبار بلا محاولات",
+        publication_status="draft",
+        is_published=False,
+    )
+    db.session.add(clean_worksheet)
     ids = {
         "teacher": teacher.id,
         "admin": admin.id,
         "student": student.id,
         "curriculum": curriculum.id,
         "character": character.id,
+        "clean_curriculum": clean_curriculum.id,
     }
     token = _password_reset_serializer().dumps(
         {"user_id": student.id, "email": student.email},
@@ -100,6 +133,12 @@ with app.app_context():
     assert db.session.query(CharacterAttempt).filter_by(
         character_id=ids["character"]
     ).first() is not None
+
+# Unused content (including a worksheet without attempts) can be removed for a new term.
+response = client.post(f"/teacher-dashboard/platform/curricula/{ids['clean_curriculum']}/delete")
+assert response.status_code == 302
+with app.app_context():
+    assert db.session.get(Curriculum, ids["clean_curriculum"]) is None
 
 # Only an administrator can create another administrator, and duplicates are rejected.
 login_as(ids["admin"])
