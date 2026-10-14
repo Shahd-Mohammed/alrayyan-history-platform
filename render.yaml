@@ -20,6 +20,18 @@ services:
           property: connectionString
       - key: OPENROUTER_API_KEY
         sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM_EMAIL
+        sync: false
+      - key: SMTP_USE_TLS
+        value: "1"
       - key: OPENROUTER_MODEL
         value: openai/gpt-4o-mini
       - key: EMBEDDING_MODEL
