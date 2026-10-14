@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static',filename='css/platform.css',v='20261014-test-center-toggle-fix-1') }}">
   <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin_premium.css',v='20261011-concept-tabs-gold-10') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin_premium.css',v='20261014-concept-tabs-gold-admin-form-1') }}">
 </head>
 <body class="platform-admin-body{% if request.endpoint == 'assessment.test_center' %} test-center-page{% endif %}">
   {% include '_platform_header.html' %}
@@ -22,6 +22,6 @@
     {% block content %}{% endblock %}
   </main>
   {% include '_platform_footer.html' %}
-  <script src="{{ url_for('static', filename='js/password_toggle.js', v='20261011-admin-password-toggle-1') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/password_toggle.js', v='20261014-admin-password-toggle-2') }}" defer></script>
 </body>
 </html>
