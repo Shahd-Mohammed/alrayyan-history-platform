@@ -1,12 +1,11 @@
-"""Rebase concept mastery percentages after introducing verified tutor answers.
+"""Preserve existing concept mastery records during the tutor scoring transition.
 
-Existing mastery percentages may include unverified social replies from the older
-scoring flow. Reset only the derived percentage; preserve attempts, counters,
-points, test results, and conversation history.
+The earlier reset targeted a singular table name that does not match the
+ConceptMastery model (concept_masteries). Resetting stored scores would also
+silently change existing student progress. Keep this revision in the Alembic
+chain without rewriting student data; any future recalculation must be an
+explicit, reviewed operation.
 """
-from alembic import op
-import sqlalchemy as sa
-
 
 revision = "c3e8a1b7d902"
 down_revision = "0b8e7d6c5a41"
@@ -15,12 +14,10 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(
-        sa.text("UPDATE concept_mastery SET mastery_score = 0")
-    )
+    # Intentionally preserve existing mastery scores and student data.
+    pass
 
 
 def downgrade():
-    # The old derived scores are intentionally not restored: they may contain
-    # unverified increases and are no longer considered trustworthy.
+    # No database changes were made by upgrade().
     pass
