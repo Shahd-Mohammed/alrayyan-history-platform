@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin.css') }}">
   <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin_premium.css',v='20261011-concept-tabs-gold-10') }}">
 </head>
-<body class="platform-admin-body">
+<body class="platform-admin-body{% if request.endpoint == 'assessment.test_center' %} test-center-page{% endif %}">
   {% include '_platform_header.html' %}
   <main class="platform-admin-page">
     <header class="platform-admin-hero">
