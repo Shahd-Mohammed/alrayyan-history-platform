@@ -275,17 +275,20 @@ def reindex_curriculum(curriculum_id):
 def delete_curriculum(curriculum_id):
     curriculum = teacher_curricula().filter_by(id=curriculum_id).first_or_404()
 
-    # Never cascade-delete curriculum lessons that already contain worksheets,
-    # questions, attempts, or recorded concept mastery. Archive/deactivation is
-    # safer than silently destroying assessment history or student progress.
+    # Allow removal of unused assessment content, but never cascade-delete curriculum
+    # lessons that have student attempts or recorded learning history. Archive
+    # or deactivate the curriculum when historical activity is linked to it.
     lesson_ids = [
         lesson.id
         for unit in curriculum.units
         for lesson in unit.lessons
     ]
     if lesson_ids:
-        has_worksheets = Worksheet.query.filter(
+        worksheet_ids = db.session.query(Worksheet.id).filter(
             Worksheet.lesson_id.in_(lesson_ids)
+        )
+        has_worksheet_attempts = WorksheetAttempt.query.filter(
+            WorksheetAttempt.worksheet_id.in_(worksheet_ids)
         ).first() is not None
         has_mastery_records = ConceptMastery.query.filter(
             ConceptMastery.lesson_id.in_(lesson_ids)
@@ -319,7 +322,7 @@ def delete_curriculum(curriculum_id):
         # Deleting lessons cascades to worksheets, characters, maps and dates;
         # protect every linked student record before SQLAlchemy can cascade.
         if (
-            has_worksheets
+            has_worksheet_attempts
             or has_mastery_records
             or has_challenge_sessions
             or has_date_reviews
@@ -329,7 +332,7 @@ def delete_curriculum(curriculum_id):
             or has_concept_map_rewards
         ):
             flash(
-                "لا يمكن حذف هذا المنهج لأنه مرتبط بسجلات تعلم أو محاولات أو نتائج للطالبات. "
+                "لا يمكن حذف هذا المنهج لأنه مرتبط بمحاولات أو سجلات تعلم للطالبات. "
                 "عطّلي المنهج، أو احتفظي بنسخة أرشيفية منه قبل بدء فصل جديد.",
                 "error",
             )
