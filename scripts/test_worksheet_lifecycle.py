@@ -3,6 +3,7 @@
 import os
 import tempfile
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 
 database_file = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
@@ -11,11 +12,13 @@ os.environ["DATABASE_URL"] = f"sqlite:///{database_file.name}"
 
 from app import app  # noqa: E402
 from alrayyan.extensions import db  # noqa: E402
-from alrayyan.models import Curriculum, Lesson, Question, Unit, User, Worksheet, WorksheetAttempt  # noqa: E402
+from alrayyan.models import Curriculum, Lesson, Question, Unit, User, Worksheet, WorksheetAttempt, WorksheetAttachment  # noqa: E402
 from alrayyan.routes.assessment import get_remaining_seconds  # noqa: E402
 
 
 app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
+upload_directory = tempfile.mkdtemp(prefix="alrayyan-uploads-")
+app.config["UPLOAD_FOLDER"] = upload_directory
 
 with app.app_context():
     db.create_all()
@@ -84,6 +87,60 @@ response = client.post(f"/assessment/teacher/questions/{question_id}/delete")
 assert response.status_code == 302
 with app.app_context():
     assert db.session.get(Question, question_id) is not None
+
+# Verify that uploaded files download for both worksheets and tests.
+with app.app_context():
+    upload_path = Path(upload_directory) / "worksheet-test.pdf"
+    upload_path.write_bytes(b"%PDF-1.4 test file")
+    attachment = WorksheetAttachment(
+        worksheet_id=worksheet_id,
+        attachment_type="worksheet",
+        original_filename="ملف اختبار.pdf",
+        stored_filename="worksheet-test.pdf",
+        storage_path="worksheet-test.pdf",
+        file_extension=".pdf",
+        mime_type="application/pdf",
+        file_size=upload_path.stat().st_size,
+    )
+    db.session.add(attachment)
+    db.session.commit()
+
+with client.session_transaction() as session:
+    session["_user_id"] = str(student_id)
+    session["_fresh"] = True
+
+response = client.get(f"/worksheets/{worksheet_id}/download")
+assert response.status_code == 200, response.status_code
+assert response.data == b"%PDF-1.4 test file"
+assert "attachment" in response.headers.get("Content-Disposition", "").lower()
+
+with app.app_context():
+    worksheet = db.session.get(Worksheet, worksheet_id)
+    worksheet.creation_method = "test"
+    upload_path = Path(upload_directory) / "worksheet-test-extra.pdf"
+    upload_path.write_bytes(b"%PDF-1.4 test file")
+    db.session.add(WorksheetAttachment(
+        worksheet_id=worksheet_id,
+        attachment_type="worksheet",
+        original_filename="test.pdf",
+        stored_filename="worksheet-test-extra.pdf",
+        storage_path="worksheet-test-extra.pdf",
+        file_extension=".pdf",
+        mime_type="application/pdf",
+        file_size=upload_path.stat().st_size,
+    ))
+    db.session.commit()
+
+response = client.get(f"/worksheets/{worksheet_id}")
+assert response.status_code == 200, response.status_code
+
+response = client.get(f"/worksheets/{worksheet_id}/download")
+assert response.status_code == 200, response.status_code
+assert response.data == b"%PDF-1.4 test file"
+
+with client.session_transaction() as session:
+    session["_user_id"] = str(teacher_id)
+    session["_fresh"] = True
 
 response = client.post(f"/teacher-dashboard/worksheets/{worksheet_id}/delete")
 assert response.status_code == 302
