@@ -676,7 +676,16 @@ def upload_concept_map():
         flash("راجعي بيانات خريطة الرفع وصيغة الملف.", "error")
         return redirect(url_for("platform_admin.concept_maps"))
     owned_lesson_or_404(form.lesson_id.data)
-    original, path, relative = save_upload(form.document.data, "concept_maps", {"pdf", "png", "jpg", "jpeg", "webp"})
+    try:
+        original, path, relative = save_upload(
+            form.document.data,
+            "concept_maps",
+            {"pdf", "png", "jpg", "jpeg", "webp"},
+        )
+    except Exception as error:
+        current_app.logger.exception("Concept-map upload failed")
+        flash(f"تعذر رفع الخريطة: {error}", "error")
+        return redirect(url_for("platform_admin.concept_maps"))
     row = ConceptMap(lesson_id=form.lesson_id.data, created_by_id=current_user.id, title=form.title.data.strip(), map_type="uploaded", creation_method="upload", publication_status=form.publication_status.data, original_filename=original, stored_path=relative, mime_type=form.document.data.mimetype)
     db.session.add(row); db.session.commit()
     flash("تم رفع الخريطة الجاهزة.", "success")
