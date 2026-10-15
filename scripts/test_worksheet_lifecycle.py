@@ -4,6 +4,7 @@ import os
 import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from pathlib import Path
 
 
 database_file = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
@@ -17,6 +18,8 @@ from alrayyan.routes.assessment import get_remaining_seconds  # noqa: E402
 
 
 app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
+upload_directory = tempfile.mkdtemp(prefix="alrayyan-uploads-")
+app.config["UPLOAD_FOLDER"] = upload_directory
 upload_directory = tempfile.mkdtemp(prefix="alrayyan-uploads-")
 app.config["UPLOAD_FOLDER"] = upload_directory
 
@@ -112,11 +115,24 @@ with client.session_transaction() as session:
 response = client.get(f"/worksheets/{worksheet_id}/download")
 assert response.status_code == 200, response.status_code
 assert response.data == b"%PDF-1.4 test file"
+assert response.data == b"%PDF-1.4 test file"
 assert "attachment" in response.headers.get("Content-Disposition", "").lower()
 
 with app.app_context():
     worksheet = db.session.get(Worksheet, worksheet_id)
     worksheet.creation_method = "test"
+    upload_path = Path(upload_directory) / "worksheet-test.pdf"
+    upload_path.write_bytes(b"%PDF-1.4 test file")
+    db.session.add(WorksheetAttachment(
+        worksheet_id=worksheet_id,
+        attachment_type="worksheet",
+        original_filename="test.pdf",
+        stored_filename="worksheet-test.pdf",
+        storage_path="worksheet-test.pdf",
+        file_extension=".pdf",
+        mime_type="application/pdf",
+        file_size=upload_path.stat().st_size,
+    ))
     db.session.commit()
 
 response = client.get(f"/worksheets/{worksheet_id}")
