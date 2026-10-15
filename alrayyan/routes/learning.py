@@ -155,7 +155,6 @@ def build_concept_map_svg(concept_map):
     node_width = 270
     node_height = 100
     margin = 50
-    gap_x = 40
     gap_y = 45
 
     raw_positions = [
@@ -197,7 +196,6 @@ def build_concept_map_svg(concept_map):
         f'<text x="{width / 2:.1f}" y="30" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" fill="#17243b" direction="rtl">{html_escape(concept_map.title or "خريطة مفاهيمية")}</text>',
     ]
 
-    by_id = {node.id: node for node in nodes}
     for edge in concept_map.edges:
         if edge.source_node_id not in normalized or edge.target_node_id not in normalized:
             continue
