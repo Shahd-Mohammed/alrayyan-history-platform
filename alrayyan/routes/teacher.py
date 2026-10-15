@@ -89,6 +89,35 @@ def serialize_message(message):
     }
 
 
+def preserve_failed_tutor_message(conversation_id, student_text):
+    """Keep the student's question even when an external AI request fails."""
+    if not student_text:
+        return
+    try:
+        db.session.rollback()
+        conversation = db.session.get(TutorConversation, conversation_id)
+        if conversation is None:
+            return
+        last_message = conversation.messages[-1] if conversation.messages else None
+        if not (
+            last_message
+            and last_message.role == "student"
+            and last_message.content == student_text
+        ):
+            db.session.add(TutorMessage(
+                conversation_id=conversation.id,
+                role="student",
+                content=student_text,
+            ))
+            conversation.updated_at = utc_now()
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception(
+            "Could not preserve student message after tutor failure"
+        )
+
+
 def update_mastery(conversation, payload):
     if not conversation.lesson_id or payload["evaluation"] == "not_evaluated":
         return None
@@ -147,6 +176,7 @@ def refresh_learning_plan(student_id):
             existing
             and existing.status == "completed"
             and existing.completed_at
+            and mastery.last_reviewed_at
             and as_utc_naive(mastery.last_reviewed_at) <= as_utc_naive(existing.completed_at)
         ):
             continue
@@ -289,11 +319,20 @@ def send_tutor_message(conversation_id):
         or ""
     ).strip()
     try:
-        student_message = TutorMessage(
-            conversation_id=conversation.id, role="student", content=student_text
-        )
-        db.session.add(student_message)
-        db.session.flush()
+        last_message = conversation.messages[-1] if conversation.messages else None
+        if (
+            last_message
+            and last_message.role == "student"
+            and last_message.content == student_text
+        ):
+            # Reuse a previously saved question when the student retries after an AI error.
+            student_message = last_message
+        else:
+            student_message = TutorMessage(
+                conversation_id=conversation.id, role="student", content=student_text
+            )
+            db.session.add(student_message)
+            db.session.flush()
         was_verifying_mastery = conversation.tutor_state == "verify_mastery"
         payload = tutor_reply(conversation, student_text)
         awaiting_mastery_verification = (
@@ -415,12 +454,12 @@ def send_tutor_message(conversation_id):
         db.session.rollback()
         return jsonify({"success": False, "error": str(error)}), 400
     except RuntimeError as error:
-        db.session.rollback()
         current_app.logger.exception("Interactive tutor request failed")
+        preserve_failed_tutor_message(conversation_id, student_text)
         return jsonify({"success": False, "error": str(error)}), 502
     except Exception:
-        db.session.rollback()
         current_app.logger.exception("Unexpected interactive tutor error")
+        preserve_failed_tutor_message(conversation_id, student_text)
         return jsonify({"success": False, "error": "حدث خطأ غير متوقع. حاولي مرة أخرى."}), 500
 
 

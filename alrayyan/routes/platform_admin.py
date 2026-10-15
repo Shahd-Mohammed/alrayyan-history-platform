@@ -14,6 +14,7 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.forms import ClassroomForm, ConceptMapForm, ConceptMapUploadForm, CurriculumUploadForm, HistoricalCharacterForm, InvitationForm, LearningResourceForm, PlatformSettingsForm
+from alrayyan.services.file_storage import upload_to_object_storage
 from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, DateReview, HistoricalDate, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
 from alrayyan.services.document_reader import calculate_checksum, extract_docx, extract_pdf
 from alrayyan.services.text_processing import chunk_text, create_text_hash
@@ -129,7 +130,14 @@ def save_upload(upload, folder_name, allowed):
     stored_name = f"{uuid4().hex}{extension}"
     path = folder / stored_name
     upload.save(path)
-    return original, path, str(Path(folder_name) / stored_name)
+    relative = str(Path(folder_name) / stored_name).replace("\\", "/")
+    if folder_name in {"learning_resources", "concept_maps"}:
+        try:
+            upload_to_object_storage(path, relative)
+        except Exception:
+            path.unlink(missing_ok=True)
+            raise
+    return original, path, relative
 
 
 @platform_admin_bp.route("/curricula", methods=["GET", "POST"])
@@ -668,7 +676,16 @@ def upload_concept_map():
         flash("راجعي بيانات خريطة الرفع وصيغة الملف.", "error")
         return redirect(url_for("platform_admin.concept_maps"))
     owned_lesson_or_404(form.lesson_id.data)
-    original, path, relative = save_upload(form.document.data, "concept_maps", {"pdf", "png", "jpg", "jpeg", "webp"})
+    try:
+        original, path, relative = save_upload(
+            form.document.data,
+            "concept_maps",
+            {"pdf", "png", "jpg", "jpeg", "webp"},
+        )
+    except Exception as error:
+        current_app.logger.exception("Concept-map upload failed")
+        flash(f"تعذر رفع الخريطة: {error}", "error")
+        return redirect(url_for("platform_admin.concept_maps"))
     row = ConceptMap(lesson_id=form.lesson_id.data, created_by_id=current_user.id, title=form.title.data.strip(), map_type="uploaded", creation_method="upload", publication_status=form.publication_status.data, original_filename=original, stored_path=relative, mime_type=form.document.data.mimetype)
     db.session.add(row); db.session.commit()
     flash("تم رفع الخريطة الجاهزة.", "success")

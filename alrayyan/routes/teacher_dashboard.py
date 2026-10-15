@@ -21,6 +21,7 @@ from alrayyan.forms import (
     EditWorksheetForm,
     UploadWorksheetForm,
 )
+from alrayyan.services.file_storage import upload_to_object_storage
 from alrayyan.models import (
     AboutPage,
     Curriculum,
@@ -169,12 +170,18 @@ def save_uploaded_file(
 
     uploaded_file.save(full_path)
 
-    file_size = full_path.stat().st_size
-
     relative_path = str(
         Path(destination_folder)
         / stored_filename
-    )
+    ).replace("\\", "/")
+
+    try:
+        upload_to_object_storage(full_path, relative_path)
+    except Exception:
+        full_path.unlink(missing_ok=True)
+        raise
+
+    file_size = full_path.stat().st_size
 
     return {
         "original_filename": original_filename,

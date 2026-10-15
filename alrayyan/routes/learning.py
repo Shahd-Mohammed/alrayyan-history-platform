@@ -1,5 +1,7 @@
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
+from html import escape as html_escape
+from io import BytesIO
 
 import re
 from difflib import SequenceMatcher
@@ -8,6 +10,7 @@ from flask import Blueprint, abort, current_app, flash, jsonify, redirect, rende
 from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
+from alrayyan.services.file_storage import resolve_stored_file
 from alrayyan.models import CharacterAttempt, ConceptMap, Curriculum, DateReview, HistoricalCharacter, HistoricalDate, HonorBoardEntry, LearningResource, Lesson, Unit, User, XPTransaction
 from alrayyan.services.learning_content_ai import generate_historical_date_drafts
 
@@ -123,11 +126,166 @@ def concept_map_file(map_id):
     row = ConceptMap.query.filter_by(id=map_id, creation_method="upload").first_or_404()
     if row.publication_status != "published" and current_user.role not in {"teacher", "admin"}:
         abort(404)
-    upload_root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
-    target = (upload_root / (row.stored_path or "")).resolve()
-    if not target.is_relative_to(upload_root) or not target.is_file():
+    try:
+        target = resolve_stored_file(row.stored_path)
+    except ValueError:
+        current_app.logger.warning(
+            "Blocked concept-map file path for map %s",
+            row.id,
+        )
+        abort(403)
+    if target is None:
+        current_app.logger.error(
+            "Concept-map file is missing from local and durable storage: map=%s path=%s",
+            row.id,
+            row.stored_path,
+        )
         abort(404)
-    return send_file(target, as_attachment=False, download_name=row.original_filename)
+    return send_file(
+        target,
+        as_attachment=False,
+        download_name=Path(row.original_filename or f"concept-map-{row.id}").name,
+        mimetype=row.mime_type or "application/octet-stream",
+    )
+
+
+def build_concept_map_svg(concept_map):
+    """Render a downloadable SVG for a generated concept map."""
+    nodes = list(concept_map.nodes)
+    node_width = 270
+    node_height = 100
+    margin = 50
+    gap_y = 45
+
+    raw_positions = [
+        (float(node.position_x or 0), float(node.position_y or 0))
+        for node in nodes
+    ]
+    if raw_positions and all(position == (0.0, 0.0) for position in raw_positions):
+        raw_positions = [
+            (0.0, index * (node_height + gap_y))
+            for index in range(len(nodes))
+        ]
+
+    positions = {}
+    for node, (x, y) in zip(nodes, raw_positions):
+        positions[node.id] = (x, y)
+
+    if positions:
+        min_x = min(x for x, _ in positions.values())
+        min_y = min(y for _, y in positions.values())
+        max_x = max(x for x, _ in positions.values())
+        max_y = max(y for _, y in positions.values())
+    else:
+        min_x = min_y = max_x = max_y = 0.0
+
+    normalized = {
+        node_id: (
+            x - min_x + margin,
+            y - min_y + margin,
+        )
+        for node_id, (x, y) in positions.items()
+    }
+    width = max(2 * margin + node_width, max_x - min_x + node_width + 2 * margin)
+    height = max(2 * margin + node_height, max_y - min_y + node_height + 2 * margin)
+
+    parts = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{int(width)}" height="{int(height)}" viewBox="0 0 {int(width)} {int(height)}">',
+        '<rect width="100%" height="100%" fill="#f8f6f1"/>',
+        f'<text x="{width / 2:.1f}" y="30" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" fill="#17243b" direction="rtl">{html_escape(concept_map.title or "خريطة مفاهيمية")}</text>',
+    ]
+
+    for edge in concept_map.edges:
+        if edge.source_node_id not in normalized or edge.target_node_id not in normalized:
+            continue
+        sx, sy = normalized[edge.source_node_id]
+        tx, ty = normalized[edge.target_node_id]
+        x1 = sx + node_width / 2
+        y1 = sy + node_height / 2
+        x2 = tx + node_width / 2
+        y2 = ty + node_height / 2
+        parts.append(
+            f'<path d="M {x1:.1f} {y1:.1f} C {(x1+x2)/2:.1f} {y1:.1f}, '
+            f'{(x1+x2)/2:.1f} {y2:.1f}, {x2:.1f} {y2:.1f}" '
+            'fill="none" stroke="#b38a3e" stroke-width="3"/>'
+        )
+        label = html_escape((edge.label or "").strip())
+        if label:
+            parts.append(
+                f'<text x="{(x1+x2)/2:.1f}" y="{(y1+y2)/2-7:.1f}" '
+                'text-anchor="middle" font-size="13" font-family="Arial, sans-serif" '
+                f'fill="#5d6470" direction="rtl">{label}</text>'
+            )
+
+    for node in nodes:
+        x, y = normalized[node.id]
+        title = html_escape(node.label or "")
+        description = html_escape((node.description or "").strip())
+        if len(description) > 42:
+            description = html_escape((node.description or "").strip()[:39] + "…")
+        parts.append(
+            f'<rect x="{x:.1f}" y="{y:.1f}" width="{node_width}" height="{node_height}" '
+            'rx="15" fill="#ffffff" stroke="#b38a3e" stroke-width="2"/>'
+        )
+        parts.append(
+            f'<text x="{x + node_width / 2:.1f}" y="{y + 38:.1f}" text-anchor="middle" '
+            'font-size="18" font-weight="700" font-family="Arial, sans-serif" '
+            f'fill="#17243b" direction="rtl">{title}</text>'
+        )
+        if description:
+            parts.append(
+                f'<text x="{x + node_width / 2:.1f}" y="{y + 68:.1f}" text-anchor="middle" '
+                'font-size="13" font-family="Arial, sans-serif" '
+                f'fill="#5d6470" direction="rtl">{description}</text>'
+            )
+
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+@learning_bp.get("/maps/<int:map_id>/download")
+@login_required
+def download_concept_map(map_id):
+    """Download an uploaded map or export an interactive map as SVG."""
+    row = db.session.get(ConceptMap, map_id)
+    if row is None:
+        abort(404)
+    if row.publication_status != "published" and current_user.role not in {"teacher", "admin"}:
+        abort(404)
+
+    filename_stem = Path(row.title or f"concept-map-{row.id}").name.strip()
+    if row.creation_method == "upload":
+        try:
+            target = resolve_stored_file(row.stored_path)
+        except ValueError:
+            current_app.logger.warning(
+                "Blocked concept-map download path for map %s",
+                row.id,
+            )
+            abort(403)
+        if target is None:
+            current_app.logger.error(
+                "Concept-map download file is missing from local and durable storage: map=%s path=%s",
+                row.id,
+                row.stored_path,
+            )
+            abort(404)
+        original_name = Path(row.original_filename or filename_stem)
+        return send_file(
+            target,
+            as_attachment=True,
+            download_name=original_name.name,
+            mimetype=row.mime_type or "application/octet-stream",
+        )
+
+    svg_content = build_concept_map_svg(row)
+    return send_file(
+        BytesIO(svg_content.encode("utf-8")),
+        as_attachment=True,
+        download_name=f"{filename_stem}.svg",
+        mimetype="image/svg+xml; charset=utf-8",
+    )
 
 
 @learning_bp.get("/characters")
@@ -192,13 +350,29 @@ def download_resource(resource_id):
     row = LearningResource.query.filter_by(id=resource_id, publication_status="published").first_or_404()
     if not row.allow_download:
         abort(403)
-    upload_root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
-    target = (upload_root / row.stored_path).resolve()
-    if not target.is_relative_to(upload_root) or not target.is_file():
+    try:
+        target = resolve_stored_file(row.stored_path)
+    except ValueError:
+        current_app.logger.warning(
+            "Blocked learning-resource path for resource %s",
+            row.id,
+        )
+        abort(403)
+    if target is None:
+        current_app.logger.error(
+            "Learning-resource file is missing from local and durable storage: resource=%s path=%s",
+            row.id,
+            row.stored_path,
+        )
         abort(404)
     award_content_interaction(current_user, "resource_downloaded", "learning_resource", row.id)
     db.session.commit()
-    return send_file(target, as_attachment=True, download_name=row.original_filename)
+    return send_file(
+        target,
+        as_attachment=True,
+        download_name=Path(row.original_filename or f"learning-resource-{row.id}").name,
+        mimetype=row.mime_type or "application/octet-stream",
+    )
 
 
 

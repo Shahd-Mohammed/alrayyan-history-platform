@@ -3,6 +3,7 @@ from types import SimpleNamespace
 from datetime import datetime, timedelta, timezone
 
 from alrayyan.services.datetime_utils import as_utc_naive
+from alrayyan.services.semantic_search import _normalize_keyword_text
 from alrayyan.services.tutor_engine import (
     _extract_json,
     _history_text,
@@ -19,6 +20,7 @@ def run_tests():
     assert as_utc_naive(aware_utc) == naive_utc
     assert as_utc_naive(naive_utc) == naive_utc
     assert as_utc_naive(None) is None
+    assert _normalize_keyword_text("الإِسْتِعْمَار") == "الاستعمار"
     assert as_utc_naive(
         datetime(2026, 10, 15, 13, 0, tzinfo=timezone(timedelta(hours=2)))
     ) == naive_utc
