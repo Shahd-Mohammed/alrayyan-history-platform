@@ -16,7 +16,7 @@ def _storage_settings():
     access_key = (os.getenv("S3_ACCESS_KEY_ID") or "").strip()
     secret_key = (os.getenv("S3_SECRET_ACCESS_KEY") or "").strip()
     endpoint_url = (os.getenv("S3_ENDPOINT_URL") or "").strip() or None
-    region = (os.getenv("S3_REGION") or "auto").strip()
+    region = (os.getenv("S3_REGION") or ("auto" if endpoint_url else "us-east-1")).strip()
 
     configured = any((bucket, access_key, secret_key, endpoint_url))
     if not configured:
@@ -66,7 +66,7 @@ def upload_to_object_storage(local_path, storage_key):
         return False
 
     key = Path(str(storage_key)).as_posix().lstrip("/")
-    if not key or key.startswith("../") or "/../" in key:
+    if not key or ".." in Path(key).parts:
         raise ValueError("Invalid object-storage key.")
 
     try:
