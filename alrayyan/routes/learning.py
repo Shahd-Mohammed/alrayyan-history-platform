@@ -1,5 +1,7 @@
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
+from html import escape as html_escape
+from io import BytesIO
 
 import re
 from difflib import SequenceMatcher
@@ -8,6 +10,7 @@ from flask import Blueprint, abort, current_app, flash, jsonify, redirect, rende
 from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
+from alrayyan.services.file_storage import resolve_stored_file, upload_to_object_storage
 from alrayyan.models import CharacterAttempt, ConceptMap, Curriculum, DateReview, HistoricalCharacter, HistoricalDate, HonorBoardEntry, LearningResource, Lesson, Unit, User, XPTransaction
 from alrayyan.services.learning_content_ai import generate_historical_date_drafts
 
@@ -123,11 +126,27 @@ def concept_map_file(map_id):
     row = ConceptMap.query.filter_by(id=map_id, creation_method="upload").first_or_404()
     if row.publication_status != "published" and current_user.role not in {"teacher", "admin"}:
         abort(404)
-    upload_root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
-    target = (upload_root / (row.stored_path or "")).resolve()
-    if not target.is_relative_to(upload_root) or not target.is_file():
+    try:
+        target = resolve_stored_file(row.stored_path)
+    except ValueError:
+        current_app.logger.warning(
+            "Blocked concept-map file path for map %s",
+            row.id,
+        )
+        abort(403)
+    if target is None:
+        current_app.logger.error(
+            "Concept-map file is missing from local and durable storage: map=%s path=%s",
+            row.id,
+            row.stored_path,
+        )
         abort(404)
-    return send_file(target, as_attachment=False, download_name=row.original_filename)
+    return send_file(
+        target,
+        as_attachment=False,
+        download_name=Path(row.original_filename or f"concept-map-{row.id}").name,
+        mimetype=row.mime_type or "application/octet-stream",
+    )
 
 
 @learning_bp.get("/characters")
@@ -192,13 +211,29 @@ def download_resource(resource_id):
     row = LearningResource.query.filter_by(id=resource_id, publication_status="published").first_or_404()
     if not row.allow_download:
         abort(403)
-    upload_root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
-    target = (upload_root / row.stored_path).resolve()
-    if not target.is_relative_to(upload_root) or not target.is_file():
+    try:
+        target = resolve_stored_file(row.stored_path)
+    except ValueError:
+        current_app.logger.warning(
+            "Blocked learning-resource path for resource %s",
+            row.id,
+        )
+        abort(403)
+    if target is None:
+        current_app.logger.error(
+            "Learning-resource file is missing from local and durable storage: resource=%s path=%s",
+            row.id,
+            row.stored_path,
+        )
         abort(404)
     award_content_interaction(current_user, "resource_downloaded", "learning_resource", row.id)
     db.session.commit()
-    return send_file(target, as_attachment=True, download_name=row.original_filename)
+    return send_file(
+        target,
+        as_attachment=True,
+        download_name=Path(row.original_filename or f"learning-resource-{row.id}").name,
+        mimetype=row.mime_type or "application/octet-stream",
+    )
 
 
 
