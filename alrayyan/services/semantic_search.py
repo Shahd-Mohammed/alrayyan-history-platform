@@ -249,4 +249,14 @@ def semantic_search(
         reverse=True,
     )
 
+    if not results:
+        current_app.logger.info(
+            "Semantic search returned no matches; trying curriculum keyword fallback."
+        )
+        return keyword_search_fallback(
+            query,
+            top_k=top_k,
+            lesson_id=lesson_id,
+        )
+
     return results[:top_k]
