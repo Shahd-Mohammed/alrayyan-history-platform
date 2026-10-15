@@ -36,6 +36,17 @@ services:
         value: "1"
       - key: OPENROUTER_MODEL
         value: openai/gpt-4o-mini
+
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: S3_REGION
+        value: auto
       - key: EMBEDDING_MODEL
         value: openai/text-embedding-3-small
       - key: EMBEDDING_API_URL
