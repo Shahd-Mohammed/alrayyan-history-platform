@@ -1,5 +1,9 @@
 import json
 import math
+import re
+import unicodedata
+
+from flask import current_app
 
 from alrayyan.models import (
     ContentChunk,
@@ -71,6 +75,73 @@ def format_citation(source, page_number):
     return source.title
 
 
+def _normalize_keyword_text(value):
+    value = unicodedata.normalize("NFKC", value or "").casefold()
+    value = re.sub(r"[\\u064B-\\u065F\\u0670]", "", value)
+    return value.translate(str.maketrans({
+        "أ": "ا", "إ": "ا", "آ": "ا", "ى": "ي", "ة": "ه",
+    }))
+
+
+def keyword_search_fallback(query, top_k=5, lesson_id=None):
+    """Retrieve relevant curriculum passages when embedding search is unavailable."""
+    terms = [
+        token for token in re.findall(r"\\w+", _normalize_keyword_text(query))
+        if len(token) > 1
+    ]
+    unique_terms = list(dict.fromkeys(terms))
+    if not unique_terms:
+        return []
+
+    candidate_query = (
+        ContentChunk.query
+        .join(SourceDocument, ContentChunk.source_id == SourceDocument.id)
+        .join(Curriculum, SourceDocument.curriculum_id == Curriculum.id)
+        .filter(
+            Curriculum.is_active.is_(True),
+            SourceDocument.is_active.is_(True),
+            ContentChunk.text.isnot(None),
+        )
+    )
+    if lesson_id is not None:
+        candidate_query = candidate_query.filter(ContentChunk.lesson_id == lesson_id)
+
+    results = []
+    for chunk in candidate_query.all():
+        normalized_text = _normalize_keyword_text(chunk.text)
+        matched_terms = [
+            term for term in unique_terms if term in normalized_text
+        ]
+        if not matched_terms:
+            continue
+
+        source = chunk.source
+        coverage = len(matched_terms) / len(unique_terms)
+        frequency_bonus = min(
+            0.05,
+            sum(normalized_text.count(term) for term in matched_terms) * 0.005,
+        )
+        similarity = min(1.0, coverage + frequency_bonus)
+        results.append({
+            "chunk_id": chunk.id,
+            "text": chunk.text,
+            "similarity": similarity,
+            "ranking_score": similarity + get_source_bonus(source),
+            "source_id": source.id,
+            "source_title": source.title,
+            "source_type": source.source_type,
+            "source_priority": source.priority,
+            "is_primary": source.is_primary,
+            "page_number": chunk.page_number,
+            "lesson_id": chunk.lesson_id,
+            "lesson_title": chunk.lesson.title if chunk.lesson else None,
+            "citation": format_citation(source, chunk.page_number),
+        })
+
+    results.sort(key=lambda item: item["ranking_score"], reverse=True)
+    return results[:top_k]
+
+
 def semantic_search(
     query,
     top_k=5,
@@ -85,11 +156,21 @@ def semantic_search(
             "Search query cannot be empty."
         )
 
-    settings = get_embedding_settings()
-
-    query_vector = generate_embeddings(
-        query.strip()
-    )[0]
+    try:
+        settings = get_embedding_settings()
+        query_vector = generate_embeddings(
+            query.strip()
+        )[0]
+    except Exception as error:
+        current_app.logger.warning(
+            "Embedding search unavailable; using curriculum keyword fallback: %s",
+            error,
+        )
+        return keyword_search_fallback(
+            query,
+            top_k=top_k,
+            lesson_id=lesson_id,
+        )
 
     candidate_query = (
         ContentChunk.query
