@@ -119,6 +119,9 @@ with app.app_context():
     worksheet.creation_method = "test"
     db.session.commit()
 
+response = client.get(f"/worksheets/{worksheet_id}")
+assert response.status_code == 200, response.status_code
+
 response = client.get(f"/worksheets/{worksheet_id}/download")
 assert response.status_code == 200, response.status_code
 assert response.data == b"%PDF-1.4 test file"
