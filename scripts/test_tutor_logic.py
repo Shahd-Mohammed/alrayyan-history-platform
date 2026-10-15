@@ -1,5 +1,8 @@
 from types import SimpleNamespace
 
+from datetime import datetime, timedelta, timezone
+
+from alrayyan.services.datetime_utils import as_utc_naive
 from alrayyan.services.tutor_engine import (
     _extract_json,
     _history_text,
@@ -9,6 +12,16 @@ from alrayyan.services.tutor_engine import (
 
 
 def run_tests():
+    # Database DateTime columns are naive UTC, while newly assigned timestamps
+    # can be timezone-aware. Comparing them directly raises TypeError.
+    aware_utc = datetime(2026, 10, 15, 11, 0, tzinfo=timezone.utc)
+    naive_utc = datetime(2026, 10, 15, 11, 0)
+    assert as_utc_naive(aware_utc) == naive_utc
+    assert as_utc_naive(naive_utc) == naive_utc
+    assert as_utc_naive(None) is None
+    assert as_utc_naive(
+        datetime(2026, 10, 15, 13, 0, tzinfo=timezone(timedelta(hours=2)))
+    ) == naive_utc
     wrapped_payload = _extract_json(
         'سأعيد النتيجة المنظمة الآن: {"reply": "مرحبًا"}'
     )
