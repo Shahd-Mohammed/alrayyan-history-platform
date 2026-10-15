@@ -130,7 +130,7 @@ def save_upload(upload, folder_name, allowed):
     stored_name = f"{uuid4().hex}{extension}"
     path = folder / stored_name
     upload.save(path)
-    relative = str(Path(folder_name) / stored_name).replace("\\\\", "/")
+    relative = str(Path(folder_name) / stored_name).replace("\\", "/")
     if folder_name in {"learning_resources", "concept_maps"}:
         try:
             upload_to_object_storage(path, relative)
