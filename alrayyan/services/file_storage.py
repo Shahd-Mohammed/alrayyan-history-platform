@@ -98,7 +98,7 @@ def resolve_stored_file(stored_path):
     upload_root = Path(
         current_app.config["UPLOAD_FOLDER"]
     ).resolve()
-    candidate = Path(str(stored_path))
+    candidate = Path(str(stored_path).replace("\\\\", "/"))
 
     if candidate.is_absolute():
         candidate = candidate.resolve()
