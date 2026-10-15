@@ -173,7 +173,7 @@ def save_uploaded_file(
     relative_path = str(
         Path(destination_folder)
         / stored_filename
-    ).replace("\\\\", "/")
+    ).replace("\\", "/")
 
     try:
         upload_to_object_storage(full_path, relative_path)
