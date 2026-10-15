@@ -14,6 +14,7 @@ from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.forms import ClassroomForm, ConceptMapForm, ConceptMapUploadForm, CurriculumUploadForm, HistoricalCharacterForm, InvitationForm, LearningResourceForm, PlatformSettingsForm
+from alrayyan.services.file_storage import upload_to_object_storage
 from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, DateReview, HistoricalDate, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
 from alrayyan.services.document_reader import calculate_checksum, extract_docx, extract_pdf
 from alrayyan.services.text_processing import chunk_text, create_text_hash
@@ -129,7 +130,14 @@ def save_upload(upload, folder_name, allowed):
     stored_name = f"{uuid4().hex}{extension}"
     path = folder / stored_name
     upload.save(path)
-    return original, path, str(Path(folder_name) / stored_name)
+    relative = str(Path(folder_name) / stored_name).replace("\\\\", "/")
+    if folder_name in {"learning_resources", "concept_maps"}:
+        try:
+            upload_to_object_storage(path, relative)
+        except Exception:
+            path.unlink(missing_ok=True)
+            raise
+    return original, path, relative
 
 
 @platform_admin_bp.route("/curricula", methods=["GET", "POST"])
