@@ -21,6 +21,7 @@ from alrayyan.models import (
     XPTransaction,
 )
 from alrayyan.services.tutor_engine import tutor_reply
+from alrayyan.services.datetime_utils import as_utc_naive
 
 
 teacher_bp = Blueprint("teacher", __name__, url_prefix="/teacher")
@@ -146,7 +147,7 @@ def refresh_learning_plan(student_id):
             existing
             and existing.status == "completed"
             and existing.completed_at
-            and mastery.last_reviewed_at <= existing.completed_at
+            and as_utc_naive(mastery.last_reviewed_at) <= as_utc_naive(existing.completed_at)
         ):
             continue
         else:
