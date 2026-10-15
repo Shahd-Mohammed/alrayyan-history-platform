@@ -77,7 +77,7 @@ def format_citation(source, page_number):
 
 def _normalize_keyword_text(value):
     value = unicodedata.normalize("NFKC", value or "").casefold()
-    value = re.sub(r"[\\u064B-\\u065F\\u0670]", "", value)
+    value = re.sub(r"[\u064B-\u065F\u0670]", "", value)
     return value.translate(str.maketrans({
         "أ": "ا", "إ": "ا", "آ": "ا", "ى": "ي", "ة": "ه",
     }))
@@ -86,7 +86,7 @@ def _normalize_keyword_text(value):
 def keyword_search_fallback(query, top_k=5, lesson_id=None):
     """Retrieve relevant curriculum passages when embedding search is unavailable."""
     terms = [
-        token for token in re.findall(r"\\w+", _normalize_keyword_text(query))
+        token for token in re.findall(r"\w+", _normalize_keyword_text(query))
         if len(token) > 1
     ]
     unique_terms = list(dict.fromkeys(terms))
