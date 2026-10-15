@@ -14,6 +14,7 @@ from flask_login import (
     login_required,
 )
 
+from alrayyan.services.file_storage import resolve_stored_file
 from alrayyan.models import (
     LearningResource,
     Worksheet,
@@ -183,36 +184,21 @@ def download_worksheet(worksheet_id):
         .first_or_404()
     )
 
-    upload_root = Path(
-        current_app.config["UPLOAD_FOLDER"]
-    ).resolve()
-
-    stored_path = Path(
-        attachment.storage_path
-    )
-
-    if stored_path.is_absolute():
-        file_path = stored_path.resolve()
-    else:
-        file_path = (
-            upload_root / stored_path
-        ).resolve()
-
     try:
-        file_path.relative_to(
-            upload_root
+        file_path = resolve_stored_file(
+            attachment.storage_path
         )
     except ValueError:
         current_app.logger.warning(
             "Blocked worksheet path: %s",
-            file_path,
+            attachment.storage_path,
         )
         abort(403)
 
-    if not file_path.is_file():
+    if file_path is None:
         current_app.logger.error(
-            "Worksheet file was not found: %s",
-            file_path,
+            "Worksheet file was not found in local or durable storage: %s",
+            attachment.storage_path,
         )
         abort(404)
 
@@ -224,7 +210,7 @@ def download_worksheet(worksheet_id):
 
     clean_suffix = (
         original_name.suffix.lower()
-        or file_path.suffix.lower()
+        or (file_path.suffix.lower() if isinstance(file_path, Path) else "")
         or ".pdf"
     )
 
@@ -242,7 +228,11 @@ def download_worksheet(worksheet_id):
     )
 
     response = send_file(
-        path_or_file=str(file_path),
+        path_or_file=(
+            str(file_path)
+            if isinstance(file_path, Path)
+            else file_path
+        ),
         mimetype="application/octet-stream",
         as_attachment=True,
         download_name=fallback_filename,
