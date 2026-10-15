@@ -276,6 +276,10 @@ def tutor_reply(conversation, student_text):
         and history_messages[-1].content == student_text
     ):
         history_messages = history_messages[:-1]
+    # Failed previous turns may have a saved student question without a tutor reply.
+    # Do not feed unanswered trailing questions back as if they were completed dialogue.
+    while history_messages and history_messages[-1].role == "student":
+        history_messages = history_messages[:-1]
     history = _history_text(history_messages)
     previous_tutor_message = next(
         (
