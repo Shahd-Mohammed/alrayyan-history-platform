@@ -35,6 +35,9 @@ jobs:
       - name: Compile application and test scripts
         run: python -m compileall -q app.py config.py alrayyan scripts
 
+      - name: Test file storage and concept-map downloads
+        run: PYTHONPATH=. python scripts/test_file_storage.py
+
       - name: Test question interaction grading
         run: PYTHONPATH=. python scripts/test_question_interactions.py
 
