@@ -4,7 +4,6 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
-    preDeployCommand: flask --app app db upgrade
     healthCheckPath: /health
     envVars:
       - key: SECRET_KEY
