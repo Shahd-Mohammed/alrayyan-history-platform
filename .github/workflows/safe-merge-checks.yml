@@ -32,6 +32,12 @@ jobs:
       - name: Install Python dependencies
         run: python -m pip install -r requirements.txt
 
+      - name: Verify Tesseract and Arabic OCR language data
+        run: |
+          command -v tesseract
+          tesseract --list-langs | grep -Fx ara
+          tesseract --list-langs | grep -Fx eng
+
       - name: Compile application and test scripts
         run: python -m compileall -q app.py config.py alrayyan scripts
 
