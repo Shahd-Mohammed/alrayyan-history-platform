@@ -3,6 +3,7 @@ import json
 import os
 import re
 import smtplib
+import ssl
 from email.message import EmailMessage
 from datetime import datetime, timezone
 from pathlib import Path
@@ -435,19 +436,47 @@ def invitation_mail_settings():
 
 
 def send_student_invitation(email, invitation_url, teacher_name):
-    host, username, password, sender = (os.getenv(key) for key in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL"))
+    host, username, password, sender = (
+        os.getenv(key)
+        for key in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL")
+    )
     if not all((host, username, password, sender)):
         raise RuntimeError("إعدادات البريد غير مكتملة")
+
+    port = int(os.getenv("SMTP_PORT", "587"))
+    ssl_setting = os.getenv("SMTP_USE_SSL")
+    use_ssl = (
+        ssl_setting.lower() in {"1", "true", "yes"}
+        if ssl_setting is not None
+        else port == 465
+    )
+    use_tls = os.getenv("SMTP_USE_TLS", "1").lower() not in {"0", "false", "no"}
+
     message = EmailMessage()
     message["Subject"] = "دعوة للانضمام إلى منصة الريان للدراسات التاريخية"
     message["From"] = sender
     message["To"] = email
-    message.set_content(f"مرحبًا،\n\nدعتك المعلمة {teacher_name} للانضمام إلى منصة الريان للدراسات التاريخية.\nافتحي الرابط التالي لإنشاء حسابك: {invitation_url}\n\nإذا لم تتوقعي هذه الدعوة، يمكنك تجاهل هذه الرسالة.")
-    with smtplib.SMTP(host, int(os.getenv("SMTP_PORT", "587")), timeout=20) as server:
-        if os.getenv("SMTP_USE_TLS", "1").lower() not in {"0", "false", "no"}:
-            server.starttls()
+    message["Reply-To"] = sender
+    message.set_content(
+        f"مرحبًا،\n\nدعتك المعلمة {teacher_name} للانضمام إلى منصة الريان للدراسات التاريخية.\n"
+        f"افتحي الرابط التالي لإنشاء حسابك: {invitation_url}\n\n"
+        "إذا لم تتوقعي هذه الدعوة، يمكنك تجاهل هذه الرسالة."
+    )
+
+    smtp_client = (
+        smtplib.SMTP_SSL(
+            host, port, timeout=20, context=ssl.create_default_context()
+        )
+        if use_ssl
+        else smtplib.SMTP(host, port, timeout=20)
+    )
+    with smtp_client as server:
+        if not use_ssl and use_tls:
+            server.starttls(context=ssl.create_default_context())
         server.login(username, password)
-        server.send_message(message)
+        refused = server.send_message(message)
+        if refused:
+            raise smtplib.SMTPRecipientsRefused(refused)
 
 
 def extract_invitation_emails(upload):
@@ -566,7 +595,7 @@ def create_invitation_batch(emails, classroom_id, valid_days):
         if failed:
             flash(f"تم إنشاء {len(invitation_urls)} دعوة. أُرسلت {sent} رسالة، وتعذر إرسال {len(failed)}؛ الروابط متاحة للنسخ أدناه.", "warning")
         else:
-            flash(f"تم إنشاء وإرسال {sent} دعوة بالبريد الإلكتروني بنجاح.", "success")
+            flash(f"قبل خادم البريد طلب إرسال {sent} رسالة. هذا لا يضمن وصولها إلى صندوق الوارد؛ إذا لم تظهر، افحصي الرسائل غير المرغوب فيها وتأكدي من إعدادات مزوّد البريد.", "success")
     else:
         flash(f"تم إنشاء {len(invitation_urls)} دعوة، لكن إرسال البريد غير مفعّل بعد. أضيفي إعدادات SMTP في Render ليرسل النظام الرسائل تلقائيًا؛ الروابط متاحة للنسخ أدناه.", "warning")
     return invitation_urls
