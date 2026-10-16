@@ -64,7 +64,7 @@ class TutorMessage(db.Model):
     concept = db.Column(db.String(250), nullable=True)
     mastery_delta = db.Column(db.Integer, nullable=False, default=0)
     model = db.Column(db.String(150), nullable=True)
-    prompt_version = db.Column(db.String(30), nullable=True)
+    prompt_version = db.Column(db.String(100), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=utc_now)
 
     conversation = db.relationship(

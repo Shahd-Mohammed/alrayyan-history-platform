@@ -67,6 +67,11 @@ class Config:
     }
 
 
+    REQUIRE_DURABLE_UPLOADS = os.getenv(
+        "REQUIRE_DURABLE_UPLOADS",
+        "1" if os.getenv("RENDER_SERVICE_ID") else "0",
+    ) == "1"
+
     PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL")
 
     SMTP_HOST = os.getenv("SMTP_HOST")

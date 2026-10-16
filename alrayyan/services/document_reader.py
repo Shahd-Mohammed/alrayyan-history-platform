@@ -189,17 +189,22 @@ def _text_is_usable(text):
 
 
 def _tesseract_command():
-    """Resolve Tesseract across local Windows and Linux/Render."""
-    configured = os.getenv("TESSERACT_CMD")
+    """Resolve an installed Tesseract executable on Windows or Linux."""
+    configured = (os.getenv("TESSERACT_CMD") or "").strip()
     if configured:
-        return configured
+        configured_path = Path(configured)
+        if configured_path.is_file():
+            return str(configured_path)
+        discovered_configured = shutil.which(configured)
+        if discovered_configured:
+            return discovered_configured
 
     discovered = shutil.which("tesseract")
     if discovered:
         return discovered
 
     windows_path = Path(r"C:\Program Files\Tesseract-OCR\tesseract.exe")
-    if windows_path.exists():
+    if windows_path.is_file():
         return str(windows_path)
 
     return None

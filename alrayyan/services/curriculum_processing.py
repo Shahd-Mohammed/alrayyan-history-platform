@@ -1,6 +1,7 @@
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from uuid import uuid4
 
 from flask import current_app
@@ -8,6 +9,7 @@ from flask import current_app
 from alrayyan.extensions import db
 from alrayyan.models import ContentChunk, Lesson, Unit
 from alrayyan.services.document_reader import extract_docx, extract_pdf
+from alrayyan.services.file_storage import resolve_stored_file
 from alrayyan.services.embeddings import generate_embeddings, get_embedding_settings
 from alrayyan.services.text_processing import chunk_text, create_text_hash
 
@@ -78,19 +80,33 @@ def process_source_document(
     if not source.stored_path:
         raise ValueError("ملف المصدر غير موجود")
 
-    upload_root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
-    file_path = (upload_root / source.stored_path).resolve()
-    if not file_path.is_relative_to(upload_root) or not file_path.is_file():
-        raise ValueError("ملف المصدر غير موجود على الخادم")
+    stored_file = resolve_stored_file(source.stored_path)
+    if stored_file is None:
+        raise ValueError("ملف المصدر غير موجود في التخزين المحلي أو الدائم")
 
-    extension = file_path.suffix.lower()
-    extracted = (
-        extract_pdf(file_path)
-        if extension == ".pdf"
-        else extract_docx(file_path)
-        if extension == ".docx"
-        else None
-    )
+    temporary_path = None
+    try:
+        if isinstance(stored_file, Path):
+            file_path = stored_file
+        else:
+            extension = Path(source.stored_path).suffix.lower()
+            with NamedTemporaryFile(suffix=extension, delete=False) as temporary_file:
+                temporary_file.write(stored_file.read())
+                temporary_path = Path(temporary_file.name)
+            file_path = temporary_path
+
+        extension = file_path.suffix.lower()
+        extracted = (
+            extract_pdf(file_path)
+            if extension == ".pdf"
+            else extract_docx(file_path)
+            if extension == ".docx"
+            else None
+        )
+    finally:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+
     if extracted is None:
         raise ValueError("صيغة ملف المصدر غير مدعومة")
 

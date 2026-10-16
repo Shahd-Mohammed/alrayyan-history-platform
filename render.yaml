@@ -1,15 +1,11 @@
 services:
   - type: web
     name: alrayyan-learning-platform
-    runtime: python
+    runtime: docker
     plan: free
-    buildCommand: pip install -r requirements.txt
-    preDeployCommand: flask --app app db upgrade
-    startCommand: gunicorn --workers 2 --threads 4 --timeout 120 app:app
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.7
       - key: SECRET_KEY
         generateValue: true
       - key: SESSION_COOKIE_SECURE
@@ -37,6 +33,8 @@ services:
       - key: OPENROUTER_MODEL
         value: openai/gpt-4o-mini
 
+      - key: REQUIRE_DURABLE_UPLOADS
+        value: "1"
       - key: S3_BUCKET
         sync: false
       - key: S3_ACCESS_KEY_ID

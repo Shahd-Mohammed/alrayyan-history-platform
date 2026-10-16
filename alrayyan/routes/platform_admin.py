@@ -120,7 +120,7 @@ def owned_lesson_or_404(lesson_id):
     return lesson
 
 
-def save_upload(upload, folder_name, allowed):
+def save_upload(upload, folder_name, allowed, persist=True):
     original = (upload.filename or "").strip()
     extension = Path(original).suffix.lower()
     if extension.lstrip(".") not in allowed:
@@ -131,7 +131,7 @@ def save_upload(upload, folder_name, allowed):
     path = folder / stored_name
     upload.save(path)
     relative = str(Path(folder_name) / stored_name).replace("\\", "/")
-    if folder_name in {"learning_resources", "concept_maps"}:
+    if persist:
         try:
             upload_to_object_storage(path, relative)
         except Exception:
@@ -147,7 +147,9 @@ def curricula():
         stored_path = None
         try:
             stored_path = None
-            original, stored_path, relative = save_upload(form.document.data, "curricula", {"pdf", "docx"})
+            original, stored_path, relative = save_upload(
+                form.document.data, "curricula", {"pdf", "docx"}, persist=False
+            )
             curriculum_query = teacher_curricula().filter_by(
                 subject=form.subject.data.strip(),
                 grade=form.grade.data.strip(),
@@ -229,6 +231,8 @@ def curricula():
             for item in curriculum.sources:
                 item.is_active = False
             curriculum.processing_status = "ready"
+            # The original curriculum is persisted only after successful extraction/indexing.
+            upload_to_object_storage(stored_path, relative)
             db.session.commit()
             flash(
                 f"تم تحليل وفهرسة {extracted_count} مقطعًا. المنهج جاهز ويمكنك تفعيله يدويًا من قائمة المناهج.",

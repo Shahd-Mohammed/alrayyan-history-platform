@@ -59,10 +59,22 @@ def _client(settings):
     return boto3.client("s3", **options)
 
 
-def upload_to_object_storage(local_path, storage_key):
-    """Copy an uploaded local file to durable storage when configured."""
+def upload_to_object_storage(local_path, storage_key, required=None):
+    """Copy an uploaded file to durable storage, optionally requiring persistence."""
     settings = _storage_settings()
     if settings is None:
+        must_persist = (
+            current_app.config.get("REQUIRE_DURABLE_UPLOADS", False)
+            if required is None
+            else required
+        )
+        if must_persist:
+            raise RuntimeError(
+                "التخزين الدائم للملفات غير مضبوط. أكملي إعداد S3 قبل رفع ملفات جديدة."
+            )
+        current_app.logger.warning(
+            "Object storage is not configured; uploaded files will only be stored locally."
+        )
         return False
 
     key = Path(str(storage_key)).as_posix().lstrip("/")
