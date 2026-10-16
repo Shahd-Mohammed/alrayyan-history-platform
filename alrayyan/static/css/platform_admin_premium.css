@@ -3709,3 +3709,18 @@ button.concept-action,
   border-color: #b9872d !important;
   color: #fff !important;
 }
+
+
+/* Final cascade guard: the selected concept-map tab must always be gold. */
+.platform-admin-body .platform-admin-page .concept-map-tabs > button.is-active,
+.platform-admin-body .platform-admin-page .concept-map-tabs > button[aria-selected="true"] {
+  background: linear-gradient(135deg, #e0bd68 0%, #b9872d 100%) !important;
+  background-color: #c99a3d !important;
+  border: 1px solid #b9872d !important;
+  color: #fff !important;
+  box-shadow: 0 7px 18px rgba(169,119,35,.22) !important;
+}
+.platform-admin-body .platform-admin-page .concept-map-tabs > button.is-active *,
+.platform-admin-body .platform-admin-page .concept-map-tabs > button[aria-selected="true"] * {
+  color: #fff !important;
+}

@@ -564,40 +564,99 @@ def invitations():
 
 
 def create_invitation_batch(emails, classroom_id, valid_days):
-    existing = {row.email for row in User.query.filter(User.email.in_(emails)).all()} if emails else set()
+    existing = {
+        row.email
+        for row in User.query.filter(User.email.in_(emails)).all()
+    } if emails else set()
     pending = StudentInvitation.query.filter(
         StudentInvitation.teacher_id == current_user.id,
         StudentInvitation.email.in_(emails),
         StudentInvitation.accepted_at.is_(None),
         StudentInvitation.expires_at > datetime.utcnow(),
     ).all() if emails else []
-    existing_invites = {row.email for row in pending}
+    pending_by_email = {}
+    for row in pending:
+        pending_by_email.setdefault(row.email, []).append(row)
+
     invitation_urls = []
+    renewed_count = 0
     for email in emails:
-        if email in existing or email in existing_invites:
+        if email in existing:
             continue
-        invitation, token = StudentInvitation.create(current_user.id, email, classroom_id, valid_days)
+
+        # A valid invitation previously created for this address has a token
+        # hash only, so its original link cannot be recovered. Expire that
+        # link and issue a fresh token instead of silently skipping the email.
+        old_invitations = pending_by_email.get(email, [])
+        if old_invitations:
+            for old_invitation in old_invitations:
+                old_invitation.expires_at = datetime.utcnow()
+            renewed_count += 1
+
+        invitation, token = StudentInvitation.create(
+            current_user.id, email, classroom_id, valid_days
+        )
         db.session.add(invitation)
-        invitation_urls.append({"email": email, "url": url_for("auth.register_invitation", token=token, _external=True)})
+        invitation_urls.append({
+            "email": email,
+            "url": url_for(
+                "auth.register_invitation",
+                token=token,
+                _external=True,
+            ),
+        })
+
     db.session.commit()
     if not invitation_urls:
-        flash(f"لم تُنشأ دعوات جديدة؛ تم تجاوز {len(existing)} حسابًا موجودًا و{len(existing_invites)} دعوة سارية.", "warning")
+        flash(
+            f"لم تُنشأ دعوات لأن جميع العناوين ({len(existing)}) لديها حسابات موجودة. "
+            "لن تُرسل دعوات لهذه الحسابات.",
+            "warning",
+        )
         return []
+
+    if renewed_count:
+        flash(
+            f"تم تجديد {renewed_count} دعوة سابقة وإصدار روابط جديدة؛ "
+            "سيُرسل النظام الروابط الجديدة إلى عناوين البريد إذا كانت إعدادات SMTP صحيحة.",
+            "info",
+        )
+
     if invitation_mail_settings():
         sent, failed = 0, []
         for item in invitation_urls:
             try:
-                send_student_invitation(item["email"], item["url"], current_user.full_name or "معلمة منصة الريان")
+                send_student_invitation(
+                    item["email"],
+                    item["url"],
+                    current_user.full_name or "معلمة منصة الريان",
+                )
                 sent += 1
             except Exception:
-                current_app.logger.exception("Could not email student invitation")
+                current_app.logger.exception(
+                    "Could not email student invitation to %s", item["email"]
+                )
                 failed.append(item["email"])
         if failed:
-            flash(f"تم إنشاء {len(invitation_urls)} دعوة. أُرسلت {sent} رسالة، وتعذر إرسال {len(failed)}؛ الروابط متاحة للنسخ أدناه.", "warning")
+            flash(
+                f"تم حفظ {len(invitation_urls)} دعوة. قبل خادم البريد إرسال "
+                f"{sent} رسالة، وفشل إرسال {len(failed)} رسالة. "
+                "الروابط الجديدة متاحة للنسخ أدناه؛ راجعي سجل Render لإصلاح سبب الفشل.",
+                "warning",
+            )
         else:
-            flash(f"قبل خادم البريد طلب إرسال {sent} رسالة. هذا لا يضمن وصولها إلى صندوق الوارد؛ إذا لم تظهر، افحصي الرسائل غير المرغوب فيها وتأكدي من إعدادات مزوّد البريد.", "success")
+            flash(
+                f"قبل خادم البريد طلب إرسال {sent} رسالة. "
+                "هذا لا يضمن وصولها إلى صندوق الوارد؛ إذا لم تصل، افحصي البريد غير المرغوب "
+                "فيه وسجل مزوّد البريد.",
+                "success",
+            )
     else:
-        flash(f"تم إنشاء {len(invitation_urls)} دعوة، لكن إرسال البريد غير مفعّل بعد. أضيفي إعدادات SMTP في Render ليرسل النظام الرسائل تلقائيًا؛ الروابط متاحة للنسخ أدناه.", "warning")
+        flash(
+            f"تم إنشاء {len(invitation_urls)} دعوة، لكن البريد غير مفعّل لأن إعدادات SMTP "
+            "غير مكتملة في Render. الروابط الجديدة متاحة للنسخ أدناه.",
+            "warning",
+        )
     return invitation_urls
 
 

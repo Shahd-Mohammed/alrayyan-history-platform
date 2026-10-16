@@ -255,3 +255,50 @@ a.challenge-primary-button,
 .mastery-verification span { margin-top: 5px; }
 .mastery-verification.passed { color: #17643e; background: #eaf8f0; }
 .mastery-verification.retry { color: #7b5515; background: #fff6df; }
+
+
+/* High-contrast answer cards on the challenge screen. */
+#challenge-app .question-stage .option-grid > .challenge-option {
+  color: #102746 !important;
+  background: linear-gradient(135deg, #f5e4b9 0%, #fff5dc 100%) !important;
+  border: 1px solid #d8b45e !important;
+  box-shadow: 0 5px 16px rgba(16,39,70,.09) !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option:nth-child(4n + 2) {
+  background: linear-gradient(135deg, #dcecff 0%, #f0f6ff 100%) !important;
+  border-color: #9dbce0 !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option:nth-child(4n + 3) {
+  background: linear-gradient(135deg, #e9e0ff 0%, #f7f2ff 100%) !important;
+  border-color: #c0afe5 !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option:nth-child(4n + 4) {
+  background: linear-gradient(135deg, #d9f1e4 0%, #effaf4 100%) !important;
+  border-color: #9acbb0 !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option b {
+  color: #102746 !important;
+  font-weight: 700 !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option:hover:not(:disabled),
+#challenge-app .question-stage .option-grid > .challenge-option:focus-visible {
+  background: linear-gradient(135deg, #f3d98e 0%, #ffefc3 100%) !important;
+  border-color: #a9781f !important;
+  color: #102746 !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option.selected:not(.correct):not(.incorrect) {
+  background: linear-gradient(135deg, #f0d17a 0%, #fff0c5 100%) !important;
+  border-color: #a9781f !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option.correct {
+  background: linear-gradient(135deg, #c9efdc 0%, #e9faf1 100%) !important;
+  border-color: #16845d !important;
+  color: #084b33 !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option.correct b { color: #084b33 !important; }
+#challenge-app .question-stage .option-grid > .challenge-option.incorrect {
+  background: linear-gradient(135deg, #ffdadd 0%, #fff0f1 100%) !important;
+  border-color: #b83e48 !important;
+  color: #7e2028 !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option.incorrect b { color: #7e2028 !important; }
