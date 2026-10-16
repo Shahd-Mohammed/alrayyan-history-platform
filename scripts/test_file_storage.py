@@ -1,3 +1,4 @@
+from io import BytesIO
 from pathlib import Path
 from unittest.mock import patch
 from tempfile import TemporaryDirectory
@@ -24,6 +25,28 @@ def run_tests():
                 assert resolved == sample.resolve()
                 assert resolved.read_bytes() == b"%PDF-test"
                 assert resolve_stored_file("worksheets/missing.pdf") is None
+
+                remote_settings = {
+                    "bucket": "test-bucket",
+                    "access_key": "test-access",
+                    "secret_key": "test-secret",
+                    "endpoint_url": None,
+                    "region": "us-east-1",
+                }
+                fake_client = SimpleNamespace(
+                    get_object=lambda **kwargs: {
+                        "Body": BytesIO(b"durable-file-content")
+                    }
+                )
+                with patch(
+                    "alrayyan.services.file_storage._storage_settings",
+                    return_value=remote_settings,
+                ), patch(
+                    "alrayyan.services.file_storage._client",
+                    return_value=fake_client,
+                ):
+                    remote_file = resolve_stored_file("worksheets/remote.pdf")
+                    assert remote_file.read() == b"durable-file-content"
 
                 try:
                     resolve_stored_file("../outside.pdf")
