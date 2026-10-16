@@ -14,35 +14,33 @@ depends_on = None
 
 
 def upgrade():
-    op.alter_column(
-        "tutor_messages",
-        "prompt_version",
-        existing_type=sa.String(length=30),
-        type_=sa.String(length=100),
-        existing_nullable=True,
-    )
+    with op.batch_alter_table("tutor_messages") as batch_op:
+        batch_op.alter_column(
+            "prompt_version",
+            existing_type=sa.String(length=30),
+            type_=sa.String(length=100),
+            existing_nullable=True,
+        )
 
 
 def downgrade():
     # Refuse to narrow the column if longer values exist; never truncate metadata.
-    op.execute(
-        """
-        DO $$
-        BEGIN
-            IF EXISTS (
-                SELECT 1 FROM tutor_messages
-                WHERE length(prompt_version) > 30
-            ) THEN
-                RAISE EXCEPTION
-                    'Cannot downgrade prompt_version: values longer than 30 characters exist.';
-            END IF;
-        END $$;
-        """
-    )
-    op.alter_column(
-        "tutor_messages",
-        "prompt_version",
-        existing_type=sa.String(length=100),
-        type_=sa.String(length=30),
-        existing_nullable=True,
-    )
+    connection = op.get_bind()
+    has_long_values = connection.execute(
+        sa.text(
+            "SELECT 1 FROM tutor_messages "
+            "WHERE length(prompt_version) > 30 LIMIT 1"
+        )
+    ).first()
+    if has_long_values:
+        raise RuntimeError(
+            "Cannot downgrade prompt_version: values longer than 30 characters exist."
+        )
+
+    with op.batch_alter_table("tutor_messages") as batch_op:
+        batch_op.alter_column(
+            "prompt_version",
+            existing_type=sa.String(length=100),
+            type_=sa.String(length=30),
+            existing_nullable=True,
+        )
