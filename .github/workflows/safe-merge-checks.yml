@@ -17,6 +17,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Build Docker image and verify bundled OCR tools
+        run: |
+          docker build -t alrayyan-platform-test .
+          docker run --rm --entrypoint sh alrayyan-platform-test -c 'command -v tesseract && tesseract --list-langs | grep -Fx ara && tesseract --list-langs | grep -Fx eng'
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
