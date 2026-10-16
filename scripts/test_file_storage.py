@@ -1,10 +1,11 @@
 from pathlib import Path
+from unittest.mock import patch
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 
 from app import app
 from alrayyan.routes.learning import build_concept_map_svg
-from alrayyan.services.file_storage import resolve_stored_file
+from alrayyan.services.file_storage import resolve_stored_file, upload_to_object_storage
 
 
 def run_tests():
@@ -30,6 +31,24 @@ def run_tests():
                     pass
                 else:
                     raise AssertionError("Path traversal should be rejected")
+
+                original_require_durable = app.config.get("REQUIRE_DURABLE_UPLOADS", False)
+                app.config["REQUIRE_DURABLE_UPLOADS"] = True
+                try:
+                    with patch(
+                        "alrayyan.services.file_storage._storage_settings",
+                        return_value=None,
+                    ):
+                        try:
+                            upload_to_object_storage(sample, "worksheets/sample.pdf")
+                        except RuntimeError as error:
+                            assert "التخزين الدائم" in str(error)
+                        else:
+                            raise AssertionError(
+                                "Production upload must fail when durable storage is missing"
+                            )
+                finally:
+                    app.config["REQUIRE_DURABLE_UPLOADS"] = original_require_durable
 
                 concept_map = SimpleNamespace(
                     id=1,
