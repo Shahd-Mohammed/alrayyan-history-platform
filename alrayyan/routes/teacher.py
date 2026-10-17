@@ -11,6 +11,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    session,
     url_for,
 )
 from flask_login import current_user, login_required
@@ -21,7 +22,7 @@ from alrayyan.models import (
     Lesson, TutorConversation, TutorMessage, TutorMessageSource, Unit,
     XPTransaction,
 )
-from alrayyan.services.grade_access import lessons_for_user, student_can_access_lesson
+from alrayyan.services.grade_access import (lessons_for_user, student_can_access_lesson, student_available_grades, student_grade, normalize_grade)
 from alrayyan.services.tutor_engine import tutor_reply
 from alrayyan.services.datetime_utils import as_utc_naive
 
@@ -50,6 +51,22 @@ def restrict_ai_tutor_to_students():
 
 def utc_now():
     return datetime.now(timezone.utc)
+
+
+@teacher_bp.get("/select-grade/<grade>")
+@login_required
+def select_student_grade(grade):
+    """Let a student switch only to a grade where they have an active enrollment."""
+    if current_user.role != "student":
+        abort(403)
+    normalized = normalize_grade(grade)
+    if normalized not in student_available_grades(current_user):
+        abort(404)
+    session["student_selected_grade"] = normalized
+    next_path = request.args.get("next", "")
+    if next_path.startswith("/") and not next_path.startswith("//"):
+        return redirect(next_path)
+    return redirect(url_for("teacher.teacher_page"))
 
 
 def get_owned_conversation_or_404(conversation_id):
@@ -245,6 +262,8 @@ def teacher_page():
         initial_lesson_id=initial_lesson_id,
         initial_concept=initial_concept,
         review_mode=review_mode,
+        available_grades=student_available_grades(current_user),
+        selected_student_grade=student_grade(current_user),
     )
 
 
