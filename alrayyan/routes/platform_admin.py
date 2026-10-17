@@ -667,7 +667,7 @@ def create_invitation_batch(emails, classroom_id, valid_days):
     if renewed_count:
         flash(
             f"تم تجديد {renewed_count} دعوة سابقة وإصدار روابط جديدة؛ "
-            "سيُرسل النظام الروابط الجديدة إلى عناوين البريد إذا كانت إعدادات SMTP صحيحة.",
+            "سيُرسل النظام الروابط الجديدة إذا كانت إعدادات البريد الإلكتروني صحيحة.",
             "info",
         )
 
