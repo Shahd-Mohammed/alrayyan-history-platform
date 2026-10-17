@@ -42,15 +42,26 @@ with app.app_context():
     db.session.flush()
     db.session.add(ClassEnrollment(classroom_id=classroom.id, student_id=student.id))
 
-    curriculum = Curriculum(created_by_id=teacher.id, name="منهج تجريبي", subject="تاريخ", grade="11", semester="1", academic_year="2026", version="test")
+    curriculum = Curriculum(created_by_id=teacher.id, name="منهج تجريبي", subject="تاريخ", grade="11", semester="1", academic_year="2026", version="test", is_active=True, processing_status="ready")
     db.session.add(curriculum)
     db.session.flush()
     unit = Unit(curriculum_id=curriculum.id, title="وحدة", order_index=1)
     db.session.add(unit)
     db.session.flush()
-    lesson = Lesson(unit_id=unit.id, title="درس", slug="lifecycle-test", order_index=1, is_published=True)
+    lesson = Lesson(unit_id=unit.id, title="درس الحادي عشر", slug="lifecycle-test-grade11", order_index=1, is_published=True)
     db.session.add(lesson)
     db.session.flush()
+
+    curriculum12 = Curriculum(created_by_id=teacher.id, name="منهج الصف الثاني عشر", subject="تاريخ", grade="12", semester="2", academic_year="2026", version="test-12", is_active=True, processing_status="ready")
+    db.session.add(curriculum12)
+    db.session.flush()
+    unit12 = Unit(curriculum_id=curriculum12.id, title="وحدة الثاني عشر", order_index=1)
+    db.session.add(unit12)
+    db.session.flush()
+    lesson12 = Lesson(unit_id=unit12.id, title="درس الثاني عشر", slug="lifecycle-test-grade12", order_index=1, is_published=True)
+    db.session.add(lesson12)
+    db.session.flush()
+
     worksheet = Worksheet(lesson_id=lesson.id, created_by_id=teacher.id, title="ورقة مؤقتة", publication_status="published", is_published=True, time_limit_minutes=10)
     db.session.add(worksheet)
     db.session.commit()
@@ -60,6 +71,23 @@ client = app.test_client()
 with client.session_transaction() as session:
     session["_user_id"] = str(teacher_id)
     session["_fresh"] = True
+    session["teacher_selected_grade"] = "11"
+
+# Worksheet lesson selectors must not leak the other grade or use its semester.
+response = client.get("/teacher-dashboard/worksheets/upload")
+assert response.status_code == 200, response.status_code
+assert "درس الحادي عشر".encode() in response.data
+assert "درس الثاني عشر".encode() not in response.data
+
+with client.session_transaction() as session:
+    session["teacher_selected_grade"] = "12"
+response = client.get("/teacher-dashboard/worksheets/upload")
+assert response.status_code == 200, response.status_code
+assert "درس الثاني عشر".encode() in response.data
+assert "درس الحادي عشر".encode() not in response.data
+
+with client.session_transaction() as session:
+    session["teacher_selected_grade"] = "11"
 
 response = client.post(f"/teacher-dashboard/worksheets/{worksheet_id}/archive")
 assert response.status_code == 302

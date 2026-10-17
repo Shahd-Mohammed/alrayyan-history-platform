@@ -13,6 +13,9 @@ from app import app  # noqa: E402
 from alrayyan.extensions import db  # noqa: E402
 from alrayyan.models import (  # noqa: E402
     CharacterAttempt,
+    ClassEnrollment,
+    Classroom,
+    StudentInvitation,
     Curriculum,
     HistoricalCharacter,
     Lesson,
@@ -36,8 +39,28 @@ with app.app_context():
     regular_admin.set_password("regular-admin-password-123")
     student = User(full_name="طالبة تجريبية", email="student@example.com", role="student")
     student.set_password("student-password-123")
-    db.session.add_all([teacher, admin, second_owner, regular_admin, student])
+    orphaned_student = User(full_name="طالبة بحاجة لإعادة ربط", email="orphaned@example.com", role="student")
+    orphaned_student.set_password("orphaned-password-123")
+    db.session.add_all([teacher, admin, second_owner, regular_admin, student, orphaned_student])
     db.session.flush()
+
+    classroom = Classroom(
+        teacher_id=teacher.id,
+        name="صف إعادة الربط",
+        grade="11",
+        academic_year="2026",
+        is_active=True,
+    )
+    db.session.add(classroom)
+    db.session.flush()
+    old_invitation, _ = StudentInvitation.create(
+        teacher.id, orphaned_student.email, classroom.id, valid_days=7
+    )
+    old_invitation.accepted_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    # Simulate a deleted classroom: the account and accepted invitation survive,
+    # while the classroom foreign key becomes null and enrollment is gone.
+    old_invitation.classroom_id = None
+    db.session.add(old_invitation)
 
     curriculum = Curriculum(
         created_by_id=teacher.id,
@@ -110,6 +133,8 @@ with app.app_context():
         "second_owner": second_owner.id,
         "regular_admin": regular_admin.id,
         "student": student.id,
+        "orphaned_student": orphaned_student.id,
+        "classroom": classroom.id,
         "curriculum": curriculum.id,
         "character": character.id,
         "clean_curriculum": clean_curriculum.id,
@@ -131,6 +156,40 @@ def login_as(user_id):
 login_as(ids["teacher"])
 response = client.get("/teacher-dashboard/platform/admins")
 assert response.status_code == 403
+
+# Existing student accounts can be safely re-linked to a selected class without
+# creating duplicate accounts/invitations or touching prior attempts and scores.
+with client.session_transaction() as session:
+    session["teacher_selected_grade"] = "11"
+response = client.post(
+    "/teacher-dashboard/platform/invitations",
+    data={
+        "emails": "student@example.com",
+        "classroom_id": str(ids["classroom"]),
+        "valid_days": "7",
+    },
+)
+assert response.status_code == 200, response.status_code
+with app.app_context():
+    assert ClassEnrollment.query.filter_by(
+        classroom_id=ids["classroom"], student_id=ids["student"]
+    ).first() is not None
+    assert StudentInvitation.query.filter_by(email="student@example.com").first() is None
+
+# The teacher can identify a previously accepted student whose class link was lost,
+# then restore the enrollment without recreating the account.
+response = client.get("/teacher-dashboard/platform/invitations")
+assert response.status_code == 200, response.status_code
+assert "طالبة بحاجة لإعادة ربط".encode() in response.data
+response = client.post(
+    f"/teacher-dashboard/platform/invitations/relink/{ids['orphaned_student']}",
+    data={"classroom_id": str(ids["classroom"])},
+)
+assert response.status_code == 302, response.status_code
+with app.app_context():
+    assert ClassEnrollment.query.filter_by(
+        classroom_id=ids["classroom"], student_id=ids["orphaned_student"]
+    ).first() is not None
 
 # Deleting a curriculum must not cascade-delete character attempts or student XP history.
 response = client.post(f"/teacher-dashboard/platform/curricula/{ids['curriculum']}/delete")

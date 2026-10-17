@@ -13,13 +13,14 @@ from uuid import uuid4
 from io import BytesIO, StringIO
 
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
+from sqlalchemy import func
 from alrayyan.services.grade_access import (selected_management_grade, normalize_grade, lesson_ids_for_grade, curriculum_ids_for_grade, classroom_ids_for_grade, student_ids_for_grade)
 from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
 from alrayyan.forms import ClassroomForm, ConceptMapForm, ConceptMapUploadForm, CurriculumUploadForm, HistoricalCharacterForm, InvitationForm, LearningResourceForm, PlatformSettingsForm
 from alrayyan.services.file_storage import upload_to_object_storage
-from alrayyan.models import CharacterAttempt, Classroom, ConceptMap, DateReview, HistoricalDate, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
+from alrayyan.models import CharacterAttempt, ClassEnrollment, Classroom, ConceptMap, DateReview, HistoricalDate, ConceptMapEdge, ConceptMapNode, ConceptMastery, ContentChunk, Curriculum, HistoricalCharacter, HonorBoardEntry, LearningResource, Lesson, PlatformSettings, SourceDocument, StudentInvitation, TutorConversation, TutorMessage, LearningPlanItem, Unit, User, Worksheet, WorksheetAttempt, ChallengeSession, XPTransaction
 from alrayyan.services.document_reader import calculate_checksum, extract_docx, extract_pdf
 from alrayyan.services.text_processing import chunk_text, create_text_hash
 from alrayyan.services.curriculum_processing import process_source_document
@@ -660,28 +661,138 @@ def invitations():
     query = StudentInvitation.query if current_user.role == "admin" else StudentInvitation.query.filter_by(teacher_id=current_user.id)
     selected_classroom_ids = classroom_ids_for_grade(selected_management_grade(), teacher_id=None if current_user.role == "admin" else current_user.id, active_only=False)
     query = query.filter(StudentInvitation.classroom_id.in_(selected_classroom_ids or [-1]))
-    return render_template("platform/invitations.html", form=form, invitations=query.order_by(StudentInvitation.created_at.desc()).limit(200).all(), invitation_urls=invitation_urls, classrooms=classes)
+
+    # Accepted invitations whose students no longer have an active membership
+    # in this grade can reveal accounts left behind after a classroom was removed.
+    selected_grade = selected_management_grade()
+    accepted_invitations = StudentInvitation.query.filter(
+        StudentInvitation.teacher_id == current_user.id,
+        StudentInvitation.accepted_at.isnot(None),
+    ).all()
+    # Only show missing links for this grade. An invitation still attached to a
+    # different-grade classroom is not an orphan in the current workspace.
+    accepted_emails = list({
+        (row.email or "").strip().lower()
+        for row in accepted_invitations
+        if row.classroom_id is None
+        or row.classroom is None
+        or normalize_grade(row.classroom.grade) == selected_grade
+    })
+    enrolled_student_ids = set(student_ids_for_grade(
+        selected_grade,
+        teacher_id=None if current_user.role == "admin" else current_user.id,
+        active_only=True,
+    ))
+    candidates = User.query.filter(
+        User.role == "student",
+        User.is_active_account.is_(True),
+        func.lower(User.email).in_(accepted_emails or [""]),
+    ).order_by(User.full_name.asc()).all() if accepted_emails else []
+    orphaned_students = [
+        student for student in candidates if student.id not in enrolled_student_ids
+    ]
+
+    return render_template(
+        "platform/invitations.html",
+        form=form,
+        invitations=query.order_by(StudentInvitation.created_at.desc()).limit(200).all(),
+        invitation_urls=invitation_urls,
+        classrooms=classes,
+        orphaned_students=orphaned_students,
+    )
+
+
+@platform_admin_bp.post("/invitations/relink/<int:student_id>")
+def relink_existing_student(student_id):
+    """Restore a previously invited student to an active classroom without recreating the account."""
+    classroom_id = request.form.get("classroom_id", type=int)
+    classroom_query = Classroom.query.filter_by(id=classroom_id, is_active=True)
+    if current_user.role != "admin":
+        classroom_query = classroom_query.filter_by(teacher_id=current_user.id)
+    classroom = classroom_query.first_or_404()
+    if normalize_grade(classroom.grade) != selected_management_grade():
+        abort(403)
+
+    student = User.query.filter_by(
+        id=student_id,
+        role="student",
+        is_active_account=True,
+    ).first_or_404()
+    prior_invitation = StudentInvitation.query.filter(
+        StudentInvitation.teacher_id == current_user.id,
+        func.lower(StudentInvitation.email) == (student.email or "").strip().lower(),
+        StudentInvitation.accepted_at.isnot(None),
+    ).first()
+    if prior_invitation is None:
+        abort(403)
+
+    enrollment = ClassEnrollment.query.filter_by(
+        classroom_id=classroom.id,
+        student_id=student.id,
+    ).first()
+    if enrollment is None:
+        db.session.add(ClassEnrollment(
+            classroom_id=classroom.id,
+            student_id=student.id,
+        ))
+        db.session.commit()
+        flash(
+            f"رجعنا ربط حساب {student.first_name} بالصف المختار، واحتفظنا بتقدّمها ونتائجها.",
+            "success",
+        )
+    else:
+        flash("الطالبة مرتبطة بهذا الصف بالفعل؛ لم تتغير بياناتها.", "info")
+    return redirect(url_for("platform_admin.invitations"))
 
 
 def create_invitation_batch(emails, classroom_id, valid_days):
-    existing = {
-        row.email
-        for row in User.query.filter(User.email.in_(emails)).all()
-    } if emails else set()
+    normalized_emails = list(dict.fromkeys(
+        (email or "").strip().lower() for email in emails if (email or "").strip()
+    ))
+    classroom_query = Classroom.query.filter_by(id=classroom_id, is_active=True)
+    if current_user.role != "admin":
+        classroom_query = classroom_query.filter_by(teacher_id=current_user.id)
+    classroom = classroom_query.first()
+    if classroom is None or normalize_grade(classroom.grade) != selected_management_grade():
+        raise ValueError("اختاري صفًا نشطًا تابعًا لمساحة الصف الحالية.")
+
+    existing_users = {
+        (row.email or "").strip().lower(): row
+        for row in User.query.filter(func.lower(User.email).in_(normalized_emails)).all()
+    } if normalized_emails else {}
     pending = StudentInvitation.query.filter(
         StudentInvitation.teacher_id == current_user.id,
-        StudentInvitation.email.in_(emails),
+        func.lower(StudentInvitation.email).in_(normalized_emails),
         StudentInvitation.accepted_at.is_(None),
         StudentInvitation.expires_at > datetime.utcnow(),
-    ).all() if emails else []
+    ).all() if normalized_emails else []
     pending_by_email = {}
     for row in pending:
-        pending_by_email.setdefault(row.email, []).append(row)
+        pending_by_email.setdefault(row.email.strip().lower(), []).append(row)
 
     invitation_urls = []
     renewed_count = 0
-    for email in emails:
-        if email in existing:
+    linked_count = 0
+    already_linked_count = 0
+    for email in normalized_emails:
+        existing_user = existing_users.get(email)
+        if existing_user is not None:
+            # An existing student account can be re-linked to the class when
+            # the teacher explicitly submits that email and chooses this class.
+            # Never create duplicate memberships or modify the account/results.
+            if existing_user.role == "student" and existing_user.is_active_account:
+                enrollment = ClassEnrollment.query.filter_by(
+                    classroom_id=classroom.id,
+                    student_id=existing_user.id,
+                ).first()
+                if enrollment is None:
+                    db.session.add(ClassEnrollment(
+                        classroom_id=classroom.id,
+                        student_id=existing_user.id,
+                    ))
+                    linked_count += 1
+                else:
+                    already_linked_count += 1
             continue
 
         # A valid invitation previously created for this address has a token
@@ -694,7 +805,7 @@ def create_invitation_batch(emails, classroom_id, valid_days):
             renewed_count += 1
 
         invitation, token = StudentInvitation.create(
-            current_user.id, email, classroom_id, valid_days
+            current_user.id, email, classroom.id, valid_days
         )
         db.session.add(invitation)
         invitation_urls.append({
@@ -707,12 +818,23 @@ def create_invitation_batch(emails, classroom_id, valid_days):
         })
 
     db.session.commit()
-    if not invitation_urls:
+    if linked_count:
         flash(
-            f"لم تُنشأ دعوات لأن جميع العناوين ({len(existing)}) لديها حسابات موجودة. "
-            "لن تُرسل دعوات لهذه الحسابات.",
-            "warning",
+            f"تم ربط {linked_count} طالبة مسجّلة مسبقًا بالصف المختار، "
+            "مع الاحتفاظ بحساباتهن ونتائجهن.",
+            "success",
         )
+    if already_linked_count:
+        flash(
+            f"{already_linked_count} طالبة مسجّلة بالفعل في هذا الصف؛ لم يتكرر الربط.",
+            "info",
+        )
+    if not invitation_urls:
+        if not linked_count and not already_linked_count:
+            flash(
+                "لم تُنشأ دعوات جديدة. تحققي من أن العناوين تخص حسابات طالبات نشطات.",
+                "warning",
+            )
         return []
 
     if renewed_count:
