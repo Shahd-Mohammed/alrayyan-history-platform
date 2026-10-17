@@ -319,6 +319,7 @@ def test_bank():
     recent_sessions = (
         ChallengeSession.query
         .filter_by(student_id=current_user.id, status="completed")
+        .filter(ChallengeSession.lesson_id.in_(visible_lesson_ids or [-1]))
         .order_by(ChallengeSession.completed_at.desc())
         .limit(6)
         .all()
@@ -375,6 +376,7 @@ def start():
                     "الدرس احتياطي",
                     "الوحدة — الدرس احتياطي",
                 }),
+                Lesson.id.in_(lessons_for_user(current_user, active_only=True) or [-1]),
             )
             .order_by(db.func.random())
             .first()
@@ -386,9 +388,11 @@ def start():
             if raw_lesson_id.isdigit()
             else None
         )
+        if lesson is not None and lesson.id not in set(lessons_for_user(current_user, active_only=True)):
+            lesson = None
 
     if lesson is None:
-        flash("يرجى اختيار درس يحتوي محتوى قابلًا للبحث.", "error")
+        flash("يرجى اختيار درس يحتوي محتوى قابلًا للبحث من صفك.", "error")
         return redirect(url_for("challenges.setup"))
 
     session = ChallengeSession(
