@@ -9,11 +9,11 @@
     <div class="honor-create-heading"><span class="honor-medal">✦</span><div><span class="honor-eyebrow">تكريم يصنع فرقًا</span><h2>إضافة بطاقة تكريم</h2><p>أضيفي تقديرًا شخصيًا إلى الإنجازات التي ترصدها المنصة تلقائيًا.</p></div></div>
     <form method="post" class="platform-form honor-create-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>الطالبة<select name="student_id" required>{% for student in students %}<option value="{{ student.id }}">{{ student.full_name }}</option>{% endfor %}</select></label>
+      <label>الطالبة<select name="student_id" required {% if not students %}disabled{% endif %}><option value="">{% if students %}اختاري الطالبة{% else %}لا توجد طالبات ضمن صفوفك أو اختباراتك بعد{% endif %}</option>{% for student in students %}<option value="{{ student.id }}">{{ student.full_name }}</option>{% endfor %}</select></label>
       <label>نوع التكريم<select name="category"><option value="teacher_choice">اختيار المعلمة</option><option value="most_improved">الأكثر تحسنًا</option><option value="most_active">الأكثر نشاطًا</option><option value="challenge_star">بطلة التحديات</option><option value="consistency">نجمة المواظبة</option><option value="worksheet_star">متفوقة أوراق العمل</option></select></label>
       <label>الفترة<input name="period_label" placeholder="الأسبوع الأول أو سبتمبر"></label>
       <label>كلمة تقدير<textarea name="note" maxlength="300" placeholder="اكتبي كلمة تشجيعية قصيرة..."></textarea></label>
-      <button class="platform-gold-button honor-submit-button" type="submit"><span>✦</span> إضافة إلى لوحة الشرف</button>
+      <button class="platform-gold-button honor-submit-button" type="submit" {% if not students %}disabled{% endif %}><span>✦</span> إضافة إلى لوحة الشرف</button>
     </form>
   </section>
   <section class="platform-panel honor-entries-panel">
