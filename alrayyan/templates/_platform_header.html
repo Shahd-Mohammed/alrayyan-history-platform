@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261017-mobile-menu-close-fix-1') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261017-menu-close-grade-qa-2') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -131,10 +131,20 @@
             });
         });
 
-        // A navigation choice closes the mobile panel and its nested dropdowns.
-        menu.querySelectorAll("a").forEach((link) => {
-            link.addEventListener("click", closeMobileMenu);
-        });
+        // Close the mobile panel before any navigation handler runs.
+        // Capture phase makes this reliable even when a page adds its own click listeners.
+        menu.addEventListener("click", (event) => {
+            const link = event.target.closest("a");
+            if (!link || event.defaultPrevented || event.button !== 0 ||
+                event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ||
+                (link.target && link.target !== "_self")) return;
+            closeMobileMenu();
+        }, true);
+
+        // A page restored from the browser back/forward cache must never reopen
+        // a stale mobile panel or nested dropdown.
+        window.addEventListener("pagehide", closeMobileMenu);
+        window.addEventListener("pageshow", closeMobileMenu);
 
         // Close both the mobile panel and nested dropdowns when clicking outside.
         document.addEventListener("click", (event) => {
