@@ -5,7 +5,7 @@
     --challenge-blue: #1c416d;
     --challenge-gold: #d4a33d;
     --challenge-gold-dark: #a9781f;
-    --challenge-cream: #fbf7ee;
+    --challenge-cream: #FFF9E9;
     --challenge-white: #fff;
     --challenge-text: #142b49;
     --challenge-muted: #6a7484;
@@ -21,10 +21,7 @@ body {
     margin: 0;
     min-height: 100vh;
     color: var(--challenge-text);
-    background:
-        radial-gradient(circle at 10% 10%, rgba(212, 163, 61, 0.16), transparent 25%),
-        radial-gradient(circle at 90% 35%, rgba(28, 65, 109, 0.10), transparent 28%),
-        var(--challenge-cream);
+    background: var(--challenge-cream);
     font-family: "IBM Plex Sans Arabic", "Tahoma", sans-serif;
     font-size: 16px;
     line-height: 1.75;

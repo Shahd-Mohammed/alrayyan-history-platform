@@ -2,7 +2,7 @@
     --navy: #172f52;
     --navy-light: #284b76;
     --gold: #c99a3d;
-    --cream: #faf7f0;
+    --cream: #FFF9E9;
     --white: #ffffff;
     --text: #1d2c40;
     --muted: #6d7784;
@@ -324,13 +324,7 @@
 body {
     margin: 0;
     color: var(--text);
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(201, 154, 61, 0.12),
-            transparent 30rem
-        ),
-        var(--cream);
+    background: var(--cream);
     font-family: "IBM Plex Sans Arabic", sans-serif;
 }
 

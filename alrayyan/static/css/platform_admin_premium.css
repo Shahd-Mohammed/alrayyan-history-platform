@@ -3837,3 +3837,24 @@ button.concept-action,
   .platform-admin-body .admin-account-form > button { grid-column: 1 !important; }
   .platform-admin-body .admin-account-form > button[type="submit"] { width: 100% !important; }
 }
+
+/* Final cascade guard: navy actions must win over older admin theme rules. */
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish,
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish:hover,
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish:focus-visible,
+.platform-admin-body .platform-admin-page .concept-map-card-actions button.concept-action.publish,
+.platform-admin-body .platform-admin-page .test-center-page .test-card-action.archive,
+.platform-admin-body .platform-admin-page .test-center-page .test-card-action.archive:hover,
+.platform-admin-body .platform-admin-page .test-center-page .test-card-action.archive:focus-visible,
+.platform-admin-body .test-card-action.archive,
+.platform-admin-body .test-card-action.archive:hover,
+.platform-admin-body .test-card-action.archive:focus-visible {
+  background: #102746 !important;
+  background-image: none !important;
+  background-color: #102746 !important;
+  border: 1px solid #102746 !important;
+  color: #fff !important;
+  box-shadow: 0 6px 15px rgba(16,39,70,.16) !important;
+}
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish *,
+.platform-admin-body .test-card-action.archive * { color: #fff !important; }
