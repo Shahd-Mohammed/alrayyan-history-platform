@@ -72,6 +72,11 @@ def student_can_access_lesson(user, lesson):
 
 def selected_management_grade():
     """Remember the teacher's selected grade for all management pages."""
+    from flask_login import current_user
+
+    if not current_user.is_authenticated or current_user.role not in {"teacher", "admin"}:
+        return None
+
     requested = normalize_grade(request.args.get("grade"))
     if requested in {"11", "12"}:
         session["teacher_selected_grade"] = requested
