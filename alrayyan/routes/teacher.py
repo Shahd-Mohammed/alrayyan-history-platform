@@ -473,17 +473,24 @@ def send_tutor_message(conversation_id):
 @teacher_bp.post("/quick-quiz/start")
 @login_required
 def start_quick_quiz():
+    if current_user.role != "student":
+        abort(403)
     data = request.get_json(silent=True) or {}
+    visible_lesson_ids = set(lessons_for_user(current_user, active_only=True))
     raw_lesson_id = str(data.get("lesson_id") or "")
     lesson = db.session.get(Lesson, int(raw_lesson_id)) if raw_lesson_id.isdigit() else None
+    if lesson is not None and lesson.id not in visible_lesson_ids:
+        return jsonify({"success": False, "error": "هذا الدرس ليس ضمن صفك الدراسي."}), 403
     if lesson is None:
         weakest = (
             ConceptMastery.query.filter_by(student_id=current_user.id)
             .order_by(ConceptMastery.mastery_score.asc()).first()
         )
         lesson = weakest.lesson if weakest else None
+        if lesson is not None and lesson.id not in visible_lesson_ids:
+            lesson = None
     if lesson is None:
-        return jsonify({"success": False, "error": "اختاري درسًا للاختبار السريع."}), 400
+        return jsonify({"success": False, "error": "اختاري درسًا من صفك للاختبار السريع."}), 400
     session = ChallengeSession(
         student_id=current_user.id,
         lesson_id=lesson.id,
