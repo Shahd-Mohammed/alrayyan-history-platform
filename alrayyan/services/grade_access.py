@@ -145,10 +145,24 @@ def student_ids_for_grade(grade, teacher_id=None, active_only=True):
     if normalized not in {"11", "12"} or not classroom_ids:
         return []
 
+    target_student_ids = {
+        student_id for (student_id,) in
+        db.session.query(ClassEnrollment.student_id)
+        .filter(ClassEnrollment.classroom_id.in_(classroom_ids))
+        .distinct().all()
+    }
+    if not target_student_ids:
+        return []
+
+    # Check each target student's full active enrollment history, not only the
+    # currently selected teacher's classrooms, to catch cross-teacher conflicts.
     rows = (
         db.session.query(ClassEnrollment.student_id, Classroom.grade)
         .join(Classroom, Classroom.id == ClassEnrollment.classroom_id)
-        .filter(Classroom.id.in_(classroom_ids))
+        .filter(
+            Classroom.is_active.is_(True),
+            ClassEnrollment.student_id.in_(target_student_ids),
+        )
         .all()
     )
     grades_by_student = {}
@@ -157,7 +171,7 @@ def student_ids_for_grade(grade, teacher_id=None, active_only=True):
 
     # Exclude conflicting active-grade assignments from both workspaces.
     return [
-        student_id for student_id, grades in grades_by_student.items()
-        if grades == {normalized}
+        student_id for student_id in target_student_ids
+        if grades_by_student.get(student_id) == {normalized}
     ]
 
