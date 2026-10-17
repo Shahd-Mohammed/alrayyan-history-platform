@@ -6,6 +6,8 @@ migration and keeps existing enrollment records intact.
 """
 import re
 
+from flask import request, session
+
 from alrayyan.models import ClassEnrollment, Classroom, Curriculum, Lesson, Unit
 from alrayyan.extensions import db
 
@@ -67,3 +69,68 @@ def student_can_access_lesson(user, lesson):
         return False
     grade = student_grade(user)
     return grade is not None and normalize_grade(lesson.unit.curriculum.grade) == grade
+
+def selected_management_grade():
+    """Remember the teacher's selected grade for all management pages."""
+    requested = normalize_grade(request.args.get("grade"))
+    if requested in {"11", "12"}:
+        session["teacher_selected_grade"] = requested
+
+    selected = normalize_grade(session.get("teacher_selected_grade"))
+    if selected not in {"11", "12"}:
+        selected = "11"
+        session["teacher_selected_grade"] = selected
+    return selected
+
+
+def lesson_ids_for_grade(grade):
+    """Return lesson IDs whose owning curriculum matches the requested grade."""
+    normalized = normalize_grade(grade)
+    if normalized not in {"11", "12"}:
+        return []
+    rows = (
+        db.session.query(Lesson.id, Curriculum.grade)
+        .join(Unit, Unit.id == Lesson.unit_id)
+        .join(Curriculum, Curriculum.id == Unit.curriculum_id)
+        .all()
+    )
+    return [lesson_id for lesson_id, row_grade in rows if normalize_grade(row_grade) == normalized]
+
+
+def curriculum_ids_for_grade(grade):
+    """Return curriculum IDs for one normalized grade."""
+    normalized = normalize_grade(grade)
+    if normalized not in {"11", "12"}:
+        return []
+    rows = db.session.query(Curriculum.id, Curriculum.grade).all()
+    return [curriculum_id for curriculum_id, row_grade in rows if normalize_grade(row_grade) == normalized]
+
+
+def classroom_ids_for_grade(grade, teacher_id=None, active_only=True):
+    """Return classroom IDs in one grade, optionally for one teacher."""
+    normalized = normalize_grade(grade)
+    if normalized not in {"11", "12"}:
+        return []
+    query = db.session.query(Classroom.id, Classroom.grade)
+    if active_only:
+        query = query.filter(Classroom.is_active.is_(True))
+    if teacher_id is not None:
+        query = query.filter(Classroom.teacher_id == teacher_id)
+    rows = query.all()
+    return [classroom_id for classroom_id, row_grade in rows if normalize_grade(row_grade) == normalized]
+
+
+def student_ids_for_grade(grade, teacher_id=None, active_only=True):
+    """Return enrolled student IDs for one grade without mixing class rosters."""
+    classroom_ids = classroom_ids_for_grade(
+        grade, teacher_id=teacher_id, active_only=active_only
+    )
+    if not classroom_ids:
+        return []
+    return [
+        student_id for (student_id,) in
+        db.session.query(ClassEnrollment.student_id)
+        .filter(ClassEnrollment.classroom_id.in_(classroom_ids))
+        .distinct().all()
+    ]
+
