@@ -908,6 +908,8 @@ def get_student_attempt_or_404(
         != current_user.id
     ):
         abort(403)
+    if not student_can_access_lesson(current_user, attempt.worksheet.lesson):
+        abort(404)
 
     return attempt
 
