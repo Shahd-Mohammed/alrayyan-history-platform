@@ -342,6 +342,9 @@ def send_tutor_message(conversation_id):
             db.session.flush()
         was_verifying_mastery = conversation.tutor_state == "verify_mastery"
         payload = tutor_reply(conversation, student_text)
+        # Keep verification tied to the concept currently being checked.
+        if was_verifying_mastery and conversation.current_concept:
+            payload["concept"] = conversation.current_concept
         awaiting_mastery_verification = (
             was_verifying_mastery
             and payload["evaluation"] != "correct"
