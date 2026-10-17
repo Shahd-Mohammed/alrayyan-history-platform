@@ -114,6 +114,7 @@
                     <span id="xp-badge"></span>
                     <a id="progress-link" class="gold-action" href="{{ url_for('teacher.learning_hub') }}">عرض تحديث خطتي</a>
                 </div>
+                <p class="tutor-scoring-note">للتوضيح: لكل مفهوم نسبة إتقان مستقلة، لذلك قد تبدأ نسبة مفهوم جديد من 0% من دون أن ينقص رصيدكِ أو تقدمكِ السابق. الخطأ لا يمحو إتقانكِ؛ نستخدمه لنعرف ما الذي يحتاج مراجعة، أما نقاط XP فهي رصيد منفصل تُضاف عند إكمال سؤال التحقق بنجاح.</p>
 
                 <form id="teacher-form" class="question-form">
                     <label for="question-input">اكتبي سؤالك أو أجيبي عن سؤال المعلم</label>
@@ -127,7 +128,7 @@
         </section>
     </main>
 
-    <script src="{{ url_for('static', filename='js/teacher.js', v='20261011-mastery-feedback-2') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/teacher.js', v='20261017-tutor-feedback-3') }}" defer></script>
     {% include '_platform_footer.html' %}
 </body>
 </html>

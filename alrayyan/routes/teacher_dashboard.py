@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from functools import wraps
 from pathlib import Path
 from uuid import uuid4
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from flask import (
     Blueprint,
@@ -14,6 +15,7 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
+from flask import session
 
 from alrayyan.extensions import db
 from alrayyan.forms import (
@@ -22,6 +24,7 @@ from alrayyan.forms import (
     UploadWorksheetForm,
 )
 from alrayyan.services.file_storage import upload_to_object_storage
+from alrayyan.services.grade_access import selected_management_grade, lesson_ids_for_grade, normalize_grade
 from alrayyan.models import (
     AboutPage,
     Curriculum,
@@ -37,6 +40,18 @@ teacher_dashboard_bp = Blueprint(
     __name__,
     url_prefix="/teacher-dashboard",
 )
+
+
+@teacher_dashboard_bp.before_request
+def remember_teacher_grade():
+    selected_management_grade()
+
+
+@teacher_dashboard_bp.app_context_processor
+def inject_selected_grade():
+    return {"selected_grade": selected_management_grade()}
+
+
 
 
 def teacher_required(view_function):
@@ -72,6 +87,9 @@ def get_teacher_worksheet_or_404(worksheet_id):
     )
 
     if worksheet is None:
+        abort(404)
+
+    if worksheet.lesson_id not in set(lesson_ids_for_grade(selected_management_grade())):
         abort(404)
 
     if (
@@ -193,6 +211,22 @@ def save_uploaded_file(
     }
 
 
+@teacher_dashboard_bp.get("/select-grade/<grade>")
+@teacher_required
+def select_grade(grade):
+    normalized = normalize_grade(grade)
+    if normalized not in {"11", "12"}:
+        abort(404)
+    session["teacher_selected_grade"] = normalized
+    next_path = request.args.get("next", "")
+    if next_path.startswith("/") and not next_path.startswith("//"):
+        parsed = urlsplit(next_path)
+        query_items = [(key, value) for key, value in parse_qsl(parsed.query, keep_blank_values=True) if key != "grade"]
+        safe_path = urlunsplit(("", "", parsed.path, urlencode(query_items), parsed.fragment))
+        return redirect(safe_path)
+    return redirect(url_for("teacher_dashboard.dashboard"))
+
+
 @teacher_dashboard_bp.get("/")
 @teacher_required
 def dashboard():
@@ -203,6 +237,7 @@ def dashboard():
 
     # Keep assessments in the test center; this dashboard is only for uploaded worksheets.
     query = Worksheet.query.filter(Worksheet.creation_method != "test")
+    query = query.filter(Worksheet.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
 
     if current_user.role != "admin":
         query = query.filter_by(

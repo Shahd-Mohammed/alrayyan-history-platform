@@ -13,6 +13,7 @@ from uuid import uuid4
 from io import BytesIO, StringIO
 
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
+from alrayyan.services.grade_access import (selected_management_grade, normalize_grade, lesson_ids_for_grade, curriculum_ids_for_grade, classroom_ids_for_grade, student_ids_for_grade)
 from flask_login import current_user, login_required
 
 from alrayyan.extensions import db
@@ -36,12 +37,14 @@ platform_admin_bp = Blueprint("platform_admin", __name__, url_prefix="/teacher-d
 def teacher_only():
     if current_user.role not in {"teacher", "admin"}:
         abort(403)
+    selected_management_grade()
 
 
 def teacher_curricula():
     query = Curriculum.query
     if current_user.role != "admin":
         query = query.filter((Curriculum.created_by_id == current_user.id) | (Curriculum.created_by_id.is_(None)))
+    query = query.filter(Curriculum.id.in_(curriculum_ids_for_grade(selected_management_grade()) or [-1]))
     return query
 
 
@@ -64,6 +67,7 @@ def teacher_lessons():
     # Admins manage shared platform curricula, including curricula uploaded
     # by another teacher. Non-admin teachers only see their own or shared
     # (ownerless) curricula, matching teacher_curricula().
+    query = query.filter(Lesson.id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
     if current_user.role != "admin":
         query = query.filter(
             (Curriculum.created_by_id == current_user.id)
@@ -169,12 +173,15 @@ def is_platform_owner(user):
 
 @platform_admin_bp.app_context_processor
 def inject_platform_owner_permission():
-    return {"is_platform_owner": is_platform_owner}
+    return {"is_platform_owner": is_platform_owner, "selected_grade": selected_management_grade()}
 
 @platform_admin_bp.route("/curricula", methods=["GET", "POST"])
 def curricula():
     form = CurriculumUploadForm()
     if form.validate_on_submit():
+        if normalize_grade(form.grade.data) != selected_management_grade():
+            flash("اختاري تبويب الصف المطابق للمنهج الذي تريدين رفعه.", "error")
+            return redirect(url_for("platform_admin.curricula"))
         stored_path = None
         try:
             stored_path = None
@@ -439,16 +446,22 @@ def toggle_curriculum(curriculum_id):
 def classrooms():
     form = ClassroomForm()
     if form.validate_on_submit():
+        if normalize_grade(form.grade.data) != selected_management_grade():
+            flash("اختاري تبويب الصف المطابق للفصل الذي تريدين إنشاءه.", "error")
+            return redirect(url_for("platform_admin.classrooms"))
         db.session.add(Classroom(teacher_id=current_user.id, name=form.name.data.strip(), grade=form.grade.data.strip(), academic_year=form.academic_year.data.strip(), whatsapp_url=(form.whatsapp_url.data or "").strip() or None))
         db.session.commit(); flash("تم إنشاء الصف", "success")
         return redirect(url_for("platform_admin.classrooms"))
     query = Classroom.query if current_user.role == "admin" else Classroom.query.filter_by(teacher_id=current_user.id)
+    query = query.filter(Classroom.id.in_(classroom_ids_for_grade(selected_management_grade(), teacher_id=None if current_user.role == "admin" else current_user.id, active_only=False) or [-1]))
     return render_template("platform/classrooms.html", form=form, classrooms=query.order_by(Classroom.created_at.desc()).all())
 
 
 @platform_admin_bp.post("/classrooms/<int:classroom_id>/delete")
 def delete_classroom(classroom_id):
     classroom = Classroom.query.filter_by(id=classroom_id, teacher_id=current_user.id).first_or_404()
+    if classroom.id not in set(classroom_ids_for_grade(selected_management_grade(), teacher_id=current_user.id, active_only=False)):
+        abort(404)
     try:
         # Removing a class only removes enrollments; student accounts and worksheet results stay intact.
         db.session.delete(classroom)
@@ -604,7 +617,7 @@ def extract_invitation_emails(upload):
 @platform_admin_bp.route("/invitations", methods=["GET", "POST"])
 def invitations():
     form = InvitationForm()
-    classes = Classroom.query.filter_by(teacher_id=current_user.id, is_active=True).all()
+    classes = Classroom.query.filter(Classroom.id.in_(classroom_ids_for_grade(selected_management_grade(), teacher_id=current_user.id, active_only=True) or [-1])).all()
     form.classroom_id.choices = [(0, "اختاري الصف")] + [(row.id, row.name) for row in classes]
     invitation_urls = []
     upload = request.files.get("emails_file")
@@ -645,6 +658,8 @@ def invitations():
             else:
                 invitation_urls = create_invitation_batch(emails, classroom_id, form.valid_days.data)
     query = StudentInvitation.query if current_user.role == "admin" else StudentInvitation.query.filter_by(teacher_id=current_user.id)
+    selected_classroom_ids = classroom_ids_for_grade(selected_management_grade(), teacher_id=None if current_user.role == "admin" else current_user.id, active_only=False)
+    query = query.filter(StudentInvitation.classroom_id.in_(selected_classroom_ids or [-1]))
     return render_template("platform/invitations.html", form=form, invitations=query.order_by(StudentInvitation.created_at.desc()).limit(200).all(), invitation_urls=invitation_urls, classrooms=classes)
 
 
@@ -758,6 +773,7 @@ def resources():
         except Exception as error:
             db.session.rollback(); flash(f"تعذر رفع الملف: {error}", "error")
     query = LearningResource.query if current_user.role == "admin" else LearningResource.query.filter_by(created_by_id=current_user.id)
+    query = query.filter(LearningResource.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
     return render_template("platform/resources.html", form=form, resources=query.order_by(LearningResource.created_at.desc()).all())
 
 
@@ -767,6 +783,8 @@ def owned_content_or_404(model, row_id):
         abort(404)
     if current_user.role != "admin" and row.created_by_id != current_user.id:
         abort(403)
+    if hasattr(row, "lesson_id") and row.lesson_id not in set(lesson_ids_for_grade(selected_management_grade())):
+        abort(404)
     return row
 
 
@@ -831,6 +849,7 @@ def concept_maps():
             db.session.commit(); flash("تم إنشاء الخريطة المفاهيمية", "success")
             return redirect(url_for("platform_admin.concept_maps"))
     query = ConceptMap.query if current_user.role == "admin" else ConceptMap.query.filter_by(created_by_id=current_user.id)
+    query = query.filter(ConceptMap.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
     status_filter = (request.args.get("status") or "all").strip().lower()
     if status_filter not in {"all", "draft", "published"}:
         status_filter = "all"
@@ -1040,6 +1059,7 @@ def characters():
         db.session.commit(); flash("تم حفظ الشخصية التاريخية", "success")
         return redirect(url_for("platform_admin.characters"))
     query = HistoricalCharacter.query if current_user.role == "admin" else HistoricalCharacter.query.filter_by(created_by_id=current_user.id)
+    query = query.filter(HistoricalCharacter.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
     return render_template("platform/characters.html", form=form, characters=query.order_by(HistoricalCharacter.created_at.desc()).all())
 
 
@@ -1213,15 +1233,14 @@ def admins():
 @platform_admin_bp.get("/analytics")
 def analytics():
     """Summarize assessment, practice, AI tutor, character, and points activity."""
-    worksheet_query = Worksheet.query
+    grade_lesson_ids = lesson_ids_for_grade(selected_management_grade())
+    worksheet_query = Worksheet.query.filter(Worksheet.lesson_id.in_(grade_lesson_ids or [-1]))
     if current_user.role != "admin":
         worksheet_query = worksheet_query.filter_by(created_by_id=current_user.id)
     owned_worksheets = worksheet_query.all()
     worksheet_ids = [item.id for item in owned_worksheets]
 
-    classroom_query = Classroom.query
-    if current_user.role != "admin":
-        classroom_query = classroom_query.filter_by(teacher_id=current_user.id)
+    classroom_query = Classroom.query.filter(Classroom.id.in_(classroom_ids_for_grade(selected_management_grade(), teacher_id=None if current_user.role == "admin" else current_user.id, active_only=False) or [-1]))
     classrooms = classroom_query.all()
     student_ids = {
         enrollment.student_id
@@ -1238,12 +1257,14 @@ def analytics():
         )
 
     if current_user.role == "admin":
-        student_ids.update(
-            student_id for (student_id,) in
-            db.session.query(User.id).filter_by(
-                role="student", is_active_account=True
-            ).all()
-        )
+        student_ids.update(student_ids_for_grade(selected_management_grade(), active_only=True))
+
+    allowed_grade_students = set(student_ids_for_grade(
+        selected_management_grade(),
+        teacher_id=None if current_user.role == "admin" else current_user.id,
+        active_only=True,
+    ))
+    student_ids.intersection_update(allowed_grade_students)
 
     students = (
         User.query.filter(User.id.in_(student_ids), User.role == "student")
@@ -1254,8 +1275,9 @@ def analytics():
 
     all_attempts = []
     if scoped_student_ids:
-        all_attempts = WorksheetAttempt.query.filter(
+        all_attempts = WorksheetAttempt.query.join(Worksheet).filter(
             WorksheetAttempt.student_id.in_(scoped_student_ids),
+            Worksheet.lesson_id.in_(grade_lesson_ids or [-1]),
         ).all()
 
     all_transactions = (
@@ -1289,20 +1311,31 @@ def analytics():
             if not any(answer.is_correct is None for answer in attempt.answers)
         ]
         percentages = [attempt.percentage for attempt in graded_attempts]
-        mastery_rows = ConceptMastery.query.filter_by(student_id=student.id).all()
-        challenge_sessions = ChallengeSession.query.filter_by(
-            student_id=student.id
+        mastery_rows = ConceptMastery.query.filter(
+            ConceptMastery.student_id == student.id,
+            ConceptMastery.lesson_id.in_(grade_lesson_ids or [-1]),
+        ).all()
+        challenge_sessions = ChallengeSession.query.filter(
+            ChallengeSession.student_id == student.id,
+            ChallengeSession.lesson_id.in_(grade_lesson_ids or [-1]),
         ).all()
         challenges = [session for session in challenge_sessions if session.status == "completed"]
         tutor_interactions = TutorMessage.query.join(TutorConversation).filter(
             TutorConversation.student_id == student.id,
             TutorMessage.role == "student",
         ).count()
-        character_attempts = CharacterAttempt.query.filter_by(
-            student_id=student.id
+        character_attempts = CharacterAttempt.query.join(HistoricalCharacter).filter(
+            CharacterAttempt.student_id == student.id,
+            HistoricalCharacter.lesson_id.in_(grade_lesson_ids or [-1]),
         ).count()
-        date_reviews = DateReview.query.filter_by(student_id=student.id).count()
-        plan_items = LearningPlanItem.query.filter_by(student_id=student.id).all()
+        date_reviews = DateReview.query.join(HistoricalDate).filter(
+            DateReview.student_id == student.id,
+            HistoricalDate.lesson_id.in_(grade_lesson_ids or [-1]),
+        ).count()
+        plan_items = LearningPlanItem.query.filter(
+            LearningPlanItem.student_id == student.id,
+            LearningPlanItem.lesson_id.in_(grade_lesson_ids or [-1]),
+        ).all()
         plan_verifications = sum(1 for item in plan_items if item.verified_at is not None)
         student_transactions = [
             transaction for transaction in all_transactions
@@ -1322,6 +1355,7 @@ def analytics():
         )
         tutor_evaluated_answers = TutorMessage.query.join(TutorConversation).filter(
             TutorConversation.student_id == student.id,
+            TutorConversation.lesson_id.in_(grade_lesson_ids or [-1]),
             TutorMessage.role == "tutor",
             TutorMessage.evaluation.in_([
                 "correct", "partially_correct", "incorrect", "needs_explanation"
@@ -1416,10 +1450,7 @@ def analytics():
         "submissions": len(submitted_attempts),
         "average": round(sum(class_percentages) / len(class_percentages), 1)
         if class_percentages else 0.0,
-        "challenge_completions": sum(
-            ChallengeSession.query.filter_by(student_id=student.id, status="completed").count()
-            for student in students
-        ),
+        "challenge_completions": sum(row["challenge_count"] for row in rows),
         "tutor_interactions": total_tutor_interactions,
         "challenge_answers": sum(row["challenge_answers"] for row in rows),
         "tutor_evaluated_answers": sum(row["tutor_evaluated_answers"] for row in rows),
@@ -1438,9 +1469,7 @@ def analytics():
 
 @platform_admin_bp.route("/honor-board", methods=["GET", "POST"])
 def honor_board():
-    classrooms_query = Classroom.query.filter_by(is_active=True)
-    if current_user.role != "admin":
-        classrooms_query = classrooms_query.filter_by(teacher_id=current_user.id)
+    classrooms_query = Classroom.query.filter(Classroom.id.in_(classroom_ids_for_grade(selected_management_grade(), teacher_id=None if current_user.role == "admin" else current_user.id, active_only=True) or [-1]))
     classrooms = classrooms_query.all()
     student_ids = {
         enrollment.student_id
@@ -1449,17 +1478,13 @@ def honor_board():
     }
 
     if current_user.role == "admin":
-        student_ids.update(
-            student_id for (student_id,) in
-            db.session.query(User.id).filter_by(
-                role="student", is_active_account=True
-            ).all()
-        )
+        student_ids.update(student_ids_for_grade(selected_management_grade(), active_only=True))
     else:
         # Include active students who have submitted work in this teacher's
         # assessments, even if a class enrollment has not been linked yet.
-        teacher_worksheet_ids = db.session.query(Worksheet.id).filter_by(
-            created_by_id=current_user.id
+        teacher_worksheet_ids = db.session.query(Worksheet.id).filter(
+            Worksheet.created_by_id == current_user.id,
+            Worksheet.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]),
         )
         student_ids.update(
             student_id for (student_id,) in
@@ -1467,6 +1492,13 @@ def honor_board():
             .filter(WorksheetAttempt.worksheet_id.in_(teacher_worksheet_ids))
             .distinct().all()
         )
+
+    allowed_grade_students = set(student_ids_for_grade(
+        selected_management_grade(),
+        teacher_id=None if current_user.role == "admin" else current_user.id,
+        active_only=True,
+    ))
+    student_ids.intersection_update(allowed_grade_students)
 
     students = (
         User.query.filter(
@@ -1494,8 +1526,10 @@ def honor_board():
         flash("تمت إضافة الطالبة إلى لوحة الشرف.", "success")
         return redirect(url_for("platform_admin.honor_board"))
 
-    entries = HonorBoardEntry.query.filter_by(
-        teacher_id=current_user.id, is_active=True
+    entries = HonorBoardEntry.query.filter(
+        HonorBoardEntry.teacher_id == current_user.id,
+        HonorBoardEntry.is_active.is_(True),
+        HonorBoardEntry.student_id.in_(allowed_student_ids or [-1]),
     ).order_by(HonorBoardEntry.created_at.desc()).all()
     return render_template(
         "platform/honor_board.html",
@@ -1507,6 +1541,8 @@ def honor_board():
 @platform_admin_bp.post("/honor-board/<int:entry_id>/remove")
 def remove_honor_entry(entry_id):
     row = HonorBoardEntry.query.filter_by(id=entry_id, teacher_id=current_user.id).first_or_404()
+    if row.student_id not in set(student_ids_for_grade(selected_management_grade(), teacher_id=current_user.id)):
+        abort(404)
     row.is_active = False
     db.session.commit(); flash("تمت إزالة البطاقة من لوحة الشرف.", "success")
     return redirect(url_for("platform_admin.honor_board"))

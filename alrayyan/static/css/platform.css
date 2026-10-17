@@ -1384,3 +1384,76 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
     white-space: normal !important;
   }
 }
+
+
+/* Grade 11/12 workspace switcher shared by teacher management pages. */
+.grade-workspace-tabs{width:min(1180px,calc(100% - 32px));margin:20px auto 26px;padding:12px;display:grid;grid-template-columns:minmax(180px,1fr) repeat(2,minmax(220px,1fr));gap:12px;align-items:stretch;border:1px solid #e5d6b8;border-radius:20px;background:linear-gradient(135deg,#fffdf8,#fff);box-shadow:0 12px 28px rgba(7,26,53,.06);box-sizing:border-box}
+.platform-admin-page>.grade-workspace-tabs{width:100%;margin:0 0 24px}
+.grade-workspace-tabs__intro{display:flex;flex-direction:column;justify-content:center;gap:5px;padding:10px 14px;color:#173455}
+.grade-workspace-tabs__intro strong{font-size:1rem}
+.grade-workspace-tabs__intro span{color:#738093;font-size:.82rem;line-height:1.7}
+.grade-workspace-tabs>a{display:flex;align-items:center;gap:12px;min-width:0;padding:13px 16px;border:1px solid #e4dccd;border-radius:14px;background:#f7f4ed;color:#173455;text-decoration:none;transition:background .18s,border-color .18s,transform .18s}
+.grade-workspace-tabs>a:hover{transform:translateY(-1px);border-color:#c99a3d;background:#fff8e8}
+.grade-workspace-tabs>a.is-active{border-color:#102746;background:linear-gradient(135deg,#243e63,#102746);color:#fff;box-shadow:0 8px 18px rgba(16,39,70,.18)}
+.grade-workspace-tabs__number{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:12px;background:#fff;color:#173455;font-weight:900;font-size:1.05rem}
+.grade-workspace-tabs>a.is-active .grade-workspace-tabs__number{background:#f1d694;color:#102746}
+.grade-workspace-tabs>a>span:last-child{display:grid;gap:3px;min-width:0}
+.grade-workspace-tabs>a strong{font-size:.95rem}
+.grade-workspace-tabs>a small{color:#758195;font-size:.76rem;line-height:1.5}
+.grade-workspace-tabs>a.is-active small{color:#e2eaf5}
+@media(max-width:760px){.grade-workspace-tabs{grid-template-columns:1fr;margin:14px auto 20px;padding:10px}.platform-admin-page>.grade-workspace-tabs{margin-bottom:18px}.grade-workspace-tabs__intro{padding:5px 8px}.grade-workspace-tabs>a{padding:11px 13px}}
+
+
+/* Final header-menu rule: hamburger only on compact screens, never on desktop pages. */
+.platform-header .platform-menu-toggle { display:none !important; }
+.platform-header .platform-menu-toggle span { display:block !important; width:20px !important; height:2px !important; margin:0 !important; flex:0 0 2px !important; border-radius:3px; background:#0b2546 !important; }
+@media (max-width: 900px) {
+  .platform-header .platform-menu-toggle { display:inline-flex !important; align-items:center !important; justify-content:center !important; flex-direction:column !important; gap:4px !important; }
+  .platform-header .platform-navigation:not(.is-open) { display:none !important; }
+  .platform-header .platform-navigation.is-open { display:flex !important; }
+}
+@media (min-width: 901px) {
+  .platform-header .platform-menu-toggle { display:none !important; }
+  .platform-header .platform-navigation { display:flex !important; }
+}
+.tutor-scoring-note { margin:8px 0 16px; color:#6d7784; font-size:.82rem; line-height:1.8; }
+
+
+/* Final fixes requested: archived-test and map-publish actions use the platform navy. */
+.platform-admin-body .concept-map-card-actions .concept-action.publish,
+.platform-admin-body .concept-action.publish,
+.test-card-action.archive {
+  border: 1px solid #0d294d !important;
+  background: linear-gradient(135deg, #0d294d, #1f4c7c) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(13, 41, 77, .16) !important;
+}
+.platform-admin-body .concept-map-card-actions .concept-action.publish:hover,
+.platform-admin-body .concept-action.publish:hover,
+.test-card-action.archive:hover {
+  border-color: #071a35 !important;
+  background: linear-gradient(135deg, #071a35, #153b63) !important;
+  color: #fff !important;
+}
+
+/* Keep the mobile menu anchored to the header instead of leaving a stray panel. */
+@media (max-width: 900px) {
+  .platform-header { position: sticky; }
+  .platform-header .platform-navigation:not(.is-open) { display: none !important; }
+  .platform-header .platform-navigation.is-open {
+    position: absolute !important;
+    top: calc(100% + 1px) !important;
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    background: #fff !important;
+    border: 1px solid var(--platform-border) !important;
+    border-radius: 0 0 18px 18px !important;
+    box-shadow: 0 24px 60px rgba(7, 26, 53, .14) !important;
+  }
+}

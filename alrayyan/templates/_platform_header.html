@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261017-remove-admin-shortcut-4') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261017-mobile-menu-close-fix-1') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -8,11 +8,9 @@
         <img src="{{ url_for('static', filename='images/alrayyan-logo.png') }}" alt="الريان في الدراسات التاريخية">
     </a>
 
-    {% if request.endpoint != 'assessment.test_center' %}
     <button class="platform-menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" data-platform-menu-toggle>
         <span></span><span></span><span></span>
     </button>
-    {% endif %}
 
     <nav class="platform-navigation" data-platform-menu>
         <a href="{{ url_for('main.home') }}">الرئيسية</a>
@@ -106,15 +104,24 @@
         const toggle = document.querySelector("[data-platform-menu-toggle]");
         const menu = document.querySelector("[data-platform-menu]");
         if (!toggle || !menu) return;
-        toggle.addEventListener("click", () => {
-            const isOpen = menu.classList.toggle("is-open");
-            toggle.setAttribute("aria-expanded", String(isOpen));
-        });
-
-        // Keep only one header dropdown open at a time, including the account menu.
         const dropdowns = document.querySelectorAll(
             ".platform-navigation details.student-learning-menu, .platform-navigation details.platform-user-dropdown"
         );
+
+        const closeMobileMenu = () => {
+            menu.classList.remove("is-open");
+            toggle.setAttribute("aria-expanded", "false");
+            dropdowns.forEach((details) => { details.open = false; });
+        };
+
+        toggle.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const isOpen = menu.classList.toggle("is-open");
+            toggle.setAttribute("aria-expanded", String(isOpen));
+            if (!isOpen) dropdowns.forEach((details) => { details.open = false; });
+        });
+
+        // Keep only one header dropdown open at a time, including the account menu.
         dropdowns.forEach((details) => {
             details.addEventListener("toggle", () => {
                 if (!details.open) return;
@@ -124,10 +131,20 @@
             });
         });
 
-        // Close open dropdowns when the user clicks outside the navigation.
+        // A navigation choice closes the mobile panel and its nested dropdowns.
+        menu.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", closeMobileMenu);
+        });
+
+        // Close both the mobile panel and nested dropdowns when clicking outside.
         document.addEventListener("click", (event) => {
-            if (menu.contains(event.target)) return;
-            dropdowns.forEach((details) => { details.open = false; });
+            if (menu.contains(event.target) || toggle.contains(event.target)) return;
+            closeMobileMenu();
+        });
+
+        // Reset stale mobile-menu state when switching back to desktop width.
+        window.addEventListener("resize", () => {
+            if (window.matchMedia("(min-width: 901px)").matches) closeMobileMenu();
         });
     })();
 </script>

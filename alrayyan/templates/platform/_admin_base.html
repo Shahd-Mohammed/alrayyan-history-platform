@@ -7,13 +7,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static',filename='css/platform.css',v='20261017-remove-admin-shortcut-4') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/platform.css',v='20261017-tutor-grade-workspaces-7') }}">
   <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin_premium.css',v='20261017-navy-actions-admin-form-5') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/platform_admin_premium.css',v='20261017-tutor-grade-navy-8') }}">
 </head>
 <body class="platform-admin-body{% if request.endpoint == 'assessment.test_center' %} test-center-page{% endif %}">
   {% include '_platform_header.html' %}
   <main class="platform-admin-page">
+    {% include "_grade_tabs.html" %}
     <header class="platform-admin-hero">
       <div><span>{% block eyebrow %}لوحة المعلمة{% endblock %}</span><h1>{% block heading %}إدارة المنصة{% endblock %}</h1><p>{% block intro %}{% endblock %}</p></div>
       <nav><a href="{{ url_for('platform_admin.curricula') }}">المناهج</a><a href="{{ url_for('platform_admin.classrooms') }}">الصفوف</a><a href="{{ url_for('platform_admin.invitations') }}">الدعوات</a><a href="{{ url_for('platform_admin.resources') }}">الملخصات</a><a href="{{ url_for('platform_admin.concept_maps') }}">الخرائط</a><a href="{{ url_for('platform_admin.characters') }}">الشخصيات</a><a href="{{ url_for('platform_admin.honor_board') }}">لوحة الشرف</a><a href="{{ url_for('platform_admin.analytics') }}">التحليلات</a></nav>

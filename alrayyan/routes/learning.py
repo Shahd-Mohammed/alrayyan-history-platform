@@ -13,7 +13,7 @@ from alrayyan.extensions import db
 from alrayyan.services.file_storage import resolve_stored_file
 from alrayyan.models import CharacterAttempt, ConceptMap, Curriculum, DateReview, HistoricalCharacter, HistoricalDate, HonorBoardEntry, LearningResource, Lesson, Unit, User, XPTransaction
 from alrayyan.services.learning_content_ai import generate_historical_date_drafts
-from alrayyan.services.grade_access import lessons_for_user, student_can_access_lesson
+from alrayyan.services.grade_access import lessons_for_user, student_can_access_lesson, student_grade, student_ids_for_grade
 
 
 learning_bp = Blueprint("learning", __name__, url_prefix="/learn")
@@ -53,12 +53,17 @@ def library():
         )
         db.session.commit()
     active_lessons = lessons_for_user(current_user, active_only=True)
+    honor_query = HonorBoardEntry.query.filter_by(is_active=True)
+    if current_user.role == "student":
+        grade = student_grade(current_user)
+        visible_student_ids = student_ids_for_grade(grade) if grade else []
+        honor_query = honor_query.filter(HonorBoardEntry.student_id.in_(visible_student_ids or [-1]))
     return render_template(
         "learning/library.html",
         resources=LearningResource.query.filter(LearningResource.publication_status == "published", LearningResource.lesson_id.in_(active_lessons)).order_by(LearningResource.created_at.desc()).limit(6).all(),
         maps=ConceptMap.query.filter(ConceptMap.publication_status == "published", ConceptMap.lesson_id.in_(active_lessons)).order_by(ConceptMap.created_at.desc()).limit(6).all(),
         characters=HistoricalCharacter.query.filter(HistoricalCharacter.publication_status == "published", HistoricalCharacter.lesson_id.in_(active_lessons)).order_by(HistoricalCharacter.created_at.desc()).all(),
-        honor_entries=HonorBoardEntry.query.filter_by(is_active=True).order_by(HonorBoardEntry.created_at.desc()).limit(8).all(),
+        honor_entries=honor_query.order_by(HonorBoardEntry.created_at.desc()).limit(8).all(),
     )
 
 
@@ -302,8 +307,15 @@ def characters():
 @learning_bp.get("/honor-board")
 @login_required
 def honor_board():
-    entries = HonorBoardEntry.query.filter_by(is_active=True).order_by(HonorBoardEntry.created_at.desc()).limit(30).all()
-    automatic = User.query.filter_by(role="student", is_active_account=True).filter(User.points > 0).order_by(User.points.desc(), User.full_name).limit(6).all()
+    entries_query = HonorBoardEntry.query.filter_by(is_active=True)
+    automatic_query = User.query.filter_by(role="student", is_active_account=True).filter(User.points > 0)
+    if current_user.role == "student":
+        grade = student_grade(current_user)
+        visible_student_ids = student_ids_for_grade(grade) if grade else []
+        entries_query = entries_query.filter(HonorBoardEntry.student_id.in_(visible_student_ids or [-1]))
+        automatic_query = automatic_query.filter(User.id.in_(visible_student_ids or [-1]))
+    entries = entries_query.order_by(HonorBoardEntry.created_at.desc()).limit(30).all()
+    automatic = automatic_query.order_by(User.points.desc(), User.full_name).limit(6).all()
     return render_template("learning/honor_board.html", entries=entries, automatic=automatic)
 
 

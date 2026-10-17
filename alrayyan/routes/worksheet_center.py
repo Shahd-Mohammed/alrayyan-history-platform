@@ -4,6 +4,7 @@ from flask import Blueprint, abort, render_template, request
 from flask_login import current_user, login_required
 
 from alrayyan.models import Worksheet
+from alrayyan.services.grade_access import selected_management_grade, lesson_ids_for_grade
 
 
 worksheet_center_bp = Blueprint(
@@ -11,6 +12,11 @@ worksheet_center_bp = Blueprint(
     __name__,
     url_prefix="/teacher-dashboard/worksheets",
 )
+
+
+@worksheet_center_bp.before_request
+def remember_selected_grade():
+    selected_management_grade()
 
 
 def teacher_required(view_function):
@@ -28,6 +34,7 @@ def teacher_required(view_function):
 @teacher_required
 def center():
     query = Worksheet.query.filter(Worksheet.creation_method != "test")
+    query = query.filter(Worksheet.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
 
     if current_user.role != "admin":
         query = query.filter_by(created_by_id=current_user.id)

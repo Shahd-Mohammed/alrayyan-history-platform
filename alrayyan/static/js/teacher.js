@@ -117,13 +117,17 @@ if (tutorApp) {
             return;
         }
         evaluationBadge.textContent = evaluationLabels[message.evaluation] || "تقييم جديد";
+        const conceptName = (message.concept || "").trim();
         masteryBadge.textContent = masteryScore === null || masteryScore === undefined
-            ? "" : `إتقان المفهوم: ${masteryScore}%`;
+            ? ""
+            : conceptName
+                ? `إتقان «${conceptName}»: ${masteryScore}%`
+                : `إتقان المفهوم الحالي: ${masteryScore}%`;
         xpBadge.textContent = xpAwarded > 0
             ? `+${xpAwarded} XP`
             : progressUpdated
-                ? "تم تحديث إتقان المفهوم"
-                : "لم يتغير الإتقان";
+                ? "تحدّثت نسبة الإتقان؛ النقاط تُحسب بشكل منفصل"
+                : "لم تتغير نسبة الإتقان";
         progressLink.hidden = !progressUpdated && xpAwarded <= 0;
         insight.hidden = false;
     }
