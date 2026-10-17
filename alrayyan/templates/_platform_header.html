@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261017-navigation-order-3') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261017-remove-admin-shortcut-4') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -45,9 +45,6 @@
                         <a href="{{ url_for('platform_admin.settings') }}">إعدادات المنصة</a>
                     </div>
                 </details>
-                {% if current_user.role == 'admin' %}
-                    <a class="platform-admin-create-link" href="{{ url_for('platform_admin.admins') }}">＋ حساب إدارة</a>
-                {% endif %}
             {% elif current_user.role == 'student' %}
                 <a href="{{ url_for('main.student_dashboard') }}">لوحتي</a>
                 <details class="student-learning-menu student-results-menu">
