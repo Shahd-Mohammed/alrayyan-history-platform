@@ -16,6 +16,7 @@ from alrayyan.services.grade_access import (  # noqa: E402
     lessons_for_user,
     normalize_grade,
     student_can_access_lesson,
+    student_available_grades,
     student_grade,
     student_ids_for_grade,
 )
@@ -99,14 +100,17 @@ with app.app_context():
     assert student_grade(grade11_student) == "11"
     assert student_grade(grade12_student) == "12"
     assert student_grade(unassigned_student) is None
-    assert student_grade(mixed_student) is None
+    assert student_available_grades(mixed_student) == ["11", "12"]
+    # The most recently created active enrollment is selected by default.
+    assert student_grade(mixed_student) == "12"
 
     visible11 = set(lessons_for_user(grade11_student))
     visible12 = set(lessons_for_user(grade12_student))
     assert lesson11.id in visible11 and lesson12.id not in visible11
     assert lesson12.id in visible12 and lesson11.id not in visible12
     assert lessons_for_user(unassigned_student) == []
-    assert lessons_for_user(mixed_student) == []
+    mixed_visible = set(lessons_for_user(mixed_student))
+    assert lesson12.id in mixed_visible and lesson11.id not in mixed_visible
 
     assert student_can_access_lesson(grade11_student, lesson11)
     assert not student_can_access_lesson(grade11_student, lesson12)
@@ -121,7 +125,7 @@ with app.app_context():
     assert class12.id not in classroom_ids_for_grade("11", teacher_id=teacher.id)
     assert grade11_student.id in student_ids_for_grade("11", teacher_id=teacher.id)
     assert grade12_student.id in student_ids_for_grade("12", teacher_id=teacher.id)
-    assert mixed_student.id not in student_ids_for_grade("11", teacher_id=teacher.id)
-    assert mixed_student.id not in student_ids_for_grade("12", teacher_id=teacher.id)
+    assert mixed_student.id in student_ids_for_grade("11", teacher_id=teacher.id)
+    assert mixed_student.id in student_ids_for_grade("12", teacher_id=teacher.id)
 
-print("PASS: grade normalization, content scoping, classroom rosters, and mixed-grade exclusion")
+print("PASS: grade normalization, content scoping, student grade switching, and visible classroom rosters")
