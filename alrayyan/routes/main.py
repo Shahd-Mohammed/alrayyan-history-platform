@@ -175,6 +175,7 @@ def student_dashboard():
     latest_challenges = (
         ChallengeSession.query
         .filter_by(student_id=current_user.id)
+        .filter(ChallengeSession.lesson_id.in_(visible_lesson_ids or [-1]))
         .order_by(ChallengeSession.started_at.desc())
         .limit(3)
         .all()
