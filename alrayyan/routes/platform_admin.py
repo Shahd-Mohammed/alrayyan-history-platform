@@ -143,6 +143,34 @@ def save_upload(upload, folder_name, allowed, persist=True):
     return original, path, relative
 
 
+
+
+def platform_owner_emails():
+    """Return the two explicitly trusted platform-owner email addresses."""
+    configured = os.getenv(
+        "PLATFORM_OWNER_EMAILS",
+        "1shahdmohammed@gmail.com,miss.emmy2020@gmail.com",
+    )
+    return {
+        email.strip().casefold()
+        for email in configured.split(",")
+        if email.strip()
+    }
+
+
+def is_platform_owner(user):
+    return bool(
+        user
+        and user.is_authenticated
+        and user.role == "admin"
+        and (user.email or "").strip().casefold() in platform_owner_emails()
+    )
+
+
+@platform_admin_bp.app_context_processor
+def inject_platform_owner_permission():
+    return {"is_platform_owner": is_platform_owner}
+
 @platform_admin_bp.route("/curricula", methods=["GET", "POST"])
 def curricula():
     form = CurriculumUploadForm()
@@ -1140,8 +1168,8 @@ def settings():
 
 @platform_admin_bp.route("/admins", methods=["GET", "POST"])
 def admins():
-    """Allow only existing administrators to create additional admin accounts."""
-    if current_user.role != "admin":
+    """Only the two platform owners may create or review admin accounts."""
+    if not is_platform_owner(current_user):
         abort(403)
 
     if request.method == "POST":
