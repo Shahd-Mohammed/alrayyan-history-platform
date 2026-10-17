@@ -13,7 +13,7 @@ from flask_login import (
 from sqlalchemy import text
 
 from alrayyan.extensions import db
-from alrayyan.services.grade_access import lessons_for_user
+from alrayyan.services.grade_access import lessons_for_user, student_grade, student_ids_for_grade
 
 from alrayyan.models import (
     AboutPage,
@@ -186,10 +186,16 @@ def student_dashboard():
         .all()
     )
 
-    # Show a small, motivating leaderboard directly on the student dashboard.
+    # Keep the motivating leaderboard within the student's own grade.
+    student_grade_value = student_grade(current_user)
+    grade_student_ids = student_ids_for_grade(student_grade_value) if student_grade_value else []
     top_students = (
         User.query
-        .filter_by(role="student", is_active_account=True)
+        .filter(
+            User.role == "student",
+            User.is_active_account.is_(True),
+            User.id.in_(grade_student_ids or [-1]),
+        )
         .order_by(User.points.desc(), User.level.desc(), User.full_name.asc())
         .limit(3)
         .all()
