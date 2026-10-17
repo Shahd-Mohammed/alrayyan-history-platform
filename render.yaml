@@ -48,7 +48,7 @@ services:
       - key: S3_ENDPOINT_URL
         sync: false
       - key: S3_REGION
-        sync: false
+        value: auto
       - key: EMBEDDING_MODEL
         value: openai/text-embedding-3-small
       - key: EMBEDDING_API_URL
