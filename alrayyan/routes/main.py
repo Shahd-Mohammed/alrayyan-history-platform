@@ -13,6 +13,7 @@ from flask_login import (
 from sqlalchemy import text
 
 from alrayyan.extensions import db
+from alrayyan.services.grade_access import lessons_for_user
 
 from alrayyan.models import (
     AboutPage,
@@ -118,11 +119,12 @@ def student_dashboard():
     if current_user.role != "student":
         abort(403)
 
+    visible_lesson_ids = lessons_for_user(current_user, active_only=True)
     published_query = Worksheet.query.filter_by(
         publication_status="published",
         is_published=True,
         is_archived=False,
-    )
+    ).filter(Worksheet.lesson_id.in_(visible_lesson_ids or [-1]))
     available_worksheets = (
         published_query
         .filter(Worksheet.creation_method != "test")
