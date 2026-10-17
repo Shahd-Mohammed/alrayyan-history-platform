@@ -24,7 +24,7 @@ from alrayyan.forms import (
     UploadWorksheetForm,
 )
 from alrayyan.services.file_storage import upload_to_object_storage
-from alrayyan.services.grade_access import selected_management_grade, lesson_ids_for_grade, normalize_grade
+from alrayyan.services.grade_access import selected_management_grade, lesson_ids_for_grade, normalize_grade, student_available_grades, student_grade
 from alrayyan.models import (
     AboutPage,
     Curriculum,
@@ -49,7 +49,12 @@ def remember_teacher_grade():
 
 @teacher_dashboard_bp.app_context_processor
 def inject_selected_grade():
-    return {"selected_grade": selected_management_grade()}
+    is_student = current_user.is_authenticated and current_user.role == "student"
+    return {
+        "selected_grade": selected_management_grade(),
+        "available_student_grades": student_available_grades(current_user) if is_student else [],
+        "selected_student_grade": student_grade(current_user) if is_student else None,
+    }
 
 
 
