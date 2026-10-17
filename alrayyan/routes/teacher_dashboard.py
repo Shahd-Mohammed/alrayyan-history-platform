@@ -46,6 +46,11 @@ def remember_teacher_grade():
     selected_management_grade()
 
 
+@teacher_dashboard_bp.app_context_processor
+def inject_selected_grade():
+    return {"selected_grade": selected_management_grade()}
+
+
 
 
 def teacher_required(view_function):
@@ -81,6 +86,9 @@ def get_teacher_worksheet_or_404(worksheet_id):
     )
 
     if worksheet is None:
+        abort(404)
+
+    if worksheet.lesson_id not in set(lesson_ids_for_grade(selected_management_grade())):
         abort(404)
 
     if (
