@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261017-menu-close-grade-qa-2') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css',v='20261017-grade-scope-qa-4') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -139,6 +139,7 @@
                 event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ||
                 (link.target && link.target !== "_self")) return;
             closeMobileMenu();
+            dropdowns.forEach((details) => { details.open = false; });
         }, true);
 
         // A page restored from the browser back/forward cache must never reopen
