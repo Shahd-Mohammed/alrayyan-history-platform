@@ -14,6 +14,7 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
+from flask import session
 
 from alrayyan.extensions import db
 from alrayyan.forms import (
@@ -22,6 +23,7 @@ from alrayyan.forms import (
     UploadWorksheetForm,
 )
 from alrayyan.services.file_storage import upload_to_object_storage
+from alrayyan.services.grade_access import selected_management_grade, lesson_ids_for_grade, normalize_grade
 from alrayyan.models import (
     AboutPage,
     Curriculum,
@@ -37,6 +39,13 @@ teacher_dashboard_bp = Blueprint(
     __name__,
     url_prefix="/teacher-dashboard",
 )
+
+
+@teacher_dashboard_bp.before_request
+def remember_teacher_grade():
+    selected_management_grade()
+
+
 
 
 def teacher_required(view_function):
@@ -193,6 +202,19 @@ def save_uploaded_file(
     }
 
 
+@teacher_dashboard_bp.get("/select-grade/<grade>")
+@teacher_required
+def select_grade(grade):
+    normalized = normalize_grade(grade)
+    if normalized not in {"11", "12"}:
+        abort(404)
+    session["teacher_selected_grade"] = normalized
+    next_path = request.args.get("next", "")
+    if next_path.startswith("/") and not next_path.startswith("//"):
+        return redirect(next_path)
+    return redirect(url_for("teacher_dashboard.dashboard"))
+
+
 @teacher_dashboard_bp.get("/")
 @teacher_required
 def dashboard():
@@ -203,6 +225,7 @@ def dashboard():
 
     # Keep assessments in the test center; this dashboard is only for uploaded worksheets.
     query = Worksheet.query.filter(Worksheet.creation_method != "test")
+    query = query.filter(Worksheet.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
 
     if current_user.role != "admin":
         query = query.filter_by(
