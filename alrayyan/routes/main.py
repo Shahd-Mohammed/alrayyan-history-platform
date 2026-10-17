@@ -120,6 +120,9 @@ def student_dashboard():
         abort(403)
 
     visible_lesson_ids = lessons_for_user(current_user, active_only=True)
+    visible_worksheet_ids = db.session.query(Worksheet.id).filter(
+        Worksheet.lesson_id.in_(visible_lesson_ids or [-1])
+    )
     published_query = Worksheet.query.filter_by(
         publication_status="published",
         is_published=True,
@@ -144,6 +147,7 @@ def student_dashboard():
             student_id=current_user.id,
             submitted_at=None,
         )
+        .filter(WorksheetAttempt.worksheet_id.in_(visible_worksheet_ids))
         .order_by(
             WorksheetAttempt.started_at.desc()
         )
@@ -155,6 +159,7 @@ def student_dashboard():
         .filter_by(
             student_id=current_user.id,
         )
+        .filter(WorksheetAttempt.worksheet_id.in_(visible_worksheet_ids))
         .filter(
             WorksheetAttempt
             .submitted_at
@@ -212,9 +217,14 @@ def student_progress():
     if current_user.role != "student":
         abort(403)
 
+    visible_lesson_ids = lessons_for_user(current_user, active_only=True)
+    visible_worksheet_ids = db.session.query(Worksheet.id).filter(
+        Worksheet.lesson_id.in_(visible_lesson_ids or [-1])
+    )
     attempts = (
         WorksheetAttempt.query
         .filter_by(student_id=current_user.id)
+        .filter(WorksheetAttempt.worksheet_id.in_(visible_worksheet_ids))
         .filter(WorksheetAttempt.submitted_at.isnot(None))
         .order_by(WorksheetAttempt.submitted_at.desc())
         .all()
@@ -222,18 +232,30 @@ def student_progress():
     tests_completed = sum(1 for item in attempts if item.worksheet and item.worksheet.creation_method == "test")
     worksheets_completed = sum(1 for item in attempts if item.worksheet and item.worksheet.creation_method != "test")
 
-    challenge_sessions = ChallengeSession.query.filter_by(student_id=current_user.id).all()
+    challenge_sessions = (
+        ChallengeSession.query
+        .filter_by(student_id=current_user.id)
+        .filter(ChallengeSession.lesson_id.in_(visible_lesson_ids or [-1]))
+        .all()
+    )
     completed_challenges = sum(1 for item in challenge_sessions if item.status == "completed")
     masteries = (
         ConceptMastery.query.filter_by(student_id=current_user.id)
+        .filter(ConceptMastery.lesson_id.in_(visible_lesson_ids or [-1]))
         .order_by(ConceptMastery.mastery_score.asc())
         .all()
     )
-    tutor_conversations = TutorConversation.query.filter_by(student_id=current_user.id).count()
+    tutor_conversations = (
+        TutorConversation.query
+        .filter_by(student_id=current_user.id)
+        .filter(TutorConversation.lesson_id.in_(visible_lesson_ids or [-1]))
+        .count()
+    )
     tutor_evaluations = (
         TutorMessage.query.join(TutorConversation)
         .filter(
             TutorConversation.student_id == current_user.id,
+            TutorConversation.lesson_id.in_(visible_lesson_ids or [-1]),
             TutorMessage.role == "tutor",
             TutorMessage.evaluation.in_([
                 "correct", "partially_correct", "incorrect", "needs_explanation"
@@ -241,8 +263,20 @@ def student_progress():
         )
         .count()
     )
-    character_attempts = CharacterAttempt.query.filter_by(student_id=current_user.id).count()
-    date_reviews = DateReview.query.filter_by(student_id=current_user.id).count()
+    character_attempts = (
+        CharacterAttempt.query
+        .filter_by(student_id=current_user.id)
+        .join(HistoricalCharacter, CharacterAttempt.character_id == HistoricalCharacter.id)
+        .filter(HistoricalCharacter.lesson_id.in_(visible_lesson_ids or [-1]))
+        .count()
+    )
+    date_reviews = (
+        DateReview.query
+        .filter_by(student_id=current_user.id)
+        .join(HistoricalDate, DateReview.historical_date_id == HistoricalDate.id)
+        .filter(HistoricalDate.lesson_id.in_(visible_lesson_ids or [-1]))
+        .count()
+    )
     points_by_reason = {}
     for transaction in XPTransaction.query.filter_by(student_id=current_user.id).all():
         points_by_reason[transaction.reason] = points_by_reason.get(transaction.reason, 0) + transaction.amount
