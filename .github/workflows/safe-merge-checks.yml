@@ -67,5 +67,8 @@ jobs:
       - name: Test admin permissions, password reset, and curriculum history
         run: PYTHONPATH=. python scripts/test_security_and_curriculum.py
 
+      - name: Test grade 11/12 separation and cross-grade access
+        run: PYTHONPATH=. python scripts/test_grade_access.py
+
       - name: Test manual grading, score totals, and XP consistency
         run: PYTHONPATH=. python scripts/test_attempt_scoring.py

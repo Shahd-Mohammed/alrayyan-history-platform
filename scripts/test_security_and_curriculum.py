@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 db_file = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
 db_file.close()
 os.environ["DATABASE_URL"] = f"sqlite:///{db_file.name}"
+os.environ["PLATFORM_OWNER_EMAILS"] = "owner1@example.com,owner2@example.com"
 
 from app import app  # noqa: E402
 from alrayyan.extensions import db  # noqa: E402
@@ -27,11 +28,15 @@ with app.app_context():
     db.create_all()
     teacher = User(full_name="معلمة تجريبية", email="teacher@example.com", role="teacher")
     teacher.set_password("teacher-password-123")
-    admin = User(full_name="مديرة تجريبية", email="admin@example.com", role="admin")
+    admin = User(full_name="مالكة المنصة الأولى", email="owner1@example.com", role="admin")
     admin.set_password("admin-password-123")
+    second_owner = User(full_name="مالكة المنصة الثانية", email="owner2@example.com", role="admin")
+    second_owner.set_password("owner2-password-123")
+    regular_admin = User(full_name="مديرة عادية", email="regular-admin@example.com", role="admin")
+    regular_admin.set_password("regular-admin-password-123")
     student = User(full_name="طالبة تجريبية", email="student@example.com", role="student")
     student.set_password("student-password-123")
-    db.session.add_all([teacher, admin, student])
+    db.session.add_all([teacher, admin, second_owner, regular_admin, student])
     db.session.flush()
 
     curriculum = Curriculum(
@@ -102,6 +107,8 @@ with app.app_context():
     ids = {
         "teacher": teacher.id,
         "admin": admin.id,
+        "second_owner": second_owner.id,
+        "regular_admin": regular_admin.id,
         "student": student.id,
         "curriculum": curriculum.id,
         "character": character.id,
@@ -140,7 +147,23 @@ assert response.status_code == 302
 with app.app_context():
     assert db.session.get(Curriculum, ids["clean_curriculum"]) is None
 
-# Only an administrator can create another administrator, and duplicates are rejected.
+# Ordinary admins cannot view or create admin accounts, even by direct URL.
+login_as(ids["regular_admin"])
+response = client.get("/teacher-dashboard/platform/admins")
+assert response.status_code == 403
+response = client.post(
+    "/teacher-dashboard/platform/admins",
+    data={
+        "full_name": "حساب غير مصرح",
+        "email": "unauthorized-admin@example.com",
+        "password": "new-admin-password-123",
+    },
+)
+assert response.status_code == 403
+with app.app_context():
+    assert User.query.filter_by(email="unauthorized-admin@example.com").first() is None
+
+# Both platform owners may create administrators; duplicate emails are rejected.
 login_as(ids["admin"])
 response = client.post(
     "/teacher-dashboard/platform/admins",
@@ -163,6 +186,9 @@ response = client.post(
     },
 )
 assert response.status_code == 200
+login_as(ids["second_owner"])
+response = client.get("/teacher-dashboard/platform/admins")
+assert response.status_code == 200
 
 # Password-reset tokens are time-limited/signed; valid tokens update the password.
 response = client.post(
@@ -177,4 +203,4 @@ with app.app_context():
 response = client.get("/auth/reset-password/not-a-valid-token")
 assert response.status_code == 302
 
-print("PASS: admin authorization/creation, password reset, and curriculum history protection")
+print("PASS: owner-only admin management, password reset, and curriculum history protection")

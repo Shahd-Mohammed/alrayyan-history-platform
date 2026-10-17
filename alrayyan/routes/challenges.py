@@ -28,6 +28,7 @@ from alrayyan.models import (
     Worksheet,
     XPTransaction,
 )
+from alrayyan.services.grade_access import lessons_for_user, student_can_access_lesson
 from alrayyan.services.challenge_engine import (
     DIFFICULTIES,
     calculate_award,
@@ -56,6 +57,8 @@ def get_owned_session_or_404(session_id):
         abort(404)
     if session.student_id != current_user.id:
         abort(403)
+    if not student_can_access_lesson(current_user, session.lesson):
+        abort(404)
     return session
 
 
@@ -246,6 +249,7 @@ def setup():
                 "الدرس احتياطي",
                 "الوحدة — الدرس احتياطي",
             }),
+            Lesson.id.in_(lessons_for_user(current_user, active_only=True) or [-1]),
         )
         # Group by the lesson and sort keys instead of DISTINCT: PostgreSQL
         # rejects ORDER BY columns that are not selected with SELECT DISTINCT.
@@ -280,6 +284,7 @@ def test_bank():
                 "الدرس احتياطي",
                 "الوحدة — الدرس احتياطي",
             }),
+            Lesson.id.in_(lessons_for_user(current_user, active_only=True) or [-1]),
         )
         # Group by the lesson and sort keys instead of DISTINCT: PostgreSQL
         # rejects ORDER BY columns that are not selected with SELECT DISTINCT.
@@ -293,11 +298,12 @@ def test_bank():
         .order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index)
         .all()
     )
+    visible_lesson_ids = lessons_for_user(current_user, active_only=True)
     published_content = Worksheet.query.filter_by(
         publication_status="published",
         is_published=True,
         is_archived=False,
-    )
+    ).filter(Worksheet.lesson_id.in_(visible_lesson_ids or [-1]))
     worksheets = (
         published_content
         .filter(Worksheet.creation_method != "test")
@@ -313,6 +319,7 @@ def test_bank():
     recent_sessions = (
         ChallengeSession.query
         .filter_by(student_id=current_user.id, status="completed")
+        .filter(ChallengeSession.lesson_id.in_(visible_lesson_ids or [-1]))
         .order_by(ChallengeSession.completed_at.desc())
         .limit(6)
         .all()
@@ -369,6 +376,7 @@ def start():
                     "الدرس احتياطي",
                     "الوحدة — الدرس احتياطي",
                 }),
+                Lesson.id.in_(lessons_for_user(current_user, active_only=True) or [-1]),
             )
             .order_by(db.func.random())
             .first()
@@ -380,9 +388,11 @@ def start():
             if raw_lesson_id.isdigit()
             else None
         )
+        if lesson is not None and lesson.id not in set(lessons_for_user(current_user, active_only=True)):
+            lesson = None
 
     if lesson is None:
-        flash("يرجى اختيار درس يحتوي محتوى قابلًا للبحث.", "error")
+        flash("يرجى اختيار درس يحتوي محتوى قابلًا للبحث من صفك.", "error")
         return redirect(url_for("challenges.setup"))
 
     session = ChallengeSession(

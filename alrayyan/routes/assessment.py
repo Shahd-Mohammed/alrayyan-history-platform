@@ -40,6 +40,7 @@ from alrayyan.models import (
     User,
     XPTransaction,
 )
+from alrayyan.services.grade_access import student_can_access_lesson
 from alrayyan.services.question_interactions import (
     INTERACTIVE_TYPES,
     build_config,
@@ -870,7 +871,7 @@ def get_published_worksheet_or_404(
     published and available to students.
     """
 
-    return (
+    worksheet = (
         Worksheet.query
         .filter_by(
             id=worksheet_id,
@@ -880,6 +881,9 @@ def get_published_worksheet_or_404(
         )
         .first_or_404()
     )
+    if not student_can_access_lesson(current_user, worksheet.lesson):
+        abort(404)
+    return worksheet
 
 
 def get_student_attempt_or_404(
@@ -904,6 +908,8 @@ def get_student_attempt_or_404(
         != current_user.id
     ):
         abort(403)
+    if not student_can_access_lesson(current_user, attempt.worksheet.lesson):
+        abort(404)
 
     return attempt
 

@@ -83,7 +83,7 @@ def _normalize_keyword_text(value):
     }))
 
 
-def keyword_search_fallback(query, top_k=5, lesson_id=None):
+def keyword_search_fallback(query, top_k=5, lesson_id=None, lesson_ids=None):
     """Retrieve relevant curriculum passages when embedding search is unavailable."""
     terms = [
         token for token in re.findall(r"\w+", _normalize_keyword_text(query))
@@ -105,6 +105,8 @@ def keyword_search_fallback(query, top_k=5, lesson_id=None):
     )
     if lesson_id is not None:
         candidate_query = candidate_query.filter(ContentChunk.lesson_id == lesson_id)
+    if lesson_ids is not None:
+        candidate_query = candidate_query.filter(ContentChunk.lesson_id.in_(lesson_ids or [-1]))
 
     results = []
     for chunk in candidate_query.all():
@@ -147,6 +149,7 @@ def semantic_search(
     top_k=5,
     min_similarity=0.15,
     lesson_id=None,
+    lesson_ids=None,
 ):
     """
     Search active curriculum chunks using cosine similarity.
@@ -170,6 +173,7 @@ def semantic_search(
             query,
             top_k=top_k,
             lesson_id=lesson_id,
+            lesson_ids=lesson_ids,
         )
 
     candidate_query = (
@@ -196,6 +200,10 @@ def semantic_search(
     if lesson_id is not None:
         candidate_query = candidate_query.filter(
             ContentChunk.lesson_id == lesson_id
+        )
+    if lesson_ids is not None:
+        candidate_query = candidate_query.filter(
+            ContentChunk.lesson_id.in_(lesson_ids or [-1])
         )
 
     candidates = candidate_query.all()
@@ -257,6 +265,7 @@ def semantic_search(
             query,
             top_k=top_k,
             lesson_id=lesson_id,
+            lesson_ids=lesson_ids,
         )
 
     return results[:top_k]

@@ -21,6 +21,7 @@ from alrayyan.models import (
     Lesson, TutorConversation, TutorMessage, TutorMessageSource, Unit,
     XPTransaction,
 )
+from alrayyan.services.grade_access import lessons_for_user, student_can_access_lesson
 from alrayyan.services.tutor_engine import tutor_reply
 from alrayyan.services.datetime_utils import as_utc_naive
 
@@ -57,6 +58,8 @@ def get_owned_conversation_or_404(conversation_id):
         abort(404)
     if conversation.student_id != current_user.id:
         abort(403)
+    if conversation.lesson is not None and not student_can_access_lesson(current_user, conversation.lesson):
+        abort(404)
     return conversation
 
 
@@ -213,6 +216,7 @@ def teacher_page():
                 "الدرس احتياطي",
                 "الوحدة — الدرس احتياطي",
             }),
+            Lesson.id.in_(lessons_for_user(current_user, active_only=True) or [-1]),
         )
         # Group by the lesson and sort keys instead of DISTINCT: PostgreSQL
         # rejects ORDER BY columns that are not selected with SELECT DISTINCT.
@@ -250,6 +254,8 @@ def create_conversation():
     data = request.get_json(silent=True) or {}
     raw_lesson_id = str(data.get("lesson_id") or "")
     lesson = db.session.get(Lesson, int(raw_lesson_id)) if raw_lesson_id.isdigit() else None
+    if lesson is not None and not student_can_access_lesson(current_user, lesson):
+        abort(404)
     initial_concept = str(data.get("concept") or "").strip()[:250] or None
     conversation = TutorConversation(
         student_id=current_user.id,
@@ -467,17 +473,23 @@ def send_tutor_message(conversation_id):
 @teacher_bp.post("/quick-quiz/start")
 @login_required
 def start_quick_quiz():
+    if current_user.role != "student":
+        abort(403)
     data = request.get_json(silent=True) or {}
+    visible_lesson_ids = set(lessons_for_user(current_user, active_only=True))
     raw_lesson_id = str(data.get("lesson_id") or "")
     lesson = db.session.get(Lesson, int(raw_lesson_id)) if raw_lesson_id.isdigit() else None
+    if lesson is not None and lesson.id not in visible_lesson_ids:
+        return jsonify({"success": False, "error": "هذا الدرس ليس ضمن صفك الدراسي."}), 403
     if lesson is None:
         weakest = (
             ConceptMastery.query.filter_by(student_id=current_user.id)
+            .filter(ConceptMastery.lesson_id.in_(visible_lesson_ids or [-1]))
             .order_by(ConceptMastery.mastery_score.asc()).first()
         )
         lesson = weakest.lesson if weakest else None
     if lesson is None:
-        return jsonify({"success": False, "error": "اختاري درسًا للاختبار السريع."}), 400
+        return jsonify({"success": False, "error": "اختاري درسًا من صفك للاختبار السريع."}), 400
     session = ChallengeSession(
         student_id=current_user.id,
         lesson_id=lesson.id,

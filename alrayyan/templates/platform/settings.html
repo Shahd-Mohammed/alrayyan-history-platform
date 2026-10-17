@@ -11,11 +11,11 @@
     {{ form.submit(class_='platform-gold-button') }}
   </form>
 </section>
-{% if current_user.role == 'admin' %}
+{% if is_platform_owner(current_user) %}
 <section class="platform-panel platform-admin-account-shortcut">
   <div>
     <h2>إدارة حسابات الإدارة</h2>
-    <p>هذا القسم مخصص للحسابات التي تملك صلاحية المدير، ويمكن منه إنشاء حسابات إدارة إضافية ومراجعة الحسابات الحالية.</p>
+    <p>هذا القسم مخصص لمالكتي المنصة فقط، ويمكن منه إنشاء حسابات إدارة إضافية ومراجعة الحسابات الحالية.</p>
   </div>
   <a class="platform-gold-button" href="{{ url_for('platform_admin.admins') }}">فتح حسابات الإدارة</a>
 </section>
