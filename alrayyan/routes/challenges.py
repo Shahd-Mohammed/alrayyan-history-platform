@@ -57,6 +57,8 @@ def get_owned_session_or_404(session_id):
         abort(404)
     if session.student_id != current_user.id:
         abort(403)
+    if not student_can_access_lesson(current_user, session.lesson):
+        abort(404)
     return session
 
 
@@ -247,6 +249,7 @@ def setup():
                 "الدرس احتياطي",
                 "الوحدة — الدرس احتياطي",
             }),
+            Lesson.id.in_(lessons_for_user(current_user, active_only=True) or [-1]),
         )
         # Group by the lesson and sort keys instead of DISTINCT: PostgreSQL
         # rejects ORDER BY columns that are not selected with SELECT DISTINCT.
@@ -281,6 +284,7 @@ def test_bank():
                 "الدرس احتياطي",
                 "الوحدة — الدرس احتياطي",
             }),
+            Lesson.id.in_(lessons_for_user(current_user, active_only=True) or [-1]),
         )
         # Group by the lesson and sort keys instead of DISTINCT: PostgreSQL
         # rejects ORDER BY columns that are not selected with SELECT DISTINCT.
@@ -294,11 +298,12 @@ def test_bank():
         .order_by(Curriculum.subject, Curriculum.grade, Unit.order_index, Lesson.order_index)
         .all()
     )
+    visible_lesson_ids = lessons_for_user(current_user, active_only=True)
     published_content = Worksheet.query.filter_by(
         publication_status="published",
         is_published=True,
         is_archived=False,
-    )
+    ).filter(Worksheet.lesson_id.in_(visible_lesson_ids or [-1]))
     worksheets = (
         published_content
         .filter(Worksheet.creation_method != "test")
