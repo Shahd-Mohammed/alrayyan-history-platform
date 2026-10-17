@@ -484,11 +484,10 @@ def start_quick_quiz():
     if lesson is None:
         weakest = (
             ConceptMastery.query.filter_by(student_id=current_user.id)
+            .filter(ConceptMastery.lesson_id.in_(visible_lesson_ids or [-1]))
             .order_by(ConceptMastery.mastery_score.asc()).first()
         )
         lesson = weakest.lesson if weakest else None
-        if lesson is not None and lesson.id not in visible_lesson_ids:
-            lesson = None
     if lesson is None:
         return jsonify({"success": False, "error": "اختاري درسًا من صفك للاختبار السريع."}), 400
     session = ChallengeSession(
