@@ -12,7 +12,7 @@ os.environ["DATABASE_URL"] = f"sqlite:///{database_file.name}"
 
 from app import app  # noqa: E402
 from alrayyan.extensions import db  # noqa: E402
-from alrayyan.models import Curriculum, Lesson, Question, Unit, User, Worksheet, WorksheetAttempt, WorksheetAttachment  # noqa: E402
+from alrayyan.models import ClassEnrollment, Classroom, Curriculum, Lesson, Question, Unit, User, Worksheet, WorksheetAttempt, WorksheetAttachment  # noqa: E402
 from alrayyan.routes.assessment import get_remaining_seconds  # noqa: E402
 
 
@@ -28,6 +28,19 @@ with app.app_context():
     student.set_password("strong-password")
     db.session.add_all([teacher, student])
     db.session.flush()
+
+    # Grade access now fails closed for unassigned students; give this test
+    # student a real grade-11 enrollment so the download checks are meaningful.
+    classroom = Classroom(
+        teacher_id=teacher.id,
+        name="صف الاختبار",
+        grade="11",
+        academic_year="2026",
+        is_active=True,
+    )
+    db.session.add(classroom)
+    db.session.flush()
+    db.session.add(ClassEnrollment(classroom_id=classroom.id, student_id=student.id))
 
     curriculum = Curriculum(created_by_id=teacher.id, name="منهج تجريبي", subject="تاريخ", grade="11", semester="1", academic_year="2026", version="test")
     db.session.add(curriculum)
