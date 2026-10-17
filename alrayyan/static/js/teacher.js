@@ -118,12 +118,12 @@ if (tutorApp) {
         }
         evaluationBadge.textContent = evaluationLabels[message.evaluation] || "تقييم جديد";
         masteryBadge.textContent = masteryScore === null || masteryScore === undefined
-            ? "" : `إتقان المفهوم: ${masteryScore}%`;
+            ? "" : `نسبة إتقان المفهوم: ${masteryScore}%`;
         xpBadge.textContent = xpAwarded > 0
             ? `+${xpAwarded} XP`
             : progressUpdated
-                ? "تم تحديث إتقان المفهوم"
-                : "لم يتغير الإتقان";
+                ? "تحدّثت نسبة الإتقان؛ النقاط تُحسب بشكل منفصل"
+                : "لم تتغير نسبة الإتقان";
         progressLink.hidden = !progressUpdated && xpAwarded <= 0;
         insight.hidden = false;
     }
