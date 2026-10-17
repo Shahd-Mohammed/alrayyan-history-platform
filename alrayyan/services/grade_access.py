@@ -25,6 +25,21 @@ def normalize_grade(value):
     return None
 
 
+def _selected_student_grade():
+    try:
+        return normalize_grade(session.get("student_selected_grade"))
+    except RuntimeError:
+        # Unit tests and maintenance scripts may call this helper without a request.
+        return None
+
+
+def _remember_student_grade(grade):
+    try:
+        session["student_selected_grade"] = grade
+    except RuntimeError:
+        pass
+
+
 def student_available_grades(user):
     """Return the active grades in which a student is enrolled."""
     if not user or user.role != "student":
@@ -52,11 +67,11 @@ def student_grade(user):
     if not available:
         return None
 
-    selected = normalize_grade(session.get("student_selected_grade"))
+    selected = _selected_student_grade()
     if selected in available:
         return selected
     if len(available) == 1:
-        session["student_selected_grade"] = available[0]
+        _remember_student_grade(available[0])
         return available[0]
 
     # Legacy accounts can have active enrollments in both grades. Keep their
@@ -74,7 +89,7 @@ def student_grade(user):
     )
     resolved = normalize_grade(latest[0]) if latest else None
     if resolved in available:
-        session["student_selected_grade"] = resolved
+        _remember_student_grade(resolved)
         return resolved
     return None
 
