@@ -32,7 +32,7 @@ class InvitationForm(FlaskForm):
         validators=[DataRequired(), Length(max=20000)],
         description="بريد واحد في كل سطر، أو افصلي بينها بفاصلة.",
     )
-    classroom_id = SelectField("الصف", coerce=int, validators=[Optional()])
+    classroom_id = SelectField("الصف", coerce=int, validators=[DataRequired(message="اختاري الصف قبل إنشاء الدعوة.")])
     valid_days = IntegerField("صلاحية الدعوة بالأيام", default=7, validators=[DataRequired(), NumberRange(min=1, max=30)])
     submit = SubmitField("إنشاء رابط الدعوة")
 
