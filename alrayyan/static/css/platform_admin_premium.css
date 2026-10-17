@@ -3858,3 +3858,24 @@ button.concept-action,
 }
 .platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish *,
 .platform-admin-body .test-card-action.archive * { color: #fff !important; }
+
+/* Last-resort cache-independent navy state for the requested map/test actions. */
+.platform-admin-body .platform-admin-page .concept-action.publish,
+.platform-admin-body .platform-admin-page .concept-action.publish:hover,
+.platform-admin-body .platform-admin-page .concept-action.publish:focus-visible,
+.platform-admin-body .platform-admin-page .concept-action.publish:active,
+.platform-admin-body .platform-admin-page .test-card-action.archive,
+.platform-admin-body .platform-admin-page .test-card-action.archive:hover,
+.platform-admin-body .platform-admin-page .test-card-action.archive:focus-visible,
+.platform-admin-body .platform-admin-page .test-card-action.archive:active {
+  background: #102746 !important;
+  background-image: none !important;
+  background-color: #102746 !important;
+  border-color: #102746 !important;
+  color: #fff !important;
+  box-shadow: 0 6px 15px rgba(16,39,70,.16) !important;
+}
+.platform-admin-body .platform-admin-page .concept-action.publish *,
+.platform-admin-body .platform-admin-page .test-card-action.archive * {
+  color: #fff !important;
+}
