@@ -40,6 +40,7 @@ from alrayyan.models import (
     User,
     XPTransaction,
 )
+from alrayyan.services.grade_access import student_can_access_lesson
 from alrayyan.services.question_interactions import (
     INTERACTIVE_TYPES,
     build_config,
