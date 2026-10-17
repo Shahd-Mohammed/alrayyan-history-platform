@@ -13,6 +13,7 @@ from alrayyan.extensions import db
 from alrayyan.services.file_storage import resolve_stored_file
 from alrayyan.models import CharacterAttempt, ConceptMap, Curriculum, DateReview, HistoricalCharacter, HistoricalDate, HonorBoardEntry, LearningResource, Lesson, Unit, User, XPTransaction
 from alrayyan.services.learning_content_ai import generate_historical_date_drafts
+from alrayyan.services.grade_access import lessons_for_user, student_can_access_lesson
 
 
 learning_bp = Blueprint("learning", __name__, url_prefix="/learn")
@@ -51,7 +52,7 @@ def library():
             current_user, "learning_library_opened", "student", current_user.id, amount=2
         )
         db.session.commit()
-    active_lessons = db.session.query(Lesson.id).join(Unit).join(Curriculum).filter(Curriculum.is_active.is_(True))
+    active_lessons = lessons_for_user(current_user, active_only=True)
     return render_template(
         "learning/library.html",
         resources=LearningResource.query.filter(LearningResource.publication_status == "published", LearningResource.lesson_id.in_(active_lessons)).order_by(LearningResource.created_at.desc()).limit(6).all(),
@@ -65,9 +66,7 @@ def library():
 @login_required
 def maps_archive():
     """Show published concept maps in a paginated archive."""
-    active_lessons = db.session.query(Lesson.id).join(Unit).join(Curriculum).filter(
-        Curriculum.is_active.is_(True)
-    )
+    active_lessons = lessons_for_user(current_user, active_only=True)
     pagination = ConceptMap.query.filter(
         ConceptMap.publication_status == "published",
         ConceptMap.lesson_id.in_(active_lessons),
@@ -115,6 +114,8 @@ def concept_map(map_id):
         abort(404)
     if row.publication_status != "published" and current_user.role not in {"teacher", "admin"}:
         abort(404)
+    if not student_can_access_lesson(current_user, row.lesson):
+        abort(404)
     award_content_interaction(current_user, "concept_map_viewed", "concept_map", row.id)
     db.session.commit()
     return render_template("learning/concept_map.html", concept_map=row)
@@ -125,6 +126,8 @@ def concept_map(map_id):
 def concept_map_file(map_id):
     row = ConceptMap.query.filter_by(id=map_id, creation_method="upload").first_or_404()
     if row.publication_status != "published" and current_user.role not in {"teacher", "admin"}:
+        abort(404)
+    if not student_can_access_lesson(current_user, row.lesson):
         abort(404)
     try:
         target = resolve_stored_file(row.stored_path)
@@ -253,6 +256,8 @@ def download_concept_map(map_id):
         abort(404)
     if row.publication_status != "published" and current_user.role not in {"teacher", "admin"}:
         abort(404)
+    if not student_can_access_lesson(current_user, row.lesson):
+        abort(404)
 
     filename_stem = Path(row.title or f"concept-map-{row.id}").name.strip()
     if row.creation_method == "upload":
@@ -315,6 +320,8 @@ def answer_character(character_id):
     if current_user.role != "student":
         abort(403)
     row = HistoricalCharacter.query.filter_by(id=character_id, publication_status="published").first_or_404()
+    if not student_can_access_lesson(current_user, row.lesson):
+        abort(404)
     payload = request.get_json(silent=True) or {}
     answer = str(payload.get("answer") or "").strip()[:250]
     if not answer:
@@ -348,6 +355,8 @@ def answer_character(character_id):
 @login_required
 def download_resource(resource_id):
     row = LearningResource.query.filter_by(id=resource_id, publication_status="published").first_or_404()
+    if not student_can_access_lesson(current_user, row.lesson):
+        abort(404)
     if not row.allow_download:
         abort(403)
     try:
