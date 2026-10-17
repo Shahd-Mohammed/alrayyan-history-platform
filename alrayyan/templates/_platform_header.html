@@ -16,6 +16,7 @@
 
     <nav class="platform-navigation" data-platform-menu>
         <a href="{{ url_for('main.home') }}">الرئيسية</a>
+        <a href="{{ url_for('main.about') }}">من نحن</a>
 
         {% if not current_user.is_authenticated %}
             <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
@@ -24,8 +25,6 @@
             <a href="{{ url_for('learning.characters') }}">من أنا؟</a>
             <a href="{{ url_for('learning.honor_board') }}">لوحة الشرف</a>
         {% endif %}
-
-        <a href="{{ url_for('main.about') }}">من نحن</a>
 
         {% if current_user.is_authenticated %}
             {% if current_user.role in ['teacher', 'admin'] %}
@@ -44,11 +43,11 @@
                         <a href="{{ url_for('platform_admin.characters') }}">الشخصيات التعليمية</a>
                         <a href="{{ url_for('platform_admin.honor_board') }}">لوحة الشرف</a>
                         <a href="{{ url_for('platform_admin.settings') }}">إعدادات المنصة</a>
-                        {% if current_user.role == 'admin' %}
-                        <a href="{{ url_for('platform_admin.admins') }}">＋ إنشاء حساب إدارة</a>
-                        {% endif %}
                     </div>
                 </details>
+                {% if current_user.role == 'admin' %}
+                    <a class="platform-admin-create-link" href="{{ url_for('platform_admin.admins') }}">＋ حساب إدارة</a>
+                {% endif %}
             {% elif current_user.role == 'student' %}
                 <a href="{{ url_for('main.student_dashboard') }}">لوحتي</a>
                 <details class="student-learning-menu student-results-menu">
