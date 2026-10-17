@@ -40,7 +40,7 @@ from alrayyan.models import (
     User,
     XPTransaction,
 )
-from alrayyan.services.grade_access import student_can_access_lesson, selected_management_grade, lesson_ids_for_grade
+from alrayyan.services.grade_access import student_can_access_lesson, selected_management_grade, lesson_ids_for_grade, lessons_for_user
 from alrayyan.services.question_interactions import (
     INTERACTIVE_TYPES,
     build_config,
@@ -1336,10 +1336,13 @@ def my_results():
     if current_user.role != "student":
         abort(403)
 
+    visible_lesson_ids = lessons_for_user(current_user, active_only=True)
     attempts = (
         WorksheetAttempt.query
-        .filter_by(
-            student_id=current_user.id
+        .join(Worksheet)
+        .filter(
+            WorksheetAttempt.student_id == current_user.id,
+            Worksheet.lesson_id.in_(visible_lesson_ids or [-1]),
         )
         .order_by(
             WorksheetAttempt
