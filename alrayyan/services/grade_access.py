@@ -16,9 +16,9 @@ _ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
 def normalize_grade(value):
     text = (value or "").translate(_ARABIC_DIGITS).strip().casefold()
     compact = re.sub(r"[\sـ_\-()\[\]{}]+", "", text)
-    if re.search(r"(?:الحاديعشر|الحاديةعشرة|grade11|year11|(?<!\\d)11(?!\\d))", compact):
+    if re.search(r"(?:الحاديعشر|الحاديةعشرة|grade11|year11|(?<!\d)11(?!\d))", compact):
         return "11"
-    if re.search(r"(?:الثانيعشر|الثانيةعشرة|grade12|year12|(?<!\\d)12(?!\\d))", compact):
+    if re.search(r"(?:الثانيعشر|الثانيةعشرة|grade12|year12|(?<!\d)12(?!\d))", compact):
         return "12"
     return None
 
