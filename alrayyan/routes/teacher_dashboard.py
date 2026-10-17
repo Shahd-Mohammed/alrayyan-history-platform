@@ -24,7 +24,7 @@ from alrayyan.forms import (
     UploadWorksheetForm,
 )
 from alrayyan.services.file_storage import upload_to_object_storage
-from alrayyan.services.grade_access import selected_management_grade, lesson_ids_for_grade, normalize_grade, student_available_grades, student_grade
+from alrayyan.services.grade_access import selected_management_grade, lesson_ids_for_grade, curriculum_ids_for_grade, normalize_grade, student_available_grades, student_grade
 from alrayyan.models import (
     AboutPage,
     Curriculum,
@@ -341,9 +341,12 @@ def upload_worksheet():
     form = UploadWorksheetForm()
 
     # ورقة العمل تعرض دروس أحدث فصل جرى تفعيله، وليس دروس الفصول القديمة.
+    selected_grade = selected_management_grade()
     active_curricula_query = Curriculum.query.filter_by(
         is_active=True,
         processing_status="ready",
+    ).filter(
+        Curriculum.id.in_(curriculum_ids_for_grade(selected_grade) or [-1])
     )
     if current_user.role != "admin":
         active_curricula_query = active_curricula_query.filter(
@@ -367,6 +370,7 @@ def upload_worksheet():
             Curriculum.is_active.is_(True),
             Curriculum.processing_status == "ready",
             Curriculum.semester == active_semester,
+            Lesson.id.in_(lesson_ids_for_grade(selected_grade) or [-1]),
         )
         if current_user.role != "admin":
             lessons_query = lessons_query.filter(
@@ -604,7 +608,11 @@ def edit_worksheet(worksheet_id):
         obj=worksheet
     )
 
-    lessons = Lesson.query.order_by(
+    # The selected grade also limits the editable lesson choices. Keep inactive
+    # lessons from this same grade available so legacy worksheets remain editable.
+    lessons = Lesson.query.filter(
+        Lesson.id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1])
+    ).order_by(
         Lesson.id
     ).all()
 
