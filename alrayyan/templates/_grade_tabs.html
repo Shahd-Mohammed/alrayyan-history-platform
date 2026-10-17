@@ -1,0 +1,18 @@
+<nav class="grade-workspace-tabs" aria-label="اختيار الصف لإدارة المنصة">
+  <div class="grade-workspace-tabs__intro">
+    <strong>مساحة إدارة الصف</strong>
+    <span>اختاري الصف لعرض محتواه وبياناته فقط.</span>
+  </div>
+  <a href="{{ url_for('teacher_dashboard.select_grade', grade='11', next=request.full_path) }}"
+     class="{{ 'is-active' if selected_grade == '11' else '' }}"
+     {% if selected_grade == '11' %}aria-current="page"{% endif %}>
+    <span class="grade-workspace-tabs__number">11</span>
+    <span><strong>الصف الحادي عشر</strong><small>محتوى الطالبات ونتائجهن</small></span>
+  </a>
+  <a href="{{ url_for('teacher_dashboard.select_grade', grade='12', next=request.full_path) }}"
+     class="{{ 'is-active' if selected_grade == '12' else '' }}"
+     {% if selected_grade == '12' %}aria-current="page"{% endif %}>
+    <span class="grade-workspace-tabs__number">12</span>
+    <span><strong>الصف الثاني عشر</strong><small>محتوى الطالبات ونتائجهن</small></span>
+  </a>
+</nav>
