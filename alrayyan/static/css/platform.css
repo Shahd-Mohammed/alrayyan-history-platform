@@ -1384,3 +1384,21 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
     white-space: normal !important;
   }
 }
+
+
+/* Grade 11/12 workspace switcher shared by teacher management pages. */
+.grade-workspace-tabs{width:min(1180px,calc(100% - 32px));margin:20px auto 26px;padding:12px;display:grid;grid-template-columns:minmax(180px,1fr) repeat(2,minmax(220px,1fr));gap:12px;align-items:stretch;border:1px solid #e5d6b8;border-radius:20px;background:linear-gradient(135deg,#fffdf8,#fff);box-shadow:0 12px 28px rgba(7,26,53,.06);box-sizing:border-box}
+.platform-admin-page>.grade-workspace-tabs{width:100%;margin:0 0 24px}
+.grade-workspace-tabs__intro{display:flex;flex-direction:column;justify-content:center;gap:5px;padding:10px 14px;color:#173455}
+.grade-workspace-tabs__intro strong{font-size:1rem}
+.grade-workspace-tabs__intro span{color:#738093;font-size:.82rem;line-height:1.7}
+.grade-workspace-tabs>a{display:flex;align-items:center;gap:12px;min-width:0;padding:13px 16px;border:1px solid #e4dccd;border-radius:14px;background:#f7f4ed;color:#173455;text-decoration:none;transition:background .18s,border-color .18s,transform .18s}
+.grade-workspace-tabs>a:hover{transform:translateY(-1px);border-color:#c99a3d;background:#fff8e8}
+.grade-workspace-tabs>a.is-active{border-color:#102746;background:linear-gradient(135deg,#243e63,#102746);color:#fff;box-shadow:0 8px 18px rgba(16,39,70,.18)}
+.grade-workspace-tabs__number{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:12px;background:#fff;color:#173455;font-weight:900;font-size:1.05rem}
+.grade-workspace-tabs>a.is-active .grade-workspace-tabs__number{background:#f1d694;color:#102746}
+.grade-workspace-tabs>a>span:last-child{display:grid;gap:3px;min-width:0}
+.grade-workspace-tabs>a strong{font-size:.95rem}
+.grade-workspace-tabs>a small{color:#758195;font-size:.76rem;line-height:1.5}
+.grade-workspace-tabs>a.is-active small{color:#e2eaf5}
+@media(max-width:760px){.grade-workspace-tabs{grid-template-columns:1fr;margin:14px auto 20px;padding:10px}.platform-admin-page>.grade-workspace-tabs{margin-bottom:18px}.grade-workspace-tabs__intro{padding:5px 8px}.grade-workspace-tabs>a{padding:11px 13px}}
