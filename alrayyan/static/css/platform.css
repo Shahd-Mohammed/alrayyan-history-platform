@@ -1417,3 +1417,43 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
   .platform-header .platform-navigation { display:flex !important; }
 }
 .tutor-scoring-note { margin:8px 0 16px; color:#6d7784; font-size:.82rem; line-height:1.8; }
+
+
+/* Final fixes requested: archived-test and map-publish actions use the platform navy. */
+.platform-admin-body .concept-map-card-actions .concept-action.publish,
+.platform-admin-body .concept-action.publish,
+.test-card-action.archive {
+  border: 1px solid #0d294d !important;
+  background: linear-gradient(135deg, #0d294d, #1f4c7c) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(13, 41, 77, .16) !important;
+}
+.platform-admin-body .concept-map-card-actions .concept-action.publish:hover,
+.platform-admin-body .concept-action.publish:hover,
+.test-card-action.archive:hover {
+  border-color: #071a35 !important;
+  background: linear-gradient(135deg, #071a35, #153b63) !important;
+  color: #fff !important;
+}
+
+/* Keep the mobile menu anchored to the header instead of leaving a stray panel. */
+@media (max-width: 900px) {
+  .platform-header { position: sticky; }
+  .platform-header .platform-navigation:not(.is-open) { display: none !important; }
+  .platform-header .platform-navigation.is-open {
+    position: absolute !important;
+    top: calc(100% + 1px) !important;
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    background: #fff !important;
+    border: 1px solid var(--platform-border) !important;
+    border-radius: 0 0 18px 18px !important;
+    box-shadow: 0 24px 60px rgba(7, 26, 53, .14) !important;
+  }
+}
