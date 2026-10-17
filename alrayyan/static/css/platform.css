@@ -1384,3 +1384,18 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
     white-space: normal !important;
   }
 }
+
+
+/* Final header-menu rule: hamburger only on compact screens, never on desktop pages. */
+.platform-header .platform-menu-toggle { display: none !important; }
+.platform-header .platform-menu-toggle span { display:block !important; width:20px !important; height:2px !important; margin:0 !important; flex:0 0 2px !important; border-radius:3px; background:#0b2546 !important; }
+@media (max-width: 900px) {
+  .platform-header .platform-menu-toggle { display:inline-flex !important; align-items:center !important; justify-content:center !important; flex-direction:column !important; gap:4px !important; }
+  .platform-header .platform-navigation:not(.is-open) { display:none !important; }
+  .platform-header .platform-navigation.is-open { display:flex !important; }
+}
+@media (min-width: 901px) {
+  .platform-header .platform-menu-toggle { display:none !important; }
+  .platform-header .platform-navigation { display:flex !important; }
+}
+.tutor-scoring-note { margin: 8px 0 16px; color:#6d7784; font-size:.82rem; line-height:1.8; }
