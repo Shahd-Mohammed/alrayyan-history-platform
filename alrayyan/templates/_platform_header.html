@@ -56,6 +56,16 @@
                                 <details class="student-learning-menu">
                     <summary>تعلّمي</summary>
                     <div>
+                        {% if available_student_grades|length > 1 %}
+                            <span class="student-grade-menu-heading">التعلّم حسب الصف</span>
+                            {% for grade in available_student_grades %}
+                            <a class="student-grade-menu-link {{ 'is-active' if selected_student_grade == grade else '' }}"
+                               href="{{ url_for('teacher.select_student_grade', grade=grade, next=request.full_path) }}">
+                                الصف {{ 'الحادي عشر' if grade == '11' else 'الثاني عشر' }}
+                                {% if selected_student_grade == grade %}<span aria-hidden="true"> ✓</span>{% endif %}
+                            </a>
+                            {% endfor %}
+                        {% endif %}
                         <a href="{{ url_for('challenges.test_bank') }}">الاختبارات</a>
                         <a href="{{ url_for('worksheets.worksheet_list') }}">أوراق العمل</a>
                         <a href="{{ url_for('teacher.teacher_page') }}">المعلّم الذكي</a>
