@@ -3762,8 +3762,7 @@ button.concept-action,
   font-size: .94rem !important;
   font-weight: 800 !important;
 }
-.platform-admin-body .admin-account-form > label:first-of-type,
-.platform-admin-body .admin-account-form > label:nth-of-type(2),
+.platform-admin-body .admin-account-form > label:nth-of-type(3),
 .platform-admin-body .admin-password-guidance,
 .platform-admin-body .admin-account-form > button { grid-column: 1 / -1 !important; }
 .platform-admin-body .admin-account-form input {
