@@ -15,6 +15,7 @@ from flask_login import (
 )
 
 from alrayyan.services.file_storage import resolve_stored_file
+from alrayyan.services.grade_access import lessons_for_user, student_can_access_lesson
 from alrayyan.models import (
     LearningResource,
     Worksheet,
@@ -38,15 +39,22 @@ def worksheet_list():
     """
 
     page = max(request.args.get("page", 1, type=int), 1)
+    query = Worksheet.query.filter(
+        Worksheet.creation_method != "test",
+        Worksheet.publication_status == "published",
+        Worksheet.is_published.is_(True),
+        Worksheet.is_archived.is_(False),
+    )
+
+    # Students must only discover worksheets assigned to their active grade.
+    # Keep teacher/admin previews available, while enforcing student access
+    # again on details and download endpoints below.
+    if current_user.role == "student":
+        visible_lesson_ids = lessons_for_user(current_user, active_only=True)
+        query = query.filter(Worksheet.lesson_id.in_(visible_lesson_ids or [-1]))
+
     pagination = (
-        Worksheet.query
-        .filter(
-            Worksheet.creation_method != "test",
-            Worksheet.publication_status == "published",
-            Worksheet.is_published.is_(True),
-            Worksheet.is_archived.is_(False),
-        )
-        .order_by(Worksheet.created_at.desc())
+        query.order_by(Worksheet.created_at.desc())
         .paginate(page=page, per_page=12, error_out=False)
     )
 
@@ -76,6 +84,10 @@ def worksheet_details(worksheet_id):
         )
         .first_or_404()
     )
+
+    # Do not rely on hiding links in the list: direct URLs must respect grade access.
+    if not student_can_access_lesson(current_user, worksheet.lesson):
+        abort(404)
 
     worksheet_file = (
         WorksheetAttachment.query
@@ -171,6 +183,10 @@ def download_worksheet(worksheet_id):
         )
         .first_or_404()
     )
+
+    # Apply the same grade check to file downloads, including guessed URLs.
+    if not student_can_access_lesson(current_user, worksheet.lesson):
+        abort(404)
 
     if not worksheet.allow_download:
         abort(403)
