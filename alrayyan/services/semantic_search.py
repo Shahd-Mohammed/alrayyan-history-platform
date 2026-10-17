@@ -78,9 +78,12 @@ def format_citation(source, page_number):
 def _normalize_keyword_text(value):
     value = unicodedata.normalize("NFKC", value or "").casefold()
     value = re.sub(r"[\u064B-\u065F\u0670]", "", value)
-    return value.translate(str.maketrans({
+    value = value.translate(str.maketrans({
         "أ": "ا", "إ": "ا", "آ": "ا", "ى": "ي", "ة": "ه",
     }))
+    # Students often stretch a word for emphasis (e.g. "الاستعمارررر").
+    # Collapse only 3+ repeated Arabic letters so keyword lookup can still find the textbook term.
+    return re.sub(r"([\\u0621-\\u064A])\\1{2,}", r"\\1", value)
 
 
 def keyword_search_fallback(query, top_k=5, lesson_id=None, lesson_ids=None):
