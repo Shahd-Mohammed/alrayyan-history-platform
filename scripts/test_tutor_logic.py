@@ -21,6 +21,7 @@ def run_tests():
     assert as_utc_naive(naive_utc) == naive_utc
     assert as_utc_naive(None) is None
     assert _normalize_keyword_text("الإِسْتِعْمَار") == "الاستعمار"
+    assert _normalize_keyword_text("الاستعماررررررر") == "الاستعمار"
     assert as_utc_naive(
         datetime(2026, 10, 15, 13, 0, tzinfo=timezone(timedelta(hours=2)))
     ) == naive_utc
