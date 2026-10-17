@@ -4,6 +4,8 @@ import os
 import re
 import smtplib
 import ssl
+import urllib.error
+import urllib.request
 from email.message import EmailMessage
 from datetime import datetime, timezone
 from pathlib import Path
@@ -432,16 +434,67 @@ def delete_classroom(classroom_id):
 
 
 def invitation_mail_settings():
-    return all(os.getenv(key) for key in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL"))
-
-
-def send_student_invitation(email, invitation_url, teacher_name):
-    host, username, password, sender = (
+    # Resend uses HTTPS and works with Render Free services; outbound SMTP
+    # ports (25/465/587) are blocked on Render's free web-service tier.
+    if os.getenv("RESEND_API_KEY") and os.getenv("RESEND_FROM_EMAIL"):
+        return True
+    return all(
         os.getenv(key)
         for key in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL")
     )
+
+
+def send_student_invitation(email, invitation_url, teacher_name):
+    sender = os.getenv("RESEND_FROM_EMAIL") or os.getenv("SMTP_FROM_EMAIL")
+    subject = "دعوة للانضمام إلى منصة الريان للدراسات التاريخية"
+    body = (
+        f"مرحبًا،\n\nدعتك المعلمة {teacher_name} للانضمام إلى منصة الريان للدراسات التاريخية.\n"
+        f"افتحي الرابط التالي لإنشاء حسابك: {invitation_url}\n\n"
+        "إذا لم تتوقعي هذه الدعوة، يمكنك تجاهل هذه الرسالة."
+    )
+
+    resend_api_key = (os.getenv("RESEND_API_KEY") or "").strip()
+    if resend_api_key and sender:
+        payload = json.dumps({
+            "from": sender,
+            "to": [email],
+            "subject": subject,
+            "text": body,
+        }).encode("utf-8")
+        api_request = urllib.request.Request(
+            "https://api.resend.com/emails",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json",
+                "User-Agent": "Alrayyan-History-Platform/1.0",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(api_request, timeout=25) as response:
+                if response.status < 200 or response.status >= 300:
+                    raise RuntimeError(f"خدمة البريد رفضت الطلب (HTTP {response.status})")
+                return json.loads(response.read().decode("utf-8") or "{}")
+        except urllib.error.HTTPError as error:
+            details = error.read().decode("utf-8", errors="replace")[:500]
+            raise RuntimeError(
+                f"فشل إرسال الدعوة عبر خدمة البريد (HTTP {error.code}): {details}"
+            ) from error
+        except urllib.error.URLError as error:
+            raise RuntimeError(
+                "تعذر الاتصال بخدمة البريد عبر HTTPS. تحققي من سجل Render."
+            ) from error
+
+    host, username, password = (
+        os.getenv(key)
+        for key in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD")
+    )
     if not all((host, username, password, sender)):
-        raise RuntimeError("إعدادات البريد غير مكتملة")
+        raise RuntimeError(
+            "إعدادات البريد غير مكتملة. أضيفي RESEND_API_KEY وRESEND_FROM_EMAIL "
+            "في Render أو أكملي إعداد SMTP."
+        )
 
     port = int(os.getenv("SMTP_PORT", "587"))
     ssl_setting = os.getenv("SMTP_USE_SSL")
@@ -453,15 +506,11 @@ def send_student_invitation(email, invitation_url, teacher_name):
     use_tls = os.getenv("SMTP_USE_TLS", "1").lower() not in {"0", "false", "no"}
 
     message = EmailMessage()
-    message["Subject"] = "دعوة للانضمام إلى منصة الريان للدراسات التاريخية"
+    message["Subject"] = subject
     message["From"] = sender
     message["To"] = email
     message["Reply-To"] = sender
-    message.set_content(
-        f"مرحبًا،\n\nدعتك المعلمة {teacher_name} للانضمام إلى منصة الريان للدراسات التاريخية.\n"
-        f"افتحي الرابط التالي لإنشاء حسابك: {invitation_url}\n\n"
-        "إذا لم تتوقعي هذه الدعوة، يمكنك تجاهل هذه الرسالة."
-    )
+    message.set_content(body)
 
     smtp_client = (
         smtplib.SMTP_SSL(
@@ -1353,18 +1402,70 @@ def analytics():
 
 @platform_admin_bp.route("/honor-board", methods=["GET", "POST"])
 def honor_board():
-    classrooms = Classroom.query.filter_by(teacher_id=current_user.id, is_active=True).all()
-    student_ids = {enrollment.student_id for classroom in classrooms for enrollment in classroom.enrollments}
-    students = User.query.filter(User.id.in_(student_ids)).order_by(User.full_name).all() if student_ids else []
+    classrooms_query = Classroom.query.filter_by(is_active=True)
+    if current_user.role != "admin":
+        classrooms_query = classrooms_query.filter_by(teacher_id=current_user.id)
+    classrooms = classrooms_query.all()
+    student_ids = {
+        enrollment.student_id
+        for classroom in classrooms
+        for enrollment in classroom.enrollments
+    }
+
+    if current_user.role == "admin":
+        student_ids.update(
+            student_id for (student_id,) in
+            db.session.query(User.id).filter_by(
+                role="student", is_active_account=True
+            ).all()
+        )
+    else:
+        # Include active students who have submitted work in this teacher's
+        # assessments, even if a class enrollment has not been linked yet.
+        teacher_worksheet_ids = db.session.query(Worksheet.id).filter_by(
+            created_by_id=current_user.id
+        )
+        student_ids.update(
+            student_id for (student_id,) in
+            db.session.query(WorksheetAttempt.student_id)
+            .filter(WorksheetAttempt.worksheet_id.in_(teacher_worksheet_ids))
+            .distinct().all()
+        )
+
+    students = (
+        User.query.filter(
+            User.id.in_(student_ids),
+            User.role == "student",
+            User.is_active_account.is_(True),
+        ).order_by(User.full_name).all()
+        if student_ids else []
+    )
+    allowed_student_ids = {student.id for student in students}
+
     if request.method == "POST":
         student_id = request.form.get("student_id", type=int)
-        if student_id not in student_ids:
+        if student_id not in allowed_student_ids:
             abort(403)
-        entry = HonorBoardEntry(teacher_id=current_user.id, student_id=student_id, category=request.form.get("category", "teacher_choice")[:50], note=(request.form.get("note") or "").strip()[:300] or None, period_label=(request.form.get("period_label") or "").strip()[:100] or None)
-        db.session.add(entry); db.session.commit(); flash("تمت إضافة الطالبة إلى لوحة الشرف.", "success")
+        entry = HonorBoardEntry(
+            teacher_id=current_user.id,
+            student_id=student_id,
+            category=request.form.get("category", "teacher_choice")[:50],
+            note=(request.form.get("note") or "").strip()[:300] or None,
+            period_label=(request.form.get("period_label") or "").strip()[:100] or None,
+        )
+        db.session.add(entry)
+        db.session.commit()
+        flash("تمت إضافة الطالبة إلى لوحة الشرف.", "success")
         return redirect(url_for("platform_admin.honor_board"))
-    entries = HonorBoardEntry.query.filter_by(teacher_id=current_user.id, is_active=True).order_by(HonorBoardEntry.created_at.desc()).all()
-    return render_template("platform/honor_board.html", students=students, entries=entries)
+
+    entries = HonorBoardEntry.query.filter_by(
+        teacher_id=current_user.id, is_active=True
+    ).order_by(HonorBoardEntry.created_at.desc()).all()
+    return render_template(
+        "platform/honor_board.html",
+        students=students,
+        entries=entries,
+    )
 
 
 @platform_admin_bp.post("/honor-board/<int:entry_id>/remove")
