@@ -1355,3 +1355,32 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
     display: flex !important;
   }
 }
+
+
+/* Gold top-level administrator shortcut, outside the content dropdown. */
+.platform-navigation > .platform-admin-create-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 38px !important;
+  padding: 8px 12px !important;
+  border: 1px solid #b9872d !important;
+  border-radius: 10px !important;
+  background: linear-gradient(135deg, #dfbd68, #b9872d) !important;
+  color: #fff !important;
+  font-size: .86rem !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+}
+.platform-navigation > .platform-admin-create-link::after { display: none !important; }
+.platform-navigation > .platform-admin-create-link:hover {
+  background: linear-gradient(135deg, #c99a3d, #9b6e20) !important;
+  color: #fff !important;
+}
+@media (max-width: 980px) {
+  .platform-navigation > .platform-admin-create-link {
+    align-self: stretch !important;
+    justify-content: flex-start !important;
+    white-space: normal !important;
+  }
+}

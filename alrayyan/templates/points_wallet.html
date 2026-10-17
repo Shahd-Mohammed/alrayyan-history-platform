@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محفظة نقاطي | الريان</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css',v='20261009-global-button-1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css',v='20261017-palestine-points-time-2') }}">
 </head>
 <body>
     {% include '_platform_header.html' %}
@@ -42,7 +42,7 @@
                     <article>
                         <div>
                             <strong>{{ reason_labels.get(transaction.reason, transaction.reason) }}</strong>
-                            <small>{{ transaction.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                            <small>{{ transaction_times.get(transaction.id, '—') }} · توقيت فلسطين</small>
                         </div>
                         <b>+{{ transaction.amount }} XP</b>
                     </article>

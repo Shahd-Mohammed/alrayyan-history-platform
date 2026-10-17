@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 import re
 
 from flask import (
@@ -621,11 +622,25 @@ def my_points():
             totals_by_reason.get(transaction.reason, 0)
             + transaction.amount
         )
+    palestine_tz = ZoneInfo("Asia/Gaza")
+    transaction_times = {}
+    for transaction in transactions:
+        timestamp = transaction.created_at
+        if timestamp is None:
+            transaction_times[transaction.id] = "—"
+            continue
+        if timestamp.tzinfo is None:
+            timestamp = timestamp.replace(tzinfo=timezone.utc)
+        transaction_times[transaction.id] = timestamp.astimezone(
+            palestine_tz
+        ).strftime("%Y-%m-%d %H:%M")
+
     return render_template(
         "points_wallet.html",
         transactions=transactions,
         totals_by_reason=totals_by_reason,
         reason_labels=labels,
+        transaction_times=transaction_times,
     )
 
 

@@ -18,6 +18,10 @@ services:
         sync: false
       - key: PUBLIC_BASE_URL
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        sync: false
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT
@@ -44,7 +48,7 @@ services:
       - key: S3_ENDPOINT_URL
         sync: false
       - key: S3_REGION
-        sync: false
+        value: auto
       - key: EMBEDDING_MODEL
         value: openai/text-embedding-3-small
       - key: EMBEDDING_API_URL
