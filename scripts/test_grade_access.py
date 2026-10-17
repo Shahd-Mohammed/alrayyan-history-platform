@@ -33,6 +33,8 @@ with app.app_context():
     grade12_student = User(full_name="طالبة الثاني عشر", email="grade12-student@example.com", role="student")
     unassigned_student = User(full_name="طالبة بلا صف", email="unassigned-student@example.com", role="student")
     mixed_student = User(full_name="طالبة ذات تسجيلين", email="mixed-student@example.com", role="student")
+    for user in (teacher, grade11_student, grade12_student, unassigned_student, mixed_student):
+        user.set_password("grade-test-password-123")
     db.session.add_all([teacher, grade11_student, grade12_student, unassigned_student, mixed_student])
     db.session.flush()
 
