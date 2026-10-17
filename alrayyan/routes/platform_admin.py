@@ -605,15 +605,19 @@ def extract_invitation_emails(upload):
 def invitations():
     form = InvitationForm()
     classes = Classroom.query.filter_by(teacher_id=current_user.id, is_active=True).all()
-    form.classroom_id.choices = [(0, "بدون صف محدد")] + [(row.id, row.name) for row in classes]
+    form.classroom_id.choices = [(row.id, row.name) for row in classes]
     invitation_urls = []
     upload = request.files.get("emails_file")
     is_file_upload = request.method == "POST" and upload is not None and bool(upload.filename)
-    if is_file_upload:
+    if request.method == "POST" and not classes:
+        flash("لا توجد صفوف نشطة لإرسال الدعوات إليها. أنشئي الصف أولًا ثم أعيدي المحاولة.", "error")
+    elif is_file_upload:
         try:
             emails = extract_invitation_emails(upload)
-            classroom_id = request.form.get("classroom_id", default=0, type=int) or None
-            if classroom_id and not any(row.id == classroom_id for row in classes):
+            classroom_id = request.form.get("classroom_id", type=int)
+            if not classroom_id:
+                raise ValueError("اختاري الصف الذي ستنضم إليه الطالبات قبل إنشاء الدعوات.")
+            if not any(row.id == classroom_id for row in classes):
                 abort(403)
             valid_days = request.form.get("valid_days", default=7, type=int)
             if not 1 <= valid_days <= 30:
@@ -626,16 +630,20 @@ def invitations():
             current_app.logger.exception("Bulk invitation upload failed")
             flash(f"تعذر معالجة الملف: {error}", "error")
     elif form.validate_on_submit():
-        emails = []
-        for email in re.split(r"[\s,;]+", form.emails.data or ""):
-            normalized = email.strip().lower()
-            if normalized and normalized not in emails:
-                emails.append(normalized)
-        invalid = [email for email in emails if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email)]
-        if invalid:
-            form.emails.errors.append("بعض العناوين غير صالحة: " + "، ".join(invalid[:5]))
+        classroom_id = form.classroom_id.data
+        if not classroom_id or not any(row.id == classroom_id for row in classes):
+            flash("اختاري صفًا نشطًا وصحيحًا قبل إنشاء الدعوات.", "error")
         else:
-            invitation_urls = create_invitation_batch(emails, form.classroom_id.data or None, form.valid_days.data)
+            emails = []
+            for email in re.split(r"[\s,;]+", form.emails.data or ""):
+                normalized = email.strip().lower()
+                if normalized and normalized not in emails:
+                    emails.append(normalized)
+            invalid = [email for email in emails if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email)]
+            if invalid:
+                form.emails.errors.append("بعض العناوين غير صالحة: " + "، ".join(invalid[:5]))
+            else:
+                invitation_urls = create_invitation_batch(emails, classroom_id, form.valid_days.data)
     query = StudentInvitation.query if current_user.role == "admin" else StudentInvitation.query.filter_by(teacher_id=current_user.id)
     return render_template("platform/invitations.html", form=form, invitations=query.order_by(StudentInvitation.created_at.desc()).limit(200).all(), invitation_urls=invitation_urls, classrooms=classes)
 
