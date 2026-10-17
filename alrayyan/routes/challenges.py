@@ -28,6 +28,7 @@ from alrayyan.models import (
     Worksheet,
     XPTransaction,
 )
+from alrayyan.services.grade_access import lessons_for_user, student_can_access_lesson
 from alrayyan.services.challenge_engine import (
     DIFFICULTIES,
     calculate_award,
