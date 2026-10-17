@@ -87,9 +87,7 @@ def maps_archive():
 @login_required
 def resources_archive():
     """Show published lesson summaries and supporting files in a paginated archive."""
-    active_lessons = db.session.query(Lesson.id).join(Unit).join(Curriculum).filter(
-        Curriculum.is_active.is_(True)
-    )
+    active_lessons = lessons_for_user(current_user, active_only=True)
     pagination = LearningResource.query.filter(
         LearningResource.publication_status == "published",
         LearningResource.lesson_id.in_(active_lessons),
@@ -296,7 +294,7 @@ def download_concept_map(map_id):
 @learning_bp.get("/characters")
 @login_required
 def characters():
-    active_lessons = db.session.query(Lesson.id).join(Unit).join(Curriculum).filter(Curriculum.is_active.is_(True))
+    active_lessons = lessons_for_user(current_user, active_only=True)
     rows = HistoricalCharacter.query.filter(HistoricalCharacter.publication_status == "published", HistoricalCharacter.lesson_id.in_(active_lessons)).order_by(HistoricalCharacter.name).all()
     return render_template("learning/characters.html", characters=rows)
 
