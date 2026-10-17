@@ -11,10 +11,13 @@ from app import app  # noqa: E402
 from alrayyan.extensions import db  # noqa: E402
 from alrayyan.models import ClassEnrollment, Classroom, Curriculum, Lesson, Unit, User  # noqa: E402
 from alrayyan.services.grade_access import (  # noqa: E402
+    classroom_ids_for_grade,
+    lesson_ids_for_grade,
     lessons_for_user,
     normalize_grade,
     student_can_access_lesson,
     student_grade,
+    student_ids_for_grade,
 )
 
 app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
@@ -110,4 +113,15 @@ with app.app_context():
     assert student_can_access_lesson(grade12_student, lesson12)
     assert not student_can_access_lesson(grade12_student, lesson11)
 
-print("PASS: grade normalization, classroom assignment, and cross-grade access denial")
+    assert lesson11.id in lesson_ids_for_grade("11")
+    assert lesson12.id not in lesson_ids_for_grade("11")
+    assert lesson12.id in lesson_ids_for_grade("12")
+    assert lesson11.id not in lesson_ids_for_grade("12")
+    assert class11.id in classroom_ids_for_grade("11", teacher_id=teacher.id)
+    assert class12.id not in classroom_ids_for_grade("11", teacher_id=teacher.id)
+    assert grade11_student.id in student_ids_for_grade("11", teacher_id=teacher.id)
+    assert grade12_student.id in student_ids_for_grade("12", teacher_id=teacher.id)
+    assert mixed_student.id not in student_ids_for_grade("11", teacher_id=teacher.id)
+    assert mixed_student.id not in student_ids_for_grade("12", teacher_id=teacher.id)
+
+print("PASS: grade normalization, content scoping, classroom rosters, and mixed-grade exclusion")
