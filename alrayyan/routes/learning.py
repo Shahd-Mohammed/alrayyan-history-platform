@@ -390,6 +390,7 @@ def date_memory():
     if current_user.role != "student":
         abort(403)
 
+    visible_lesson_ids = lessons_for_user(current_user, active_only=True)
     lessons = (
         Lesson.query
         .join(Unit)
@@ -398,6 +399,7 @@ def date_memory():
             Curriculum.is_active.is_(True),
             Curriculum.processing_status == "ready",
             Lesson.is_published.is_(True),
+            Lesson.id.in_(visible_lesson_ids or [-1]),
         )
         .order_by(Curriculum.subject, Unit.order_index, Lesson.order_index)
         .all()
@@ -443,6 +445,7 @@ def generate_student_date_memory():
             Curriculum.is_active.is_(True),
             Curriculum.processing_status == "ready",
             Lesson.is_published.is_(True),
+            Lesson.id.in_(lessons_for_user(current_user, active_only=True) or [-1]),
         )
         .first_or_404()
     )
@@ -497,6 +500,8 @@ def review_historical_date(date_id):
         abort(403)
 
     row = HistoricalDate.query.filter_by(id=date_id, is_published=True).first_or_404()
+    if not student_can_access_lesson(current_user, row.lesson):
+        abort(404)
     answer = (request.form.get("answer") or "").strip()[:300]
     if not answer:
         flash("اكتبي الحدث المرتبط بالتاريخ أولًا.", "error")
