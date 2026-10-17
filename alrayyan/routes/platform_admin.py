@@ -664,16 +664,22 @@ def invitations():
 
     # Accepted invitations whose students no longer have an active membership
     # in this grade can reveal accounts left behind after a classroom was removed.
-    accepted_emails = [
-        row[0] for row in db.session.query(func.lower(StudentInvitation.email))
-        .filter(
-            StudentInvitation.teacher_id == current_user.id,
-            StudentInvitation.accepted_at.isnot(None),
-        )
-        .distinct().all()
-    ]
+    selected_grade = selected_management_grade()
+    accepted_invitations = StudentInvitation.query.filter(
+        StudentInvitation.teacher_id == current_user.id,
+        StudentInvitation.accepted_at.isnot(None),
+    ).all()
+    # Only show missing links for this grade. An invitation still attached to a
+    # different-grade classroom is not an orphan in the current workspace.
+    accepted_emails = list({
+        (row.email or "").strip().lower()
+        for row in accepted_invitations
+        if row.classroom_id is None
+        or row.classroom is None
+        or normalize_grade(row.classroom.grade) == selected_grade
+    })
     enrolled_student_ids = set(student_ids_for_grade(
-        selected_management_grade(),
+        selected_grade,
         teacher_id=None if current_user.role == "admin" else current_user.id,
         active_only=True,
     ))
