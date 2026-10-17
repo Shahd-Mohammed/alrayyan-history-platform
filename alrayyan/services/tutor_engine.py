@@ -6,6 +6,7 @@ from flask import current_app
 
 from alrayyan.services.ai_teacher import build_context, prepare_sources
 from alrayyan.services.semantic_search import semantic_search
+from alrayyan.services.grade_access import lessons_for_user
 
 
 PROMPT_VERSION = "tutor-v10-warm-encouraging"
@@ -255,11 +256,15 @@ def tutor_reply(conversation, student_text):
     if conversation.lesson:
         query_parts.append(conversation.lesson.title)
 
+    # Even a general tutor conversation may only retrieve lessons from
+    # the student's own active grade. A selected lesson narrows this further.
+    visible_lesson_ids = lessons_for_user(conversation.student, active_only=True)
     search_results = semantic_search(
         " ".join(query_parts),
         top_k=6,
         min_similarity=0.16,
         lesson_id=conversation.lesson_id,
+        lesson_ids=visible_lesson_ids,
     )
 
     if not search_results:
