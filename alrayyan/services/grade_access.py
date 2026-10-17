@@ -78,7 +78,23 @@ def selected_management_grade():
 
     selected = normalize_grade(session.get("teacher_selected_grade"))
     if selected not in {"11", "12"}:
-        selected = "11"
+        selected = None
+        try:
+            from flask_login import current_user
+            if current_user.is_authenticated and current_user.role in {"teacher", "admin"}:
+                teacher_id = current_user.id if current_user.role == "teacher" else None
+                grades_query = db.session.query(Classroom.grade).filter(Classroom.is_active.is_(True))
+                if teacher_id is not None:
+                    grades_query = grades_query.filter(Classroom.teacher_id == teacher_id)
+                available = {normalize_grade(row[0]) for row in grades_query.all()}
+                available.discard(None)
+                if "11" in available:
+                    selected = "11"
+                elif "12" in available:
+                    selected = "12"
+        except Exception:
+            selected = None
+        selected = selected or "11"
         session["teacher_selected_grade"] = selected
     return selected
 
@@ -121,16 +137,27 @@ def classroom_ids_for_grade(grade, teacher_id=None, active_only=True):
 
 
 def student_ids_for_grade(grade, teacher_id=None, active_only=True):
-    """Return enrolled student IDs for one grade without mixing class rosters."""
+    """Return students assigned exclusively to one grade."""
+    normalized = normalize_grade(grade)
     classroom_ids = classroom_ids_for_grade(
         grade, teacher_id=teacher_id, active_only=active_only
     )
-    if not classroom_ids:
+    if normalized not in {"11", "12"} or not classroom_ids:
         return []
+
+    rows = (
+        db.session.query(ClassEnrollment.student_id, Classroom.grade)
+        .join(Classroom, Classroom.id == ClassEnrollment.classroom_id)
+        .filter(Classroom.id.in_(classroom_ids))
+        .all()
+    )
+    grades_by_student = {}
+    for student_id, row_grade in rows:
+        grades_by_student.setdefault(student_id, set()).add(normalize_grade(row_grade))
+
+    # Exclude conflicting active-grade assignments from both workspaces.
     return [
-        student_id for (student_id,) in
-        db.session.query(ClassEnrollment.student_id)
-        .filter(ClassEnrollment.classroom_id.in_(classroom_ids))
-        .distinct().all()
+        student_id for student_id, grades in grades_by_student.items()
+        if grades == {normalized}
     ]
 
