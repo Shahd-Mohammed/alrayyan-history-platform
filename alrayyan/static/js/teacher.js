@@ -117,8 +117,12 @@ if (tutorApp) {
             return;
         }
         evaluationBadge.textContent = evaluationLabels[message.evaluation] || "تقييم جديد";
+        const conceptName = (message.concept || "").trim();
         masteryBadge.textContent = masteryScore === null || masteryScore === undefined
-            ? "" : `نسبة إتقان المفهوم: ${masteryScore}%`;
+            ? ""
+            : conceptName
+                ? `إتقان «${conceptName}»: ${masteryScore}%`
+                : `إتقان المفهوم الحالي: ${masteryScore}%`;
         xpBadge.textContent = xpAwarded > 0
             ? `+${xpAwarded} XP`
             : progressUpdated
