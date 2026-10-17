@@ -1489,3 +1489,14 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
   background: linear-gradient(135deg, #071a35, #153b63) !important;
   color: #fff !important;
 }
+
+
+/* Grade workspace: the selected grade is gold on every management screen. */
+.grade-workspace-tabs>a.is-active{border-color:#b9872d!important;background:linear-gradient(135deg,#f1d694,#d2a13b)!important;color:#102746!important;box-shadow:0 8px 18px rgba(185,135,45,.22)!important}
+.grade-workspace-tabs>a.is-active small{color:#173455!important}
+.grade-workspace-tabs>a.is-active .grade-workspace-tabs__number{background:#102746!important;color:#f1d694!important}
+.student-grade-switcher{width:min(1180px,calc(100% - 32px));margin:16px auto 0;display:flex;align-items:center;flex-wrap:wrap;gap:9px;color:#526174;font-size:.9rem}
+.student-grade-switcher a{display:inline-flex;align-items:center;min-height:38px;padding:8px 14px;border:1px solid #e5d6b8;border-radius:11px;background:#fffdf8;color:#173455;font-weight:700;text-decoration:none}
+.student-grade-switcher a.is-active{border-color:#b9872d;background:linear-gradient(135deg,#f1d694,#d2a13b);color:#102746}
+.tutor-no-lessons-note{margin:10px 0 0;padding:10px 12px;border:1px solid #ead9ad;border-radius:10px;background:#fffaf0;color:#6b5b3e;font-size:.88rem;line-height:1.8}
+@media(max-width:900px){.platform-header{position:sticky}.platform-header .platform-menu-toggle{z-index:1002}.platform-header .platform-navigation:not(.is-open){display:none!important;visibility:hidden!important;pointer-events:none!important}.platform-header .platform-navigation.is-open{z-index:1001;visibility:visible!important;pointer-events:auto!important}}
