@@ -1500,3 +1500,8 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
 .student-grade-switcher a.is-active{border-color:#b9872d;background:linear-gradient(135deg,#f1d694,#d2a13b);color:#102746}
 .tutor-no-lessons-note{margin:10px 0 0;padding:10px 12px;border:1px solid #ead9ad;border-radius:10px;background:#fffaf0;color:#6b5b3e;font-size:.88rem;line-height:1.8}
 @media(max-width:900px){.platform-header{position:sticky}.platform-header .platform-menu-toggle{z-index:1002}.platform-header .platform-navigation:not(.is-open){display:none!important;visibility:hidden!important;pointer-events:none!important}.platform-header .platform-navigation.is-open{z-index:1001;visibility:visible!important;pointer-events:auto!important}}
+
+
+.student-grade-menu-heading{display:block;padding:8px 10px 4px;color:#7c6a49;font-size:.78rem;font-weight:800}
+.student-learning-menu>div a.student-grade-menu-link{border:1px solid #eadbb9;background:#fffaf0}
+.student-learning-menu>div a.student-grade-menu-link.is-active{border-color:#b9872d;background:linear-gradient(135deg,#f1d694,#d2a13b);color:#102746}
