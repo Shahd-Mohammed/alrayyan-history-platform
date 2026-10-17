@@ -13,6 +13,9 @@ from app import app  # noqa: E402
 from alrayyan.extensions import db  # noqa: E402
 from alrayyan.models import (  # noqa: E402
     CharacterAttempt,
+    ClassEnrollment,
+    Classroom,
+    StudentInvitation,
     Curriculum,
     HistoricalCharacter,
     Lesson,
@@ -37,6 +40,16 @@ with app.app_context():
     student = User(full_name="طالبة تجريبية", email="student@example.com", role="student")
     student.set_password("student-password-123")
     db.session.add_all([teacher, admin, second_owner, regular_admin, student])
+    db.session.flush()
+
+    classroom = Classroom(
+        teacher_id=teacher.id,
+        name="صف إعادة الربط",
+        grade="11",
+        academic_year="2026",
+        is_active=True,
+    )
+    db.session.add(classroom)
     db.session.flush()
 
     curriculum = Curriculum(
@@ -110,6 +123,7 @@ with app.app_context():
         "second_owner": second_owner.id,
         "regular_admin": regular_admin.id,
         "student": student.id,
+        "classroom": classroom.id,
         "curriculum": curriculum.id,
         "character": character.id,
         "clean_curriculum": clean_curriculum.id,
@@ -131,6 +145,25 @@ def login_as(user_id):
 login_as(ids["teacher"])
 response = client.get("/teacher-dashboard/platform/admins")
 assert response.status_code == 403
+
+# Existing student accounts can be safely re-linked to a selected class without
+# creating duplicate accounts/invitations or touching prior attempts and scores.
+with client.session_transaction() as session:
+    session["teacher_selected_grade"] = "11"
+response = client.post(
+    "/teacher-dashboard/platform/invitations",
+    data={
+        "emails": "student@example.com",
+        "classroom_id": str(ids["classroom"]),
+        "valid_days": "7",
+    },
+)
+assert response.status_code == 200, response.status_code
+with app.app_context():
+    assert ClassEnrollment.query.filter_by(
+        classroom_id=ids["classroom"], student_id=ids["student"]
+    ).first() is not None
+    assert StudentInvitation.query.filter_by(email="student@example.com").first() is None
 
 # Deleting a curriculum must not cascade-delete character attempts or student XP history.
 response = client.post(f"/teacher-dashboard/platform/curricula/{ids['curriculum']}/delete")
