@@ -75,6 +75,9 @@
                             <option value="{{ lesson.id }}" {% if lesson.id == initial_lesson_id %}selected{% endif %}>{{ lesson.title }}</option>
                         {% endfor %}
                     </select>
+                    {% if not lessons %}
+                    <p class="tutor-no-lessons-note">لسه ما ظهر عندنا درس جاهز في هذا الصف. جرّبي تغيير الصف إن كان عندك أكثر من صف، أو أخبرينا باسم الدرس كما هو في الكتاب لنساعدكِ في الوصول إليه.</p>
+                    {% endif %}
                     <button id="new-conversation" class="gold-action" type="button">محادثة جديدة</button>
                     <button id="quick-quiz" class="soft-gold-action" type="button">اختبار سريع — 5 أسئلة</button>
                 </div>
