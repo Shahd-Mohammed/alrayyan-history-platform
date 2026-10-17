@@ -83,7 +83,7 @@ def _normalize_keyword_text(value):
     }))
     # Students often stretch a word for emphasis (e.g. "الاستعمارررر").
     # Collapse only 3+ repeated Arabic letters so keyword lookup can still find the textbook term.
-    return re.sub(r"([\\u0621-\\u064A])\\1{2,}", r"\\1", value)
+    return re.sub(r"([\u0621-\u064A])\1{2,}", r"\1", value)
 
 
 def keyword_search_fallback(query, top_k=5, lesson_id=None, lesson_ids=None):
