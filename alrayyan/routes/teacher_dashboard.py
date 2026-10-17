@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from functools import wraps
 from pathlib import Path
 from uuid import uuid4
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from flask import (
     Blueprint,
@@ -219,7 +220,10 @@ def select_grade(grade):
     session["teacher_selected_grade"] = normalized
     next_path = request.args.get("next", "")
     if next_path.startswith("/") and not next_path.startswith("//"):
-        return redirect(next_path)
+        parsed = urlsplit(next_path)
+        query_items = [(key, value) for key, value in parse_qsl(parsed.query, keep_blank_values=True) if key != "grade"]
+        safe_path = urlunsplit(("", "", parsed.path, urlencode(query_items), parsed.fragment))
+        return redirect(safe_path)
     return redirect(url_for("teacher_dashboard.dashboard"))
 
 
