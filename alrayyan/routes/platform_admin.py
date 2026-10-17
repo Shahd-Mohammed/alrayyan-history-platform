@@ -1259,6 +1259,13 @@ def analytics():
     if current_user.role == "admin":
         student_ids.update(student_ids_for_grade(selected_management_grade(), active_only=True))
 
+    allowed_grade_students = set(student_ids_for_grade(
+        selected_management_grade(),
+        teacher_id=None if current_user.role == "admin" else current_user.id,
+        active_only=True,
+    ))
+    student_ids.intersection_update(allowed_grade_students)
+
     students = (
         User.query.filter(User.id.in_(student_ids), User.role == "student")
         .order_by(User.full_name).all()
@@ -1485,6 +1492,13 @@ def honor_board():
             .filter(WorksheetAttempt.worksheet_id.in_(teacher_worksheet_ids))
             .distinct().all()
         )
+
+    allowed_grade_students = set(student_ids_for_grade(
+        selected_management_grade(),
+        teacher_id=None if current_user.role == "admin" else current_user.id,
+        active_only=True,
+    ))
+    student_ids.intersection_update(allowed_grade_students)
 
     students = (
         User.query.filter(
