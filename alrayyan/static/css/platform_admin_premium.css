@@ -3724,3 +3724,117 @@ button.concept-action,
 .platform-admin-body .platform-admin-page .concept-map-tabs > button[aria-selected="true"] * {
   color: #fff !important;
 }
+
+
+/* Requested navy action buttons for concept maps and test archiving. */
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish,
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish:hover,
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish:focus-visible,
+.platform-admin-body .platform-admin-page .test-card-action.archive,
+.platform-admin-body .platform-admin-page .test-card-action.archive:hover,
+.platform-admin-body .platform-admin-page .test-card-action.archive:focus-visible {
+  background: linear-gradient(135deg, #243e63 0%, #102746 100%) !important;
+  background-color: #102746 !important;
+  border: 1px solid #102746 !important;
+  color: #fff !important;
+  box-shadow: 0 6px 15px rgba(16,39,70,.16) !important;
+}
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish *,
+.platform-admin-body .platform-admin-page .test-card-action.archive * { color: #fff !important; }
+
+/* Refined administrator account form and password visibility control. */
+.platform-admin-body .admin-accounts-panel {
+  border: 1px solid #e8dfcf !important;
+  border-radius: 24px !important;
+  background: linear-gradient(160deg, #fff 0%, #fcf9f2 100%) !important;
+  box-shadow: 0 16px 38px rgba(23,38,63,.07) !important;
+}
+.platform-admin-body .admin-account-form {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+}
+.platform-admin-body .admin-account-form > label {
+  display: grid !important;
+  align-content: start !important;
+  gap: 8px !important;
+  color: #243b5b !important;
+  font-size: .94rem !important;
+  font-weight: 800 !important;
+}
+.platform-admin-body .admin-account-form > label:first-of-type,
+.platform-admin-body .admin-account-form > label:nth-of-type(2),
+.platform-admin-body .admin-password-guidance,
+.platform-admin-body .admin-account-form > button { grid-column: 1 / -1 !important; }
+.platform-admin-body .admin-account-form input {
+  width: 100% !important;
+  min-height: 52px !important;
+  box-sizing: border-box !important;
+  padding: 13px 15px !important;
+  border: 1px solid #ddd2bd !important;
+  border-radius: 13px !important;
+  background: #fff !important;
+  color: #17263f !important;
+  font: inherit !important;
+  transition: border-color .18s ease, box-shadow .18s ease !important;
+}
+.platform-admin-body .admin-account-form input:focus {
+  outline: none !important;
+  border-color: #c99a3d !important;
+  box-shadow: 0 0 0 4px rgba(201,154,61,.15) !important;
+}
+.platform-admin-body .admin-account-form .password-field-wrap {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+.platform-admin-body .admin-account-form .password-field-wrap > input {
+  padding-left: 112px !important;
+}
+.platform-admin-body .admin-account-form .password-visibility-toggle {
+  position: absolute !important;
+  left: 7px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 36px !important;
+  padding: 7px 12px !important;
+  border: 1px solid #b9872d !important;
+  border-radius: 9px !important;
+  background: linear-gradient(135deg, #dfbd68, #b9872d) !important;
+  color: #fff !important;
+  font-size: .82rem !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 10px rgba(169,122,34,.15) !important;
+}
+.platform-admin-body .admin-account-form .password-visibility-toggle:hover {
+  background: linear-gradient(135deg, #c99a3d, #9b6e20) !important;
+}
+.platform-admin-body .admin-password-guidance {
+  margin: 0 !important;
+  padding: 13px 15px !important;
+  border: 1px solid #ead9ae !important;
+  border-radius: 12px !important;
+  background: #fff8e8 !important;
+  color: #6e541f !important;
+  line-height: 1.8 !important;
+}
+.platform-admin-body .admin-account-form > button[type="submit"] {
+  min-height: 50px !important;
+  justify-self: start !important;
+  padding: 12px 22px !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #dfbd68, #b9872d) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 18px rgba(169,122,34,.18) !important;
+}
+@media (max-width: 680px) {
+  .platform-admin-body .admin-account-form { grid-template-columns: 1fr !important; }
+  .platform-admin-body .admin-account-form > label,
+  .platform-admin-body .admin-password-guidance,
+  .platform-admin-body .admin-account-form > button { grid-column: 1 !important; }
+  .platform-admin-body .admin-account-form > button[type="submit"] { width: 100% !important; }
+}
