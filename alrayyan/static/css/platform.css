@@ -1457,3 +1457,35 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
     box-shadow: 0 24px 60px rgba(7, 26, 53, .14) !important;
   }
 }
+
+
+/* Regression guard: menu links must leave no visible or clickable panel behind. */
+@media (max-width: 900px) {
+  .platform-header .platform-navigation:not(.is-open) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  .platform-header .platform-navigation.is-open {
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* High-specificity navy styling for the requested management actions. */
+.platform-admin-body .test-card-action.archive,
+.platform-admin-body .test-card-actions .test-card-action.archive,
+.platform-admin-body .concept-map-card-actions .concept-action.publish,
+.platform-admin-body .concept-map-card-actions form button.concept-action.publish {
+  border: 1px solid #0d294d !important;
+  background: linear-gradient(135deg, #0d294d, #1f4c7c) !important;
+  color: #fff !important;
+}
+.platform-admin-body .test-card-action.archive:hover,
+.platform-admin-body .test-card-actions .test-card-action.archive:hover,
+.platform-admin-body .concept-map-card-actions .concept-action.publish:hover,
+.platform-admin-body .concept-map-card-actions form button.concept-action.publish:hover {
+  border-color: #071a35 !important;
+  background: linear-gradient(135deg, #071a35, #153b63) !important;
+  color: #fff !important;
+}
