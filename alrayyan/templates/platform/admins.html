@@ -11,7 +11,7 @@
     <label for="admin-full-name">الاسم الكامل<input id="admin-full-name" name="full_name" type="text" maxlength="150" required autocomplete="name" placeholder="اسم المديرة"></label>
     <label for="admin-email">البريد الإلكتروني<input id="admin-email" name="email" type="email" maxlength="255" required autocomplete="email" dir="ltr" placeholder="manager@example.com"></label>
     <label for="admin-password">كلمة مرور قوية<input id="admin-password" name="password" type="password" minlength="12" maxlength="128" required autocomplete="new-password" placeholder="12 حرفًا على الأقل"></label>
-    <p class="admin-password-guidance">استخدمي كلمة مرور فريدة لا تقل عن 12 حرفًا. يمكنك الضغط على «إظهار» لمراجعتها قبل الحفظ.</p>
+    <p class="admin-password-guidance">استخدمي كلمة مرور فريدة لا تقل عن 12 حرفًا. يمكنك إظهارها لمراجعتها قبل الحفظ؛ لن تُعرض بعد إنشاء الحساب.</p>
     <button class="platform-gold-button" type="submit">إنشاء حساب الإدارة</button>
   </form>
 </section>
@@ -23,5 +23,4 @@
     {% else %}<div class="platform-empty">لا توجد حسابات إدارة مسجلة.</div>{% endfor %}
   </div>
 </section>
-<script src="{{ url_for('static', filename='js/password_toggle.js', v='20261011-admin-password-toggle-1') }}" defer></script>
 {% endblock %}
