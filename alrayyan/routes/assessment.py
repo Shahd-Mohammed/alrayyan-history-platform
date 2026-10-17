@@ -40,7 +40,7 @@ from alrayyan.models import (
     User,
     XPTransaction,
 )
-from alrayyan.services.grade_access import student_can_access_lesson
+from alrayyan.services.grade_access import student_can_access_lesson, selected_management_grade, lesson_ids_for_grade
 from alrayyan.services.question_interactions import (
     INTERACTIVE_TYPES,
     build_config,
@@ -169,12 +169,15 @@ def create_question_from_form(worksheet, form):
 @assessment_bp.route("/teacher/tests", methods=["GET", "POST"])
 @teacher_required
 def test_center():
+    selected_grade = selected_management_grade()
+    selected_lesson_ids = lesson_ids_for_grade(selected_grade)
     lessons = (
         Lesson.query.join(Unit).join(Curriculum)
         .filter(
             Curriculum.is_active.is_(True),
             Curriculum.processing_status == "ready",
             Lesson.is_published.is_(True),
+            Lesson.id.in_(selected_lesson_ids or [-1]),
         )
         .order_by(Unit.order_index, Lesson.order_index)
         .all()
@@ -268,7 +271,7 @@ def test_center():
     tests_query = Worksheet.query.filter_by(
         creation_method="test",
         is_archived=False,
-    )
+    ).filter(Worksheet.lesson_id.in_(selected_lesson_ids or [-1]))
     if current_user.role != "admin":
         tests_query = tests_query.filter_by(created_by_id=current_user.id)
     pagination = tests_query.order_by(Worksheet.created_at.desc()).paginate(
@@ -310,6 +313,8 @@ def get_teacher_worksheet_or_404(
         != current_user.id
     ):
         abort(403)
+    if worksheet.lesson_id not in set(lesson_ids_for_grade(selected_management_grade())):
+        abort(404)
 
     return worksheet
 
