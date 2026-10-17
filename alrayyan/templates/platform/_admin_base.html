@@ -14,6 +14,7 @@
 <body class="platform-admin-body{% if request.endpoint == 'assessment.test_center' %} test-center-page{% endif %}">
   {% include '_platform_header.html' %}
   <main class="platform-admin-page">
+    {% include "_grade_tabs.html" %}
     <header class="platform-admin-hero">
       <div><span>{% block eyebrow %}لوحة المعلمة{% endblock %}</span><h1>{% block heading %}إدارة المنصة{% endblock %}</h1><p>{% block intro %}{% endblock %}</p></div>
       <nav><a href="{{ url_for('platform_admin.curricula') }}">المناهج</a><a href="{{ url_for('platform_admin.classrooms') }}">الصفوف</a><a href="{{ url_for('platform_admin.invitations') }}">الدعوات</a><a href="{{ url_for('platform_admin.resources') }}">الملخصات</a><a href="{{ url_for('platform_admin.concept_maps') }}">الخرائط</a><a href="{{ url_for('platform_admin.characters') }}">الشخصيات</a><a href="{{ url_for('platform_admin.honor_board') }}">لوحة الشرف</a><a href="{{ url_for('platform_admin.analytics') }}">التحليلات</a></nav>
