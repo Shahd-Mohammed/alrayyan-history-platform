@@ -25,10 +25,10 @@ def normalize_grade(value):
     return None
 
 
-def student_grade(user):
-    """Return one unambiguous grade, or None when the student is unassigned."""
+def student_available_grades(user):
+    """Return the active grades in which a student is enrolled."""
     if not user or user.role != "student":
-        return None
+        return []
     rows = (
         db.session.query(Classroom.grade)
         .join(ClassEnrollment, ClassEnrollment.classroom_id == Classroom.id)
@@ -40,7 +40,43 @@ def student_grade(user):
     )
     grades = {normalize_grade(row[0]) for row in rows}
     grades.discard(None)
-    return next(iter(grades)) if len(grades) == 1 else None
+    return sorted(grades, key=lambda grade: int(grade))
+
+
+def student_grade(user):
+    """Resolve a student's active grade, honoring an explicitly selected enrolled grade."""
+    if not user or user.role != "student":
+        return None
+
+    available = student_available_grades(user)
+    if not available:
+        return None
+
+    selected = normalize_grade(session.get("student_selected_grade"))
+    if selected in available:
+        return selected
+    if len(available) == 1:
+        session["student_selected_grade"] = available[0]
+        return available[0]
+
+    # Legacy accounts can have active enrollments in both grades. Keep their
+    # content usable by choosing their most recently joined active classroom;
+    # the student can explicitly switch to another enrolled grade.
+    latest = (
+        db.session.query(Classroom.grade)
+        .join(ClassEnrollment, ClassEnrollment.classroom_id == Classroom.id)
+        .filter(
+            ClassEnrollment.student_id == user.id,
+            Classroom.is_active.is_(True),
+        )
+        .order_by(ClassEnrollment.joined_at.desc(), ClassEnrollment.id.desc())
+        .first()
+    )
+    resolved = normalize_grade(latest[0]) if latest else None
+    if resolved in available:
+        session["student_selected_grade"] = resolved
+        return resolved
+    return None
 
 
 def lessons_for_user(user, active_only=True):
@@ -159,24 +195,9 @@ def student_ids_for_grade(grade, teacher_id=None, active_only=True):
     if not target_student_ids:
         return []
 
-    # Check each target student's full active enrollment history, not only the
-    # currently selected teacher's classrooms, to catch cross-teacher conflicts.
-    rows = (
-        db.session.query(ClassEnrollment.student_id, Classroom.grade)
-        .join(Classroom, Classroom.id == ClassEnrollment.classroom_id)
-        .filter(
-            Classroom.is_active.is_(True),
-            ClassEnrollment.student_id.in_(target_student_ids),
-        )
-        .all()
-    )
-    grades_by_student = {}
-    for student_id, row_grade in rows:
-        grades_by_student.setdefault(student_id, set()).add(normalize_grade(row_grade))
-
-    # Exclude conflicting active-grade assignments from both workspaces.
-    return [
-        student_id for student_id in target_student_ids
-        if grades_by_student.get(student_id) == {normalized}
-    ]
+    # Membership determines which management workspace lists a student.
+    # Do not hide students merely because legacy data contains active enrollments
+    # in both grades; their student-facing content is scoped separately by
+    # student_grade() and the explicit grade switch.
+    return sorted(target_student_ids)
 
