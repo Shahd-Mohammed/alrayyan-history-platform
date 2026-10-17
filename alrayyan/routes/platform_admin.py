@@ -605,7 +605,7 @@ def extract_invitation_emails(upload):
 def invitations():
     form = InvitationForm()
     classes = Classroom.query.filter_by(teacher_id=current_user.id, is_active=True).all()
-    form.classroom_id.choices = [(row.id, row.name) for row in classes]
+    form.classroom_id.choices = [(0, "اختاري الصف")] + [(row.id, row.name) for row in classes]
     invitation_urls = []
     upload = request.files.get("emails_file")
     is_file_upload = request.method == "POST" and upload is not None and bool(upload.filename)
