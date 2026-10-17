@@ -3881,8 +3881,22 @@ button.concept-action,
 }
 
 
-/* Requested navy actions: archive a test and publish a concept map. */
-.test-card-action.archive { background:#0d294d !important; border-color:#0d294d !important; color:#fff !important; }
-.test-card-action.archive:hover { background:#071a35 !important; border-color:#071a35 !important; color:#fff !important; }
-.concept-map-card-actions .concept-action.publish { background:#0d294d !important; border-color:#0d294d !important; color:#fff !important; }
-.concept-map-card-actions .concept-action.publish:hover { background:#071a35 !important; border-color:#071a35 !important; color:#fff !important; }
+/* Final scoped navy actions: archive tests and publish concept maps. */
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish,
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish:hover,
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish:focus-visible,
+.platform-admin-body .platform-admin-page .test-center-page .test-card-action.archive,
+.platform-admin-body .platform-admin-page .test-center-page .test-card-action.archive:hover,
+.platform-admin-body .platform-admin-page .test-center-page .test-card-action.archive:focus-visible,
+.platform-admin-body .test-card-action.archive,
+.platform-admin-body .test-card-action.archive:hover,
+.platform-admin-body .test-card-action.archive:focus-visible {
+  background: #102746 !important;
+  background-image: none !important;
+  background-color: #102746 !important;
+  border: 1px solid #102746 !important;
+  color: #fff !important;
+  box-shadow: 0 6px 15px rgba(16,39,70,.16) !important;
+}
+.platform-admin-body .platform-admin-page .concept-map-card-actions .concept-action.publish *,
+.platform-admin-body .test-card-action.archive * { color: #fff !important; }
