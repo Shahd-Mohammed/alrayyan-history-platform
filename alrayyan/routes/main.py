@@ -52,16 +52,21 @@ def health():
 
 @main_bp.get("/")
 def home():
+    featured_query = Worksheet.query.filter_by(
+        publication_status="published",
+        is_published=True,
+        is_archived=False,
+    )
+    # A logged-in student should not see another grade's worksheet titles
+    # on the landing page; public visitors still see general featured content.
+    if current_user.is_authenticated and current_user.role == "student":
+        visible_lesson_ids = lessons_for_user(current_user, active_only=True)
+        featured_query = featured_query.filter(
+            Worksheet.lesson_id.in_(visible_lesson_ids or [-1])
+        )
     featured_worksheets = (
-        Worksheet.query
-        .filter_by(
-            publication_status="published",
-            is_published=True,
-            is_archived=False,
-        )
-        .order_by(
-            Worksheet.created_at.desc()
-        )
+        featured_query
+        .order_by(Worksheet.created_at.desc())
         .limit(5)
         .all()
     )
