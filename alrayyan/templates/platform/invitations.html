@@ -14,7 +14,7 @@
       <div><strong>{{ student.full_name }}</strong><p><bdi>{{ student.email }}</bdi></p><small>{{ student.points }} نقطة · المستوى {{ student.level }}</small></div>
       <form method="post" action="{{ url_for('platform_admin.remove_student_from_grade', student_id=student.id) }}" onsubmit="return confirm('إزالة {{ student.full_name }} من صف {{ selected_grade }} فقط؟ ستبقى نتائجها ونقاطها محفوظة.')">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="platform-danger-button" type="submit">إزالة من الصف</button>
+        <button class="platform-gold-button" type="submit">إزالة من الصف</button>
       </form>
     </article>
     {% else %}<div class="platform-empty">لا توجد طالبات مرتبطات بهذا الصف حاليًا.</div>{% endfor %}
@@ -22,7 +22,7 @@
 </section>
 {% if orphaned_students and classrooms %}
 <section class="platform-panel invite-repair-panel">
-  <div class="panel-title"><span>04</span><div><h2>حسابات تحتاج إعادة ربط</h2><p>طالبات فعّلن حساباتهن سابقًا، لكن لا يظهر لهن صف نشط في هذا التبويب. إعادة الربط تحفظ الحسابات والنتائج كما هي.</p></div></div>
+  <div class="panel-title"><span>05</span><div><h2>حسابات تحتاج إعادة ربط</h2><p>طالبات فعّلن حساباتهن سابقًا، لكن لا يظهر لهن صف نشط في هذا التبويب. إعادة الربط تحفظ الحسابات والنتائج كما هي.</p></div></div>
   <div class="platform-list invite-history">
     {% for student in orphaned_students %}
     <article>
