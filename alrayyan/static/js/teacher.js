@@ -18,6 +18,7 @@ if (tutorApp) {
     const progressLink = document.getElementById("progress-link");
     const csrfToken = tutorApp.dataset.csrfToken;
     const initialConcept = tutorApp.dataset.initialConcept || "";
+    const deleteUrlTemplate = tutorApp.dataset.deleteUrlTemplate;
     let conversationId = null;
 
     const evaluationLabels = {
@@ -135,15 +136,66 @@ if (tutorApp) {
     function addConversationButton(id, title) {
         const empty = document.getElementById("empty-history");
         if (empty) empty.remove();
-        const button = document.createElement("button");
-        button.type = "button";
-        button.dataset.conversationId = id;
+
+        const item = document.createElement("div");
+        item.className = "conversation-item";
+        item.dataset.conversationItem = "";
+
+        const openButton = document.createElement("button");
+        openButton.type = "button";
+        openButton.className = "conversation-open";
+        openButton.dataset.conversationId = id;
+
         const bold = document.createElement("b");
         bold.textContent = title;
         const small = document.createElement("small");
         small.textContent = lessonSelect.options[lessonSelect.selectedIndex].text;
-        button.append(bold, small);
-        conversationList.prepend(button);
+        openButton.append(bold, small);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "conversation-delete";
+        deleteButton.dataset.deleteConversationId = id;
+        deleteButton.textContent = "حذف";
+        deleteButton.title = "حذف المحادثة";
+        deleteButton.setAttribute("aria-label", "حذف المحادثة " + title);
+
+        item.append(openButton, deleteButton);
+        conversationList.prepend(item);
+    }
+
+    async function deleteConversation(id, deleteButton) {
+        if (!window.confirm("بدك تحذفي هاي المحادثة ورسائلها؟ ما رح يأثر الحذف على نقاطك أو محادثاتك الثانية.")) {
+            return;
+        }
+
+        deleteButton.disabled = true;
+        try {
+            await requestJson(endpoint(deleteUrlTemplate, id), { method: "POST", body: "{}" });
+            const item = deleteButton.closest("[data-conversation-item]");
+            if (item) item.remove();
+
+            if (Number(conversationId) === Number(id)) {
+                conversationId = null;
+                conversationTitle.textContent = "معلّم الريان";
+                renderMessages([{
+                    role: "tutor",
+                    content: "انحذفت المحادثة 🌷 إذا حابة، نقدر نبدأ محادثة جديدة بأي درس تختاريه.",
+                    sources: []
+                }]);
+                insight.hidden = true;
+            }
+
+            if (!conversationList.querySelector("[data-conversation-item]")) {
+                const empty = document.createElement("p");
+                empty.id = "empty-history";
+                empty.textContent = "ما في محادثات سابقة لسه.";
+                conversationList.appendChild(empty);
+            }
+        } catch (error) {
+            window.alert(error.message);
+            deleteButton.disabled = false;
+        }
     }
 
     async function createConversation() {
@@ -219,6 +271,14 @@ if (tutorApp) {
 
     newButton.addEventListener("click", createConversation);
     conversationList.addEventListener("click", (event) => {
+        const deleteButton = event.target.closest("[data-delete-conversation-id]");
+        if (deleteButton) {
+            event.preventDefault();
+            event.stopPropagation();
+            deleteConversation(Number(deleteButton.dataset.deleteConversationId), deleteButton);
+            return;
+        }
+
         const button = event.target.closest("[data-conversation-id]");
         if (button) loadConversation(Number(button.dataset.conversationId));
     });
