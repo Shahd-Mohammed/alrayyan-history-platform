@@ -2221,6 +2221,38 @@ a.grade-attempt-action,
 }
 
 
+/* Use the same warm-cream background for every answer choice in tests and worksheets. */
+.solve-page .answer-options > .answer-option,
+.solve-page .answer-options > .answer-option:nth-child(n) {
+  color: #17263f !important;
+  background: #FFF9E9 !important;
+  border: 1px solid #e6d8b7 !important;
+  box-shadow: 0 4px 12px rgba(16,39,70,.05) !important;
+}
+.solve-page .answer-options > .answer-option .option-text { color: #17263f !important; font-weight: 650 !important; }
+.solve-page .answer-options > .answer-option:hover {
+  background: #fff0c8 !important;
+  border-color: #c99a3d !important;
+}
+.solve-page .answer-options > .answer-option:has(input:checked) {
+  background: #f6e7bd !important;
+  border: 2px solid #a9781f !important;
+}
+.solve-page .answer-options > .answer-option.correct,
+.solve-page .answer-options > .answer-option.is-correct,
+.solve-page .answer-options > .answer-option[data-correct="true"] {
+  color: #064b31 !important;
+  background: linear-gradient(135deg, #c8f0d9 0%, #8ed6b0 100%) !important;
+  border: 2px solid #16845d !important;
+}
+.solve-page .answer-options > .answer-option.incorrect,
+.solve-page .answer-options > .answer-option.is-incorrect,
+.solve-page .answer-options > .answer-option[data-correct="false"] {
+  color: #781d27 !important;
+  background: linear-gradient(135deg, #ffd7db 0%, #f3a4aa 100%) !important;
+  border: 2px solid #bf3442 !important;
+}
+
 /* High-contrast, softly colored answer choices for tests and worksheets. */
 .solve-page .answer-options > .answer-option {
   color: #102746 !important;
