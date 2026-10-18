@@ -1407,12 +1407,12 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
 /* Final header-menu rule: hamburger only on compact screens, never on desktop pages. */
 .platform-header .platform-menu-toggle { display:none !important; }
 .platform-header .platform-menu-toggle span { display:block !important; width:20px !important; height:2px !important; margin:0 !important; flex:0 0 2px !important; border-radius:3px; background:#0b2546 !important; }
-@media (max-width: 900px) {
-  .platform-header .platform-menu-toggle { display:inline-flex !important; align-items:center !important; justify-content:center !important; flex-direction:column !important; gap:4px !important; }
+@media (max-width: 980px) {
+  .platform-header .platform-menu-toggle { display:inline-flex !important; align-items:center !important; justify-content:center !important; flex-direction:column !important; gap:4px !important; background:transparent !important; border:0 !important; box-shadow:none !important; }
   .platform-header .platform-navigation:not(.is-open) { display:none !important; }
   .platform-header .platform-navigation.is-open { display:flex !important; }
 }
-@media (min-width: 901px) {
+@media (min-width: 981px) {
   .platform-header .platform-menu-toggle { display:none !important; }
   .platform-header .platform-navigation { display:flex !important; }
 }
@@ -1437,7 +1437,7 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
 }
 
 /* Keep the mobile menu anchored to the header instead of leaving a stray panel. */
-@media (max-width: 900px) {
+@media (max-width: 980px) {
   .platform-header { position: sticky; }
   .platform-header .platform-navigation:not(.is-open) { display: none !important; }
   .platform-header .platform-navigation.is-open {
@@ -1460,7 +1460,7 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
 
 
 /* Regression guard: menu links must leave no visible or clickable panel behind. */
-@media (max-width: 900px) {
+@media (max-width: 980px) {
   .platform-header .platform-navigation:not(.is-open) {
     display: none !important;
     visibility: hidden !important;
@@ -1499,7 +1499,7 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
 .student-grade-switcher a{display:inline-flex;align-items:center;min-height:38px;padding:8px 14px;border:1px solid #e5d6b8;border-radius:11px;background:#fffdf8;color:#173455;font-weight:700;text-decoration:none}
 .student-grade-switcher a.is-active{border-color:#b9872d;background:linear-gradient(135deg,#f1d694,#d2a13b);color:#102746}
 .tutor-no-lessons-note{margin:10px 0 0;padding:10px 12px;border:1px solid #ead9ad;border-radius:10px;background:#fffaf0;color:#6b5b3e;font-size:.88rem;line-height:1.8}
-@media(max-width:900px){.platform-header{position:sticky}.platform-header .platform-menu-toggle{z-index:1002}.platform-header .platform-navigation:not(.is-open){display:none!important;visibility:hidden!important;pointer-events:none!important}.platform-header .platform-navigation.is-open{z-index:1001;visibility:visible!important;pointer-events:auto!important}}
+@media(max-width:980px){.platform-header{position:sticky}.platform-header .platform-menu-toggle{z-index:1002}.platform-header .platform-navigation:not(.is-open){display:none!important;visibility:hidden!important;pointer-events:none!important}.platform-header .platform-navigation.is-open{z-index:1001;visibility:visible!important;pointer-events:auto!important}}
 
 
 .student-grade-menu-heading{display:block;padding:8px 10px 4px;color:#7c6a49;font-size:.78rem;font-weight:800}
