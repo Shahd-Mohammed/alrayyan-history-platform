@@ -6,9 +6,23 @@
 <section class="platform-panel invite-method-card excel-invite-card"><div class="panel-title"><span>02</span><div><h2>رفع ملف Excel</h2><p>ارفعي ملف ‎.xlsx أو ‎.csv يحتوي على الإيميلات؛ يمكن أن تكون الإيميلات في عمود واحد أو أكثر.</p></div></div>
 <form method="post" action="{{ url_for('platform_admin.invitations') }}" enctype="multipart/form-data" class="platform-form excel-invite-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label class="excel-file-label" for="invitation-emails-file"><span class="excel-file-icon">XLS</span><span><strong>اختيار ملف الإيميلات</strong><small>Excel ‎.xlsx أو CSV · حتى 15 MB</small></span></label><input id="invitation-emails-file" type="file" name="emails_file" accept=".xlsx,.csv" required><label>الصف المراد ربط الدعوات به<select name="classroom_id" required><option value="0" selected>اختاري الصف</option>{% for row in classrooms %}<option value="{{ row.id }}">{{ row.name }}</option>{% endfor %}</select></label><label>صلاحية الدعوة بالأيام<input type="number" name="valid_days" value="7" min="1" max="30" required></label><button class="platform-gold-button" type="submit">إنشاء وإرسال الدعوات من الملف</button><p class="excel-mail-note">سيتم إرسال رابط التسجيل لكل عنوان جديد عند توفر إعدادات البريد الإلكتروني في الخادم. وإذا لم تكن مهيّأة، ستظهر رسالة توضح ذلك ويمكنك نسخ الروابط.</p></form></section>
 <section class="platform-panel invite-history-panel"><div class="panel-title"><span>03</span><div><h2>متابعة الدعوات</h2><p>تعرفي فورًا من انضمت ومن تنتظر.</p></div></div><div class="platform-list invite-history">{% for row in invitations %}<article><div><strong>{{ row.email }}</strong><p>{{ row.classroom.name if row.classroom else 'دون صف محدد' }}</p><small>تنتهي {{ row.expires_at.strftime('%Y-%m-%d') }}</small></div><span class="status-pill {{ 'used' if row.accepted_at else 'valid' }}">{{ 'انضمت' if row.accepted_at else 'بانتظارها' }}</span></article>{% else %}<div class="platform-empty">لا توجد دعوات بعد.</div>{% endfor %}</div></section>
+<section class="platform-panel grade-students-panel">
+  <div class="panel-title"><span>04</span><div><h2>طالبات الصف {{ selected_grade }}</h2><p>يمكنك إزالة طالبة من مساحة هذا الصف فقط. سيبقى حسابها ونتائجها ونقاطها محفوظة، ولن تتأثر عضويتها في الصف الآخر.</p></div></div>
+  <div class="platform-list invite-history">
+    {% for student in grade_students %}
+    <article>
+      <div><strong>{{ student.full_name }}</strong><p><bdi>{{ student.email }}</bdi></p><small>{{ student.points }} نقطة · المستوى {{ student.level }}</small></div>
+      <form method="post" action="{{ url_for('platform_admin.remove_student_from_grade', student_id=student.id) }}" onsubmit="return confirm('إزالة {{ student.full_name }} من صف {{ selected_grade }} فقط؟ ستبقى نتائجها ونقاطها محفوظة.')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="platform-gold-button" type="submit">إزالة من الصف</button>
+      </form>
+    </article>
+    {% else %}<div class="platform-empty">لا توجد طالبات مرتبطات بهذا الصف حاليًا.</div>{% endfor %}
+  </div>
+</section>
 {% if orphaned_students and classrooms %}
 <section class="platform-panel invite-repair-panel">
-  <div class="panel-title"><span>04</span><div><h2>حسابات تحتاج إعادة ربط</h2><p>طالبات فعّلن حساباتهن سابقًا، لكن لا يظهر لهن صف نشط في هذا التبويب. إعادة الربط تحفظ الحسابات والنتائج كما هي.</p></div></div>
+  <div class="panel-title"><span>05</span><div><h2>حسابات تحتاج إعادة ربط</h2><p>طالبات فعّلن حساباتهن سابقًا، لكن لا يظهر لهن صف نشط في هذا التبويب. إعادة الربط تحفظ الحسابات والنتائج كما هي.</p></div></div>
   <div class="platform-list invite-history">
     {% for student in orphaned_students %}
     <article>
