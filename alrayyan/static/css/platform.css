@@ -1394,25 +1394,25 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
 .grade-workspace-tabs__intro span{color:#738093;font-size:.82rem;line-height:1.7}
 .grade-workspace-tabs>a{display:flex;align-items:center;gap:12px;min-width:0;padding:13px 16px;border:1px solid #e4dccd;border-radius:14px;background:#f7f4ed;color:#173455;text-decoration:none;transition:background .18s,border-color .18s,transform .18s}
 .grade-workspace-tabs>a:hover{transform:translateY(-1px);border-color:#c99a3d;background:#fff8e8}
-.grade-workspace-tabs>a.is-active{border-color:#102746;background:linear-gradient(135deg,#243e63,#102746);color:#fff;box-shadow:0 8px 18px rgba(16,39,70,.18)}
+.grade-workspace-tabs>a.is-active{border-color:#b9872d;background:linear-gradient(135deg,#f5df9d,#d2a13b);color:#102746;box-shadow:0 8px 18px rgba(185,135,45,.22)}
 .grade-workspace-tabs__number{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:12px;background:#fff;color:#173455;font-weight:900;font-size:1.05rem}
 .grade-workspace-tabs>a.is-active .grade-workspace-tabs__number{background:#f1d694;color:#102746}
 .grade-workspace-tabs>a>span:last-child{display:grid;gap:3px;min-width:0}
 .grade-workspace-tabs>a strong{font-size:.95rem}
 .grade-workspace-tabs>a small{color:#758195;font-size:.76rem;line-height:1.5}
-.grade-workspace-tabs>a.is-active small{color:#e2eaf5}
+.grade-workspace-tabs>a.is-active small{color:#624812}
 @media(max-width:760px){.grade-workspace-tabs{grid-template-columns:1fr;margin:14px auto 20px;padding:10px}.platform-admin-page>.grade-workspace-tabs{margin-bottom:18px}.grade-workspace-tabs__intro{padding:5px 8px}.grade-workspace-tabs>a{padding:11px 13px}}
 
 
 /* Final header-menu rule: hamburger only on compact screens, never on desktop pages. */
 .platform-header .platform-menu-toggle { display:none !important; }
 .platform-header .platform-menu-toggle span { display:block !important; width:20px !important; height:2px !important; margin:0 !important; flex:0 0 2px !important; border-radius:3px; background:#0b2546 !important; }
-@media (max-width: 900px) {
-  .platform-header .platform-menu-toggle { display:inline-flex !important; align-items:center !important; justify-content:center !important; flex-direction:column !important; gap:4px !important; }
+@media (max-width: 980px) {
+  .platform-header .platform-menu-toggle { display:inline-flex !important; align-items:center !important; justify-content:center !important; flex-direction:column !important; gap:4px !important; background:transparent !important; border:0 !important; box-shadow:none !important; }
   .platform-header .platform-navigation:not(.is-open) { display:none !important; }
   .platform-header .platform-navigation.is-open { display:flex !important; }
 }
-@media (min-width: 901px) {
+@media (min-width: 981px) {
   .platform-header .platform-menu-toggle { display:none !important; }
   .platform-header .platform-navigation { display:flex !important; }
 }
@@ -1437,7 +1437,7 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
 }
 
 /* Keep the mobile menu anchored to the header instead of leaving a stray panel. */
-@media (max-width: 900px) {
+@media (max-width: 980px) {
   .platform-header { position: sticky; }
   .platform-header .platform-navigation:not(.is-open) { display: none !important; }
   .platform-header .platform-navigation.is-open {
@@ -1460,7 +1460,7 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
 
 
 /* Regression guard: menu links must leave no visible or clickable panel behind. */
-@media (max-width: 900px) {
+@media (max-width: 980px) {
   .platform-header .platform-navigation:not(.is-open) {
     display: none !important;
     visibility: hidden !important;
@@ -1499,7 +1499,7 @@ input[type="submit"]:not(.platform-gold-button):not(.submit-button):hover{backgr
 .student-grade-switcher a{display:inline-flex;align-items:center;min-height:38px;padding:8px 14px;border:1px solid #e5d6b8;border-radius:11px;background:#fffdf8;color:#173455;font-weight:700;text-decoration:none}
 .student-grade-switcher a.is-active{border-color:#b9872d;background:linear-gradient(135deg,#f1d694,#d2a13b);color:#102746}
 .tutor-no-lessons-note{margin:10px 0 0;padding:10px 12px;border:1px solid #ead9ad;border-radius:10px;background:#fffaf0;color:#6b5b3e;font-size:.88rem;line-height:1.8}
-@media(max-width:900px){.platform-header{position:sticky}.platform-header .platform-menu-toggle{z-index:1002}.platform-header .platform-navigation:not(.is-open){display:none!important;visibility:hidden!important;pointer-events:none!important}.platform-header .platform-navigation.is-open{z-index:1001;visibility:visible!important;pointer-events:auto!important}}
+@media(max-width:980px){.platform-header{position:sticky}.platform-header .platform-menu-toggle{z-index:1002}.platform-header .platform-navigation:not(.is-open){display:none!important;visibility:hidden!important;pointer-events:none!important}.platform-header .platform-navigation.is-open{z-index:1001;visibility:visible!important;pointer-events:auto!important}}
 
 
 .student-grade-menu-heading{display:block;padding:8px 10px 4px;color:#7c6a49;font-size:.78rem;font-weight:800}
