@@ -254,13 +254,21 @@ a.challenge-primary-button,
 .mastery-verification.retry { color: #7b5515; background: #fff6df; }
 
 
-/* Consistent warm-cream answer choices requested for both tests and challenges. */
+/* Unified answer-choice colors: all four unanswered options use the requested cream. */
 #challenge-app .question-stage .option-grid > .challenge-option,
 #challenge-app .question-stage .option-grid > .challenge-option:nth-child(n) {
   color: #102746 !important;
   background: #FFF9E9 !important;
   border: 1px solid #e6d8b7 !important;
   box-shadow: 0 5px 14px rgba(16,39,70,.06) !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option > span {
+  color: #fff !important;
+  background: #8e671f !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option b {
+  color: #102746 !important;
+  font-weight: 700 !important;
 }
 #challenge-app .question-stage .option-grid > .challenge-option:hover:not(:disabled),
 #challenge-app .question-stage .option-grid > .challenge-option:focus-visible {
@@ -273,108 +281,30 @@ a.challenge-primary-button,
   background: #f6e7bd !important;
   border-color: #a9781f !important;
 }
-#challenge-app .question-stage .option-grid > .challenge-option.correct {
-  color: #084b33 !important;
-  background: linear-gradient(135deg, #c9efdc 0%, #e9faf1 100%) !important;
-  border-color: #16845d !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option.incorrect {
-  color: #7e2028 !important;
-  background: linear-gradient(135deg, #ffdadd 0%, #fff0f1 100%) !important;
-  border-color: #b83e48 !important;
-}
-
-/* High-contrast answer cards on the challenge screen. */
-#challenge-app .question-stage .option-grid > .challenge-option {
-  color: #102746 !important;
-  background: linear-gradient(135deg, #f5e4b9 0%, #fff5dc 100%) !important;
-  border: 1px solid #d8b45e !important;
-  box-shadow: 0 5px 16px rgba(16,39,70,.09) !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option:nth-child(4n + 2) {
-  background: linear-gradient(135deg, #dcecff 0%, #f0f6ff 100%) !important;
-  border-color: #9dbce0 !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option:nth-child(4n + 3) {
-  background: linear-gradient(135deg, #e9e0ff 0%, #f7f2ff 100%) !important;
-  border-color: #c0afe5 !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option:nth-child(4n + 4) {
-  background: linear-gradient(135deg, #d9f1e4 0%, #effaf4 100%) !important;
-  border-color: #9acbb0 !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option b {
-  color: #102746 !important;
-  font-weight: 700 !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option:hover:not(:disabled),
-#challenge-app .question-stage .option-grid > .challenge-option:focus-visible {
-  background: linear-gradient(135deg, #f3d98e 0%, #ffefc3 100%) !important;
-  border-color: #a9781f !important;
-  color: #102746 !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option.selected:not(.correct):not(.incorrect) {
-  background: linear-gradient(135deg, #f0d17a 0%, #fff0c5 100%) !important;
-  border-color: #a9781f !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option.correct {
-  background: linear-gradient(135deg, #c9efdc 0%, #e9faf1 100%) !important;
-  border-color: #16845d !important;
-  color: #084b33 !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option.correct b { color: #084b33 !important; }
-#challenge-app .question-stage .option-grid > .challenge-option.incorrect {
-  background: linear-gradient(135deg, #ffdadd 0%, #fff0f1 100%) !important;
-  border-color: #b83e48 !important;
-  color: #7e2028 !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option.incorrect b { color: #7e2028 !important; }
-
-
-/* One consistent gold palette for challenge answers, with unmistakable grading feedback. */
-#challenge-app .question-stage .option-grid > .challenge-option,
-#challenge-app .question-stage .option-grid > .challenge-option:nth-child(n) {
-  color: #17263f !important;
-  background: linear-gradient(135deg, #e7c56f 0%, #c99a3d 100%) !important;
-  border: 1px solid #b9872d !important;
-  box-shadow: 0 6px 16px rgba(117, 79, 18, .13) !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option > span {
-  color: #fff !important;
-  background: #8e671f !important;
-  border: 1px solid rgba(255,255,255,.4) !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option b {
-  color: #17263f !important;
-  font-weight: 800 !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option:hover:not(:disabled),
-#challenge-app .question-stage .option-grid > .challenge-option:focus-visible,
-#challenge-app .question-stage .option-grid > .challenge-option.selected:not(.correct):not(.incorrect) {
-  color: #17263f !important;
-  background: linear-gradient(135deg, #f4dfa0 0%, #dfb84f 100%) !important;
-  border-color: #8e671f !important;
-}
 #challenge-app .question-stage .option-grid > .challenge-option.correct,
 #challenge-app .question-stage .option-grid > .challenge-option.correct:nth-child(n) {
-  color: #064b31 !important;
-  background: linear-gradient(135deg, #c8f0d9 0%, #8ed6b0 100%) !important;
+  color: #084b33 !important;
+  background: #e9f8ef !important;
   border: 2px solid #16845d !important;
 }
 #challenge-app .question-stage .option-grid > .challenge-option.correct > span {
   background: #08754d !important;
 }
-#challenge-app .question-stage .option-grid > .challenge-option.correct b { color: #064b31 !important; }
+#challenge-app .question-stage .option-grid > .challenge-option.correct b {
+  color: #084b33 !important;
+}
 #challenge-app .question-stage .option-grid > .challenge-option.incorrect,
 #challenge-app .question-stage .option-grid > .challenge-option.incorrect:nth-child(n) {
-  color: #781d27 !important;
-  background: linear-gradient(135deg, #ffd7db 0%, #f3a4aa 100%) !important;
-  border: 2px solid #bf3442 !important;
+  color: #7e2028 !important;
+  background: #fff0f1 !important;
+  border: 2px solid #b83e48 !important;
 }
 #challenge-app .question-stage .option-grid > .challenge-option.incorrect > span {
   background: #a92331 !important;
 }
-#challenge-app .question-stage .option-grid > .challenge-option.incorrect b { color: #781d27 !important; }
+#challenge-app .question-stage .option-grid > .challenge-option.incorrect b {
+  color: #7e2028 !important;
+}
 #challenge-app .challenge-actions .hint-button {
   color: #fff !important;
   background: linear-gradient(135deg, #dfbd68 0%, #b9872d 100%) !important;
@@ -388,39 +318,4 @@ a.challenge-primary-button,
 }
 #challenge-app .challenge-actions .hint-button:disabled {
   opacity: .72;
-}
-
-
-/* Final override: keep every unanswered challenge option warm cream. */
-#challenge-app .question-stage .option-grid > .challenge-option,
-#challenge-app .question-stage .option-grid > .challenge-option:nth-child(n) {
-  color: #102746 !important;
-  background: #FFF9E9 !important;
-  border: 1px solid #e6d8b7 !important;
-  box-shadow: 0 5px 14px rgba(16,39,70,.06) !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option > span {
-  color: #fff !important;
-  background: #8e671f !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option:hover:not(:disabled),
-#challenge-app .question-stage .option-grid > .challenge-option:focus-visible {
-  color: #102746 !important;
-  background: #fff0c8 !important;
-  border-color: #c99a3d !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option.selected:not(.correct):not(.incorrect) {
-  color: #102746 !important;
-  background: #f6e7bd !important;
-  border-color: #a9781f !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option.correct {
-  color: #084b33 !important;
-  background: linear-gradient(135deg, #c9efdc 0%, #e9faf1 100%) !important;
-  border-color: #16845d !important;
-}
-#challenge-app .question-stage .option-grid > .challenge-option.incorrect {
-  color: #7e2028 !important;
-  background: linear-gradient(135deg, #ffdadd 0%, #fff0f1 100%) !important;
-  border-color: #b83e48 !important;
 }
