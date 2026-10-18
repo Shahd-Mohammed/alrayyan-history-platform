@@ -254,6 +254,36 @@ a.challenge-primary-button,
 .mastery-verification.retry { color: #7b5515; background: #fff6df; }
 
 
+/* Consistent warm-cream answer choices requested for both tests and challenges. */
+#challenge-app .question-stage .option-grid > .challenge-option,
+#challenge-app .question-stage .option-grid > .challenge-option:nth-child(n) {
+  color: #102746 !important;
+  background: #FFF9E9 !important;
+  border: 1px solid #e6d8b7 !important;
+  box-shadow: 0 5px 14px rgba(16,39,70,.06) !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option:hover:not(:disabled),
+#challenge-app .question-stage .option-grid > .challenge-option:focus-visible {
+  color: #102746 !important;
+  background: #fff0c8 !important;
+  border-color: #c99a3d !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option.selected:not(.correct):not(.incorrect) {
+  color: #102746 !important;
+  background: #f6e7bd !important;
+  border-color: #a9781f !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option.correct {
+  color: #084b33 !important;
+  background: linear-gradient(135deg, #c9efdc 0%, #e9faf1 100%) !important;
+  border-color: #16845d !important;
+}
+#challenge-app .question-stage .option-grid > .challenge-option.incorrect {
+  color: #7e2028 !important;
+  background: linear-gradient(135deg, #ffdadd 0%, #fff0f1 100%) !important;
+  border-color: #b83e48 !important;
+}
+
 /* High-contrast answer cards on the challenge screen. */
 #challenge-app .question-stage .option-grid > .challenge-option {
   color: #102746 !important;
