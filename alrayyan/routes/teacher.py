@@ -284,10 +284,48 @@ def create_conversation():
     if lesson is not None and not student_can_access_lesson(current_user, lesson):
         abort(404)
     initial_concept = str(data.get("concept") or "").strip()[:250] or None
+
+    # When a review is launched from the learning plan, resume the student's
+    # latest conversation that already covered this exact lesson and concept.
+    if lesson is not None and initial_concept:
+        previous_conversation = (
+            TutorConversation.query
+            .join(
+                TutorMessage,
+                TutorMessage.conversation_id == TutorConversation.id,
+            )
+            .filter(
+                TutorConversation.student_id == current_user.id,
+                TutorConversation.lesson_id == lesson.id,
+                TutorMessage.concept == initial_concept,
+            )
+            .order_by(TutorConversation.updated_at.desc())
+            .first()
+        )
+        if previous_conversation is not None:
+            return jsonify({
+                "success": True,
+                "conversation_id": previous_conversation.id,
+                "title": previous_conversation.title,
+                "lesson_id": previous_conversation.lesson_id,
+                "concept": previous_conversation.current_concept,
+                "messages": [
+                    serialize_message(item)
+                    for item in previous_conversation.messages
+                ],
+                "resumed": True,
+            })
+
     conversation = TutorConversation(
         student_id=current_user.id,
         lesson_id=lesson.id if lesson else None,
-        title=f"مراجعة {lesson.title}" if lesson else "محادثة تعليمية جديدة",
+        title=(
+            f"مراجعة {initial_concept} — {lesson.title}"
+            if lesson is not None and initial_concept
+            else f"مراجعة {lesson.title}"
+            if lesson
+            else "محادثة تعليمية جديدة"
+        ),
         difficulty=data.get("difficulty", "adaptive"),
         current_concept=initial_concept,
     )
