@@ -2,10 +2,35 @@
 {% block title %}حسابات الإدارة{% endblock %}
 {% block eyebrow %}صلاحيات المنصة{% endblock %}
 {% block heading %}حسابات الإدارة{% endblock %}
-{% block intro %}أنشئي حسابات موثوقة للمديرة أو فريق الإدارة، واحتفظي بصلاحيات الإشراف محصورة بالمخولات فقط.{% endblock %}
+{% block intro %}راجعي صلاحيات الحسابين الأساسيين، وأديري بقية الحسابات مع الحفاظ على البيانات المرتبطة بها.{% endblock %}
 {% block content %}
+<section class="platform-panel admin-accounts-panel owner-status-panel">
+  <div class="panel-title"><span>01</span><div><h2>التحقق من حسابَي الإدارة الأساسيين</h2><p>هذه الحالة مأخوذة من الحسابات المسجلة في قاعدة البيانات، ولا تغيّر كلمة المرور أو بيانات الحساب.</p></div></div>
+  <div class="platform-list admin-account-list">
+    {% for owner_email in owner_emails %}
+      {% set account = owner_accounts.get(owner_email) %}
+      <article>
+        <div><strong>{{ 'الإدارة الأساسية' if owner_email == primary_owner_email else 'الإدارة الثانية' }}</strong><p><bdi>{{ owner_email }}</bdi></p>
+          <small>{% if not account %}لا يوجد حساب مسجّل بهذا البريد{% elif account.role != 'admin' %}الدور الحالي: {{ account.role }}{% elif not account.is_active_account %}الحساب موجود لكن تسجيل الدخول معطّل{% else %}حساب إدارة نشط{% endif %}</small>
+        </div>
+        {% if account and (account.role != 'admin' or not account.is_active_account) %}
+          <form method="post" action="{{ url_for('platform_admin.activate_platform_owner_account', account_id=account.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="platform-gold-button" type="submit">تفعيل صلاحيات الإدارة</button>
+          </form>
+        {% elif account %}
+          <span class="status-pill used">مديرة نشطة</span>
+        {% else %}
+          <span class="status-pill valid">الحساب غير موجود</span>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</section>
 <section class="platform-panel admin-accounts-panel">
-  <div class="panel-title"><span>01</span><div><h2>إضافة مديرة أو مسؤولة</h2><p>يُمنح الحساب صلاحيات الإدارة الكاملة، لذلك أضيفي فقط الأشخاص المخوّلين. كلمة المرور لا تُعرض بعد الحفظ.</p></div></div>
+  <div class="panel-title"><span>02</span>
+<section class="platform-panel admin-accounts-panel">
+  <div class="panel-title"><span>03</span><div><h2>إضافة مديرة أو مسؤولة</h2><p>يُمنح الحساب صلاحيات الإدارة الكاملة، لذلك أضيفي فقط الأشخاص المخوّلين. كلمة المرور لا تُعرض بعد الحفظ.</p></div></div>
   <form method="post" class="platform-form admin-account-form" autocomplete="off">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="admin-full-name">الاسم الكامل<input id="admin-full-name" name="full_name" type="text" maxlength="150" required autocomplete="name" placeholder="اسم المديرة"></label>
@@ -16,10 +41,10 @@
   </form>
 </section>
 <section class="platform-panel admin-accounts-panel">
-  <div class="panel-title"><span>02</span><div><h2>الحسابات الحالية</h2><p>هذه القائمة تعرض حسابات الإدارة المسجلة فقط.</p></div></div>
+  <div class="panel-title"><span>04</span><div><h2>الحسابات الحالية</h2><p>هذه القائمة تعرض حسابات الإدارة المسجلة فقط.</p></div></div>
   <div class="platform-list admin-account-list">
     {% for account in admins %}
-    <article><div><strong>{{ account.full_name }}</strong><p><bdi>{{ account.email }}</bdi></p><small>أُنشئ في {{ account.created_at.strftime('%Y-%m-%d') if account.created_at else '—' }}</small></div><span class="status-pill {{ 'used' if account.is_active_account else '' }}">{{ 'نشط' if account.is_active_account else 'غير نشط' }}</span></article>
+    <article><div><strong>{{ account.full_name }}</strong><p><bdi>{{ account.email }}</bdi></p><small>أُنشئ في {{ account.created_at.strftime('%Y-%m-%d') if account.created_at else '—' }}</small></div><span class="status-pill {{ 'used' if account.is_active_account else '' }}">{{ 'نشط' if account.is_active_account else 'غير نشط' }}</span>{% if account.email|lower != primary_owner_email and account.id != current_user.id and account.is_active_account %}<form method="post" action="{{ url_for('platform_admin.disable_admin_account', admin_id=account.id) }}" onsubmit="return confirm('سيتم تعطيل دخول هذا الحساب مع الاحتفاظ ببياناته. هل تريدين المتابعة؟')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="platform-danger-button" type="submit">تعطيل حساب الإدارة</button></form>{% endif %}</article>
     {% else %}<div class="platform-empty">لا توجد حسابات إدارة مسجلة.</div>{% endfor %}
   </div>
 </section>
