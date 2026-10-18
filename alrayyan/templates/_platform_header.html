@@ -56,7 +56,7 @@
                                 <details class="student-learning-menu">
                     <summary>تعلّمي</summary>
                     <div>
-                        {% if not is_platform_owner_account(current_user) %}
+                        {% if (current_user.email or '')|lower|trim != 'miss.emmy2020@gmail.com' %}
                             <span class="student-grade-menu-heading">التعلّم حسب الصف</span>
                             {% for grade in available_student_grades %}
                                 <a class="student-grade-menu-link {{ 'is-active' if selected_student_grade == grade else '' }}"
