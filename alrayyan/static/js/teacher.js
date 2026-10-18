@@ -134,6 +134,10 @@ if (tutorApp) {
     }
 
     function addConversationButton(id, title) {
+        // Resuming a saved review must not add a duplicate row to the history.
+        if (conversationList.querySelector('[data-conversation-id="' + id + '"]')) {
+            return;
+        }
         const empty = document.getElementById("empty-history");
         if (empty) empty.remove();
 
