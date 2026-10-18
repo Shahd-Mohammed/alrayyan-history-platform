@@ -23,7 +23,7 @@ from alrayyan.models import (
     XPTransaction,
 )
 from alrayyan.services.grade_access import (lessons_for_user, student_can_access_lesson, student_available_grades, student_grade, normalize_grade)
-from alrayyan.services.tutor_engine import tutor_reply
+from alrayyan.services.tutor_engine import preserve_concept_for_evaluated_answer, tutor_reply
 from alrayyan.services.datetime_utils import as_utc_naive
 
 
@@ -382,11 +382,14 @@ def send_tutor_message(conversation_id):
             )
             db.session.add(student_message)
             db.session.flush()
-        was_verifying_mastery = conversation.tutor_state == "verify_mastery"
+        previous_tutor_state = conversation.tutor_state
+        was_verifying_mastery = previous_tutor_state == "verify_mastery"
         payload = tutor_reply(conversation, student_text)
-        # Keep verification tied to the concept currently being checked.
-        if was_verifying_mastery and conversation.current_concept:
-            payload["concept"] = conversation.current_concept
+        payload = preserve_concept_for_evaluated_answer(
+            conversation.current_concept,
+            previous_tutor_state,
+            payload,
+        )
         awaiting_mastery_verification = (
             was_verifying_mastery
             and payload["evaluation"] != "correct"

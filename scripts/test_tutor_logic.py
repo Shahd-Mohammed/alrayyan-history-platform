@@ -9,6 +9,7 @@ from alrayyan.services.tutor_engine import (
     _history_text,
     _validate_payload,
     is_non_learning_message,
+    preserve_concept_for_evaluated_answer,
 )
 
 
@@ -66,6 +67,27 @@ def run_tests():
     ])
     assert "الطالب: ما السبب؟" in history
     assert "المعلم: ماذا تتذكر؟" in history
+
+    # Evaluated answers stay attached to the current concept, so a model label
+    # variation cannot create a new 0% mastery row. A deliberate advance may switch.
+    for evaluation in ("correct", "partially_correct", "incorrect", "needs_explanation", "off_topic"):
+        payload = {"evaluation": evaluation, "concept": "صياغة مختلفة"}
+        preserve_concept_for_evaluated_answer(
+            "دوافع الاستعمار", "ask_follow_up", payload
+        )
+        assert payload["concept"] == "دوافع الاستعمار"
+
+    verification_payload = {"evaluation": "not_evaluated", "concept": "المفهوم العام"}
+    preserve_concept_for_evaluated_answer(
+        "دوافع الاستعمار", "verify_mastery", verification_payload
+    )
+    assert verification_payload["concept"] == "دوافع الاستعمار"
+
+    advanced_payload = {"evaluation": "correct", "concept": "النتائج السياسية"}
+    preserve_concept_for_evaluated_answer(
+        "دوافع الاستعمار", "advance", advanced_payload
+    )
+    assert advanced_payload["concept"] == "النتائج السياسية"
 
     # Casual replies must never count as academic answers, while a real answer
     # that ends with a friendly phrase must still be evaluated normally.
