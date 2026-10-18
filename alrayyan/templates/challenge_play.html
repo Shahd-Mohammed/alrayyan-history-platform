@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الجولة {{ challenge.current_round }} | تحدي الريان</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/challenge.css', v='20261017-cream-background-4') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/challenge.css', v='20261018-cream-options-delete-labels-1') }}">
 </head>
 <body>
     {% include '_platform_header.html' %}
@@ -17,9 +17,9 @@
     >
         <section class="game-hud">
             <div class="hud-item"><span>الجولة</span><strong>{{ challenge.current_round }}/{{ challenge.total_rounds }}</strong></div>
-            <div class="hud-item"><span>النقاط</span><strong id="hud-score">{{ challenge.score }}</strong></div>
-            <div class="hud-item"><span>XP</span><strong id="hud-xp">{{ challenge.xp_earned }}</strong></div>
-            <div class="hud-item combo"><span>Combo</span><strong id="hud-combo">×{{ challenge.combo }}</strong></div>
+            <div class="hud-item"><span>نقاط التحدي</span><strong id="hud-score">{{ challenge.score }}</strong></div>
+            <div class="hud-item"><span>الخبرة (XP)</span><strong id="hud-xp">{{ challenge.xp_earned }}</strong></div>
+            <div class="hud-item combo"><span>سلسلة الإجابات</span><strong id="hud-combo">×{{ challenge.combo }}</strong></div>
         </section>
 
         <div class="progress-track" aria-label="تقدم التحدي">
