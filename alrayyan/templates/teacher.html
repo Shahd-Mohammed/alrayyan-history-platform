@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css', v='20261018-chat-delete-1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css', v='20261018-review-auto-start-1') }}">
 </head>
 <body>
     {% include '_platform_header.html' %}
@@ -77,7 +77,9 @@
                         {% endfor %}
                     </select>
                     {% if not lessons %}
-                    <p class="tutor-no-lessons-note">لسه ما ظهر عندنا درس جاهز في هذا الصف. جرّبي تغيير الصف إن كان عندك أكثر من صف، أو أخبرينا باسم الدرس كما هو في الكتاب لنساعدكِ في الوصول إليه.</p>
+                    <p class="tutor-no-lessons-note">لسه ما ظهر عندنا درس جاهز في هذا الصف. جرّبي تغيير الصف إن كان عندك أكثر من صف، وبنكمل سوا 🌷</p>
+                    {% elif review_mode and not review_lesson_available %}
+                    <p class="tutor-no-lessons-note">مش لاقيين الدرس ضمن الصف المختار حاليًا. اختاري الصف المناسب أو ارجعي لخطتك واختاري الدرس من جديد، وبنكمل سوا 🌷</p>
                     {% endif %}
                     <button id="new-conversation" class="gold-action" type="button">محادثة جديدة</button>
                     <button id="quick-quiz" class="soft-gold-action" type="button">اختبار سريع — 5 أسئلة</button>
@@ -139,7 +141,7 @@
                 <form id="teacher-form" class="question-form">
                     <label for="question-input">اكتبي سؤالك أو أجيبي عن سؤال المعلم</label>
                     <div class="input-wrapper">
-                        <textarea id="question-input" rows="2" maxlength="1200" placeholder="مثال: أعتقد أن السبب هو الحاجة إلى المواد الخام..." required>{% if review_mode and initial_concept %}أريد مراجعة مفهوم {{ initial_concept }}{% endif %}</textarea>
+                        <textarea id="question-input" rows="2" maxlength="1200" placeholder="اكتبي سؤالك أو أجيبي عن سؤال المعلّم..." required></textarea>
                         <button id="send-button" type="submit"><span>إرسال</span><b>←</b></button>
                     </div>
                     <small>تُحفظ الجلسة لتستطيعي المتابعة من حيث توقفتِ.</small>
