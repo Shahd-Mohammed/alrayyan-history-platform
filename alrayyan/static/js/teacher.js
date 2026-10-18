@@ -308,4 +308,10 @@ if (tutorApp) {
             quizButton.disabled = false;
         }
     });
+
+    // A review link must open a lesson-bound conversation immediately.
+    // Never create a generic conversation when the requested lesson is unavailable.
+    if (tutorApp.dataset.reviewMode === "true" && lessonSelect.value) {
+        createConversation();
+    }
 }
