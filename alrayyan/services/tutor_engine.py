@@ -56,6 +56,26 @@ NON_LEARNING_MESSAGE_PATTERNS = (
 )
 
 
+def preserve_concept_for_evaluated_answer(current_concept, previous_state, payload):
+    """Keep mastery tied to the concept that was asked about, unless advancing."""
+    current = str(current_concept or "").strip()
+    evaluation = payload.get("evaluation")
+    academic_evaluations = {
+        "correct",
+        "partially_correct",
+        "incorrect",
+        "needs_explanation",
+        "off_topic",
+    }
+    should_keep = (
+        previous_state == "verify_mastery"
+        or (previous_state != "advance" and evaluation in academic_evaluations)
+    )
+    if current and should_keep:
+        payload["concept"] = current
+    return payload
+
+
 def is_non_learning_message(text):
     """Keep social chat and meta-feedback from changing mastery scores."""
     normalized = re.sub(r"\s+", " ", (text or "").strip().lower())
