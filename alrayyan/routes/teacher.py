@@ -334,6 +334,21 @@ def conversation_messages(conversation_id):
     })
 
 
+@teacher_bp.post("/conversations/<int:conversation_id>/delete")
+@login_required
+def delete_tutor_conversation(conversation_id):
+    """Delete only the signed-in student's own conversation and its messages."""
+    conversation = db.session.get(TutorConversation, conversation_id)
+    if conversation is None:
+        abort(404)
+    if conversation.student_id != current_user.id:
+        abort(403)
+
+    db.session.delete(conversation)
+    db.session.commit()
+    return jsonify({"success": True, "conversation_id": conversation_id})
+
+
 @teacher_bp.post("/conversations/<int:conversation_id>/message")
 @login_required
 def send_tutor_message(conversation_id):
