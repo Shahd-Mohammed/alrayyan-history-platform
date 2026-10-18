@@ -692,6 +692,17 @@ def invitations():
         student for student in candidates if student.id not in enrolled_student_ids
     ]
 
+    current_grade_student_ids = student_ids_for_grade(
+        selected_grade,
+        teacher_id=None if current_user.role == "admin" else current_user.id,
+        active_only=True,
+    )
+    grade_students = User.query.filter(
+        User.id.in_(current_grade_student_ids or [-1]),
+        User.role == "student",
+        User.is_active_account.is_(True),
+    ).order_by(User.full_name.asc()).all()
+
     return render_template(
         "platform/invitations.html",
         form=form,
@@ -699,7 +710,43 @@ def invitations():
         invitation_urls=invitation_urls,
         classrooms=classes,
         orphaned_students=orphaned_students,
+        grade_students=grade_students,
+        selected_grade=selected_grade,
     )
+
+
+@platform_admin_bp.post("/students/<int:student_id>/remove-from-grade")
+def remove_student_from_grade(student_id):
+    """Remove a student only from the currently selected grade, preserving history."""
+    selected_grade = selected_management_grade()
+    allowed_classroom_ids = classroom_ids_for_grade(
+        selected_grade,
+        teacher_id=None if current_user.role == "admin" else current_user.id,
+        active_only=False,
+    )
+    if not allowed_classroom_ids:
+        abort(404)
+
+    student = User.query.filter_by(
+        id=student_id,
+        role="student",
+        is_active_account=True,
+    ).first_or_404()
+    memberships = ClassEnrollment.query.filter(
+        ClassEnrollment.student_id == student.id,
+        ClassEnrollment.classroom_id.in_(allowed_classroom_ids),
+    ).all()
+    if not memberships:
+        abort(404)
+
+    for membership in memberships:
+        db.session.delete(membership)
+    db.session.commit()
+    flash(
+        f"تمت إزالة {student.first_name} من صف {selected_grade} فقط. بقي حسابها ونتائجها ونقاطها محفوظة، ولم يتغير أي ارتباط بصف آخر.",
+        "success",
+    )
+    return redirect(url_for("platform_admin.invitations"))
 
 
 @platform_admin_bp.post("/invitations/relink/<int:student_id>")
@@ -1349,7 +1396,50 @@ def admins():
             return redirect(url_for("platform_admin.admins"))
 
     admins = User.query.filter_by(role="admin").order_by(User.created_at.asc()).all()
-    return render_template("platform/admins.html", admins=admins)
+    owner_emails = sorted(platform_owner_emails())
+    owner_accounts = {
+        (account.email or "").strip().casefold(): account
+        for account in User.query.filter(func.lower(User.email).in_(owner_emails)).all()
+    }
+    return render_template(
+        "platform/admins.html",
+        admins=admins,
+        owner_emails=owner_emails,
+        owner_accounts=owner_accounts,
+        primary_owner_email="1shahdmohammed@gmail.com",
+    )
+
+
+@platform_admin_bp.post("/admins/<int:admin_id>/disable")
+def disable_admin_account(admin_id):
+    """Disable an admin login without deleting their teaching data or records."""
+    if not is_platform_owner(current_user):
+        abort(403)
+    account = User.query.filter_by(id=admin_id, role="admin").first_or_404()
+    email = (account.email or "").strip().casefold()
+    if email == "1shahdmohammed@gmail.com" or account.id == current_user.id:
+        flash("لا يمكن تعطيل الحساب الأساسي أو الحساب الذي تستخدمينه الآن.", "error")
+        return redirect(url_for("platform_admin.admins"))
+    account.is_active_account = False
+    db.session.commit()
+    flash("تم تعطيل دخول حساب الإدارة مع الاحتفاظ بالحساب والبيانات المرتبطة به.", "success")
+    return redirect(url_for("platform_admin.admins"))
+
+
+@platform_admin_bp.post("/admins/owners/<int:account_id>/activate")
+def activate_platform_owner_account(account_id):
+    """Restore admin access only for one of the two configured owner emails."""
+    if not is_platform_owner(current_user):
+        abort(403)
+    account = User.query.filter_by(id=account_id).first_or_404()
+    email = (account.email or "").strip().casefold()
+    if email not in platform_owner_emails():
+        abort(403)
+    account.role = "admin"
+    account.is_active_account = True
+    db.session.commit()
+    flash(f"تم تفعيل صلاحيات الإدارة للحساب {email}.", "success")
+    return redirect(url_for("platform_admin.admins"))
 
 
 @platform_admin_bp.get("/analytics")
