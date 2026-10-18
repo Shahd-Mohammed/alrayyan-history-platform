@@ -252,9 +252,16 @@ def teacher_page():
         .order_by(TutorConversation.updated_at.desc()).limit(10).all()
     )
     raw_lesson_id = request.args.get("lesson_id", "")
-    initial_lesson_id = int(raw_lesson_id) if raw_lesson_id.isdigit() else None
+    requested_lesson_id = int(raw_lesson_id) if raw_lesson_id.isdigit() else None
+    available_lesson_ids = {lesson.id for lesson in lessons}
+    initial_lesson_id = (
+        requested_lesson_id
+        if requested_lesson_id in available_lesson_ids
+        else None
+    )
     initial_concept = (request.args.get("concept") or "").strip()[:250]
     review_mode = request.args.get("mode") == "review"
+    review_lesson_available = initial_lesson_id is not None
     return render_template(
         "teacher.html",
         lessons=lessons,
@@ -262,6 +269,7 @@ def teacher_page():
         initial_lesson_id=initial_lesson_id,
         initial_concept=initial_concept,
         review_mode=review_mode,
+        review_lesson_available=review_lesson_available,
         available_grades=student_available_grades(current_user),
         selected_student_grade=student_grade(current_user),
     )
@@ -332,6 +340,21 @@ def conversation_messages(conversation_id):
         "concept": conversation.current_concept,
         "messages": [serialize_message(item) for item in conversation.messages],
     })
+
+
+@teacher_bp.post("/conversations/<int:conversation_id>/delete")
+@login_required
+def delete_tutor_conversation(conversation_id):
+    """Delete only the signed-in student's own conversation and its messages."""
+    conversation = db.session.get(TutorConversation, conversation_id)
+    if conversation is None:
+        abort(404)
+    if conversation.student_id != current_user.id:
+        abort(403)
+
+    db.session.delete(conversation)
+    db.session.commit()
+    return jsonify({"success": True, "conversation_id": conversation_id})
 
 
 @teacher_bp.post("/conversations/<int:conversation_id>/message")

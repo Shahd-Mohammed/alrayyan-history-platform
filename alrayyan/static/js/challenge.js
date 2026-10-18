@@ -76,9 +76,9 @@ if (app) {
             document.getElementById("feedback-title").textContent =
                 data.correct ? "إجابة صحيحة ✦" : "لنحوّل الخطأ إلى معرفة";
             document.getElementById("feedback-text").textContent = data.feedback;
-            document.getElementById("score-reward").textContent = `+${data.score_awarded} نقطة`;
-            document.getElementById("xp-reward").textContent = `+${data.xp_awarded + data.completion_xp} XP`;
-            document.getElementById("combo-reward").textContent = `Combo ×${data.combo}`;
+            document.getElementById("score-reward").textContent = `+${data.score_awarded} نقطة للتحدي`;
+            document.getElementById("xp-reward").textContent = `+${data.xp_awarded + data.completion_xp} خبرة (XP)`;
+            document.getElementById("combo-reward").textContent = `سلسلة الإجابات ×${data.combo}`;
             document.getElementById("hud-score").textContent = data.score;
             document.getElementById("hud-xp").textContent = data.xp_total;
             document.getElementById("hud-combo").textContent = `×${data.combo}`;

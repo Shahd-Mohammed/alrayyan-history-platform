@@ -752,11 +752,36 @@ textarea {
 }
 .new-conversation-panel button { width: 100%; margin-top: 8px; }
 
-#conversation-list { display: grid; gap: 7px; }
-#conversation-list > button {
-    padding: 11px; color: var(--text); text-align: right; background: #f8f9fb;
-    border: 1px solid #e6e9ee; border-radius: 10px; cursor: pointer;
+#conversation-list { display: grid; gap: 8px; }
+.conversation-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
+    gap: 6px;
+    min-width: 0;
 }
+#conversation-list .conversation-open {
+    min-width: 0;
+    padding: 10px 11px;
+    color: var(--text);
+    text-align: right;
+    background: #f8f9fb;
+    border: 1px solid #e6e9ee;
+    border-radius: 10px;
+    cursor: pointer;
+}
+#conversation-list .conversation-delete {
+    align-self: stretch;
+    padding: 6px 9px;
+    color: #8b3434;
+    background: #fff7f5;
+    border: 1px solid #efd4d0;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 12px;
+}
+#conversation-list .conversation-delete:hover { background: #fde9e5; border-color: #dca8a1; }
+#conversation-list .conversation-delete:disabled { opacity: .55; cursor: wait; }
 #conversation-list b, #conversation-list small { display: block; }
 #conversation-list b { overflow: hidden; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 #conversation-list small { margin-top: 3px; color: var(--muted); font-size: 11px; }
@@ -863,7 +888,7 @@ a.gold-action {
 }
 
 /* Keep long Arabic conversation titles inside the sidebar at every width. */
-.tutor-workspace,.tutor-sidebar,.tutor-chat-card{min-width:0}.tutor-sidebar{overflow:hidden}#conversation-list{min-width:0;max-height:520px;overflow-y:auto;overflow-x:hidden;padding-inline-end:4px}#conversation-list>button{width:100%;min-width:0;overflow:hidden}#conversation-list b,#conversation-list small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tutor-workspace,.tutor-sidebar,.tutor-chat-card{min-width:0}.tutor-sidebar{overflow:hidden}#conversation-list{min-width:0;max-height:520px;overflow-y:auto;overflow-x:hidden;padding-inline-end:4px}#conversation-list .conversation-open{width:100%;min-width:0;overflow:hidden}#conversation-list b,#conversation-list small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 
 /* Site-wide Arabic button typography: consistent weight and no artificial letter spacing */
