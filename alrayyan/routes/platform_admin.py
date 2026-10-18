@@ -1410,19 +1410,19 @@ def admins():
     )
 
 
-@platform_admin_bp.post("/admins/<int:admin_id>/disable")
-def disable_admin_account(admin_id):
-    """Disable an admin login without deleting their teaching data or records."""
+@platform_admin_bp.post("/admins/<int:admin_id>/remove")
+def remove_admin_privilege(admin_id):
+    """Remove admin privileges without deleting the account or its linked data."""
     if not is_platform_owner(current_user):
         abort(403)
     account = User.query.filter_by(id=admin_id, role="admin").first_or_404()
     email = (account.email or "").strip().casefold()
     if email == "1shahdmohammed@gmail.com" or account.id == current_user.id:
-        flash("لا يمكن تعطيل الحساب الأساسي أو الحساب الذي تستخدمينه الآن.", "error")
+        flash("لا يمكن إزالة صلاحية الإدارة عن الحساب الأساسي أو الحساب الذي تستخدمينه الآن.", "error")
         return redirect(url_for("platform_admin.admins"))
-    account.is_active_account = False
+    account.role = "teacher"
     db.session.commit()
-    flash("تم تعطيل دخول حساب الإدارة مع الاحتفاظ بالحساب والبيانات المرتبطة به.", "success")
+    flash("تمت إزالة صلاحية الإدارة عن الحساب. بقي الحساب ومحتواه وسجلاته محفوظة دون حذف.", "success")
     return redirect(url_for("platform_admin.admins"))
 
 
