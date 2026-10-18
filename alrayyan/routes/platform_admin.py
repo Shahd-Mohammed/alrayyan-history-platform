@@ -163,18 +163,30 @@ def platform_owner_emails():
     }
 
 
-def is_platform_owner(user):
+def is_platform_owner_account(user):
+    """Identify a configured owner account for display-only navigation rules."""
     return bool(
         user
         and user.is_authenticated
-        and user.role == "admin"
         and (user.email or "").strip().casefold() in platform_owner_emails()
+    )
+
+
+def is_platform_owner(user):
+    """Grant owner permissions only to a configured account with the admin role."""
+    return bool(
+        is_platform_owner_account(user)
+        and user.role == "admin"
     )
 
 
 @platform_admin_bp.app_context_processor
 def inject_platform_owner_permission():
-    return {"is_platform_owner": is_platform_owner, "selected_grade": selected_management_grade()}
+    return {
+        "is_platform_owner": is_platform_owner,
+        "is_platform_owner_account": is_platform_owner_account,
+        "selected_grade": selected_management_grade(),
+    }
 
 @platform_admin_bp.route("/curricula", methods=["GET", "POST"])
 def curricula():
