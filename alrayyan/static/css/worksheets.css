@@ -2370,3 +2370,57 @@ a.grade-attempt-action,
   background: linear-gradient(135deg, #ffd7db 0%, #f3a4aa 100%) !important;
   border: 2px solid #bf3442 !important;
 }
+
+/* Clear spacing for file-download controls and post-submission answer review. */
+.file-download-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.file-download-area .download-button,
+.file-download-area .disabled-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    min-height: 46px;
+    margin: 0;
+    padding: 11px 18px;
+    line-height: 1.7;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.correct-answer-box {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border: 1px solid #b8dfc8;
+    border-radius: 13px;
+    background: #f0fbf4;
+    color: #175b3c;
+}
+
+.correct-answer-box span {
+    display: block;
+    margin-bottom: 6px;
+    font-size: .9rem;
+    font-weight: 800;
+}
+
+.correct-answer-box p {
+    margin: 0;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+    .file-download-area .download-button,
+    .file-download-area .disabled-button {
+        width: 100%;
+    }
+}

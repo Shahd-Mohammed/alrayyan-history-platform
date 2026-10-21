@@ -55,6 +55,7 @@
             class="worksheet-form"
         >
             {{ form.hidden_tag() }}
+            <input type="hidden" name="return_to" value="{{ request.form.get('return_to') or request.args.get('return_to', '') }}">
 
             {% if form.errors %}
                 <div class="alert error">
@@ -120,7 +121,7 @@
 
             <div class="form-actions">
                 <a
-                    href="{{ url_for('teacher_dashboard.dashboard') }}"
+                    href="{{ request.args.get('return_to') if request.args.get('return_to', '').startswith('/') and not request.args.get('return_to', '').startswith('//') else url_for('worksheet_center.center') }}"
                 >
                     إلغاء
                 </a>

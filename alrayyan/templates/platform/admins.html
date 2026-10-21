@@ -49,10 +49,14 @@
     <article>
       <div><strong>{{ account.full_name }}</strong><p><bdi>{{ account.email }}</bdi></p><small>أُنشئ في {{ account.created_at.strftime('%Y-%m-%d') if account.created_at else '—' }}</small></div>
       <span class="status-pill {{ 'used' if account.is_active_account else '' }}">{{ 'نشط' if account.is_active_account else 'غير نشط' }}</span>
-      {% if account.email|lower != primary_owner_email and account.id != current_user.id and account.is_active_account %}
+      {% if account.email|lower not in owner_emails and account.id != current_user.id and account.is_active_account %}
       <form method="post" action="{{ url_for('platform_admin.remove_admin_privilege', admin_id=account.id) }}" onsubmit="return confirm('ستُزال صلاحية الإدارة فقط، وسيبقى الحساب وبياناته. هل تريدين المتابعة؟')">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button class="platform-gold-button" type="submit">إزالة من الإدارة</button>
+      </form>
+      <form method="post" action="{{ url_for('platform_admin.delete_admin_account', admin_id=account.id) }}" onsubmit="return confirm('سيُحذف حساب الدخول نهائيًا. سيُحتفظ بالمحتوى المرتبط به، ولن تُحذف سجلات التعلّم. هل تريدين المتابعة؟')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="danger-action" type="submit">حذف حساب الدخول</button>
       </form>
       {% endif %}
     </article>

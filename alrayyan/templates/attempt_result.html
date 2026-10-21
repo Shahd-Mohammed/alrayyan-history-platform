@@ -33,7 +33,7 @@
             </div>
         </header>
 
-        {% if attempt.worksheet.show_answers_after_submit %}
+        {% if show_answer_review %}
             <section class="result-answers-section">
                 <div class="result-answers-heading">
                     <div><span>مراجعة المحاولة</span><h2>الأسئلة والإجابات</h2></div>
@@ -53,6 +53,13 @@
                                 <span>إجابتك</span>
                                 <p>{{ answer.display_value }}</p>
                             </div>
+
+                            {% if answer.is_correct is not none and correct_answers.get(answer.id) %}
+                                <div class="correct-answer-box">
+                                    <span>الإجابة الصحيحة</span>
+                                    <p>{{ correct_answers[answer.id] }}</p>
+                                </div>
+                            {% endif %}
 
                             <div class="result-question-footer">
                                 {% if answer.is_correct is none %}

@@ -38,6 +38,17 @@
   let draggedKey = null;
   let sequence = 0;
 
+  // Restore an existing manually created map when the editor is opened in edit mode.
+  try {
+    const initialGraph = JSON.parse(hiddenInput.value || "{}");
+    if (Array.isArray(initialGraph.nodes)) nodes = initialGraph.nodes;
+    if (Array.isArray(initialGraph.edges)) edges = initialGraph.edges;
+    sequence = nodes.length;
+  } catch (_) {
+    nodes = [];
+    edges = [];
+  }
+
   const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
   }[char]));

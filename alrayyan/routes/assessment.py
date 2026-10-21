@@ -48,6 +48,7 @@ from alrayyan.services.question_interactions import (
     dump_config,
     encode_submission,
     grade_interaction,
+    load_config,
 )
 
 
@@ -1316,12 +1317,48 @@ def attempt_result(attempt_id):
         for answer in attempt.answers
     )
 
+    show_answer_review = attempt.worksheet.show_answers_after_submit or any(
+        answer.is_correct is not None for answer in attempt.answers
+    )
+
+    correct_answers = {}
+    for answer in attempt.answers:
+        question = answer.question
+        if answer.is_correct is None:
+            continue
+        if question.question_type == "multiple_select":
+            config = load_config(question)
+            correct_answers[answer.id] = "، ".join(
+                str(value) for value in config.get("correct_values", [])
+            )
+        elif question.question_type == "ordering":
+            config = load_config(question)
+            correct_answers[answer.id] = " ← ".join(
+                str(value) for value in config.get("correct_order", [])
+            )
+        elif question.question_type == "matching":
+            config = load_config(question)
+            correct_answers[answer.id] = "؛ ".join(
+                f"{pair.get('left', '')} ← {pair.get('right', '')}"
+                for pair in config.get("pairs", [])
+            )
+        else:
+            selected_choices = [
+                choice.choice_text for choice in question.choices
+                if choice.is_correct
+            ]
+            correct_answers[answer.id] = (
+                "، ".join(selected_choices)
+                or question.correct_answer_text
+                or ""
+            )
+
     return render_template(
         "attempt_result.html",
         attempt=attempt,
-        pending_manual_grading=(
-            pending_manual_grading
-        ),
+        pending_manual_grading=pending_manual_grading,
+        correct_answers=correct_answers,
+        show_answer_review=show_answer_review,
     )
 
 
