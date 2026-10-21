@@ -54,6 +54,13 @@
                                 <p>{{ answer.display_value }}</p>
                             </div>
 
+                            {% if answer.is_correct is not none and correct_answers.get(answer.id) %}
+                                <div class="correct-answer-box">
+                                    <span>الإجابة الصحيحة</span>
+                                    <p>{{ correct_answers[answer.id] }}</p>
+                                </div>
+                            {% endif %}
+
                             <div class="result-question-footer">
                                 {% if answer.is_correct is none %}
                                     <span class="answer-state answer-pending">بانتظار تصحيح المعلمة</span>
