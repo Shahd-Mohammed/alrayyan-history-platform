@@ -5,11 +5,13 @@
 {% block heading %}حوّلي الدرس إلى شجرة أفكار واضحة{% endblock %}
 {% block intro %}رتّبي أفكار الدرس في شجرة واضحة، ثم راجعيها واعتمدي النسخة المناسبة لطالباتك.{% endblock %}
 {% block content %}
+{% if not editing_map %}
 <section class="creation-tabs concept-map-tabs" data-creation-tabs aria-label="طرق إنشاء الخريطة">
   <button type="button" class="is-active" data-tab="manual"><span>01</span> إنشاء بصري</button>
   <button type="button" data-tab="ai"><span>02</span> اقتراح ذكي</button>
   <button type="button" data-tab="upload"><span>03</span> رفع خريطة جاهزة</button>
 </section>
+{% endif %}
 
 <section class="platform-panel map-creator-panel concept-map-workspace is-active" data-panel="manual">
   <div class="concept-section-heading">
@@ -36,6 +38,7 @@
   </form>
 </section>
 
+{% if not editing_map %}
 <section class="platform-panel map-creator-panel concept-map-workspace concept-ai-workspace" data-panel="ai">
   <div class="concept-section-heading">
     <div class="concept-section-icon ai">✧</div>
@@ -58,6 +61,7 @@
     {{ upload_form.submit(class_='platform-gold-button') }}
   </form>
 </section>
+{% endif %}
 
 <section id="concept-map-library" class="platform-panel maps-library concept-map-library">
   <div class="concept-section-heading library-heading"><div class="concept-section-icon library">▤</div><div><span class="concept-kicker">مكتبة الخرائط</span><h2>خرائطك ومسوداتك</h2><p>راجعي خرائطك، وعاينيها قبل النشر، واحتفظي بالمسودات التي ما زلتِ تعملين عليها.</p></div><span class="library-count">{{ maps|length }} خريطة</span></div>
