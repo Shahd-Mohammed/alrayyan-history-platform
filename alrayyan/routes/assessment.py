@@ -1317,6 +1317,10 @@ def attempt_result(attempt_id):
         for answer in attempt.answers
     )
 
+    show_answer_review = attempt.worksheet.show_answers_after_submit or any(
+        answer.is_correct is not None for answer in attempt.answers
+    )
+
     correct_answers = {}
     for answer in attempt.answers:
         question = answer.question
@@ -1354,6 +1358,7 @@ def attempt_result(attempt_id):
         attempt=attempt,
         pending_manual_grading=pending_manual_grading,
         correct_answers=correct_answers,
+        show_answer_review=show_answer_review,
     )
 
 
