@@ -1546,8 +1546,8 @@ def remove_admin_privilege(admin_id):
         abort(403)
     account = User.query.filter_by(id=admin_id, role="admin").first_or_404()
     email = (account.email or "").strip().casefold()
-    if email == "1shahdmohammed@gmail.com" or account.id == current_user.id:
-        flash("لا يمكن إزالة صلاحية الإدارة عن الحساب الأساسي أو الحساب الذي تستخدمينه الآن.", "error")
+    if email in platform_owner_emails() or account.id == current_user.id:
+        flash("لا يمكن إزالة صلاحية الإدارة عن حساب مالكة المنصة أو الحساب الذي تستخدمينه الآن.", "error")
         return redirect(url_for("platform_admin.admins"))
     account.role = "teacher"
     db.session.commit()
