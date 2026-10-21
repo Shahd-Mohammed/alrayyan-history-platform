@@ -1043,6 +1043,115 @@ def concept_maps():
         upload_form=upload_form,
         maps=maps,
         status_filter=status_filter,
+        editing_map=None,
+    )
+
+
+@platform_admin_bp.route("/concept-maps/<int:row_id>/edit", methods=["GET", "POST"])
+def edit_manual_concept_map(row_id):
+    """Edit a manually created concept map without replacing its identity or lesson history."""
+    row = owned_content_or_404(ConceptMap, row_id)
+    if row.creation_method != "manual":
+        abort(404)
+
+    form = ConceptMapForm(obj=row)
+    form.lesson_id.choices = lesson_choices()
+    upload_form = ConceptMapUploadForm(prefix="upload")
+    upload_form.lesson_id.choices = lesson_choices()
+
+    if request.method == "GET":
+        form.lesson_id.data = row.lesson_id
+        form.title.data = row.title
+        form.publication_status.data = row.publication_status
+        node_keys = {node.id: str(node.id) for node in row.nodes}
+        form.nodes_json.data = json.dumps({
+            "nodes": [
+                {
+                    "key": node_keys[node.id],
+                    "label": node.label,
+                    "description": node.description or "",
+                    "tone": "gold",
+                    "x": node.position_x or 0,
+                    "y": node.position_y or 0,
+                }
+                for node in row.nodes
+            ],
+            "edges": [
+                {
+                    "source": node_keys[edge.source_node_id],
+                    "target": node_keys[edge.target_node_id],
+                    "label": edge.label or "يتفرع إلى",
+                }
+                for edge in row.edges
+                if edge.source_node_id in node_keys and edge.target_node_id in node_keys
+            ],
+        }, ensure_ascii=False)
+
+    if form.validate_on_submit():
+        try:
+            graph = json.loads(form.nodes_json.data or "{}")
+        except (TypeError, ValueError):
+            graph = {}
+        nodes_data = graph.get("nodes", []) if isinstance(graph, dict) else []
+        edges_data = graph.get("edges", []) if isinstance(graph, dict) else []
+        if len(nodes_data) < 2:
+            form.nodes_json.errors.append("أضيفي مفهومين على الأقل داخل المصمم")
+        else:
+            lesson = owned_lesson_or_404(form.lesson_id.data)
+            row.lesson_id = lesson.id
+            row.title = form.title.data.strip()
+            row.publication_status = form.publication_status.data
+
+            db.session.query(ConceptMapEdge).filter_by(concept_map_id=row.id).delete(synchronize_session=False)
+            db.session.query(ConceptMapNode).filter_by(concept_map_id=row.id).delete(synchronize_session=False)
+            db.session.flush()
+
+            nodes = {}
+            for index, item in enumerate(nodes_data[:80]):
+                label = str(item.get("label", "")).strip()[:250]
+                if not label:
+                    continue
+                try:
+                    position_x = min(max(float(item.get("x", (index % 3) * 260)), 0), 2000)
+                    position_y = min(max(float(item.get("y", (index // 3) * 150)), 0), 2000)
+                except (TypeError, ValueError):
+                    position_x, position_y = (index % 3) * 260, (index // 3) * 150
+                node = ConceptMapNode(
+                    concept_map_id=row.id,
+                    label=label,
+                    description=str(item.get("description", "")).strip()[:2000] or None,
+                    position_x=position_x,
+                    position_y=position_y,
+                )
+                db.session.add(node)
+                db.session.flush()
+                nodes[str(item.get("key", index))] = node
+
+            for item in edges_data[:160]:
+                source = nodes.get(str(item.get("source")))
+                target = nodes.get(str(item.get("target")))
+                if source and target and source.id != target.id:
+                    db.session.add(ConceptMapEdge(
+                        concept_map_id=row.id,
+                        source_node_id=source.id,
+                        target_node_id=target.id,
+                        label=str(item.get("label", ""))[:150] or None,
+                    ))
+
+            db.session.commit()
+            flash("تم حفظ تعديلات الخريطة المفاهيمية.", "success")
+            return redirect(url_for("platform_admin.concept_maps") + "#concept-map-library")
+
+    query = ConceptMap.query if current_user.role == "admin" else ConceptMap.query.filter_by(created_by_id=current_user.id)
+    query = query.filter(ConceptMap.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
+    maps = query.order_by(ConceptMap.created_at.desc()).all()
+    return render_template(
+        "platform/concept_maps.html",
+        form=form,
+        upload_form=upload_form,
+        maps=maps,
+        status_filter="all",
+        editing_map=row,
     )
 
 
