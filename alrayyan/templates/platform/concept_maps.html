@@ -18,6 +18,7 @@
   </div>
   <form method="post" class="platform-form concept-map-form" data-map-form>
     {{ form.hidden_tag() }}
+    {% if editing_map %}<input type="hidden" name="return_to" value="{{ request.form.get('return_to') or request.args.get('return_to', '') }}">{% endif %}
     {{ fields(form,[form.lesson_id,form.title,form.publication_status]) }}
     <div class="tree-builder">
       <div class="tree-builder-topline"><div><strong>{{ 'مساحة تعديل الخريطة' if editing_map else 'مساحة بناء الخريطة' }}</strong><small>رتّبي الفروع بسهولة</small></div><span class="tree-count" data-tree-count>0 مفهوم</span></div>
@@ -80,9 +81,9 @@
       </div>
       <div class="concept-map-card-actions">
         <a class="concept-action preview" href="{{ url_for('learning.concept_map',map_id=row.id,preview=1) }}" target="_blank" rel="noopener noreferrer">معاينة</a>
-        {% if row.creation_method == 'manual' %}<a class="concept-action preview" href="{{ url_for('platform_admin.edit_manual_concept_map', row_id=row.id) }}">تعديل الخريطة</a>{% endif %}
-        <form method="post" action="{{ url_for('platform_admin.toggle_concept_map',row_id=row.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="concept-action publish" type="submit">{{ 'إعادة إلى المسودة' if row.publication_status == 'published' else 'نشر الخريطة' }}</button></form>
-        <form method="post" action="{{ url_for('platform_admin.delete_concept_map',row_id=row.id) }}" onsubmit="return confirm('هل أنتِ متأكدة من حذف هذه الخريطة نهائيًا؟');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="concept-action delete" type="submit">حذف</button></form>
+        {% if row.creation_method == 'manual' %}<a class="concept-action preview" href="{{ url_for('platform_admin.edit_manual_concept_map', row_id=row.id, return_to=request.full_path) }}">تعديل الخريطة</a>{% endif %}
+        <form method="post" action="{{ url_for('platform_admin.toggle_concept_map',row_id=row.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="return_to" value="{{ request.full_path }}"><button class="concept-action publish" type="submit">{{ 'إعادة إلى المسودة' if row.publication_status == 'published' else 'نشر الخريطة' }}</button></form>
+        <form method="post" action="{{ url_for('platform_admin.delete_concept_map',row_id=row.id) }}" onsubmit="return confirm('هل أنتِ متأكدة من حذف هذه الخريطة نهائيًا؟');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="return_to" value="{{ request.full_path }}"><button class="concept-action delete" type="submit">حذف</button></form>
       </div>
     </article>
   {% else %}
