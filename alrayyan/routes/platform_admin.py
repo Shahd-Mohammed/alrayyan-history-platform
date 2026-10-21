@@ -1548,7 +1548,7 @@ def remove_admin_privilege(admin_id):
 
 
 @platform_admin_bp.post("/admins/<int:admin_id>/delete")
-def delete_admin_account():
+def delete_admin_account(admin_id):
     """Delete an eligible admin login while preserving authored platform content."""
     if not is_platform_owner(current_user):
         abort(403)
