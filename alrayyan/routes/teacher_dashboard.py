@@ -45,7 +45,7 @@ teacher_dashboard_bp = Blueprint(
 def _worksheet_return_url(default_endpoint="worksheet_center.center"):
     """Return to the page that initiated a worksheet action, accepting only local paths."""
     target = (request.form.get("return_to") or request.args.get("return_to") or "").strip()
-    if target.startswith("/") and not target.startswith("//") and "\\\\" not in target:
+    if target.startswith("/") and not target.startswith("//") and chr(92) not in target:
         return target
     referrer = request.referrer
     if referrer:
@@ -569,7 +569,7 @@ def upload_worksheet():
                 "success",
             )
 
-        return redirect(_worksheet_return_url())
+        return redirect(url_for("worksheet_center.center"))
 
     if request.method == "POST":
         for field_name, errors in form.errors.items():
