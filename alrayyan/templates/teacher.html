@@ -24,19 +24,6 @@
         data-review-mode="{{ 'true' if review_mode else 'false' }}"
         data-csrf-token="{{ csrf_token() }}"
     >
-        {% if available_grades|length > 1 %}
-        <nav class="student-grade-switcher" aria-label="اختيار الصف">
-            <span>تتعلّمين الآن ضمن:</span>
-            {% for grade in available_grades %}
-            <a href="{{ url_for('teacher.select_student_grade', grade=grade, next=request.full_path) }}"
-               class="{{ 'is-active' if selected_student_grade == grade else '' }}"
-               {% if selected_student_grade == grade %}aria-current="page"{% endif %}>
-                الصف {{ 'الحادي عشر' if grade == '11' else 'الثاني عشر' }}
-            </a>
-            {% endfor %}
-        </nav>
-        {% endif %}
-
         <section class="teacher-intro tutor-intro">
             <div>
                 <span class="intro-label">تعلم يفهم مستواك</span>
