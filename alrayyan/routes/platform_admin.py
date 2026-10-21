@@ -1547,6 +1547,59 @@ def remove_admin_privilege(admin_id):
     return redirect(url_for("platform_admin.admins"))
 
 
+@platform_admin_bp.post("/admins/<int:admin_id>/delete")
+def delete_admin_account():
+    """Delete an eligible admin login while preserving authored platform content."""
+    if not is_platform_owner(current_user):
+        abort(403)
+
+    account = User.query.filter_by(id=admin_id, role="admin").first_or_404()
+    email = (account.email or "").strip().casefold()
+    protected_emails = platform_owner_emails()
+    if account.id == current_user.id or email in protected_emails:
+        flash("لا يمكن حذف حساب الإدارة الأساسي أو أحد حسابات مالكات المنصة.", "error")
+        return redirect(url_for("platform_admin.admins"))
+
+    # Never cascade-delete a person's learning history or student records.
+    learner_history_checks = [
+        (WorksheetAttempt, "student_id"),
+        (DateReview, "student_id"),
+        (XPTransaction, "student_id"),
+        (ClassEnrollment, "student_id"),
+        (TutorConversation, "student_id"),
+        (ConceptMastery, "student_id"),
+        (CharacterAttempt, "student_id"),
+        (HonorBoardEntry, "student_id"),
+        (LearningPlanItem, "student_id"),
+    ]
+    for model, field_name in learner_history_checks:
+        if hasattr(model, field_name) and model.query.filter(
+            getattr(model, field_name) == account.id
+        ).first():
+            flash("لا يمكن حذف هذا الحساب بأمان لوجود سجلات تعلّم مرتبطة به. أزيلي صلاحية الإدارة بدلًا من حذف السجلات.", "error")
+            return redirect(url_for("platform_admin.admins"))
+
+    try:
+        # Preserve content and invitations by transferring their ownership to
+        # the authenticated platform owner before removing the login account.
+        for model in (Curriculum, LearningResource, ConceptMap, HistoricalCharacter, Worksheet, Classroom, StudentInvitation):
+            if hasattr(model, "created_by_id"):
+                model.query.filter_by(created_by_id=account.id).update(
+                    {"created_by_id": current_user.id},
+                    synchronize_session=False,
+                )
+        db.session.delete(account)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Admin account deletion failed for account id %s", admin_id)
+        flash("تعذر حذف الحساب لأن هناك سجلات مرتبطة به لا يمكن نقلها بأمان. لم يتم اعتماد الحذف.", "error")
+        return redirect(url_for("platform_admin.admins"))
+
+    flash("تم حذف حساب الإدارة وتحرير البريد الإلكتروني للتسجيل من جديد، مع الحفاظ على المحتوى الذي كان مرتبطًا به.", "success")
+    return redirect(url_for("platform_admin.admins"))
+
+
 @platform_admin_bp.post("/admins/owners/<int:account_id>/activate")
 def activate_platform_owner_account(account_id):
     """Restore admin access only for one of the two configured owner emails."""
