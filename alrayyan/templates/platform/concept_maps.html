@@ -14,13 +14,13 @@
 <section class="platform-panel map-creator-panel concept-map-workspace is-active" data-panel="manual">
   <div class="concept-section-heading">
     <div class="concept-section-icon">✦</div>
-    <div><span class="concept-kicker">مصمم الشجرة</span><h2>رتّبي المعرفة من الفكرة إلى الفروع</h2><p>ابدئي بالفكرة الرئيسية ثم أضيفي الفروع المتصلة بها. يمكنك سحب الفروع وإفلاتها لإعادة ترتيب الشجرة بسهولة.</p></div>
+    <div><span class="concept-kicker">مصمم الشجرة</span><h2>رتّبي المعرفة من الفكرة إلى الفروع</h2><p>{{ 'عدّلي العنوان والمفاهيم والعلاقات، ثم احفظي التغييرات على الخريطة نفسها.' if editing_map else 'ابدئي بالفكرة الرئيسية ثم أضيفي الفروع المتصلة بها. يمكنك سحب الفروع وإفلاتها لإعادة ترتيب الشجرة بسهولة.' }}</p></div>
   </div>
   <form method="post" class="platform-form concept-map-form" data-map-form>
     {{ form.hidden_tag() }}
     {{ fields(form,[form.lesson_id,form.title,form.publication_status]) }}
     <div class="tree-builder">
-      <div class="tree-builder-topline"><div><strong>مساحة بناء الخريطة</strong><small>رتّبي الفروع بسهولة</small></div><span class="tree-count" data-tree-count>0 مفهوم</span></div>
+      <div class="tree-builder-topline"><div><strong>{{ 'مساحة تعديل الخريطة' if editing_map else 'مساحة بناء الخريطة' }}</strong><small>رتّبي الفروع بسهولة</small></div><span class="tree-count" data-tree-count>0 مفهوم</span></div>
       <div class="tree-builder-toolbar">
         <label class="tree-node-entry"><span>عنوان الفكرة أو الفرع</span><input type="text" data-node-label maxlength="250" placeholder="مثال: أسباب الحدث التاريخي"></label>
         <label class="tree-parent-entry"><span>يتفرع من</span><select data-parent-node><option value="">الموضوع الرئيسي / بدون أصل</option></select></label>
@@ -31,7 +31,7 @@
         <div class="tree-empty-state" data-builder-empty><span>✧</span><strong>ابدئي من الفكرة الرئيسية</strong><p>اكتبي الفكرة الرئيسية ثم أضيفي الفروع المتصلة بها.</p></div>
       </div>
     </div>
-    <div class="concept-form-footer"><p>ستُحفظ الخريطة بالحالة التي اخترتِها، ويمكنك معاينتها قبل نشرها.</p>{{ form.submit(class_='platform-gold-button') }}</div>
+    <div class="concept-form-footer"><p>ستُحفظ الخريطة بالحالة التي اخترتِها، ويمكنك معاينتها قبل نشرها.</p>{{ form.submit(class_='platform-gold-button', value='حفظ التعديلات' if editing_map else 'حفظ الخريطة') }}</div>
   </form>
 </section>
 
@@ -80,6 +80,7 @@
       </div>
       <div class="concept-map-card-actions">
         <a class="concept-action preview" href="{{ url_for('learning.concept_map',map_id=row.id,preview=1) }}" target="_blank" rel="noopener noreferrer">معاينة</a>
+        {% if row.creation_method == 'manual' %}<a class="concept-action preview" href="{{ url_for('platform_admin.edit_manual_concept_map', row_id=row.id) }}">تعديل الخريطة</a>{% endif %}
         <form method="post" action="{{ url_for('platform_admin.toggle_concept_map',row_id=row.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="concept-action publish" type="submit">{{ 'إعادة إلى المسودة' if row.publication_status == 'published' else 'نشر الخريطة' }}</button></form>
         <form method="post" action="{{ url_for('platform_admin.delete_concept_map',row_id=row.id) }}" onsubmit="return confirm('هل أنتِ متأكدة من حذف هذه الخريطة نهائيًا؟');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="concept-action delete" type="submit">حذف</button></form>
       </div>
