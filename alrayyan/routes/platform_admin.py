@@ -33,6 +33,14 @@ from alrayyan.services.embeddings import generate_embeddings, get_embedding_sett
 platform_admin_bp = Blueprint("platform_admin", __name__, url_prefix="/teacher-dashboard/platform")
 
 
+def _safe_admin_return_url(default_endpoint):
+    """Accept a same-site relative return path for post/redirect/get flows."""
+    target = (request.form.get("return_to") or request.args.get("return_to") or "").strip()
+    if target.startswith("/") and not target.startswith("//") and chr(92) not in target:
+        return target
+    return url_for(default_endpoint)
+
+
 @platform_admin_bp.before_request
 @login_required
 def teacher_only():
@@ -1028,7 +1036,7 @@ def concept_maps():
                 if source and target and source.id != target.id:
                     db.session.add(ConceptMapEdge(concept_map_id=concept_map.id, source_node_id=source.id, target_node_id=target.id, label=str(item.get("label", ""))[:150] or None))
             db.session.commit(); flash("تم إنشاء الخريطة المفاهيمية", "success")
-            return redirect(url_for("platform_admin.concept_maps"))
+            return redirect(_safe_admin_return_url("platform_admin.concept_maps"))
     query = ConceptMap.query if current_user.role == "admin" else ConceptMap.query.filter_by(created_by_id=current_user.id)
     query = query.filter(ConceptMap.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
     status_filter = (request.args.get("status") or "all").strip().lower()
@@ -1140,7 +1148,7 @@ def edit_manual_concept_map(row_id):
 
             db.session.commit()
             flash("تم حفظ تعديلات الخريطة المفاهيمية.", "success")
-            return redirect(url_for("platform_admin.concept_maps") + "#concept-map-library")
+            return redirect(_safe_admin_return_url("platform_admin.concept_maps") + "#concept-map-library")
 
     query = ConceptMap.query if current_user.role == "admin" else ConceptMap.query.filter_by(created_by_id=current_user.id)
     query = query.filter(ConceptMap.lesson_id.in_(lesson_ids_for_grade(selected_management_grade()) or [-1]))
