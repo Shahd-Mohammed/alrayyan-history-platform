@@ -42,6 +42,19 @@ teacher_dashboard_bp = Blueprint(
 )
 
 
+def _worksheet_return_url(default_endpoint="worksheet_center.center"):
+    """Return to the page that initiated a worksheet action, accepting only local paths."""
+    target = (request.form.get("return_to") or request.args.get("return_to") or "").strip()
+    if target.startswith("/") and not target.startswith("//") and "\\\\" not in target:
+        return target
+    referrer = request.referrer
+    if referrer:
+        parsed = urlsplit(referrer)
+        if parsed.scheme in {"http", "https"} and parsed.netloc == request.host:
+            return urlunsplit(("", "", parsed.path, parsed.query, ""))
+    return url_for(default_endpoint)
+
+
 @teacher_dashboard_bp.before_request
 def remember_teacher_grade():
     selected_management_grade()
@@ -229,7 +242,7 @@ def select_grade(grade):
         query_items = [(key, value) for key, value in parse_qsl(parsed.query, keep_blank_values=True) if key != "grade"]
         safe_path = urlunsplit(("", "", parsed.path, urlencode(query_items), parsed.fragment))
         return redirect(safe_path)
-    return redirect(url_for("teacher_dashboard.dashboard"))
+    return redirect(_worksheet_return_url())
 
 
 @teacher_dashboard_bp.get("/")
@@ -556,11 +569,7 @@ def upload_worksheet():
                 "success",
             )
 
-        return redirect(
-            url_for(
-                "teacher_dashboard.dashboard"
-            )
-        )
+        return redirect(_worksheet_return_url())
 
     if request.method == "POST":
         for field_name, errors in form.errors.items():
@@ -772,7 +781,7 @@ def archive_worksheet(worksheet_id):
     worksheet.is_published = False
     db.session.commit()
     flash("تمت أرشفة ورقة العمل مع الاحتفاظ بنتائج الطلاب.", "success")
-    return redirect(url_for("teacher_dashboard.dashboard"))
+    return redirect(_worksheet_return_url())
 
 
 @teacher_dashboard_bp.post(
@@ -788,7 +797,7 @@ def restore_worksheet(worksheet_id):
     worksheet.is_published = False
     db.session.commit()
     flash("تمت استعادة ورقة العمل كمسودة.", "success")
-    return redirect(url_for("teacher_dashboard.dashboard"))
+    return redirect(_worksheet_return_url())
 
 
 @teacher_dashboard_bp.post(
@@ -803,7 +812,7 @@ def delete_worksheet(worksheet_id):
             "لا يمكن حذف ورقة مرتبطة بمحاولات طلاب. استخدمي الأرشفة لحفظ النتائج.",
             "error",
         )
-        return redirect(url_for("teacher_dashboard.dashboard"))
+        return redirect(_worksheet_return_url())
 
     upload_root = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
     attachment_paths = []
@@ -824,4 +833,4 @@ def delete_worksheet(worksheet_id):
             )
 
     flash("تم حذف ورقة العمل نهائيًا.", "success")
-    return redirect(url_for("teacher_dashboard.dashboard"))
+    return redirect(_worksheet_return_url())
