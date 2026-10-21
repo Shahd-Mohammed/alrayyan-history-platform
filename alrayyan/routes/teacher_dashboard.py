@@ -690,11 +690,7 @@ def edit_worksheet(worksheet_id):
             "success",
         )
 
-        return redirect(
-            url_for(
-                "teacher_dashboard.dashboard"
-            )
-        )
+        return redirect(_worksheet_return_url())
 
     attachments = (
         WorksheetAttachment.query
@@ -761,11 +757,7 @@ def toggle_publish(worksheet_id):
         "success",
     )
 
-    return redirect(
-        url_for(
-            "teacher_dashboard.dashboard"
-        )
-    )
+    return redirect(_worksheet_return_url())
 
 
 @teacher_dashboard_bp.post(
