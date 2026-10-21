@@ -14,7 +14,7 @@
 <section class="platform-panel map-creator-panel concept-map-workspace is-active" data-panel="manual">
   <div class="concept-section-heading">
     <div class="concept-section-icon">✦</div>
-    <div><span class="concept-kicker">مصمم الشجرة</span><h2>رتّبي المعرفة من الفكرة إلى الفروع</h2><p>{{ 'عدّلي العنوان والمفاهيم والعلاقات، ثم احفظي التغييرات على الخريطة نفسها.' if editing_map else 'ابدئي بالفكرة الرئيسية ثم أضيفي الفروع المتصلة بها. يمكنك سحب الفروع وإفلاتها لإعادة ترتيب الشجرة بسهولة.' }}</p></div>
+    <div><span class="concept-kicker">مصمم الشجرة</span><h2>{{ 'تعديل الخريطة البصرية' if editing_map else 'رتّبي المعرفة من الفكرة إلى الفروع' }}</h2><p>{{ 'عدّلي العنوان والمفاهيم والعلاقات، ثم احفظي التغييرات على الخريطة نفسها.' if editing_map else 'ابدئي بالفكرة الرئيسية ثم أضيفي الفروع المتصلة بها. يمكنك سحب الفروع وإفلاتها لإعادة ترتيب الشجرة بسهولة.' }}</p></div>
   </div>
   <form method="post" class="platform-form concept-map-form" data-map-form>
     {{ form.hidden_tag() }}
