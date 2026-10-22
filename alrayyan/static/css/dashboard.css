@@ -1861,3 +1861,32 @@ a.grade-attempt-action,
     border: 1px solid rgba(210, 161, 59, .45);
     box-shadow: 0 18px 40px rgba(7, 26, 53, .16);
 }
+
+
+/* Ensure worksheet upload/edit intro has a solid contrast surface.
+   White headings need a navy background, not the page's cream background. */
+.worksheet-form-page .form-intro {
+    padding: clamp(24px, 4vw, 38px);
+    color: #ffffff !important;
+    border: 1px solid rgba(210, 161, 59, .58) !important;
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at 12% 18%, rgba(201, 155, 61, .28), transparent 34%),
+        linear-gradient(135deg, #172d4f 0%, #23456e 100%) !important;
+    box-shadow: 0 18px 40px rgba(7, 26, 53, .18) !important;
+}
+.worksheet-form-page .form-intro > span {
+    display: inline-block;
+    color: #f1d694 !important;
+    font-weight: 800;
+}
+.worksheet-form-page .form-intro h1 {
+    color: #ffffff !important;
+    line-height: 1.5;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+}
+.worksheet-form-page .form-intro p {
+    margin-bottom: 0;
+    color: #f6f1e7 !important;
+    line-height: 1.95;
+}
