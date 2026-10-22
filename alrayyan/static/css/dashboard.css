@@ -1843,3 +1843,21 @@ a.grade-attempt-action,
 .results-dashboard button:not(.results-primary-link):not(.platform-gold-button){background:#102f50!important;color:#fff!important;border-color:#102f50!important}
 .results-dashboard button:not(.results-primary-link):not(.platform-gold-button):hover{background:#1b496e!important;color:#fff!important;border-color:#1b496e!important}
 
+/* Worksheet upload/edit headings: warm ivory, navy and restrained gold. */
+.worksheet-form-page .form-intro > span {
+    color: #f1d694 !important;
+    font-weight: 800;
+    letter-spacing: .02em;
+}
+.worksheet-form-page .form-intro h1 {
+    color: #fff !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, .16);
+}
+.worksheet-form-page .form-intro p {
+    color: #f6f1e7 !important;
+    line-height: 1.95;
+}
+.worksheet-form-page .form-intro {
+    border: 1px solid rgba(210, 161, 59, .45);
+    box-shadow: 0 18px 40px rgba(7, 26, 53, .16);
+}
